@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 10.11.2023
+* @version      5.3.4 26.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -288,6 +288,7 @@ $config->checkout_form_finish_multipart = 0;
 $config->product_admin_demo_file = 1;
 $config->product_admin_sale_file = 1;
 $config->admin_shop_lang_as_admin_lang = 1;
+$config->admin_display_extra_field_values_in_list_max = 100;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';
@@ -321,6 +322,8 @@ $config->product_search_fields = array(
 $config->attribut_dep_sorting_in_product = "V.value_ordering"; // (V.value_ordering, value_name, PA.price, PA.ean, PA.count)
 $config->attribut_nodep_sorting_in_product = "V.value_ordering"; // (V.value_ordering, value_name, addprice)
 $config->new_extra_field_type = 'varchar(100)';
+$config->new_extra_field_type_list = 'int(11)';
+$config->new_extra_field_type_multilist = 'varchar(32)';
 
 $config->disable_admin = array(
     'product_price_per_consignment' => 0,

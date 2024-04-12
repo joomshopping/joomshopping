@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.4 24.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,7 +13,7 @@ class ProductFieldValuesModel extends BaseadminModel{
     
     protected $nameTable = 'productfieldvalue';
 
-	function getList($field_id, $order = null, $orderDir = null, $filter=array()){
+	public function getList($field_id, $order = null, $orderDir = null, $filter=array()){
         $db = \JFactory::getDBO();
         $lang = \JSFactory::getLang();
         $ordering = 'ordering';
@@ -32,7 +32,7 @@ class ProductFieldValuesModel extends BaseadminModel{
         return $db->loadObjectList();
     }
 
-    function getAllList($display = 0){
+    public function getAllList($display = 0){
         $db = \JFactory::getDBO();
         $lang = \JSFactory::getLang();
         $query = "SELECT id, `".$lang->get("name")."` as name, field_id FROM `#__jshopping_products_extra_field_values` order by ordering";
@@ -61,24 +61,38 @@ class ProductFieldValuesModel extends BaseadminModel{
         }
     }
 
+    public function getListRaw($field_id, $db_filed_select = '*') {
+        $db = \JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $query->select($db_filed_select)
+            ->from($db->qn('#__jshopping_products_extra_field_values'))
+            ->where($db->qn('field_id') . '=' . $db->q($field_id))            
+            ->order('id');
+        $db->setQuery($query);
+        return $db->loadObjectList();
+    }
+
     public function save(array $post){
         $productfieldvalue = \JSFactory::getTable('productFieldValue');
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveProductFieldValue', array(&$post));
-        if (!$productfieldvalue->bind($post)) {
-            \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_BIND'));
-            $this->setRedirect("index.php?option=com_jshopping&controller=productfieldvalues");
-            return 0;
+        if (!$post['id']) {
+            $productfield = \JSFactory::getTable('productfield');
+            $productfield->load($post['field_id']);
+            if ($productfield->type == 3 || (isset($post['_save_unique']) && $post['_save_unique'])) {
+                $post['id'] = $this->getIdByNames($post['field_id'], $post);
+                if ($post['id']) {
+                    $productfieldvalue->load($post['id']);
+                    return $productfieldvalue;
+                }
+            }
         }
+        $productfieldvalue->bind($post);
         if (!$post['id']) {
             $productfieldvalue->ordering = null;
             $productfieldvalue->ordering = $productfieldvalue->getNextOrder('field_id="' . $post['field_id'] . '"');
         }
-        if (!$productfieldvalue->store()) {
-            \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
-            $this->setRedirect("index.php?option=com_jshopping&controller=productfieldvalues");
-            return 0;
-        }
+        $productfieldvalue->store();
         $dispatcher->triggerEvent('onAfterSaveProductFieldValue', array(&$productfieldvalue));
         return $productfieldvalue;
     }
@@ -98,4 +112,77 @@ class ProductFieldValuesModel extends BaseadminModel{
         \JFactory::getApplication()->triggerEvent('onAfterRemoveProductFieldValue', array(&$cid));
     }
 
+    public function getIdByNames($field_id, $names) {
+        $db = \JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $query->select($db->qn('id'))
+            ->from($db->qn('#__jshopping_products_extra_field_values'))
+            ->where($db->qn('field_id')."=".$db->q($field_id))
+            ->order('id');
+        $count_name = 0;
+        foreach($names as $k => $v) {
+            if ($v != '' && preg_match('/name_([a-z]{2})-([A-Z]{2})/', $k)) {
+                $query->where($db->qn($k)."=".$db->q($v));
+                $count_name++;
+            }
+        }
+        if ($count_name == 0) {
+            return 0;
+        } else {
+            $db->setQuery($query);
+            return (int)$db->loadResult();
+        }        
+    }
+
+    public function clearDoubleValues($field_id) {
+        $list = $this->getListRaw($field_id);
+        $langs = \JSFactory::getModel('Languages')->getAllTags();
+        $updated = 0;
+        foreach($list as $item) {
+            $names = [];
+            foreach($langs as $lang) {
+                $field = 'name_'.$lang;
+                $names[$field] = $item->$field;
+            }
+            $first_id = $this->getIdByNames($field_id, $names);
+            if ($first_id && $first_id != $item->id) {
+                \JSHelper::saveToLog('extrafield_clear_double.log', 'efid: '.$field_id.' oldval: '.$item->id.' newid: '.$first_id);
+                $this->deleteById($item->id);
+                $this->updateAllProductsValue($field_id, $item->id, $first_id);
+                $updated++;
+            }
+        }
+        return $updated;
+    }
+
+    public function deleteById($id) {
+        $db = \JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $query->delete($db->qn('#__jshopping_products_extra_field_values'))
+            ->where($db->qn('id') . '=' .$db->q($id));
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    public function updateAllProductsValue($field_id, $old_val_id, $new_val_id) {
+        $db = \JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $field = 'extra_field_'.(int)$field_id;
+        $query->update($db->qn('#__jshopping_products_to_extra_fields'))
+            ->set($db->qn($field) . "=" . $db->q($new_val_id))
+            ->where($db->qn($field) . '=' . $db->q($old_val_id));
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    public function updateProductValue($product_id, $field_id, $val_id) {
+        $db = \JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $field = 'extra_field_'.(int)$field_id;
+        $query->update($db->qn('#__jshopping_products_to_extra_fields'))
+            ->set($db->qn($field) . "=" . $db->q($val_id))
+            ->where($db->qn('product_id') . '=' . $db->q($product_id));
+        $db->setQuery($query);
+        $db->execute();
+    }
 }

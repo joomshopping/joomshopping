@@ -26,7 +26,7 @@ defined('_JEXEC') or die;
                 <span class="characteristic_name"><?php print $characteristic_fields[$ch_id]->name;?></span>
             </div>
             <div class = "controls">
-                <?php if ($characteristic_fields[$ch_id]->type==0){?>
+                <?php if ($characteristic_fields[$ch_id]->type != 1){?>
                     <input type="hidden" name="extra_fields[<?php print $ch_id?>][]" value="0" />
                     <?php if (is_array($characteristic_fieldvalues[$ch_id])){?>
                         <?php foreach($characteristic_fieldvalues[$ch_id] as $val_id=>$val_name){?>

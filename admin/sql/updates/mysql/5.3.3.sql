@@ -1,0 +1,1 @@
+update `#__jshopping_products_extra_fields` set `type`=2 WHERE `product_uniq_val` = 1;

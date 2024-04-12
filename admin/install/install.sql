@@ -607,7 +607,6 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products_extra_fields` (
 `type` TINYINT(1) NOT NULL default 0,
 `multilist` TINYINT(1) NOT NULL default 0,
 `group` tinyint(4) NOT NULL default 0,
-`product_uniq_val` TINYINT(1) NOT NULL default 0,
 `ordering` int(6) NOT NULL default 0,
 PRIMARY KEY  (`id`),
 KEY `group` (`group`)

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.07.2022
+* @version      5.3.4 26.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,7 +14,7 @@ class ProductFieldsModel extends BaseadminModel{
     
     protected $nameTable = 'productfield';
 	
-	function getList($groupordering = 0, $order = null, $orderDir = null, $filter=array(), $printCatName = 0){
+	public function getList($groupordering = 0, $order = null, $orderDir = null, $filter=array(), $printCatName = 0){
         $db = \JFactory::getDBO();
         $lang = \JSFactory::getLang();
         $ordering = "F.ordering";
@@ -37,7 +37,7 @@ class ProductFieldsModel extends BaseadminModel{
 		if (count($_where)>0){
 			$where = " WHERE ".implode(" AND ",$_where);
 		}
-        $query = "SELECT F.id, F.`".$lang->get("name")."` as name, F.`".$lang->get("description")."` as description, F.allcats, F.type, F.cats, F.ordering, F.`group`, G.`".$lang->get("name")."` as groupname, multilist, product_uniq_val FROM `#__jshopping_products_extra_fields` as F left join `#__jshopping_products_extra_field_groups` as G on G.id=F.group ".$where." order by ".$ordering;
+        $query = "SELECT F.id, F.`".$lang->get("name")."` as name, F.`".$lang->get("description")."` as description, F.allcats, F.type, F.cats, F.ordering, F.`group`, G.`".$lang->get("name")."` as groupname, multilist FROM `#__jshopping_products_extra_fields` as F left join `#__jshopping_products_extra_field_groups` as G on G.id=F.group ".$where." order by ".$ordering;
         extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $rows = $db->loadObjectList();
@@ -80,18 +80,25 @@ class ProductFieldsModel extends BaseadminModel{
         return $post;
     }
     
-    function save(array $post){
+    public function save(array $post){
         $id = (int)$post["id"];
         $productfield = \JSFactory::getTable('productfield');
+        $post['multilist'] = 0;
         if ($post['type']==-1){
             $post['type'] = 0;
             $post['multilist'] = 1;
-        }else{
-            $post['multilist'] = 0;
         }
         $app = \JFactory::getApplication();
         $app->triggerEvent('onBeforeSaveProductField', array(&$post));
-        $productfield->bind($post);        
+        if ($id) {
+            $productfield->load($id);
+            $old_type = $productfield->type;
+            $old_multilist = $productfield->multilist;
+            if ($old_type == 1 && $post['type'] != 1) {
+                $this->converProductDataDeprecatedTextToList($id, $post['type']);
+            }
+        }
+        $productfield->bind($post);
         $categorys = $post['category_id'] ?? [];
         $productfield->setCategorys($categorys);
         if (!$id){
@@ -104,6 +111,10 @@ class ProductFieldsModel extends BaseadminModel{
         }
         if (!$id){            
             $productfield->addNewFieldProducts();
+        } else {
+            if ($old_type != $productfield->type || $old_multilist != $productfield->multilist) {
+                $productfield->updateFieldProducts();
+            }
         }
         $app->triggerEvent('onAfterSaveProductField', array(&$productfield));        
         return $productfield;
@@ -136,6 +147,54 @@ class ProductFieldsModel extends BaseadminModel{
         $query = "DELETE FROM `#__jshopping_products_extra_field_values` WHERE `field_id`=".$db->q($field_id);
         $db->setQuery($query);
         $db->execute();
+    }
+
+    public function getTypes($show_deprecated = 0){
+        $types = [
+            0 => \JText::_('JSHOP_LIST'),
+            -1 => \JText::_('JSHOP_MULTI_LIST'),
+            3 => \JText::_('JSHOP_TEXT')." (".\JText::_('JSHOP_SAVE_UNIQUE').")",
+            2 => \JText::_('JSHOP_TEXT'),
+            1 => \JText::_('JSHOP_TEXT')." (".\JText::_('JSHOP_DEPRECATED').")",
+        ];
+        if (!$show_deprecated) {
+            unset($types[1]);
+        }
+        $app = \JFactory::getApplication();
+        $app->triggerEvent('onBeforeGetTypesProductField', array(&$types, &$show_deprecated));
+        return $types;
+    }
+
+    public function getListProducsValueByExtraFieldId($id) {
+        $db = \JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $field = 'extra_field_'.(int)$id;
+        $query->select($db->qn(['product_id', $field]))
+            ->from($db->qn('#__jshopping_products_to_extra_fields'));
+        $db->setQuery($query);
+        return $db->loadObjectList();
+    }
+
+    public function converProductDataDeprecatedTextToList($id, $new_type) {        
+        $modelVal = \JSFactory::getModel('ProductFieldValues');
+        $field = 'extra_field_'.(int)$id;
+        $list = $this->getListProducsValueByExtraFieldId($id);
+        $langs = \JSFactory::getModel('Languages')->getAllTags();
+        foreach ($list as $item) {
+            if ($item->$field !== '') {
+                \JSHelper::saveToLog('convert_extrafield_dep_text.log', 'pid: '.$item->product_id.' efid: '.$id.' val: '.$item->$field);
+                $data = ['id' => 0, 'field_id' => $id];                
+                foreach($langs as $lang) {
+                    $data['name_'.$lang] = $item->$field;
+                }
+                if ($new_type != 2) {
+                    $data['_save_unique'] = 1;
+                }                
+                $productfieldvalue = $modelVal->save($data);
+                $modelVal->updateProductValue($item->product_id, $id, $productfieldvalue->id);                
+                \JSHelper::saveToLog('convert_extrafield_dep_text.log', 'new vid: '.$productfieldvalue->id);
+            }
+        }
     }
 
 }

@@ -889,7 +889,7 @@ class Helper{
         $rows = [];
         foreach($displayfields as $field_id){
             $field_name = "extra_field_".$field_id;
-            if ($fields[$field_id]->type==0){
+            if ($fields[$field_id]->type != 1){
                 if ($product->$field_name!=0 && $product->$field_name!=''){
                     $listid = explode(',', $product->$field_name);
                     $tmp = [];

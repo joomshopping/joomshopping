@@ -875,7 +875,7 @@ class ProductTable extends MultilangTable{
         foreach($fields as $field){
             $field_id = $field->id;
             $field_name = "extra_field_".$field_id;
-            if ($field->type==0){
+            if ($field->type != 1){
                 if ($productExtraField[$field_name] != 0 && $productExtraField[$field_name] != ''){
                     $listid = explode(',', $productExtraField[$field_name]);
                     $tmp = array();

@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.4 29.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,11 +10,12 @@ defined('_JEXEC') or die();
 ?>
 <script type="text/javascript">
     var jshopParams = jshopParams || {};
-    <?php if ($this->product->product_quantity >0){?>
+    <?php if ($this->product->product_quantity > 0){?>
     jshopParams.translate_not_available = "<?php print addslashes(JText::_('JSHOP_PRODUCT_NOT_AVAILABLE_THIS_OPTION'))?>";
     <?php }else{?>
     jshopParams.translate_not_available = "<?php print addslashes(JText::_('JSHOP_PRODUCT_NOT_AVAILABLE'))?>";
     <?php }?>
+    jshopParams.translate_available = "<?php print addslashes(JText::_('JSHOP_PRODUCT_AVAILABLE'))?>";
     jshopParams.translate_zoom_image = "<?php print addslashes(JText::_('JSHOP_ZOOM_IMAGE'))?>";
     jshopParams.product_basic_price_volume = <?php print $this->product->weight_volume_units;?>;
     jshopParams.product_basic_price_unit_qty = <?php print $this->product->product_basic_price_unit_qty;?>;

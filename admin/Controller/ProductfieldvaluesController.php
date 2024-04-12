@@ -121,4 +121,13 @@ class ProductfieldvaluesController extends BaseadminController{
         die();
     }
 
+    public function clear_double() {
+        $field_id = $this->input->getInt("field_id");
+        $model = \JSFactory::getModel('ProductFieldValues');
+        if ($model->clearDoubleValues($field_id)) {
+            \JSError::raiseMessage(100, \JText::_('JSHOP_DATA_SUCC_UPDATED'));
+        }
+        $this->setRedirect("index.php?option=com_jshopping&controller=productfieldvalues&field_id=".$field_id);
+    }
+
 }

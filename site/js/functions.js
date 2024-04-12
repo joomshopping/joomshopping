@@ -225,9 +225,13 @@ var jshopClass = function(){
                 }
 
                 if (json.available=="0"){
-                    jQuery("#not_available").html(jshopParams.translate_not_available);
+                    jQuery(".productfull #not_available").addClass('not_available');
+                    jQuery(".productfull #not_available").removeClass('available');
+                    jQuery(".productfull #not_available").html(jshopParams.translate_not_available);
                 }else{
-                    jQuery("#not_available").html("");
+                    jQuery(".productfull #not_available").removeClass('not_available');
+                    jQuery(".productfull #not_available").addClass('available');
+                    jQuery(".productfull #not_available").html(jshopParams.translate_available ?? '');
                 }
 
                 if (json.displaybuttons=="0"){

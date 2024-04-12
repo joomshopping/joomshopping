@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.3.4 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -148,6 +148,7 @@ if ($saveOrder){
                     </td>
                     <td>
                         <?php echo \JHTML::_('grid.id', $i, $row->product_id);?>
+						<?php print $row->tmp_html_in_col_checkbox ?? '';?>
                     </td>
                     <td>
                         <?php if ($row->label_id){?>

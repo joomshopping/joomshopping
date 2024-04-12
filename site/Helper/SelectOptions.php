@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.3.4 23.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -485,16 +485,17 @@ class SelectOptions{
         return array_merge($first_option, $list);
     }
     
-    public static function getProductFieldTypes(){
-        $type = array();
-        $type[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_LIST'), 'id', 'value');
-        $type[] = \JHTML::_('select.option', -1, \JText::_('JSHOP_MULTI_LIST'), 'id', 'value');
-        $type[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_TEXT'), 'id', 'value');
+    public static function getProductFieldTypes($show_deprecated = 0){
+        $type = [];        
+        $list = \JSFactory::getModel("productfields")->getTypes($show_deprecated);
+        foreach($list as $k => $v) {
+            $type[] = \JHTML::_('select.option', $k, $v, 'id', 'value');
+        }
         return $type;
     }
     
     public static function getCouponType(){
-        $type = array();
+        $type = [];
         $type[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_COUPON_PERCENT'), 'id', 'name');
         $type[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_COUPON_ABS_VALUE'), 'id', 'name');
         return $type;

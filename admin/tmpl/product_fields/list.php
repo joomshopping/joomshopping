@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.3.4 24.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -97,30 +97,35 @@ if ($saveOrder){
             <?php } ?>
         </td>
         <td>
-         <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+            <?php echo \JHTML::_('grid.id', $i, $row->id);?>
         </td>
         <td>
-         <?php if (!$row->count_option && $row->type==0 && $row->product_uniq_val==0) {?><img src="components/com_jshopping/images/icon-16-denyinactive.png" alt="" /><?php }?>
-         <a href="index.php?option=com_jshopping&controller=productfields&task=edit&id=<?php echo $row->id; ?>"><?php echo $row->name;?></a>
+            <?php if (!$row->count_option && $row->type==0) {?><img src="components/com_jshopping/images/icon-16-denyinactive.png" alt="" /><?php }?>
+            <a href="index.php?option=com_jshopping&controller=productfields&task=edit&id=<?php echo $row->id; ?>"><?php echo $row->name;?></a>
         </td>
         <td>
-         <?php print $this->types[$row->type];?>
+            <?php 
+            if ($row->type == 0 && $row->multilist == 1) {
+                echo JText::_('JSHOP_MULTI_LIST');
+            } else {
+                print $this->types[$row->type];
+            }
+            ?>
         </td>
         <td>
-            <?php if ($row->type==0 && $row->product_uniq_val==0){?>
+            <?php if ($row->type != 1){ ?>
                 <a href="index.php?option=com_jshopping&controller=productfieldvalues&field_id=<?php echo $row->id?>">
+                    <?php if (count($this->vals[$row->id]) > $this->config->admin_display_extra_field_values_in_list_max) {?>
+                        <?php print count($this->vals[$row->id])?> x
+                    <?php }?>        
                     <?php echo JText::_('JSHOP_OPTIONS')?>
                 </a>
-                (<?php if (isset($this->vals[$row->id]) && is_array($this->vals[$row->id])) echo implode(", ", $this->vals[$row->id]);?>)
-            <?php }elseif ($row->type==0 && $row->product_uniq_val==1){?>
-                <a href="index.php?option=com_jshopping&controller=productfieldvalues&field_id=<?php echo $row->id?>">
-                <?php print count($this->vals[$row->id] ?? [])?> x
-                <?php echo JText::_('JSHOP_OPTIONS')?>
-                </a>
-                / <span class="small"><?php echo JText::_('JSHOP_UNIQ_VALUE_FOR_PRODUCT')?></span>
-            <?php }else{?>
+                <?php if (count($this->vals[$row->id]) <= $this->config->admin_display_extra_field_values_in_list_max) {?>
+                    (<?php echo implode(", ", $this->vals[$row->id]);?>)
+                <?php }?>                
+            <?php }else{ ?>
                 -
-            <?php }?>
+            <?php } ?>
         </td>
         <td>
         <?php print $row->printcat;?>

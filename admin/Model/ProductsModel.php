@@ -1119,25 +1119,13 @@ class ProductsModel extends BaseadminModel{
 			$product_ef = [];
 			foreach($list_productfields as $v) {
 				$_nef = 'extra_field_'.$v->id;
-				if ($v->type == 0){
+				if ($v->type != 1) {
 					$_data = $post['productfields'][$_nef] ?? [];
 					$_data = array_diff($_data, [-1]);
 					if (count($_data)) {
 						$product_ef[$_nef] = implode(',', $_data);
 					}
-					/*if (isset($post['productfields'][$_nef]) && is_array($post['productfields'][$_nef]) && count($post['productfields'][$_nef]) > 0){
-						if ($v->multilist == 0 && !in_array(-1, $post['productfields'][$_nef])) {
-							$product_ef[$_nef] = implode(',', $post['productfields'][$_nef]);
-						}
-						if ($v->multilist == 1){
-							$_data = array_diff($post['productfields'][$_nef], [-1]);
-							if (count($_data)) {
-								$product_ef[$_nef] = implode(',', $_data);
-							}
-						}
-					}*/
-				}
-				if ($v->type == 1){
+				} else {
 					if (isset($post[$_nef]) && $post[$_nef] != ''){
 						$product_ef[$_nef] = $post[$_nef];
 					}

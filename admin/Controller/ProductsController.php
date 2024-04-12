@@ -644,7 +644,7 @@ class ProductsController extends BaseadminController{
                     if (in_array($catid, $cats)) $insert = 1;
                 }
             }
-            if ($edittype == 'list' && $v->product_uniq_val) {
+            if ($edittype == 'list' && $v->type == 2) {
                 $insert = 0;
             }
             if ($insert){
@@ -652,9 +652,8 @@ class ProductsController extends BaseadminController{
                 $obj->id = $v->id;
                 $obj->name = $v->name;
                 $obj->groupname = $v->groupname;
-                $obj->product_uniq_val = $v->product_uniq_val;
                 $name = 'extra_field_'.$v->id;
-                if ($v->type == 0 && $v->product_uniq_val == 0) {
+                if ($v->type == 0) {
                     if ($v->multilist==1){
                         $attr = 'multiple="multiple" size="10" class="form-select" ';
                     }else{
@@ -669,9 +668,9 @@ class ProductsController extends BaseadminController{
                     $view->setLayout("extrafields_btn_add");
                     $view->title = \JText::_('JSHOP_ADD_NEW_OPTION_FOR').' "'.$v->name.'"';
                     $obj->btn = $view->loadTemplate();
-                } elseif ($v->type == 0 && $v->product_uniq_val == 1) {
+                } elseif ($v->type > 1) {
                     $obj->values = "<input type='hidden' name='".'productfields['.$name.'][]'."' value='".($product->$name ?? '0')."'>";
-                    $obj->values .= "<span class='prod_extra_fields_uniq_val'>".($listvalue[$product->$name]->name ?? '')."</span>";
+                    $obj->values .= "<span class='prod_extra_fields_uniq_val'>".(isset($product->$name) ? ($listvalue[$product->$name]->name ?? '') : '')."</span>";
                     $view = $this->getView("product_edit", 'html');
                     $view->setLayout("extrafields_btn_edit");
                     $view->title = \JText::_('JSHOP_EDIT').' "'.$v->name.'"';
@@ -839,7 +838,7 @@ class ProductsController extends BaseadminController{
         }
         $res = [];
         $res['type'] = $productfield->type;
-        if ($productfield->type == 0) {
+        if ($productfield->type > 1) {
             $productfieldvalue = \JSFactory::getTable('productfieldvalue');
             $productfieldvalue->load($value);            
             $res['id'] = $productfieldvalue->id ?? 0;

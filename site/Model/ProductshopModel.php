@@ -230,7 +230,7 @@ class ProductShopModel extends BaseModel{
 	public function getTextAvailable(){
 		$product = $this->product;
 		$available = "";
-        if ( ($product->getQty() <= 0) && $product->product_quantity >0 ){
+        if ($product->getQty() <= 0 && $product->product_quantity > 0 ){
             $available = \JText::_('JSHOP_PRODUCT_NOT_AVAILABLE_THIS_OPTION');
         }elseif ($product->product_quantity <= 0){
             $available = \JText::_('JSHOP_PRODUCT_NOT_AVAILABLE');

@@ -56,10 +56,10 @@ defined('_JEXEC') or die();
     <div class="oiproduct">
 	
 		<?php if (!$this->config->hide_text_product_not_available){?>
-			<?php if ($product->product_quantity <=0){?>
-				<div class="not_available"><?php print JText::_('JSHOP_PRODUCT_NOT_AVAILABLE')?></div>
+			<?php if ($product->product_quantity <= 0){?>
+				<div class="block_available not_available"><?php print JText::_('JSHOP_PRODUCT_NOT_AVAILABLE')?></div>
 			<?php }elseif(!$this->config->hide_text_product_available){?>
-				<div class="available"><?php print JText::_('JSHOP_PRODUCT_AVAILABLE')?></div>
+				<div class="block_available available"><?php print JText::_('JSHOP_PRODUCT_AVAILABLE')?></div>
 			<?php }?>
 		<?php }?>
         

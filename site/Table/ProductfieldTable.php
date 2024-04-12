@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.3.4 26.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -63,14 +63,39 @@ class ProductFieldTable extends MultilangTable{
     function addNewFieldProducts(){
         $jshopConfig = \JSFactory::getConfig();
         $db = \JFactory::getDBO();
-        $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` ADD `extra_field_".(int)$this->id."` ".$jshopConfig->new_extra_field_type." NOT NULL";
+        $field = 'extra_field_'.(int)$this->id;
+        $fl_type = $jshopConfig->new_extra_field_type_list;
+        if ($this->type == 1) {
+            $fl_type = $jshopConfig->new_extra_field_type;
+        }
+        if ($this->multilist == 1) {
+            $fl_type = $jshopConfig->new_extra_field_type_multilist;
+        }
+        $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` ADD `".$field."` ".$fl_type." NOT NULL";
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    function updateFieldProducts() {
+        $jshopConfig = \JSFactory::getConfig();
+        $db = \JFactory::getDBO();
+        $field = 'extra_field_'.(int)$this->id;
+        $fl_type = $jshopConfig->new_extra_field_type_list;
+        if ($this->type == 1) {
+            $fl_type = $jshopConfig->new_extra_field_type;
+        }
+        if ($this->multilist == 1) {
+            $fl_type = $jshopConfig->new_extra_field_type_multilist;
+        }
+        $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` CHANGE `".$field."` `".$field."` ".$fl_type." NOT NULL";
         $db->setQuery($query);
         $db->execute();
     }
 
     function deleteFieldProducts(){
         $db = \JFactory::getDBO();
-        $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` DROP `extra_field_".(int)$this->id."`";
+        $field = 'extra_field_'.(int)$this->id;
+        $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` DROP `".$field."`";
         $db->setQuery($query);
         $db->execute();
     }

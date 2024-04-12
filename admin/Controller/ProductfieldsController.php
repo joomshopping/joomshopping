@@ -19,6 +19,7 @@ class ProductFieldsController extends BaseadminController{
     
     function display($cachable = false, $urlparams = false){
         $app = \JFactory::getApplication();
+        $jshopConfig = \JSFactory::getConfig();
         $context = "jshoping.list.admin.productfields";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "F.ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
@@ -42,13 +43,14 @@ class ProductFieldsController extends BaseadminController{
                     $rows[$k]->count_option = 0;
                 }
             }else{
+                $vals[$v->id] = [];
                 $rows[$k]->count_option = 0;
             }    
         }
 		$lists = array();
         $lists['group'] = \JHTML::_('select.genericlist', SelectOptions::getProductFieldGroups(), 'group', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $group);
         $lists['treecategories'] = \JHTML::_('select.genericlist', SelectOptions::getCategories(), 'category_id', 'class="form-select" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id);
-        $types = array(\JText::_('JSHOP_LIST'), \JText::_('JSHOP_TEXT'));
+        $types = $_productfields->getTypes(1);
 
         $view = $this->getView("product_fields", 'html');
         $view->setLayout("list");
@@ -59,6 +61,7 @@ class ProductFieldsController extends BaseadminController{
 		$view->set('text_search', $text_search);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
+        $view->set('config', $jshopConfig);
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
         $view->tmp_html_filter_end = "";
@@ -69,7 +72,7 @@ class ProductFieldsController extends BaseadminController{
         $view->displayList();
     }
     
-    function edit(){  
+    function edit(){
         \JFactory::getApplication()->input->set('hidemainmenu', true);      
         $id = $this->input->getInt("id");
         $productfield = \JSFactory::getTable('productfield');
@@ -86,11 +89,12 @@ class ProductFieldsController extends BaseadminController{
         
         $lists['allcats'] = \JHTML::_('select.radiolist', SelectOptions::getProductFieldShowCategory(), 'allcats', 'class="form-control" onclick="jshopAdmin.PFShowHideSelectCats()"', 'id', 'value', $productfield->allcats);
         $lists['categories'] = \JHTML::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-select" size="10" multiple = "multiple"', 'category_id', 'name', $categories_selected);
-        $lists['type'] = \JHTML::_('select.radiolist', SelectOptions::getProductFieldTypes(), 'type', 'class="form-select"', 'id', 'value', $productfield->type);
+        $show_deprecated = $productfield->type == 1 ? 1 : 0;
+        $lists['type'] = \JHTML::_('select.radiolist', SelectOptions::getProductFieldTypes($show_deprecated), 'type', 'class="form-select"', 'id', 'value', $productfield->type);
         $lists['group'] = \JHTML::_('select.genericlist', SelectOptions::getProductFieldGroups('- - -'), 'group', 'class="inputbox form-select"', 'id', 'name', $productfield->group);
         
         \JFilterOutput::objectHTMLSafe($productfield, ENT_QUOTES);
-        
+
         $view = $this->getView("product_fields", 'html');
         $view->setLayout("edit");
         $view->set('row', $productfield);

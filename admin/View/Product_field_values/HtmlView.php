@@ -15,12 +15,15 @@ class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
         \JToolBarHelper::title( \JText::_('JSHOP_PRODUCT_EXTRA_FIELD_VALUES'), 'generic.png' );        
-        \JToolBarHelper::custom( "back", 'arrow-left', 'arrow-left', \JText::_('JSHOP_BACK_TO_PRODUCT_EXTRA_FIELDS'), false);                 
-        if ($this->productfield->product_uniq_val == 0) {
+        \JToolBarHelper::custom( "back", 'arrow-left', 'arrow-left', \JText::_('JSHOP_BACK_TO_PRODUCT_EXTRA_FIELDS'), false);
+        if ($this->productfield->type != 2) {
             \JToolBarHelper::addNew();
         }
         \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
         \JSHelperAdmin::btnHome();
+        if ($this->productfield->type != 2 && $this->productfield->multilist == 0) {
+            \JToolBarHelper::custom("clear_double", 'folder', 'folder', \JText::_('JSHOP_CLEAR_DUPLICATE_VALUE'), false);
+        }
         parent::display($tpl);
 	}
     

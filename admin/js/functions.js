@@ -1054,15 +1054,15 @@ var jshopAdminClass = function(){
         let tr = jQuery(obj).closest('tr');
         let ef_id = tr.attr('extrafieldid');        
         let product_id = jQuery('input[name=product_id]').val();
-        let ef_val_id = jQuery('.prod_extrafield_values input[type=hidden]', tr).val() ?? 0;        
+        let ef_val_id = jQuery('.prod_extrafield_values input[type=hidden]', tr).val() ?? 0;
         let btn = jQuery(obj).closest('tr').find('.prod_extrafield_btn button');
 
         jQuery('#extrafields_option_popup .modal-title').html(btn.attr('title'));
         jQuery('#extrafields_option_popup input[name=new_ef_option_ef_id]').val(ef_id);
         jQuery('#extrafields_option_popup input[name=new_ef_option_ef_val_id]').val(ef_val_id);
         jQuery('#extrafields_option_popup .new_option').val('');
-        jQuery('#extrafields_option_popup').modal('show');        
-        if (action == 'edit') {
+        jQuery('#extrafields_option_popup').modal('show');
+        if (action == 'edit' && ef_val_id > 0) {
             jshopAdmin.ajaxLoadAnimate().show();
             jQuery.ajax({
                 type: "POST",
@@ -1110,6 +1110,12 @@ var jshopAdminClass = function(){
             alert('Loading data error ... ');
         });
         jQuery('#extrafields_option_popup').modal('hide');
+    }
+
+    this.productExtrafieldOptionPopupClear = function(obj){
+        let tr = jQuery(obj).closest('tr');
+        jQuery('.prod_extrafield_values input[type=hidden]', tr).val('0');
+        jQuery('.prod_extrafield_values .prod_extra_fields_uniq_val', tr).html('');
     }
 
     this.productExtrafieldSearch = function(){
@@ -1192,6 +1198,10 @@ jQuery(document).ready(function(){
     });
     jQuery(document).on('click', '.jshop_edit .extrafields_btn_edit,.jshop_edit .prod_extrafield_values .prod_extra_fields_uniq_val', function(){
         jshopAdmin.productExtrafieldOptionPopup(this, 'edit');
+        return false;
+    });
+    jQuery(document).on('click', '.jshop_edit .extrafields_btn_clear', function(){
+        jshopAdmin.productExtrafieldOptionPopupClear(this);
         return false;
     });
 

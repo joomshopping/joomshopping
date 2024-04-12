@@ -298,8 +298,16 @@ include(dirname(__FILE__)."/load.js.php");
                 <?php }?>
 
                 <?php if (!$this->config->hide_text_product_not_available){ ?>
-                    <div class="not_available" id="not_available"><?php print $this->available?></div>
-                <?php }?>
+                    <?php if ($this->product->getQty() <= 0) {?>
+                        <div class="block_available not_available" id="not_available">
+                            <?php print $this->available?>
+                        </div>
+                    <?php } else { ?>
+                        <div class="block_available available" id="not_available">
+                            <?php print JText::_('JSHOP_PRODUCT_AVAILABLE')?>
+                        </div>
+                    <?php } ?>
+                <?php } ?>
 
                 <?php if ($this->config->product_show_qty_stock){?>
                     <div class="qty_in_stock">

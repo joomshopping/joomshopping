@@ -358,6 +358,26 @@ td.reviews{
     color: #60aa2a;
     margin-top:10px;
 }
+.productfull .block_available{
+    position: relative;
+    padding-left: 18px;
+}
+.productfull .block_available::before{
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    top: 6px;
+    left: 0;    
+    border-radius: 50%;
+}
+.productfull .block_available.not_available::before{
+    background-color: #dd3232;
+}
+.productfull .block_available.available::before{
+    background-color: #60aa2a;
+}
+
 .jshop_list_product .block_product{
     padding-bottom:15px;
     margin-bottom:25px;

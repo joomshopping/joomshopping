@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.4 26.02.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -15,11 +15,14 @@ class AttributValueTable extends MultilangTable{
         parent::__construct('#__jshopping_attr_values', 'value_id', $_db);
     }
     
-    function getAllValues($attr_id) {
+    function getAllValues($attr_id, $ordering = null) {
         $db = \JFactory::getDBO(); 
         $lang = \JSFactory::getLang();
+        if (!isset($ordering)) {
+            $ordering = 'value_ordering, value_id';
+        }
         $query = "SELECT value_id, image, `".$lang->get("name")."` as name, value_ordering, attr_id FROM `#__jshopping_attr_values` "
-                . "where attr_id=".(int)$attr_id." ORDER BY value_ordering, value_id";
+                . "where attr_id=".(int)$attr_id." ORDER BY ".$ordering;
         $db->setQuery($query);
         return $db->loadObJectList();
     }
