@@ -17,7 +17,7 @@ class OtherController extends BaseController{
         \JSHelperAdmin::addSubmenu("other");
         $view=$this->getView("panel", 'html');
         $view->setLayout("options");
-        $view->sidebar = \JHTMLSidebar::render();
+
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
         $dispatcher = \JFactory::getApplication();

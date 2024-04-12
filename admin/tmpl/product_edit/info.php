@@ -184,6 +184,16 @@ defined('_JEXEC') or die();
        </td>
     </tr>
     <?php }?>
+    <?php if ($jshopConfig->disable_admin['real_ean'] == 0){?>
+    <tr>
+       <td class="key">
+         <?php echo JText::_('JSHOP_EAN')?>
+       </td>
+       <td>
+         <input type="text" name="real_ean" class="form-control" value="<?php echo $row->real_ean?>">
+       </td>
+    </tr>
+    <?php }?>
     <?php if ($jshopConfig->stock){?>
     <tr>
        <td class="key">

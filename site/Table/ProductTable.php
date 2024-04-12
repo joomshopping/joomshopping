@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.3 14.09.2022
+* @version      5.3.0 23.12.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -28,6 +28,9 @@ class ProductTable extends MultilangTable{
             $dependent_attr = array();
             $independent_attr = array();
             foreach($attribs as $k=>$v){
+                if (!isset($allattribs[$k])) {
+                    continue;
+                }
                 if ($allattribs[$k]->independent==0){
                     $dependent_attr[$k] = $v;
                 }else{
@@ -317,10 +320,18 @@ class ProductTable extends MultilangTable{
     }
 
     function getManufacturerCode(){
-        if (isset($this->attribute_active_data->ean)){
+        if (isset($this->attribute_active_data->manufacturer_code)){
             return $this->attribute_active_data->manufacturer_code;
         }else{
             return $this->manufacturer_code;
+        }
+    }
+
+    function getRealEan(){
+        if (isset($this->attribute_active_data->real_ean)){
+            return $this->attribute_active_data->real_ean;
+        }else{
+            return $this->real_ean;
         }
     }
 
@@ -641,8 +652,7 @@ class ProductTable extends MultilangTable{
     function getPricePreview(){
         $this->getPrice(1, 1, 1, 1);
         if ($this->product_is_add_price){
-            $this->product_add_prices = array_reverse($this->product_add_prices);
-            foreach($this->product_add_prices as $k => $v) {
+            foreach($this->product_add_prices as $v) {
                 $v->_tmp_var = "";
                 $v->ext_price = "";
             }
@@ -668,18 +678,12 @@ class ProductTable extends MultilangTable{
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeCalculatePriceProduct', array(&$quantity, &$enableCurrency, &$enableUserDiscount, &$enableParamsTax, &$obj, &$cartProduct));
 
-        if ($this->product_is_add_price){
-            $this->getAddPrices();
-        }else{
-            $this->product_add_prices = array();
-        }
-
-        if ($quantity && $this->product_is_add_price){
+        $this->product_add_prices = $this->getAddPrices();
+        if ($quantity) {
             foreach($this->product_add_prices as $key=>$value){
                 if (($quantity >= $value->product_quantity_start && $quantity <= $value->product_quantity_finish) || ($quantity >= $value->product_quantity_start && $value->product_quantity_finish==0)){
                     $this->product_price_calculate = $value->price;
 					$this->product_price_wp = $value->price_wp;
-                    break;
                 }
             }
         }
@@ -773,29 +777,33 @@ class ProductTable extends MultilangTable{
     }
 
     function getAddPrices(){
-        $JshopConfig = \JSFactory::getConfig();
-        $productprice = \JSFactory::getTable('productprice');
-        $this->product_add_prices = $productprice->getAddPrices($this->product_id);
+        $this->product_add_prices = [];
+        if ($this->product_is_add_price) {
+            $JshopConfig = \JSFactory::getConfig();
+            $productprice = \JSFactory::getTable('productprice');
+            $this->product_add_prices = $productprice->getAddPrices($this->product_id);
 
-        $price = $this->getPriceWithParams();
-		$price_wp = $this->product_price;
-        foreach($this->product_add_prices as $k=>$v){
-            if ($JshopConfig->product_price_qty_discount == 1){
-                $this->product_add_prices[$k]->price = $price - $v->discount; //discount value
-				$this->product_add_prices[$k]->price_wp = $price_wp - $v->discount;
-            }else{
-                $this->product_add_prices[$k]->price = $price - ($price * $v->discount / 100); //discount percent
-				$this->product_add_prices[$k]->price_wp = $price_wp - ($price_wp * $v->discount / 100);
+            $price = $this->getPriceWithParams();
+            $price_wp = $this->product_price;
+            foreach($this->product_add_prices as $k=>$v){
+                if ($JshopConfig->product_price_qty_discount == 1){
+                    $this->product_add_prices[$k]->price = $price - $v->discount; //discount value
+                    $this->product_add_prices[$k]->price_wp = $price_wp - $v->discount;
+                }else{
+                    $this->product_add_prices[$k]->price = $price - ($price * $v->discount / 100); //discount percent
+                    $this->product_add_prices[$k]->price_wp = $price_wp - ($price_wp * $v->discount / 100);
+                }
             }
-        }
 
-        if (!$this->add_price_unit_id) $this->add_price_unit_id = $JshopConfig->product_add_price_default_unit;
-        $units = \JSFactory::getAllUnits();
-        $unit = $units[$this->add_price_unit_id];
-        $this->product_add_price_unit = $unit->name;
-        if ($this->product_add_price_unit=="") $this->product_add_price_unit=JSHP_ST_;
+            if (!$this->add_price_unit_id) $this->add_price_unit_id = $JshopConfig->product_add_price_default_unit;
+            $units = \JSFactory::getAllUnits();
+            $unit = $units[$this->add_price_unit_id];
+            $this->product_add_price_unit = $unit->name;
+            if ($this->product_add_price_unit=="") $this->product_add_price_unit = \JText::_('JSHP_ST_');
+        }
         $obj = $this;
         \JFactory::getApplication()->triggerEvent('onAfterGetAddPricesProduct', array(&$obj));
+        return $this->product_add_prices;
     }
 
     function getTax(){

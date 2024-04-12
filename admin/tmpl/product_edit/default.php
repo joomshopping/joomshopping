@@ -115,12 +115,6 @@ Joomla.submitbutton=function(task){
            alert('<?php echo JText::_('JSHOP_WRITE_SIZE_BAD')?>');
            return false;
         }
-        <?php if ($this->product->parent_id==0){?>        
-        if (jQuery('#category_id').val().length==0){
-           alert('<?php echo JText::_('JSHOP_WRITE_SELECT_CATEGORY')?>');
-           return false;
-        }
-        <?php }?>
     }
     Joomla.submitform(task, document.getElementById('adminForm'));
 }

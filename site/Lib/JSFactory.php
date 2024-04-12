@@ -83,7 +83,9 @@ class JSFactory{
         if (!$load){
             $document = \JFactory::getDocument();
             $jshopConfig = \JSFactory::getConfig();
-            $document->addStyleSheet($jshopConfig->css_live_path.$jshopConfig->template.'.css');
+			if (file_exists($jshopConfig->css_path.$jshopConfig->template.'.css')){
+				$document->addStyleSheet($jshopConfig->css_live_path.$jshopConfig->template.'.css');
+			}
             if (file_exists($jshopConfig->css_path.$jshopConfig->template.'.custom.css')){
                 $document->addStyleSheet($jshopConfig->css_live_path.$jshopConfig->template.'.custom.css');
             }

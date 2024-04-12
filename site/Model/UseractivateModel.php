@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -42,6 +42,8 @@ class UseractivateModel  extends UserbaseModel{
         }
 
         $user = \JFactory::getUser($userId);
+		$obj = $this;
+        \JFactory::getApplication()->triggerEvent('onBeforeUserActivate', array(&$obj, &$token, &$user, &$userParams));
 		$usermail = \JSFactory::getModel('usermailactivation', 'Site');
 		$uri = \JURI::getInstance();
 		$base = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port'));

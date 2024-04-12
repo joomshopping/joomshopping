@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.1 21.09.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,33 +12,43 @@ defined('_JEXEC') or die();
 
 class Csv{
     
-    var $delimit = ";";
-    var $text_qualifier = '"';
+    public $delimit = ";";
+    public $text_qualifier = '"';
+	public $file = '';
+	public $write_row_nr = 0;
+	public $only_file_append = 0;
     
-    function setDelimit($val){
+    public function setDelimit($val){
         $this->delimit = $val;    
     }
     
-    function setTextQualifier($val){
+    public function setTextQualifier($val){
         $this->text_qualifier = $val;
-    }    
+    }
+	
+	public function setFile($name) {
+		$this->file = $name;
+	}
+	
+	public function setOnlyFileAppend($val) {
+		$this->only_file_append = $val;
+	}
 
- 	function read($file){
- 	$rows=array();
+ 	public function read($file){
+		$rows=array();
  		$fp = fopen ($file,"r");
         while ($data = fgetcsv($fp, 262144, $this->delimit, $this->text_qualifier) ) {
 			$rows[]=$data;
 		}
 		fclose ($fp);
-	return $rows;
+		return $rows;
  	}
 
- 	function implodeCSV($data){
+ 	public function implodeCSV($data){
         
         $delimit = $this->delimit;
-        
  		foreach($data as $k=>$v) {
- 			$v = str_replace(array("\n", "\r", "\t"), " ", $v);
+ 			$v = str_replace(array("\n", "\r", "\t"), " ", (string)$v);
             if ($this->text_qualifier!=""){ 
  			    $v = str_replace($this->text_qualifier, $this->text_qualifier.$this->text_qualifier, $v);
             }
@@ -58,7 +68,7 @@ class Csv{
 	return implode($delimit, $data);
  	}
 
- 	function write($file, $mass2D){
+ 	public function write($file, $mass2D){
  		$fp = fopen($file,"w");
  		if (!$fp) return 0;
         $countrow = count($mass2D);
@@ -71,5 +81,29 @@ class Csv{
 		fclose($fp);
 	return 1;
  	}
+	
+	public function readRow() {
+		if (!$this->file) {
+			return false;
+		}
+		if (!isset($this->file_read_resource)) {
+			$this->file_read_resource = fopen($this->file, "r");
+		}
+		return fgetcsv($this->file_read_resource, 262144, $this->delimit, $this->text_qualifier);
+	}
+	
+	public function writeRow($row) {
+		if (!$this->file || !is_array($row)) {
+			return 0;
+		}
+		$str = $this->implodeCSV($row) . "\n";
+		if ($this->write_row_nr == 0 && $this->only_file_append == 0) {
+			file_put_contents($this->file, $str);
+		} else {
+			file_put_contents($this->file, $str, FILE_APPEND);
+		}
+		$this->write_row_nr++;
+		return 1;
+	}
             
 }

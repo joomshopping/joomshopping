@@ -13,8 +13,7 @@ $jshopConfig=\JSFactory::getConfig();
 $fields=$this->fields;
 $current_fields=$this->current_fields;
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php \JSHelperAdmin::displaySubmenuConfigs('fieldregister');?>
 <div class="jshop_edit">
@@ -149,7 +148,5 @@ $current_fields=$this->current_fields;
 </div>
 <?php print $this->tmp_html_end?>
 </form>
-</div>
-</div>
 </div>
 </div>

@@ -58,6 +58,9 @@ defined('_JEXEC') or die();
                 <?php if ($this->config->manufacturer_code_in_cart && $prod['manufacturer_code']){?>
                     <div class="manufacturer_code"><?php print JText::_('JSHOP_MANUFACTURER_CODE')?>: <span><?php print $prod['manufacturer_code'] ?></span></div>
                 <?php }?>
+                <?php if ($this->config->real_ean_in_cart && $prod['real_ean']){?>
+                    <div class="real_ean"><?php print JText::_('JSHOP_EAN')?>: <span><?php print $prod['real_ean'] ?></span></div>
+                <?php }?>
                 <?php print \JSHelper::sprintAtributeInCart($prod['attributes_value']);?>
                 <?php print \JSHelper::sprintFreeAtributeInCart($prod['free_attributes_value']);?>
                 <?php print \JSHelper::sprintFreeExtraFiledsInCart($prod['extra_fields']);?>

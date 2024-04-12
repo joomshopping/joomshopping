@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.1 11.08.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -39,8 +39,8 @@ class ProductOptionTable extends ShopbaseTable{
         if (!count($array_product_id) || !is_array($array_product_id)){
             return array();
         }
-        $ids = implode(',', $array_product_id);
-        $query = "SELECT `product_id`, `value` FROM `#__jshopping_products_option` WHERE product_id IN (".$db->escape($ids).") AND `key`='".$db->escape($key)."' ";
+		$ids = implode(',', $db->q($array_product_id));
+        $query = "SELECT `product_id`, `value` FROM `#__jshopping_products_option` WHERE product_id IN (".$ids.") AND `key`=".$db->q($key);
         $db->setQuery($query);
         $list = $db->loadObJectList('product_id');         
         $rows = array();

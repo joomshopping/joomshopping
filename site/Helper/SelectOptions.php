@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -166,9 +166,10 @@ class SelectOptions{
         return array_merge($first_option, $vendors);
     }
     
-    public static function getCategories($first = 1, $ext_first = 0){
+    public static function getCategories($first = 1, $ext_first = 0, $without_cat = 0){
         $categories = Helper::buildTreeCategory(0, 1, 0);
-        $first_option = array();
+        $first_option = [];
+        $last_option = [];
         $first_name = self::getFirstNameOption($first, " - ".\JText::_('JSHOP_CATEGORY')." - ");
         if ($ext_first){
             $first_option[] = \JHTML::_('select.option', -1, "- - -", 'category_id', 'name');
@@ -176,7 +177,10 @@ class SelectOptions{
         if ($first!==0){
             $first_option[] = \JHTML::_('select.option', 0, $first_name, 'category_id', 'name');
         }
-        return array_merge($first_option, $categories);
+        if ($without_cat) {
+            $last_option[] = \JHTML::_('select.option', -9, " - ".\JText::_('JSHOP_WITHOUT_CATEGORY')." - ", 'category_id', 'name');
+        }
+        return array_merge($first_option, $categories, $last_option);
     }
     
     public static function getTaxs($first = 0, $ext_first = 0, $options = array()){

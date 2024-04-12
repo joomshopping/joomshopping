@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -273,6 +273,7 @@ class CheckoutModel extends BaseModel{
     }
     
 	function removeWishlistItemToCart($number_id){
+		$jshopConfig = \JSFactory::getConfig();
 		$dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeLoadWishlistRemoveToCart', array(&$number_id));
         
@@ -283,9 +284,12 @@ class CheckoutModel extends BaseModel{
         $freeattribut = unserialize($prod['freeattributes']);
 
         $cart = \JSFactory::getModel('cart', 'Site');
-        $cart->load("cart");        
-        if ($cart->add($prod['product_id'], $prod['quantity'], $attr, $freeattribut)) {
+        $cart->load("cart");
+        if ($cart->add($prod['product_id'], $jshopConfig->min_count_order_one_product, $attr, $freeattribut)) {
             $wishlist->delete($number_id);
+            $cart->remove_to_cart = 1;
+        } else {
+            $cart->remove_to_cart = 0;
         }
         $dispatcher->triggerEvent('onAfterWishlistRemoveToCart', array(&$cart));
 		return $cart;

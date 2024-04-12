@@ -15,7 +15,7 @@ abstract class UsershopbaseTable extends ShopbaseTable{
         parent::__construct('#__jshopping_users', 'user_id', $_db);
         \JPluginHelper::importPlugin('jshoppingcheckout');
         $obj = $this;
-		\JFactory::getApplication()->triggerEvent('onConstruct'.ucfirst(get_class($this)), array(&$obj));
+		\JFactory::getApplication()->triggerEvent('onConstruct'.ucfirst(\JSHelper::get_class_base(get_class($this))), array(&$obj));
     }
 	
 	function check($type = ''){
@@ -38,8 +38,8 @@ abstract class UsershopbaseTable extends ShopbaseTable{
         
 		$config_fields = $JshopConfig->getListFieldsRegisterType($type);
         $fields_client_check = $JshopConfig->fields_client_check;
-		$obj = $this;
-        \JFactory::getApplication()->triggerEvent('onBeforeCheck'.ucfirst(get_class($this)), array(&$obj, &$type, &$config_fields, &$type2, &$return, &$fields_client_check));
+		$obj = $this;		
+        \JFactory::getApplication()->triggerEvent('onBeforeCheck'.ucfirst(\JSHelper::get_class_base(get_class($this))), array(&$obj, &$type, &$config_fields, &$type2, &$return, &$fields_client_check));
 
         foreach ($config_fields as $field => $v) {
             if ($field == 'password_2') {

@@ -242,6 +242,9 @@ var jshopClass = function(){
                 if (typeof json.manufacturer_code !== 'undefined'){
                     jQuery("#manufacturer_code").html(json.manufacturer_code);
                 }
+                if (typeof json.real_ean !== 'undefined'){
+                    jQuery("#real_ean").html(json.real_ean);
+                }
 
                 if (json.weight){
                     jQuery("#block_weight").html(json.weight);

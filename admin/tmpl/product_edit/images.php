@@ -13,7 +13,7 @@ defined('_JEXEC') or die();
 	jshopAdmin.JSHOP_IMAGE_SELECT = "<?php echo JText::_('JSHOP_IMAGE_SELECT')?>";
 </script>
 
-<div id="product_images_tab" class="tab-pane <?php if ($this->product->parent_id!=0){?>active<?php }?>">
+<div id="product_images_tab" class="tab-pane <?php if ($this->product->parent_id!=0 && !isset($this->ptab_descr)){?>active<?php }?>">
     <div class="product_image_list">
     <?php
     $i=0;      

@@ -566,9 +566,13 @@ class Helper{
         if (!$jshopConfig->savelog) return 0;
         if ($file=='paymentdata.log' && !$jshopConfig->savelogpaymentdata) return 0;
         $f = fopen($jshopConfig->log_path.$file, "a+");
-        fwrite($f, self::getJsDate('now', 'Y-m-d H:i:s')." ".$text."\r\n");
-        fclose($f);
-    return 1;
+		if ($f) {
+			fwrite($f, self::getJsDate('now', 'Y-m-d H:i:s')." ".$text."\r\n");
+			fclose($f);
+			return 1;
+		} else {
+			return 0;
+		}
     }
 
     public static function displayTextJSC(){
@@ -765,7 +769,7 @@ class Helper{
             } else {
                 $products[$key]->extra_field = '';
             }
-            if ($jshopConfig->product_list_show_vendor){
+			if ($jshopConfig->product_list_show_vendor && isset($vendors[$value->vendor_id])){
                 $vendordata = $vendors[$value->vendor_id];
                 $vendordata->products = self::SEFLink("index.php?option=com_jshopping&controller=vendor&task=products&vendor_id=".$vendordata->id,1);
                 $products[$key]->vendor = $vendordata;
@@ -1574,5 +1578,10 @@ class Helper{
         $db = \JFactory::getDBO();
         $db->setQuery("set @@sql_mode = ''");
         $db->execute();
+    }
+
+    public static function get_class_base($class_name) {
+        $path = explode('\\', $class_name);
+        return array_pop($path);
     }
 }

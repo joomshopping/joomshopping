@@ -81,7 +81,7 @@ class ReviewsController extends BaseadminController{
         $view->tmp_html_filter_end = "";
         $view->_tmp_cols_14 = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayReviews', array(&$view));
         $view->displayList();

@@ -1,31 +1,31 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 06.12.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 defined('_JEXEC') or die();
+$groupname="";
 ?>
-<?php 
-	
-	$groupname="";
-?>
-<table class="admintable" >
+<table class="admintable list_prod_extrafields">
 <?php foreach($this->fields as $field){ ?>
 <?php if ($groupname!=$field->groupname){ $groupname=$field->groupname;?>
 <tr>
     <td><b><?php print $groupname;?></b></td>
 </tr>
 <?php }?>
-<tr>
-   <td class="key">
-     <div style="padding-left:10px;"><?php echo $field->name;?></div>
-   </td>
-   <td>
-     <?php echo $field->values;?>
-   </td>
+<tr extrafieldid="<?php print $field->id?>">
+  <td class="key">
+    <div class="prod_extrafield_title"><?php echo $field->name;?></div>
+  </td>
+  <td class="prod_extrafield_values">
+    <?php echo $field->values;?>
+  </td>
+  <td class="prod_extrafield_btn">
+    <?php echo $field->btn ?? '';?>
+  </td>
 </tr>
 <?php }?>
 </table>

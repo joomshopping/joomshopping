@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -20,7 +20,7 @@ $editor=\JEditor::getInstance(\JFactory::getConfig()->get('editor'));
 
 <div class="col100">
 <fieldset class="adminform">
-    <legend><?php if (defined("JText::_('JSHP_STPAGE_')".$this->row->alias)) print constant("JText::_('JSHP_STPAGE_')".$this->row->alias); else print $this->row->alias;?></legend>
+    <legend><?php if (JText::_('JSHP_STPAGE_'.$this->row->alias) != 'JSHP_STPAGE_'.$this->row->alias) print JText::_('JSHP_STPAGE_'.$this->row->alias); else print $this->row->alias;?></legend>
 <table class="admintable" width="100%">
 <?php $pkey="etemplatevarstart";if (isset($this->$pkey)){print $this->$pkey;}?>
 <?php if (!$this->row->id){?>
@@ -39,7 +39,7 @@ $field="text_".$lang->language;
 <tr>
    <td class="key" >
      <?php echo JText::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
-     <div style="font-size:10px;"><?php if (defined("JText::_('JSHP_STPAGE_INFO_')".$this->row->alias)) print constant("JText::_('JSHP_STPAGE_INFO_')".$this->row->alias);?></div>
+     <div style="font-size:10px;"><?php if (JText::_('JSHP_STPAGE_'.$this->row->alias) != 'JSHP_STPAGE_'.$this->row->alias) print JText::_('JSHP_STPAGE_'.$this->row->alias); else print $this->row->alias;?></div>
    </td>
    <td>
      <?php print $editor->display( 'text'.$lang->id,  $this->row->$field , '100%', '350', '75', '20' ); ?>

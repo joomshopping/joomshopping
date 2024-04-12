@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -19,7 +19,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 <div class="col100">
 <fieldset class="adminform">
-    <legend><?php if (defined("JText::_('JSHP_SEOPAGE_')".$this->row->alias)) print constant("JText::_('JSHP_SEOPAGE_')".$this->row->alias); else print $this->row->alias;?></legend>
+    <legend><?php if (JText::_('JSHP_SEOPAGE_'.$this->row->alias) != 'JSHP_SEOPAGE_'.$this->row->alias) print JText::_('JSHP_SEOPAGE_'.$this->row->alias); else print $this->row->alias;?></legend>
 <table class="admintable">
 <?php if (!$this->row->id){?>
 <tr>

@@ -409,10 +409,17 @@ div#element-box .jssubmenu div.m {
 .jshop_log_info{
     font-size:12px;
 }
-.jshopfieldregister .col100{
-}
 .jshopfieldregister .col100 fieldset{
     min-height:1360px;
+}
+.js-filters{
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.js-filters > div{
+    margin-bottom: 5px;
+    margin-right: 5px;
 }
 .js-stools .js-stools-field-list, .js-stools .js-stools-field-filter {
     display: inline-block;
@@ -487,6 +494,7 @@ fieldset.adminform{
     max-width: 100px;
     max-height: 130px;
 }
+
 a.saveorder{
     background-color: transparent;
     padding: 0px 5px;
@@ -499,8 +507,28 @@ a.saveorder{
     margin-right: 10px;
 }
 
+.jshop_edit .prod_extrafield_values{
+    min-width: 240px;
+}
+.jshop_edit .prod_extra_fields_uniq_val{
+    display: block;
+    border-radius: var(--border-radius, 0.25rem);
+    border: var(--border-width, 1px) solid var(--template-bg-dark-20, #aaa);
+    min-height: 42px;
+    padding: 8px;
+    background-color: #fff;
+}
+.jshop_edit .prod_extrafield_title{
+    padding-left: 10px;
+}
+.jshop_edit .prod_extrafield_values .form-control{
+    width: 100%;
+}
 
-/*** Changes styles for joomla 4 ***/
+#extrafields_option_popup .modal-body{
+    padding: 10px 20px;
+}
+
 .mr-2 {
     margin-right: 0.5rem;
 }
@@ -544,4 +572,36 @@ img.productlabels{
 }
 .fs-14 {
     font-size: 14px;
+}
+#ajaxLoadAnimate {
+    position : fixed;
+    left : 0;
+    top : 40%;
+    right: 0;
+    z-index : 65533;
+    opacity : 0.5;
+    filter:alpha(opacity=50);
+}
+#ajaxLoadAnimate::after {
+    content: " ";
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    margin-left: -32px;
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #fff;    
+	border-color: #888 transparent #888 transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
 }

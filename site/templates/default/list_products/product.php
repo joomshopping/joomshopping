@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,7 +16,7 @@ defined('_JEXEC') or die();
             <?php print $product->name?>
         </a>
         <?php if ($this->config->product_list_show_product_code){?>
-            <span class="jshop_code_prod">(<?php print JText::_('JSHOP_EAN')?>: <span><?php print $product->product_ean;?></span>)</span>
+            <span class="jshop_code_prod">(<?php print JText::_('JSHOP_EAN_PRODUCT')?>: <span><?php print $product->product_ean;?></span>)</span>
         <?php }?>
     </div>
     
@@ -118,6 +118,12 @@ defined('_JEXEC') or die();
             <div class="manufacturer_code">
                 <?php print JText::_('JSHOP_MANUFACTURER_CODE')?>:
                 <span><?php print $product->manufacturer_code?></span>
+            </div>
+        <?php }?>
+		<?php if ($this->config->real_ean_in_product_list && $product->real_ean){?>
+            <div class="real_ean">
+                <?php print JText::_('JSHOP_EAN')?>:
+                <span><?php print $product->real_ean?></span>
             </div>
         <?php }?>
         

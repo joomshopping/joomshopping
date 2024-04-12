@@ -11,8 +11,7 @@ defined('_JEXEC') or die();
 $lists=$this->lists;
 $jshopConfig=$this->config;
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php \JSHelperAdmin::displaySubmenuConfigs('otherconfig');?>
 <div class="jshop_edit"> 
@@ -80,7 +79,5 @@ $jshopConfig=$this->config;
 </div>
 <?php print $this->tmp_html_end?>
 </form>
-</div>
-</div>
 </div>
 </div>

@@ -57,7 +57,7 @@ class CategoriesController extends BaseadminController{
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
 		$view->set('text_search', $text_search);
-        $view->sidebar = \JHTMLSidebar::render();
+
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
         $view->tmp_html_col_after_title = "";

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.8 06.09.2022
+* @version      5.2.1 25.08.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -95,8 +95,7 @@ class ProductShopModel extends BaseModel{
             $jshopConfig->attr_display_addprice = 0;
         }
 
-		$back_value_attr = (array)$back_value['attr'];
-		
+		$back_value_attr = (array)($back_value['attr'] ?? []);
 		$this->attributes = $product->getInitLoadAttribute($back_value_attr);
 		
 		if (count($this->attributes)){
@@ -142,9 +141,13 @@ class ProductShopModel extends BaseModel{
         
         if ($jshopConfig->product_show_vendor){
             $vendorinfo = $product->getVendorInfo();
-            $vendorinfo->urllistproducts = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=products&vendor_id=".$vendorinfo->id,1);
-            $vendorinfo->urlinfo = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=info&vendor_id=".$vendorinfo->id,1);
-            $product->vendor_info = $vendorinfo;
+			if (isset($vendorinfo)) {
+				$vendorinfo->urllistproducts = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=products&vendor_id=".$vendorinfo->id,1);
+				$vendorinfo->urlinfo = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=info&vendor_id=".$vendorinfo->id,1);
+				$product->vendor_info = $vendorinfo;
+			} else {
+				$product->vendor_info = null;
+			}
         }else{
             $product->vendor_info = null;
         }

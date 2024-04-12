@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 15.09.2022
+* @version      5.2.1 19.09.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -183,10 +183,11 @@ class ImageLib{
 		$new_w = $w;
 		$new_h = $h;
 		$path = pathinfo($img); 
-        $ext = $path['extension']; 
+        $ext = $path['extension'];
         $ext = strtolower($ext);
 		
 		$imagedata = @getimagesize($img);
+		$ext = self::imageFixExtByMime($ext, $imagedata['mime']);
 
 		$img_w = $imagedata[0];
 		$img_h = $imagedata[1];
@@ -234,6 +235,9 @@ class ImageLib{
         }elseif ($ext=="png"){
             $image = imagecreatefrompng($img);
         }else{
+            return 0;
+        }
+		if (!$image) {
             return 0;
         }
 
@@ -334,6 +338,18 @@ class ImageLib{
 		return 0;
 	}
 	
+	static function imageFixExtByMime($ext, $mime) {		
+		$map = [
+			'image/gif' => 'gif',
+			'image/jpeg' => 'jpg',
+			'image/pjpeg' => 'jpg',
+			'image/png' => 'png',
+			'image/x-png' => 'png',			
+			'image/webp' => 'webp',
+		];
+		return $map[$mime] ?? $ext;		
+	}
+
 	/**
 	* Add watermark
 	* @param string  path image .jpg

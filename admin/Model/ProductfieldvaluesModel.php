@@ -48,6 +48,8 @@ class ProductFieldValuesModel extends BaseadminModel{
                 unset($rows[$k]);
             }
             return $list;
+        }elseif ($display==10){
+            return $db->loadObjectList('id');
         }else{
             $rows = $db->loadObjectList();
             $list = array();
@@ -63,16 +65,16 @@ class ProductFieldValuesModel extends BaseadminModel{
         $productfieldvalue = \JSFactory::getTable('productFieldValue');
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveProductFieldValue', array(&$post));
-        if( !$productfieldvalue->bind($post) ) {
+        if (!$productfieldvalue->bind($post)) {
             \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_BIND'));
             $this->setRedirect("index.php?option=com_jshopping&controller=productfieldvalues");
             return 0;
         }
-        if( !$post['id'] ) {
+        if (!$post['id']) {
             $productfieldvalue->ordering = null;
             $productfieldvalue->ordering = $productfieldvalue->getNextOrder('field_id="' . $post['field_id'] . '"');
         }
-        if( !$productfieldvalue->store() ) {
+        if (!$productfieldvalue->store()) {
             \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
             $this->setRedirect("index.php?option=com_jshopping&controller=productfieldvalues");
             return 0;
@@ -82,12 +84,13 @@ class ProductFieldValuesModel extends BaseadminModel{
     }
 
     public function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();
-        $db = \JFactory::getDBO();
-        foreach($cid as $value) {
-            $query = "DELETE FROM `#__jshopping_products_extra_field_values` WHERE `id` = '" . $db->escape($value) . "'";
-            $db->setQuery($query);
-            $db->execute();
+        $app = \JFactory::getApplication();        
+        $productfield = \JSFactory::getTable('productField');
+        foreach($cid as $id) {
+            $productfieldvalue = \JSFactory::getTable('productFieldValue');
+            $productfieldvalue->load($id);
+            $productfield->clearValueFromFieldProduct($productfieldvalue->field_id, $id);
+            $productfieldvalue->delete();
             if ($msg){
                 $app->enqueueMessage(\JText::_('JSHOP_ITEM_DELETED'), 'message');
             }

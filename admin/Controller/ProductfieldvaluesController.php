@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -9,7 +9,7 @@
 namespace Joomla\Component\Jshopping\Administrator\Controller;
 defined('_JEXEC') or die();
 
-class ProductFieldValuesController extends BaseadminController{
+class ProductfieldvaluesController extends BaseadminController{
 
     function init(){
         \JSHelperAdmin::checkAccessController("productfieldvalues");
@@ -38,6 +38,8 @@ class ProductFieldValuesController extends BaseadminController{
         $filter = array("text_search"=>$text_search);
 
         $rows = $_productfieldvalues->getList($field_id, $filter_order, $filter_order_Dir, $filter);
+        $productfield = \JSFactory::getTable('productfield');
+        $productfield->load($field_id);
 
         $view = $this->getView("product_field_values", 'html');
         $view->setLayout("list");
@@ -46,11 +48,12 @@ class ProductFieldValuesController extends BaseadminController{
 		$view->set('text_search', $text_search);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
+        $view->set('productfield', $productfield);
 		$view->tmp_html_start = "";
         $view->tmp_html_filter = "";
         $view->tmp_html_filter_end = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayProductFieldValues', array(&$view));
         $view->displayList();
@@ -62,10 +65,9 @@ class ProductFieldValuesController extends BaseadminController{
         $id = $this->input->getInt("id");
 
         $productfieldvalue = \JSFactory::getTable('productfieldvalue');
-        $productfieldvalue->load($id);
+        $productfieldvalue->load($id);        
 
-        $_lang = \JSFactory::getModel("languages");
-        $languages = $_lang->getAllLanguages(1);
+        $languages = \JSFactory::getModel("languages")->getAllLanguages(1);
         $multilang = count($languages)>1;
 
         $view = $this->getView("product_field_values", 'html');
@@ -95,6 +97,28 @@ class ProductFieldValuesController extends BaseadminController{
     protected function getSaveOrderWhere(){
         $field_id = $this->input->getInt("field_id");
         return 'field_id='.(int)$field_id;
+    }
+
+    public function edit_ajax(){
+        $options = $this->input->getVar('options');
+        $ef_id = $this->input->getInt('ef_id');
+        $ef_val_id = $this->input->getInt('ef_val_id');
+        if (!$ef_id) die();
+
+        $data = [];
+        $data['id'] = $ef_val_id;
+        $data['field_id'] = $ef_id;
+        foreach($options as $k => $v) {
+            $data['name_'.$k] = $v;
+        }
+        $model = \JSFactory::getModel("productfieldvalues");
+        $productfieldvalue = $model->save($data);
+        $ef_val_id = $productfieldvalue->id;
+
+        $lang = \JSFactory::getLang()->getLang();
+        $active_val_text = $options[$lang];        
+        print json_encode(['id' => $ef_val_id, 'text' => $active_val_text]);
+        die();
     }
 
 }

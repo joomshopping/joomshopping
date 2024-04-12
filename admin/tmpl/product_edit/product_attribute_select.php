@@ -46,6 +46,7 @@ defined( '_JEXEC' ) or die();
     <input type="hidden" id="pricefloat" value="<?php print $this->product->getPriceCalculate();?>">    
     <div id="block_weight" style="display: none"><?php print $this->product->getWeight();?></div>
     <div id="manufacturer_code" style="display: none"><?php print $this->product->getManufacturerCode();?></div>
+    <div id="real_ean" style="display: none"><?php print $this->product->getRealEan();?></div>
     
     <h1><?php print $this->product->name?></h1>
     

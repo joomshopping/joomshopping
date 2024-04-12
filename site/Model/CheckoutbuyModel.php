@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.8 08.09.2022
+* @version      5.2.1 08.09.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -166,7 +166,7 @@ class CheckoutBuyModel  extends CheckoutModel{
 			$payment_system = $paymentsysdata->paymentSystem;
 			if ($this->payment_method_class != $pm_method->scriptname || !$order->payment_method_id) {
 				\JSHelper::saveToLog("payment.log", "#0011 - Error load by script name ".$this->payment_method_class." / order_id ".$order_id);
-				$this->setError(_JSHOP_ERROR_PAYMENT);
+				$this->setError(\JText::_('JSHOP_ERROR_PAYMENT'));
 				return 0;
 			}
 			$this->payment_method_class = $pm_method->payment_class;

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 08.09.2022
+* @version      5.2.2 08.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -267,6 +267,7 @@ class OrderTable extends ShopbaseTable{
             $order_item->category_id = $value['category_id'];
             $order_item->product_ean = $value['ean'];
             $order_item->manufacturer_code = $value['manufacturer_code'];
+            $order_item->real_ean = $value['real_ean'];
             $order_item->product_name = $value['product_name'];
             $order_item->product_quantity = $value['quantity'];
             $order_item->product_item_price = $value['price'];
@@ -814,6 +815,7 @@ class OrderTable extends ShopbaseTable{
         $text = str_replace("{family}", $this->l_name, $text);
         $text = str_replace("{email}", $this->email, $text);
         $text = str_replace("{title}", $this->title, $text);
+		$text = str_replace("{order_id}", $this->order_id, $text);
         
         if ($alias == 'order_email_descr_end' && $JshopConfig->show_return_policy_text_in_email_order){
             $list = $this->getReturnPolicy();

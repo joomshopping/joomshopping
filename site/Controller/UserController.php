@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.2 20.11.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -357,8 +357,9 @@ class UserController extends BaseController{
 		
 		Metadata::userOrder($order);
         
-        if ($user->id!=$order->user_id){
+        if ($user->id!=$order->user_id) {
             \JSError::raiseError(500, "Error order number. You are not the owner of this order");
+			return 0;
         }
 		
 		$order->prepareOrderPrint('order_show');

@@ -126,18 +126,18 @@ class CartPreviewModel extends BaseModel{
 
 	public function getProductsPrepare($products) {
 		foreach($products as &$v) {	
-			$v['_tmp_tr_before'] = "";
-			$v['_tmp_tr_after'] = "";
-			$v['_tmp_img_before'] = "";
-			$v['_tmp_img_after'] = "";
-			$v['_ext_product_name'] = "";
-			$v['_ext_attribute_html'] = "";
-			$v['_ext_price_html'] = "";
-			$v['not_qty_update'] = "";
-			$v['_qty_unit'] = "";
-			$v['_ext_price_total_html'] = "";
-			$v['not_delete'] = "";
-			$v['basicprice'] = "";
+			$v['_tmp_tr_before'] ??= "";
+			$v['_tmp_tr_after'] ??= "";
+			$v['_tmp_img_before'] ??= "";
+			$v['_tmp_img_after'] ??= "";
+			$v['_ext_product_name'] ??= "";
+			$v['_ext_attribute_html'] ??= "";
+			$v['_ext_price_html'] ??= "";
+			$v['not_qty_update'] ??= "";
+			$v['_qty_unit'] ??= "";
+			$v['_ext_price_total_html'] ??= "";
+			$v['not_delete'] ??= "";
+			$v['basicprice'] ??= "";
 		}
 		return $products;
 	}

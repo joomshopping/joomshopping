@@ -8,8 +8,8 @@
 */
 defined('_JEXEC') or die();
 ?>
-<div class="row">
-<div id="j-main-container" class="col-md-12">
+
+<div id="j-main-container" class="j-main-container">
 <fieldset class="uploadform">
 <legend><?php echo \JText::_('COM_INSTALLER_UPLOAD_PACKAGE_FILE'); ?></legend>
 <form enctype="multipart/form-data" action="index.php?option=com_jshopping&controller=update&task=update" method="post" name="adminForm" id="adminForm">
@@ -51,5 +51,4 @@ defined('_JEXEC') or die();
 </fieldset>
 <?php print $this->tmp_html_end?>
 </form>
-</div>
 </div>

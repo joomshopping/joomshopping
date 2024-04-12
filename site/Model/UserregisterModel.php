@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -181,7 +181,7 @@ class UserregisterModel  extends UserbaseModel{
     
     public function userSave(){
         if (!$this->user_joomla_id){
-            throw new Exception('Error jshopUserregister->user_joomla_id');
+            throw new \Exception('Error jshopUserregister->user_joomla_id');
         }
         $db = \JFactory::getDBO();
         $this->user->user_id = $this->user_joomla_id;		

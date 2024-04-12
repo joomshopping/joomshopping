@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.6 15.07.2022
+* @version      5.3.0 15.07.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -32,12 +32,12 @@ class ProductFieldsModel extends BaseadminModel{
 		if (isset($filter['text_search']) && $filter['text_search']){
             $text_search = $filter['text_search'];
             $word = addcslashes($db->escape($text_search), "_%");
-            $_where[]=  "(LOWER(F.`".$lang->get('name')."`) LIKE '%" . $word . "%' OR LOWER(F.`".$lang->get('description')."`) LIKE '%" . $word . "%' OR F.id LIKE '%" . $word . "%')";            
+            $_where[]=  "(LOWER(F.`".$lang->get('name')."`) LIKE '%" . $word . "%' OR LOWER(F.`".$lang->get('description')."`) LIKE '%" . $word . "%' OR F.id LIKE '%" . $word . "%')";
         }		
 		if (count($_where)>0){
 			$where = " WHERE ".implode(" AND ",$_where);
 		}
-        $query = "SELECT F.id, F.`".$lang->get("name")."` as name, F.`".$lang->get("description")."` as description, F.allcats, F.type, F.cats, F.ordering, F.`group`, G.`".$lang->get("name")."` as groupname, multilist FROM `#__jshopping_products_extra_fields` as F left join `#__jshopping_products_extra_field_groups` as G on G.id=F.group ".$where." order by ".$ordering;
+        $query = "SELECT F.id, F.`".$lang->get("name")."` as name, F.`".$lang->get("description")."` as description, F.allcats, F.type, F.cats, F.ordering, F.`group`, G.`".$lang->get("name")."` as groupname, multilist, product_uniq_val FROM `#__jshopping_products_extra_fields` as F left join `#__jshopping_products_extra_field_groups` as G on G.id=F.group ".$where." order by ".$ordering;
         extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $rows = $db->loadObjectList();
@@ -82,15 +82,15 @@ class ProductFieldsModel extends BaseadminModel{
     
     function save(array $post){
         $id = (int)$post["id"];
-        $productfield = \JSFactory::getTable('productField');        
+        $productfield = \JSFactory::getTable('productfield');
         if ($post['type']==-1){
             $post['type'] = 0;
             $post['multilist'] = 1;
         }else{
             $post['multilist'] = 0;
         }
-        $dispatcher = \JFactory::getApplication();
-        $dispatcher->triggerEvent('onBeforeSaveProductField', array(&$post));
+        $app = \JFactory::getApplication();
+        $app->triggerEvent('onBeforeSaveProductField', array(&$post));
         $productfield->bind($post);        
         $categorys = $post['category_id'] ?? [];
         $productfield->setCategorys($categorys);
@@ -105,38 +105,37 @@ class ProductFieldsModel extends BaseadminModel{
         if (!$id){            
             $productfield->addNewFieldProducts();
         }
-        $dispatcher->triggerEvent('onAfterSaveProductField', array(&$productfield));        
+        $app->triggerEvent('onAfterSaveProductField', array(&$productfield));        
         return $productfield;
     }
     
-    public function deleteList(array $cid, $msg = 1){
-        $db = \JFactory::getDBO();
+    public function deleteList(array $cid, $msg = 1) {
         $app = \JFactory::getApplication();
         $res = array();
-        $dispatcher = \JFactory::getApplication();
-        $dispatcher->triggerEvent('onBeforeRemoveProductField', array(&$cid));
-        foreach($cid as $value){
-            $query = "DELETE FROM `#__jshopping_products_extra_fields` WHERE `id` = '".$db->escape($value)."'";
-            $db->setQuery($query);
-            if ($db->execute()){
+        $app->triggerEvent('onBeforeRemoveProductField', array(&$cid));
+        foreach($cid as $id){
+            $this->deleteAllValueFromField($id);
+            $productfield = \JSFactory::getTable('productfield');
+            $productfield->id = $id;
+            $productfield->deleteFieldProducts();
+            if ($productfield->delete()) {
                 if ($msg){
                     $app->enqueueMessage(\JText::_('JSHOP_ITEM_DELETED'), 'message');
                 }
-                $res[$value] = true;
-            }else{
-                $res[$value] = false;
+                $res[$id] = true;
+            } else {
+                $res[$id] = false;
             }
-            
-            $query = "DELETE FROM `#__jshopping_products_extra_field_values` WHERE `field_id` = '".$db->escape($value)."'";
-            $db->setQuery($query);
-            $db->execute();
-            
-            $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` DROP `extra_field_".(int)$value."`";
-            $db->setQuery($query);
-            $db->execute();
         }
-        $dispatcher->triggerEvent('onAfterRemoveProductField', array(&$cid));
+        $app->triggerEvent('onAfterRemoveProductField', array(&$cid));
         return $res;
+    }
+
+    public function deleteAllValueFromField($field_id) {
+        $db = \JFactory::getDBO();
+        $query = "DELETE FROM `#__jshopping_products_extra_field_values` WHERE `field_id`=".$db->q($field_id);
+        $db->setQuery($query);
+        $db->execute();
     }
 
 }

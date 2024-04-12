@@ -381,6 +381,7 @@ td.reviews{
 .jshop_list_product .jshop .price_extra_info, 
 .jshop_list_product .manufacturer_name,
 .jshop_list_product .manufacturer_code,
+.jshop_list_product .real_ean,
 .jshop_list_product .jshop .base_price{
     text-align: center;
     margin-bottom: 5px;
@@ -498,7 +499,7 @@ td.reviews{
     padding-left: 5px;
     display: inline-block;    
 }
-.productfull .buttons{
+.productfull .prod_buttons .buttons{
     padding-left:10px;
     display: inline-block;
 }
@@ -742,6 +743,9 @@ span.prod_attr_img img{
 .productfull .manufacturer_code{
     padding-bottom: 10px;
 }
+.productfull .real_ean{
+    padding-bottom: 10px;
+}
 .productfull .prod_free_attribs{
     padding-bottom: 10px;
 }
@@ -832,7 +836,7 @@ span.prod_attr_img img{
 .cart .jshop_code_prod{
     font-size:10px;
 }
-.cart .manufacturer, .cart .manufacturer_code{
+.cart .manufacturer, .cart .manufacturer_code, .cart .real_ean{
     padding:5px 0px 6px 10px;
     font-size:0.8rem;
     font-style: italic;
@@ -842,6 +846,13 @@ span.prod_attr_img img{
 }
 .cart .cart_reload{
     cursor: pointer;
+    display: inline-block;
+    background: url(../images/reload.svg) no-repeat center;
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+}
+.icon-refresh:before {
+    content: "";
 }
 .cart .btn{
     margin-bottom: 10px;

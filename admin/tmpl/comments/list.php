@@ -11,49 +11,37 @@ defined('_JEXEC') or die();
 $count = count($this->reviews);
 $i = 0;
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php JSHelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping&controller=reviews" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 
-<div class="js-stools clearfix jshop_block_filter">
-    <div class="js-stools-container-bar">
-        <div class="btn-toolbar" role="toolbar">
-            <?php print $this->tmp_html_filter?>
+<div class="js-filters">
+    <?php print $this->tmp_html_filter?>
 
-            <div class="btn-group">
-                <div class="input-group">
-                    <div class="js-stools-field-filter">
-                        <?php echo $this->categories;?>
-                    </div>
-                    <div class="js-stools-field-filter">
-                        <?php echo $this->products_select;?>
-                    </div>
-                </div>
-            </div>
-
-            <div class="btn-group">
-                <div class="input-group">
-                    <div class="js-stools-field-filter">
-                        <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
-                    </div>
-                    <div class="js-stools-field-filter">
-                        <span class="input-group-append">
-                            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
-                                <span class="icon-search" aria-hidden="true"></span>
-                            </button>                        
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="js-stools-field-filter">
-                <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
-            </div>
-            <?php print $this->tmp_html_filter_end?>
-        </div>
+    <div>
+        <?php echo $this->categories;?>
     </div>
+    <div>
+        <?php echo $this->products_select;?>
+    </div>
+
+    <div>
+        <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+    </div>
+    <div>
+        <span class="input-group-append">
+            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+                <span class="icon-search" aria-hidden="true"></span>
+            </button>                        
+        </span>
+    </div>
+
+    <div>
+        <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+    </div>
+    <?php print $this->tmp_html_filter_end?>
 </div>
 
 <table class="table table-striped" >
@@ -173,8 +161,6 @@ $i++;
 <input type="hidden" name="boxchecked" value="0" />
 <?php print $this->tmp_html_end?>
 </form>
-</div>
-</div>
 </div>
 <script>
 jQuery(function(){

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.0 13.05.2023
+* @version      5.3.0 10.11.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -261,8 +261,12 @@ $config->admin_list_related_show_prod_code = 1;
 $config->manufacturer_code_in_cart = 0;
 $config->manufacturer_code_in_product_list = 0;
 $config->manufacturer_code_in_product_detail = 0;
+$config->real_ean_in_cart = 0;
+$config->real_ean_in_product_list = 0;
+$config->real_ean_in_product_detail = 0;
 $config->product_list_pagination_result_counter = 1;
 $config->admin_product_list_manufacture_code = 0;
+$config->admin_product_list_real_ean = 0;
 $config->register_mail_html_format = false;
 $config->register_mail_admin_html_format = false;
 $config->activation_mail_html_format = false;
@@ -273,11 +277,16 @@ $config->checkout_step5_show_email = 0;
 $config->checkout_step5_show_phone = 0;
 $config->productDownloadFilePart8kb = 1;
 $config->show_short_descr_insted_of = 1;
-$config->allow_image_upload = array('jpeg','jpg','gif','png','webp');
+$config->allow_image_upload = ['jpeg','jpg','gif','png','webp'];
+$config->image_fill_colors = [0xffffff => 'white', 0x000000 => 'black'];
 $config->use_summ_for_calcule_payment_with_discount = 0;
 $config->product_related_order_by = 'relation.id';
 $config->product_img_seo = 0;
 $config->product_use_main_category_id = 0;
+$config->checkout_form_finish_multipart = 0;
+$config->product_admin_demo_file = 1;
+$config->product_admin_sale_file = 1;
+$config->admin_shop_lang_as_admin_lang = 1;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';
@@ -304,7 +313,8 @@ $config->product_search_fields = array(
     'prod.ml:short_description',
     'prod.ml:description',
     'prod.product_ean',
-    'prod.manufacturer_code'
+    'prod.manufacturer_code',
+    'prod.real_ean'
 );
 
 $config->attribut_dep_sorting_in_product = "V.value_ordering"; // (V.value_ordering, value_name, PA.price, PA.ean, PA.count)
@@ -316,6 +326,7 @@ $config->disable_admin = array(
     'product_old_price' => 0,
     'product_ean' => 0,
     'manufacturer_code' => 0,
+    'real_ean' => 0,
     'product_url' => 0,
     'product_manufacturer' => 0,
     'currencies' => 0,

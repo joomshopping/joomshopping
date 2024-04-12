@@ -14,7 +14,7 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_PRODUCT_EXTRA_FIELDS'), 'generic.png' ); 
+        \JToolBarHelper::title( \JText::_('JSHOP_PRODUCT_EXTRA_FIELDS'), 'generic.png' );
         \JToolBarHelper::addNew();
         \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
         \JToolBarHelper::spacer();

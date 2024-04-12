@@ -27,7 +27,7 @@ class AddonsController extends BaseadminController{
         $view->set('back64', $back64);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayAddons', array(&$view));
         $view->displayList();

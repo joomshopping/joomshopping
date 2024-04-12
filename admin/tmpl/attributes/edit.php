@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -36,7 +36,7 @@ defined('_JEXEC') or die();
          <?php echo JText::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
        </td>
        <td>
-         <input type="text" class="inputbox form-control" name="<?php print $description?>" value="<?php echo $this->attribut->$description?>" />
+		 <textarea class="inputbox form-control" name="<?php print $description?>"><?php echo $this->attribut->$description?></textarea>
        </td>
     </tr>
     <?php } ?>

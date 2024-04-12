@@ -15,38 +15,31 @@ if ($saveOrder){
 	Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
 }
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
     <?php JSHelperAdmin::displaySubmenuOptions("productfields");;?>
     <form action="index.php?option=com_jshopping&controller=productfieldvalues&field_id=<?php print $this->field_id?>" method="post" name="adminForm" id="adminForm">
 
     <?php print $this->tmp_html_start?>
 
-    <div class="js-stools clearfix jshop_block_filter">
-        <div class="js-stools-container-bar">
-            <div class="btn-toolbar" role="toolbar">
-                <?php print $this->tmp_html_filter?>
+    <div class="js-filters">
 
-                <div class="btn-group mr-2">
-                    <div class="input-group">
-                        <div class="js-stools-field-filter">
-                            <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
-                        </div>
-                        <div class="js-stools-field-filter">
-                            <span class="input-group-btn">
-                                <button type="submit" class="btn btn-secondary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
-                                    <span class="icon-search" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-secondary hasTooltip js-stools-btn-clear" onclick="jQuery('#text_search').val('');this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
+        <?php print $this->tmp_html_filter?>
 
-                <?php print $this->tmp_html_filter_end?>
-            </div>
+        <div>
+            <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
         </div>
+        <div>
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-secondary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+                    <span class="icon-search" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-secondary hasTooltip js-stools-btn-clear" onclick="jQuery('#text_search').val('');this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            </span>
+        </div>
+
+        <?php print $this->tmp_html_filter_end?>
+
     </div>
 
     <table class="table table-striped">
@@ -109,6 +102,4 @@ if ($saveOrder){
     <input type="hidden" name="boxchecked" value="0" />
     <?php print $this->tmp_html_end?>
     </form>
-</div>
-</div>
 </div>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.1 29.09.2022
+* @version      5.3.0 11.12.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -41,7 +41,13 @@ class Dispatcher extends ComponentDispatcher{
             \JSFactory::loadAdminLanguageFile();
         }
         $jshopConfig = \JSFactory::getConfig();
-        $jshopConfig->setLang($jshopConfig->getFrontLang());
+        $currLang = \JFactory::getLanguage()->getTag();
+        $lang_tags = \JSFactory::getModel("languages")->getAllTags(1);
+        if (in_array($currLang, $lang_tags) && $jshopConfig->admin_shop_lang_as_admin_lang) {
+            $jshopConfig->setLang($currLang);
+        } else {
+            $jshopConfig->setLang($jshopConfig->getFrontLang());
+        }
 		
         if (!$ajax){
             \JSHelper::installNewLanguages();

@@ -26,7 +26,7 @@ class ConfigDisplayPriceController extends BaseadminController{
         $view->setLayout("list");
         $view->set('rows', $rows);
         $view->set('typedisplay', $typedisplay);
-        $view->sidebar = \JHTMLSidebar::render();
+
         $view->tmp_html_start = '';
         $view->tmp_html_end = '';
         $dispatcher = \JFactory::getApplication();

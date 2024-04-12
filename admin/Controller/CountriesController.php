@@ -52,7 +52,7 @@ class CountriesController extends BaseadminController{
         $view->tmp_html_filter = "";
         $view->tmp_html_filter_end = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayCountries', array(&$view));
 		$view->displayList(); 

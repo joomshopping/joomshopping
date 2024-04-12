@@ -72,7 +72,7 @@ defined('_JEXEC') or die;
             <?php } ?>
         </div>
 
-        <form name = "form_finish" action = "<?php print $this->action ?>" method = "post" enctype="multipart/form-data">
+        <form name="form_finish" action="<?php print $this->action ?>" method="post" <?php if ($this->config->checkout_form_finish_multipart) {?>enctype="multipart/form-data"<?php }?>>
             <div class="pfinish_comment_block">             
                 <div class="name"><?php print JText::_('JSHOP_ADD_INFO')?></div>
                 <div class="field"><textarea class = "inputbox" id = "order_add_info" name = "order_add_info"></textarea></div>

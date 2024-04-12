@@ -36,7 +36,7 @@ class ProductLabelsController extends BaseadminController{
         $view->set('filter_order_Dir', $filter_order_Dir);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayProductLabels', array(&$view));		
 		$view->displayList();

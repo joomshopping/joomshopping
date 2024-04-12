@@ -185,9 +185,7 @@ class CartController extends BaseController{
 
         $ajax = $this->input->getInt('ajax');
         $code = $this->input->getVar('rabatt');
-
-        $checkout = \JSFactory::getModel('checkout', 'Site');
-        $checkout->setMaxStep(2);
+		$back_step = $this->input->getInt('back_step');
 
         $coupon = \JSFactory::getTable('coupon');
 		$cart = \JSFactory::getModel('cart', 'Site');
@@ -201,6 +199,7 @@ class CartController extends BaseController{
                 print \JSHelper::getOkMessageJson($cart);
                 die();
             }
+            \JSError::raiseMessage('', \JText::_('JSHOP_RABATT_APPLIED'));
         }else{
             \JSError::raiseWarning('', $coupon->error);
             if ($ajax){
@@ -208,7 +207,13 @@ class CartController extends BaseController{
                 die();
             }
         }
-        $this->setRedirect( \JSHelper::SEFLink($cart->getUrlList(),0,1) );
+		
+		if ($back_step) {
+			$url = \JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl((string)$back_step, 1);
+		} else {
+			$url = \JSHelper::SEFLink($cart->getUrlList(), 0, 1);
+		}
+        $this->setRedirect($url);
     }
 
     function clear(){

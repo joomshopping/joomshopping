@@ -133,7 +133,7 @@ class OrdersController extends BaseadminController{
         $view->set('list_order_status', $list_order_status);
         $view->set('client_id', $client_id);
         $view->set('total', $total);
-        $view->sidebar = \JHTMLSidebar::render();
+
         $view->_tmp_order_list_html_end = '';
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";

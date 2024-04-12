@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.7 06.08.2022
+* @version      5.3.0 06.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -20,6 +20,7 @@ defined('_JEXEC') or die();
 		jshopAdmin.use_weight="<?php print (int)$jshopConfig->admin_show_weight?>";
         jshopAdmin.use_product_ean="<?php print (int)!$jshopConfig->disable_admin['product_ean']?>";
         jshopAdmin.use_manufacturer_code="<?php print (int)!$jshopConfig->disable_admin['manufacturer_code']?>";
+        jshopAdmin.use_real_ean="<?php print (int)!$jshopConfig->disable_admin['real_ean']?>";
         jshopAdmin.use_product_old_price="<?php print (int)!$jshopConfig->disable_admin['product_old_price']?>";
         jshopAdmin.attrib_images=new Object();
         <?php foreach($lists['attribs_values'] as $k=>$v){?>
@@ -71,6 +72,9 @@ defined('_JEXEC') or die();
             <?php if ($jshopConfig->disable_admin['manufacturer_code'] == 0){?>
                 <th width="100"><?php print JText::_('JSHOP_MANUFACTURER_CODE')?></th>
             <?php }?>
+            <?php if ($jshopConfig->disable_admin['real_ean'] == 0){?>
+                <th width="100"><?php print JText::_('JSHOP_EAN')?></th>
+            <?php }?>
 			<?php if ($jshopConfig->admin_show_weight){?>
                 <th width="100"><?php print JText::_('JSHOP_PRODUCT_WEIGHT')?> (<?php print \JSHelper::sprintUnitWeight()?>)</th>
 			<?php }?>
@@ -115,6 +119,9 @@ defined('_JEXEC') or die();
                if ($jshopConfig->disable_admin['manufacturer_code'] == 0){
                 print "<td><input type='text' name='attr_manufacturer_code[]' class = 'form-control' value='".$v->manufacturer_code."'></td>";
                }
+               if ($jshopConfig->disable_admin['real_ean'] == 0){
+                print "<td><input type='text' name='attr_real_ean[]' class='form-control' value='".$v->real_ean."'></td>";
+               }
 			   if ($jshopConfig->admin_show_weight){
 				  print "<td><input type='text' name='attr_weight[]' class = 'form-control' value='".$v->weight."'></td>";
 			   }
@@ -145,6 +152,7 @@ defined('_JEXEC') or die();
        if ($jshopConfig->stock) print "<td></td>";
 	   if ($jshopConfig->disable_admin['product_ean'] == 0) print "<td></td>";
        if ($jshopConfig->disable_admin['manufacturer_code'] == 0) print "<td></td>";
+       if ($jshopConfig->disable_admin['real_ean'] == 0) print "<td></td>";
 	   if ($jshopConfig->admin_show_weight) print "<td></td>";
        if ($jshopConfig->admin_show_product_basic_price) print "<td></td>";
        if ($jshopConfig->disable_admin['product_old_price'] == 0) print "<td></td>";
@@ -186,6 +194,12 @@ defined('_JEXEC') or die();
             <tr>
                 <td class="key"><?php print JText::_('JSHOP_MANUFACTURER_CODE')?></td>
                 <td><input type="text" class = "form-control middle2" id="attr_manufacturer_code" value="<?php echo $row->manufacturer_code?>"></td>
+            </tr>
+            <?php }?>
+            <?php if ($jshopConfig->disable_admin['real_ean'] == 0){?>
+            <tr>
+                <td class="key"><?php print JText::_('JSHOP_EAN')?></td>
+                <td><input type="text" class="form-control middle2" id="attr_real_ean" value="<?php echo $row->real_ean?>"></td>
             </tr>
             <?php }?>
 			<?php if ($jshopConfig->admin_show_weight){?>

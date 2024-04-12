@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.3 03.07.2022
+* @version      5.3.0 07.12.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,6 +10,7 @@ namespace Joomla\Component\Jshopping\Site\Table;
 
 defined('_JEXEC') or die();
 
+#[\AllowDynamicProperties]
 class ConfigTable{
 
     public function load($keys = null, $reset = true) {
@@ -106,7 +107,7 @@ class ConfigTable{
         $session = \JFactory::getSession();
         $id_currency_session = $session->get('Js_id_currency');
         $id_currency = $app->input->getInt('id_currency');
-        $main_currency = $this->mainCurrency ?? 0;
+        $main_currency = $this->mainCurrency;
         if ($this->default_frontend_currency){
             $main_currency = $this->default_frontend_currency;
         }		
@@ -381,6 +382,7 @@ class ConfigTable{
 			$this->admin_not_send_email_order_vendor_order = 0;
 			$this->product_show_vendor = 0;
 			$this->product_show_vendor_detail = 0;
+			$this->product_list_show_vendor = 0;
 		}
 		$cpt = $this->getCopyrightTexts();
         $this->copyrightText = '<span id="mxcpr">'.$cpt[0].'<br><a rel="nofollow" target="_blank" href="https://www.joomshopping.com/">'.$cpt[1].'</a></span>';
@@ -419,12 +421,16 @@ class ConfigTable{
             $this->manufacturer_code_in_product_list = 0;
             $this->manufacturer_code_in_product_detail = 0;
         }
+        if ($this->disable_admin['real_ean']){
+            $this->real_ean_in_cart = 0;
+            $this->real_ean_in_product_list = 0;
+            $this->real_ean_in_product_detail = 0;
+        }
+
 		
 		$this->generate_pdf = ($this->order_send_pdf_client || $this->order_send_pdf_admin);        
         $this->user_number_in_invoice = isset($this->user_number_in_invoice) ? $this->user_number_in_invoice : 0;
         $this->not_redirect_in_wishlist_after_buy = isset($this->not_redirect_in_wishlist_after_buy) ? $this->not_redirect_in_wishlist_after_buy : 0;
-		$this->max_mark = (!isset($this->max_mark) || $this->max_mark<1) ? 10 : $this->max_mark;
-		$this->rating_starparts = (!isset($this->rating_starparts) || $this->rating_starparts<1) ? 1 : $this->rating_starparts;
 	}
 	
 	function getAdminContactEmails(){

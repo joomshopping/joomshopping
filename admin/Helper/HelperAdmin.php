@@ -45,6 +45,9 @@ class HelperAdmin{
         $jshopConfig = \JSFactory::getConfig();
         $temp = array();
         $dir = $jshopConfig->template_path.$jshopConfig->template."/".$folder."/";
+		if (!file_exists($dir)) {
+			$dir = $jshopConfig->template_path."default/".$folder."/";
+		}
         $dh = opendir($dir);
         while (($file = readdir($dh)) !== false) {
             if (preg_match("/".$type."_(.*)\.php/", $file, $matches)){
@@ -122,28 +125,8 @@ class HelperAdmin{
     }
 
     public static function addSubmenu($vName){
-        $user = \JFactory::getUser();
-        
-        $adminaccess = $user->authorise('core.admin', 'com_jshopping');
-        $installaccess = $user->authorise('core.admin.install', 'com_jshopping');
-        
-        $menu = array();
-        $menu['categories'] = array(\JText::_('JSHOP_MENU_CATEGORIES'), 'index.php?option=com_jshopping&controller=categories&catid=0', $vName == 'categories', 1);
-        $menu['products'] = array(\JText::_('JSHOP_MENU_PRODUCTS'), 'index.php?option=com_jshopping&controller=products&category_id=0', $vName == 'products', 1);
-        $menu['orders'] = array( \JText::_('JSHOP_MENU_ORDERS'), 'index.php?option=com_jshopping&controller=orders', $vName == 'orders', 1);
-        $menu['users'] = array(\JText::_('JSHOP_MENU_CLIENTS'), 'index.php?option=com_jshopping&controller=users', $vName == 'users', 1);
-        $menu['other'] = array(\JText::_('JSHOP_MENU_OTHER'), 'index.php?option=com_jshopping&controller=other', $vName == 'other', 1);
-        $menu['config'] = array( \JText::_('JSHOP_MENU_CONFIG'), 'index.php?option=com_jshopping&controller=config', $vName == 'config', $adminaccess );
-        $menu['update'] = array(\JText::_('JSHOP_PANEL_UPDATE'), 'index.php?option=com_jshopping&controller=update', $vName == 'update', $installaccess );
-        $menu['info'] = array(\JText::_('JSHOP_MENU_INFO'), 'index.php?option=com_jshopping&controller=info', $vName == 'info', 1);
-        
+        $menu = [];
         \JFactory::getApplication()->triggerEvent('onBeforeAdminMenuDisplay', array(&$menu, &$vName));
-        
-        foreach($menu as $item){
-            if ($item[3]){
-                \JHtmlSidebar::addEntry( $item[0], $item[1], $item[2]);
-            }
-        }
     }
 
     public static function displayMainPanelIco(){

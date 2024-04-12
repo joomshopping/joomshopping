@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.2 18.11.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -15,5 +15,6 @@ define('JPATH_JOOMSHOPPING_ADMIN', JPATH_ADMINISTRATOR.'/components/com_jshoppin
 include_once(JPATH_JOOMSHOPPING."/classmap.php");
 include_once(JPATH_JOOMSHOPPING."/payments/payment.php");
 include_once(JPATH_JOOMSHOPPING."/shippingform/shippingform.php");
+include_once(JPATH_JOOMSHOPPING."/addons/addon_core.php");
 
 \JSHelper::disableStrictMysql();

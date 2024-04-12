@@ -23,7 +23,7 @@ class ProductFieldGroupsController extends BaseadminController{
         $view = $this->getView("product_field_groups", 'html');
         $view->setLayout("list");
         $view->set('rows', $rows);
-        $view->sidebar = \JHTMLSidebar::render();
+
         $view->tmp_html_start = '';
         $view->tmp_html_end = '';
         $dispatcher = \JFactory::getApplication();

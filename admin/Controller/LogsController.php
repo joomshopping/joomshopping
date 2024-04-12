@@ -25,7 +25,7 @@ class LogsController extends BaseadminController{
         $view->set('rows', $rows);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayLogs', array(&$view));
 		$view->displayList();

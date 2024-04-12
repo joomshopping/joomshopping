@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.2 10.11.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -33,7 +33,7 @@ class ConfigController extends BaseadminController{
         $view->setLayout("config");
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $view->displayConfig();
     }
     
@@ -52,7 +52,7 @@ class ConfigController extends BaseadminController{
 		$view->set("lists", $lists);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigGeneral', array(&$view));
         $view->display();
@@ -115,7 +115,7 @@ class ConfigController extends BaseadminController{
         $view->setLayout("categoryproduct");
         $view->set("lists", $lists);
         $view->set('etemplatevar', '');
-        $view->sidebar = \JHTMLSidebar::render();
+
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
         $dispatcher = \JFactory::getApplication();
@@ -149,7 +149,7 @@ class ConfigController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigCheckout', array(&$view));
         $view->display();
@@ -167,7 +167,7 @@ class ConfigController extends BaseadminController{
         $view->set("current_fields", $current_fields);
         $view->set("fields_sys", $fields_client_sys);
         $view->set('etemplatevar', '');
-        $view->sidebar = \JHTMLSidebar::render();
+
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
         $dispatcher = \JFactory::getApplication();
@@ -194,7 +194,7 @@ class ConfigController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigAdminFunction', array(&$view));
         $view->display();
@@ -220,7 +220,7 @@ class ConfigController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigCurrency', array(&$view));
         $view->display();
@@ -234,14 +234,16 @@ class ConfigController extends BaseadminController{
         $resize_type[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_FILL'), 'id', 'name' );
         $resize_type[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_STRETCH'), 'id', 'name' );
         $select_resize_type = \JHTML::_('select.genericlist', $resize_type, 'image_resize_type','class = "inputbox form-control form-select"','id','name', $jshopConfig->image_resize_type);
+		$image_fill_colors = \JHTML::_('select.genericlist', $jshopConfig->image_fill_colors, 'image_fill_color','class = "inputbox form-control form-select"', 'id', 'name', $jshopConfig->image_fill_color);
     	
     	$view = $this->getView("config", 'html');
         $view->setLayout("image");
         $view->set("select_resize_type", $select_resize_type);
+		$view->set("image_fill_colors", $image_fill_colors);
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigImage', array(&$view));
         $view->display();
@@ -261,7 +263,7 @@ class ConfigController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigStoreInfo', array(&$view));
         $view->display();
@@ -399,7 +401,7 @@ class ConfigController extends BaseadminController{
         $view->set("rows", $rows);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplaySeo', array(&$view));
         $view->displayListSeo();    
@@ -449,7 +451,7 @@ class ConfigController extends BaseadminController{
         $view->set("rows", $rows);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayStatisticText', array(&$view)); 
         $view->displayListStatictext();    
@@ -537,6 +539,7 @@ class ConfigController extends BaseadminController{
         $prod->product_tax = 19;
         $prod->manufacturer = '';
         $prod->manufacturer_code = '';
+        $prod->real_ean = '';
         $prod->product_attributes = '';
         $prod->product_freeattributes = '';
         $prod->delivery_time = '';
@@ -580,7 +583,7 @@ class ConfigController extends BaseadminController{
 		$view->set("lists", $lists);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
 		$dispatcher = \JFactory::getApplication();
 		$dispatcher->triggerEvent('onBeforeEditConfigOtherConfig', array(&$view));
 		$view->display();

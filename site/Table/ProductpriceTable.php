@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,11 +17,11 @@ class ProductPriceTable extends ShopbaseTable{
     
     function getAddPrices($product_id){        
         $db = \JFactory::getDBO();
-        $query = "SELECT * FROM `#__jshopping_products_prices` WHERE product_id = '".$db->escape($product_id)."' ORDER BY product_quantity_start DESC";
+        $query = "SELECT * FROM `#__jshopping_products_prices` WHERE product_id=".$db->q($product_id)." ORDER BY product_quantity_start";
         $db->setQuery($query);
         $rows = $db->loadObJectList();
 		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
 		return $rows;
     }
-    
+
 }

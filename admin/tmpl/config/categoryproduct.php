@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,8 +10,7 @@ defined('_JEXEC') or die();
 
 $jshopConfig=\JSFactory::getConfig();
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php \JSHelperAdmin::displaySubmenuConfigs('catprod');?>
 <div class="jshop_edit">
@@ -275,6 +274,17 @@ $jshopConfig=\JSFactory::getConfig();
 		<td>
 			<input type="hidden" name="manufacturer_code_in_product_list" value="0">
 			<input type="checkbox" name="manufacturer_code_in_product_list" value="1" <?php if ($jshopConfig->manufacturer_code_in_product_list) echo 'checked="checked"';?> />
+		</td>
+	</tr>
+	<?php }?>
+	<?php if ($jshopConfig->disable_admin['real_ean']==0){?>
+	<tr>
+		<td class="key">
+			<?php echo JText::_('JSHOP_EAN')?>
+		</td>
+		<td>
+			<input type="hidden" name="real_ean_in_product_list" value="0">
+			<input type="checkbox" name="real_ean_in_product_list" value="1" <?php if ($jshopConfig->real_ean_in_product_list) echo 'checked="checked"';?> >
 		</td>
 	</tr>
 	<?php }?>
@@ -609,6 +619,17 @@ $jshopConfig=\JSFactory::getConfig();
 		</td>
 	</tr>
 	<?php }?>
+	<?php if ($jshopConfig->disable_admin['real_ean']==0){?>
+	<tr>
+		<td class="key">
+			<?php echo JText::_('JSHOP_EAN')?>
+		</td>
+		<td>
+			<input type="hidden" name="real_ean_in_product_detail" value="0">
+			<input type="checkbox" name="real_ean_in_product_detail" value="1" <?php if ($jshopConfig->real_ean_in_product_detail) echo 'checked="checked"';?> >
+		</td>
+	</tr>
+	<?php }?>
 	<?php if ($jshopConfig->admin_show_delivery_time){?>
 	<tr>
 		<td class="key">
@@ -743,7 +764,5 @@ $jshopConfig=\JSFactory::getConfig();
 
 <?php print $this->tmp_html_end?>
 </form>
-</div>
-</div>
 </div>
 </div>

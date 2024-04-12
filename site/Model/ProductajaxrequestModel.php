@@ -83,6 +83,7 @@ class ProductAjaxRequestModel  extends BaseModel{
 		$displaybuttons = intval(intval($product->getQty() > 0) || $jshopConfig->hide_buy_not_avaible_stock==0);
         $ean = $product->getEan();
         $manufacturer_code = $product->getManufacturerCode();
+        $real_ean = $product->getRealEan();
         $weight = \JSHelper::formatweight($product->getWeight());
         $basicprice = \JSHelper::formatprice($product->getBasicPrice());
         
@@ -91,6 +92,7 @@ class ProductAjaxRequestModel  extends BaseModel{
         $rows['available'] = $available;
         $rows['ean'] = $ean;
         $rows['manufacturer_code'] = $manufacturer_code;
+        $rows['real_ean'] = $real_ean;
         if ($jshopConfig->admin_show_product_basic_price){
             $rows['basicprice'] = $basicprice;
         }

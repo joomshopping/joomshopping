@@ -132,6 +132,7 @@ class OrdersModel extends BaseadminModel{
 			$order_item->category_id = $post['category_id'][$k];
             $order_item->product_ean = $post['product_ean'][$k] ?? '';
             $order_item->manufacturer_code = $post['manufacturer_code'][$k] ?? '';
+            $order_item->real_ean = $post['real_ean'][$k] ?? '';
             $order_item->product_name = $post['product_name'][$k];
             $order_item->product_quantity = \JSHelper::saveAsPrice($post['product_quantity'][$k]);
             $order_item->product_item_price = \JSHelper::saveAsPrice($post['product_item_price'][$k]);

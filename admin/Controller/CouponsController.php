@@ -57,7 +57,7 @@ class CouponsController extends BaseadminController{
         $view->tmp_extra_column_headers = "";
         $view->tmp_html_end = "";
         $view->deltaColspan  = 0;
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayCoupons', array(&$view));		
 		$view->displayList(); 

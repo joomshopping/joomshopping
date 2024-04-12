@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.1 15.09.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -120,13 +120,13 @@ jshopAdmin.userinfo_link = "<?php print "index.php?option=com_jshopping&controll
         </tr>
         <?php } ?>
         <?php if ($config_fields['firma_code']['display']){?>
-        <tr id="tr_field_firma_code" <?php if ($config_fields['client_type']['display'] && $order->client_type!="2"){?>style="display:none;"<?php } ?>>
+        <tr id="tr_field_firma_code">
           <td><b><?php print JText::_('JSHOP_FIRMA_CODE')?>:</b></td>
           <td><input type="text" class = "form-control" name="firma_code" value="<?php print $order->firma_code?>" /></td>
         </tr>
         <?php } ?>
         <?php if ($config_fields['tax_number']['display']){?>
-        <tr id="tr_field_tax_number" <?php if ($config_fields['client_type']['display'] && $order->client_type!="2"){?>style="display:none;"<?php } ?>>
+        <tr id="tr_field_tax_number">
           <td><b><?php print JText::_('JSHOP_VAT_NUMBER')?>:</b></td>
           <td><input type="text" class = "form-control" name="tax_number" value="<?php print $order->tax_number?>" /></td>
         </tr>
@@ -402,6 +402,9 @@ jshopAdmin.userinfo_link = "<?php print "index.php?option=com_jshopping&controll
    <br />
    <?php if ($this->config->manufacturer_code_in_cart){?>
    <input type="text" class = "form-control" name="manufacturer_code[<?php echo $i?>]" value="<?php echo $item->manufacturer_code?>" title="<?php print JText::_('JSHOP_MANUFACTURER_CODE')?>"><br />
+   <?php }?>
+   <?php if ($this->config->real_ean_in_cart){?>
+   <input type="text" class="form-control" name="real_ean[<?php echo $i?>]" value="<?php echo $item->real_ean?>" title="<?php print JText::_('JSHOP_EAN')?>"><br />
    <?php }?>
    <?php if ($this->config->admin_show_attributes){?>
    <textarea rows="2" cols="24" name="product_attributes[<?php echo $i?>]" class = "form-control" title="<?php print JText::_('JSHOP_ATTRIBUTES')?>"><?php print $item->product_attributes?></textarea>   

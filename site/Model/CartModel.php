@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.2 18.11.2022
+* @version      5.3.0 15.12.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -9,10 +9,11 @@
 namespace Joomla\Component\Jshopping\Site\Model;
 defined('_JEXEC') or die();
 
+#[\AllowDynamicProperties]
 class CartModel{
     
     public $type_cart = "cart";
-    public $products = array();
+    public $products = [];
     public $count_product = 0;
     public $price_product = 0;
     public $summ = 0;
@@ -41,10 +42,9 @@ class CartModel{
 		$session = \JFactory::getSession();
         $objcart = $session->get($this->type_cart);
 
-        if (isset($objcart) && $objcart!=''){
+        if (isset($objcart) && $objcart != ''){
             $temp_cart = unserialize($objcart);
-            $this->products = $temp_cart->products;
-			if (!isset($this->products)) $this->products = [];
+            $this->products = $temp_cart->products ?? [];
             $this->rabatt_id = $temp_cart->rabatt_id;
             $this->rabatt_value = $temp_cart->rabatt_value;
             $this->rabatt_type = $temp_cart->rabatt_type;
@@ -54,9 +54,9 @@ class CartModel{
 	
 	function loadProductsFromTempCart(){
 		$tempcart = \JSFactory::getModel($this->model_temp_cart, 'Site');
-		if (!count($this->products) && $tempcart->getIdTempCart() && $tempcart->checkAccessToTempCart($this->type_cart)){
+        if ($tempcart->getIdTempCart() && $tempcart->checkAccessToTempCart($this->type_cart)) {
 			$products = $tempcart->getProducts($this->type_cart);
-            if (count($products)){
+            if (isset($products) && count($products)) {
                 $this->products = $products;
                 $this->saveToSession();
             }
@@ -700,7 +700,7 @@ class CartModel{
         $product->load($product_id);
 
         //check attributes
-        if ( (count($product->getRequireAttribute()) > count($attr_id)) || in_array(0, $attr_id)){
+        if ($this->type_cart != 'wishlist' && ((count($product->getRequireAttribute()) > count($attr_id)) || in_array(0, $attr_id))){
             $errors['101'] = \JText::_('JSHOP_SELECT_PRODUCT_OPTIONS');
             if ($displayErrorMessage){
                 \JSError::raiseNotice(101, $errors['101']);
@@ -709,7 +709,7 @@ class CartModel{
         }
 
         //check free attributes
-        if ($jshopConfig->admin_show_freeattributes){
+        if ($this->type_cart != 'wishlist' && $jshopConfig->admin_show_freeattributes){
             $allfreeattributes = $product->getListFreeAttributes();
 			if ($usetriggers){
                 $obj = $this;
@@ -753,29 +753,31 @@ class CartModel{
                     }
                 }
 
-                if ($jshopConfig->max_count_order_one_product && $sum_quantity > $jshopConfig->max_count_order_one_product){
-                    $errors['103'] = sprintf(\JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product);
-                    if ($displayErrorMessage){
-                        \JSError::raiseNotice(103, $errors['103']);
+                if ($this->type_cart != 'wishlist') {
+                    if ($jshopConfig->max_count_order_one_product && $sum_quantity > $jshopConfig->max_count_order_one_product){
+                        $errors['103'] = sprintf(\JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product);
+                        if ($displayErrorMessage){
+                            \JSError::raiseNotice(103, $errors['103']);
+                        }
+                        return 0;
                     }
-                    return 0;
-                }
-                if ($jshopConfig->min_count_order_one_product && $sum_quantity < $jshopConfig->min_count_order_one_product){
-                    $errors['104'] = sprintf(\JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product);
-                    if ($displayErrorMessage){
-                        \JSError::raiseNotice(104, $errors['104']);
+                    if ($jshopConfig->min_count_order_one_product && $sum_quantity < $jshopConfig->min_count_order_one_product){
+                        $errors['104'] = sprintf(\JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product);
+                        if ($displayErrorMessage){
+                            \JSError::raiseNotice(104, $errors['104']);
+                        }
+                        return 0;
                     }
-                    return 0;
-                }
 
-                if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($sum_quantity > $qtyInStock)){
-                    $balans = $qtyInStock - $product_in_cart;
-                    if ($balans < 0) $balans = 0;
-                    $errors['105'] = sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_IN_CART'), $this->products[$key]['quantity'], $balans);
-                    if ($displayErrorMessage){
-                        \JSError::raiseWarning(105, $errors['105']);
+                    if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($sum_quantity > $qtyInStock)){
+                        $balans = $qtyInStock - $product_in_cart;
+                        if ($balans < 0) $balans = 0;
+                        $errors['105'] = sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_IN_CART'), $this->products[$key]['quantity'], $balans);
+                        if ($displayErrorMessage){
+                            \JSError::raiseWarning(105, $errors['105']);
+                        }
+                        return 0;
                     }
-                    return 0;
                 }
 
                 $this->products[$key]['quantity'] = $save_quantity;                
@@ -804,29 +806,31 @@ class CartModel{
             }
             $sum_quantity = $product_in_cart + $quantity;
 
-            if ($jshopConfig->max_count_order_one_product && $sum_quantity > $jshopConfig->max_count_order_one_product){
-                $errors['106'] = sprintf(\JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product);
-                if ($displayErrorMessage){
-                    \JSError::raiseNotice(106, $errors['106']);
+            if ($this->type_cart != 'wishlist') {
+                if ($jshopConfig->max_count_order_one_product && $sum_quantity > $jshopConfig->max_count_order_one_product){
+                    $errors['106'] = sprintf(\JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product);
+                    if ($displayErrorMessage){
+                        \JSError::raiseNotice(106, $errors['106']);
+                    }
+                    return 0;
                 }
-                return 0;
-            }
-            if ($jshopConfig->min_count_order_one_product && $sum_quantity < $jshopConfig->min_count_order_one_product){
-                $errors['107'] = sprintf(\JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product);
-                if ($displayErrorMessage){
-                    \JSError::raiseNotice(107, $errors['107']);
+                if ($jshopConfig->min_count_order_one_product && $sum_quantity < $jshopConfig->min_count_order_one_product){
+                    $errors['107'] = sprintf(\JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product);
+                    if ($displayErrorMessage){
+                        \JSError::raiseNotice(107, $errors['107']);
+                    }
+                    return 0;
                 }
-                return 0;
-            }
 
-            if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($sum_quantity > $qtyInStock)){
-                $balans = $qtyInStock - $product_in_cart;
-                if ($balans < 0) $balans = 0;
-                $errors['108'] = sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT'), $balans);
-                if ($displayErrorMessage){
-                    \JSError::raiseWarning(108, $errors['108']);
+                if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($sum_quantity > $qtyInStock)){
+                    $balans = $qtyInStock - $product_in_cart;
+                    if ($balans < 0) $balans = 0;
+                    $errors['108'] = sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT'), $balans);
+                    if ($displayErrorMessage){
+                        \JSError::raiseWarning(108, $errors['108']);
+                    }
+                    return 0;
                 }
-                return 0;
             }
 
             $product->getDescription();
@@ -840,6 +844,7 @@ class CartModel{
             $temp_product['delivery_times_id'] = $product->getDeliveryTimeId();
             $temp_product['ean'] = $product->getEan();
             $temp_product['manufacturer_code'] = $product->getManufacturerCode();
+            $temp_product['real_ean'] = $product->getRealEan();
             $temp_product['attributes'] = $attr_serialize;
             $temp_product['attributes_value'] = array();
             $temp_product['extra_fields'] = array();
@@ -948,17 +953,19 @@ class CartModel{
                     }
                 }
                 
-                if ($jshopConfig->max_count_order_one_product && ($checkqty > $jshopConfig->max_count_order_one_product)){
-                    \JSError::raiseNotice(111, sprintf(\JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product));
-                    return 0;
-                }
-                if ($jshopConfig->min_count_order_one_product && ($checkqty < $jshopConfig->min_count_order_one_product)){
-                    \JSError::raiseNotice(112, sprintf(\JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product));
-                    return 0;
-                }
-                if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($checkqty > $qtyInStock)){
-                    \JSError::raiseWarning(113, sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_BASKET'), $product->$name, $qtyInStock));
-                    continue;
+                if ($this->type_cart != 'wishlist') {
+                    if ($jshopConfig->max_count_order_one_product && ($checkqty > $jshopConfig->max_count_order_one_product)){
+                        \JSError::raiseNotice(111, sprintf(\JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product));
+                        return 0;
+                    }
+                    if ($jshopConfig->min_count_order_one_product && ($checkqty < $jshopConfig->min_count_order_one_product)){
+                        \JSError::raiseNotice(112, sprintf(\JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product));
+                        return 0;
+                    }
+                    if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($checkqty > $qtyInStock)){
+                        \JSError::raiseWarning(113, sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_BASKET'), $product->$name, $qtyInStock));
+                        continue;
+                    }
                 }
    
                 $this->products[$key]['price'] = $product->getPrice($value, 1, 1, 1, $this->products[$key]);

@@ -13,8 +13,7 @@ $i=0;
 $saveOrderingUrl = 'index.php?option=com_jshopping&controller=productfieldgroups&task=saveorder&tmpl=component&ajax=1';
 Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
     <?php JSHelperAdmin::displaySubmenuOptions("productfields");?>
     <form action="index.php?option=com_jshopping&controller=productfieldgroups" method="post" name="adminForm" id="adminForm">
@@ -75,6 +74,4 @@ Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
     <input type="hidden" name="boxchecked" value="0" />
     <?php print $this->tmp_html_end?>
     </form>
-</div>
-</div>
 </div>

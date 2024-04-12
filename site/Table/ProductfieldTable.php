@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -64,6 +64,21 @@ class ProductFieldTable extends MultilangTable{
         $jshopConfig = \JSFactory::getConfig();
         $db = \JFactory::getDBO();
         $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` ADD `extra_field_".(int)$this->id."` ".$jshopConfig->new_extra_field_type." NOT NULL";
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    function deleteFieldProducts(){
+        $db = \JFactory::getDBO();
+        $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` DROP `extra_field_".(int)$this->id."`";
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    function clearValueFromFieldProduct($field_id, $value_id) {
+        $db = \JFactory::getDBO();
+        $field = "extra_field_".(int)$field_id;
+        $query = "UPDATE `#__jshopping_products_to_extra_fields` SET ".$db->qn($field)."=0 WHERE ".$db->qn($field)."=".$db->q($value_id);
         $db->setQuery($query);
         $db->execute();
     }

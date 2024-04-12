@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.1 15.09.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,20 +18,13 @@ class InfoController extends BaseController{
         \JSHelperAdmin::addSubmenu("info");
         
         $jshopConfig = \JSFactory::getConfig();
-        $data = \JInstaller::parseXMLInstallFile($jshopConfig->admin_path."jshopping.xml");
-		if ($jshopConfig->display_updates_version){
-		    $update_model = \JSFactory::getModel("info");
-		    $update = $update_model->getUpdateObj($data['version'], $jshopConfig);
-        }else{
-            $update = new \stdClass();
-        }
+        $data = \JInstaller::parseXMLInstallFile($jshopConfig->admin_path."jshopping.xml");		
         $view = $this->getView("panel", 'html');
         $view->setLayout("info");
 		$view->set("data",$data);
-        $view->set("update",$update);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+        $view->sidebar = 1;
         \JFactory::getApplication()->triggerEvent('onBeforeDisplayInfo', array(&$view));
         $view->displayInfo();
     }

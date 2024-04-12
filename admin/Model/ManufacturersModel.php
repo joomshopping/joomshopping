@@ -69,7 +69,7 @@ class ManufacturersModel extends BaseadminModel{
         $upload = new UploadFile($image);
         $upload->setAllowFile($jshopConfig->allow_image_upload);
         $upload->setDir($jshopConfig->image_manufs_path);
-        if (isset($post["image_name"])) {
+		if (isset($post["image_name"]) && $post["image_name"] != '') {
             $upload->setNameWithoutExt($post["image_name"]);
         }
         $upload->setFileNameMd5(0);

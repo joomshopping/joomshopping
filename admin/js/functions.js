@@ -327,6 +327,7 @@ var jshopAdminClass = function(){
         var entered_count = jQuery("#attr_count").val();
         var entered_ean = jQuery("#attr_ean").val();
         var entered_manufacturer_code = jQuery("#attr_manufacturer_code").val();
+        var entered_real_ean = jQuery("#attr_real_ean").val();
         var entered_weight = jQuery("#attr_weight").val();
         var entered_weight_volume_units = jQuery("#attr_weight_volume_units").val();
         var entered_old_price = jQuery("#attr_old_price").val();
@@ -365,6 +366,11 @@ var jshopAdminClass = function(){
 
             if (this.use_manufacturer_code=="1"){
                 field="<input class='form-control' type='text' name='attr_manufacturer_code[]' value='"+entered_manufacturer_code+"'>";
+                html+="<td>"+field+"</td>";
+            }
+
+            if (this.use_real_ean=="1"){
+                field="<input class='form-control' type='text' name='attr_real_ean[]' value='"+entered_real_ean+"'>";
                 html+="<td>"+field+"</td>";
             }
 
@@ -581,6 +587,9 @@ var jshopAdminClass = function(){
         if (this.admin_show_manufacturer_code){
             html+='<input type="text"  class="form-control" name="manufacturer_code['+i+']"><br>';
         }
+        if (this.admin_show_real_ean){
+            html+='<input type="text"  class="form-control" name="real_ean['+i+']"><br>';
+        }
         if (this.admin_show_attributes){
             html+='<textarea rows="2" cols="24" name="product_attributes['+i+']"  class="form-control"></textarea><br />';
         }
@@ -627,6 +636,7 @@ var jshopAdminClass = function(){
             jQuery("input[name=product_name\\["+num+"\\]]").val(json.product_name);
             jQuery("input[name=product_ean\\["+num+"\\]]").val(json.product_ean);
             jQuery("input[name=manufacturer_code\\["+num+"\\]]").val(json.manufacturer_code);
+            jQuery("input[name=real_ean\\["+num+"\\]]").val(json.real_ean);
             jQuery("input[name=product_item_price\\["+num+"\\]]").val(json.product_price);
             jQuery("input[name=product_tax\\["+num+"\\]]").val(json.product_tax);
             jQuery("input[name=weight\\["+num+"\\]]").val(json.product_weight);
@@ -657,6 +667,7 @@ var jshopAdminClass = function(){
         jQuery("input[name=product_ean\\["+num+"\\]]", window.parent.document).val( jQuery('#product_code').html() );
         jQuery("input[name=weight\\["+num+"\\]]", window.parent.document).val( jQuery('#block_weight').html() );
         jQuery("input[name=manufacturer_code\\["+num+"\\]]", window.parent.document).val( jQuery('#manufacturer_code').html() );
+        jQuery("input[name=real_ean\\["+num+"\\]]", window.parent.document).val( jQuery('#real_ean').html() );
         var attributetext = '';
         var attr = {};
         for(var i=0;i<jshopParams.attr_list.length;i++){
@@ -990,7 +1001,7 @@ var jshopAdminClass = function(){
 
     this.reloadSelectMainCategory = function(obj) {
         if (jQuery('option:selected', obj).length > 1) {
-            var main_cat_sel = '<select name="main_category_id" class="inputbox form-control" onchange="jshopAdmin.updateMainCategoryVal(this.value)">';
+            var main_cat_sel = '<select name="main_category_id" class="inputbox form-control form-select" onchange="jshopAdmin.updateMainCategoryVal(this.value)">';
             jQuery('option:selected', obj).each(function(){
                 main_cat_sel += '<option value="'+$(this).val()+'">'+$(this).text()+'</option>';
             });
@@ -1011,7 +1022,120 @@ var jshopAdminClass = function(){
         jQuery('td.main_category_select').attr('val', val);
     }
 
+    this.productExtrafieldOptionPopup = function(obj, action) {
+        let tr = jQuery(obj).closest('tr');
+        let ef_id = tr.attr('extrafieldid');        
+        let product_id = jQuery('input[name=product_id]').val();
+        let ef_val_id = jQuery('.prod_extrafield_values input[type=hidden]', tr).val() ?? 0;        
+        let btn = jQuery(obj).closest('tr').find('.prod_extrafield_btn button');
+
+        jQuery('#extrafields_option_popup .modal-title').html(btn.attr('title'));
+        jQuery('#extrafields_option_popup input[name=new_ef_option_ef_id]').val(ef_id);
+        jQuery('#extrafields_option_popup input[name=new_ef_option_ef_val_id]').val(ef_val_id);
+        jQuery('#extrafields_option_popup .new_option').val('');
+        jQuery('#extrafields_option_popup').modal('show');        
+        if (action == 'edit') {
+            jshopAdmin.ajaxLoadAnimate().show();
+            jQuery.ajax({
+                type: "POST",
+                url: 'index.php?option=com_jshopping&controller=products&task=get_product_extrafield_value',
+                data: {'product_id': product_id, 'ef_id': ef_id, 'ef_val_id': ef_val_id},
+                dataType : "json"
+            }).done(function(json){
+                if (json.name) {
+                    jQuery('#extrafields_option_popup input[name^=new_ef_option_ef_name]').each(function(){        
+                        let lang = jQuery(this).attr('language');
+                        jQuery(this).val(json.name[lang]);
+                    });
+                }
+                jQuery('#extrafields_option_popup input[name=new_ef_option_ef_val_id]').val(json.id);
+                jshopAdmin.ajaxLoadAnimate().hide();
+            });
+        }
+    }
+
+    this.productExtrafieldOptionPopupSave = function() {
+        let ef_id = jQuery('#extrafields_option_popup input[name=new_ef_option_ef_id]').val();
+        let ef_val_id = jQuery('#extrafields_option_popup input[name=new_ef_option_ef_val_id]').val();    
+        let options = {};    
+        jQuery('#extrafields_option_popup input[name^=new_ef_option_ef_name]').each(function(){        
+            options[jQuery(this).attr('language')] = this.value;
+        });
+        jshopAdmin.ajaxLoadAnimate().show();
+        jQuery.ajax({
+            type: "POST",
+            url: "index.php?option=com_jshopping&controller=productfieldvalues&task=edit_ajax",
+            data: {'options': options, 'ef_id': ef_id, 'ef_val_id': ef_val_id, 'ajax': 1},
+            dataType : "json"
+        }).done(function(json){
+            let tr = jQuery("tr[extrafieldid="+ef_id+"]");
+            if (jQuery('.prod_extrafield_values select', tr).length) {
+                jQuery('.prod_extrafield_values select', tr).append('<option value="'+json.id+'">'+json.text+'</option>');
+                jQuery('.prod_extrafield_values select', tr).val(json.id);
+            } else {
+                jQuery('.prod_extrafield_values input[type=hidden]', tr).val(json.id);
+                jQuery('.prod_extrafield_values .prod_extra_fields_uniq_val', tr).html(json.text);
+            }
+            jshopAdmin.ajaxLoadAnimate().hide();
+        }).fail(function(){
+            jshopAdmin.ajaxLoadAnimate().hide();
+            alert('Loading data error ... ');
+        });
+        jQuery('#extrafields_option_popup').modal('hide');
+    }
+
+    this.productExtrafieldSearch = function(){
+        let search = jQuery('.prod_extrafields_search').val().toLowerCase();
+        if (search == '') {
+            jQuery('table.list_prod_extrafields tr').show();
+        } else {
+            jQuery('table.list_prod_extrafields tr').each(function(){
+                jQuery(this).hide();
+                if (jQuery(".prod_extrafield_title", this).length) {
+                    let text = jQuery(".prod_extrafield_title", this).html().toLowerCase();
+                    if (text.indexOf(search) != -1) {
+                        jQuery(this).show();
+                    }
+                }
+            });
+        }
+        if (jQuery('.prod_extrafields_search_hide_unfilled').prop('checked')){
+            jQuery('table.list_prod_extrafields tr').each(function(){
+                if (jQuery(".prod_extrafield_values", this).length == 0) {
+                    jQuery(this).hide();
+                }
+                if (jQuery(".prod_extrafield_values input[type=text]", this).length) {
+                    if (jQuery(".prod_extrafield_values input[type=text]", this).val() == '') {
+                        jQuery(this).hide();
+                    }
+                }
+                if (jQuery(".prod_extrafield_values input[type=hidden]", this).length) {
+                    let val = jQuery(".prod_extrafield_values input[type=hidden]", this).val();
+                    if (val == '0' || val == '') {
+                        jQuery(this).hide();
+                    }
+                }
+                if (jQuery(".prod_extrafield_values select", this).length) {   
+                    let val = jQuery(".prod_extrafield_values select", this).val();                 
+                    if (val=='0' || val.length==0) {
+                        jQuery(this).hide();
+                    }
+                }
+            });
+        }
+    }
+
+    this.ajaxLoadAnimate = function(){
+        let ajaxLoadAnimate =  jQuery('#ajaxLoadAnimate');
+        if (!ajaxLoadAnimate.length){
+            ajaxLoadAnimate = jQuery('<div id="ajaxLoadAnimate"></div>');
+            jQuery('body').append(ajaxLoadAnimate);
+        }
+        return ajaxLoadAnimate;
+    }
+
 }
+
 var jshopAdmin = new jshopAdminClass();
 
 jQuery(document).ready(function(){
@@ -1033,5 +1157,22 @@ jQuery(document).ready(function(){
 	jQuery(document).on('change', '.shop-list-order select[name^=select_status_id]', function(){
 		jQuery(this).closest('td').find('.update_status_panel').removeClass('d-none');
 	});
+
+    jQuery(document).on('click', '.jshop_edit .extrafields_btn_add', function(){
+        jshopAdmin.productExtrafieldOptionPopup(this, 'add');
+        return false;
+    });
+    jQuery(document).on('click', '.jshop_edit .extrafields_btn_edit,.jshop_edit .prod_extrafield_values .prod_extra_fields_uniq_val', function(){
+        jshopAdmin.productExtrafieldOptionPopup(this, 'edit');
+        return false;
+    });
+
+    jQuery(document).on('click', '#extrafields_option_popup .btn-save', function(){
+        jshopAdmin.productExtrafieldOptionPopupSave();
+    });
+
+    jQuery('.prod_extrafields_search, .prod_extrafields_search_hide_unfilled').on('input', function(){
+        jshopAdmin.productExtrafieldSearch();
+    });
 
 });

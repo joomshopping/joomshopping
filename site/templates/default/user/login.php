@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 defined('_JEXEC') or die();
+
+$is_uname = $this->config_fields["u_name"]["display"];
 ?>
 <div class = "jshop pagelogin" id="comjshop">    
     <h1><?php print JText::_('JSHOP_LOGIN')?></h1>
@@ -25,11 +27,11 @@ defined('_JEXEC') or die();
                 <div class="control-elms rowlogin">
                     <div class="control-label">
                         <label id="username-lbl" for="jlusername">
-                            <?php print JText::_('JSHOP_USERNAME')?>:
+                            <?php print $is_uname ? \JText::_('JSHOP_USERNAME') : \JText::_('JSHOP_EMAIL'); ?>:
                         </label>
                     </div>
                     <div class="controls">
-                        <input type="text" id="jlusername" name="username" value="" class="inputbox form-control" required placeholder="<?php print JText::_('JSHOP_USERNAME')?>">
+                        <input type="text" id="jlusername" name="username" value="" class="inputbox form-control" required placeholder="<?php print $is_uname ? \JText::_('JSHOP_USERNAME') : \JText::_('JSHOP_EMAIL'); ?>">
                     </div>
                 </div>
                 

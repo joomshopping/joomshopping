@@ -13,8 +13,7 @@ $saveOrderingUrl = 'index.php?option=com_jshopping&controller=attributesgroups&t
 Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
 $i = 0; 
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
     <?php JSHelperAdmin::displaySubmenuOptions("attributes");?>
     <form action="index.php?option=com_jshopping&controller=attributesgroups" method="post" name="adminForm" id="adminForm">
@@ -75,8 +74,6 @@ $i = 0;
     <input type="hidden" name="boxchecked" value="0" />
     <?php print $this->tmp_html_end?>
     </form>
-</div>
-</div>
 </div>
 <script>
 jQuery(function(){

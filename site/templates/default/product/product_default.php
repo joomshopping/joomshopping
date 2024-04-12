@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 15.09.2022
+* @version      5.3.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,7 +13,7 @@ include(dirname(__FILE__)."/load.js.php");
 <div class="jshop productfull" id="comjshop">
     <form name="product" method="post" action="<?php print $this->action?>" enctype="multipart/form-data" autocomplete="off">
     
-        <h1><?php print $this->product->name?><?php if ($this->config->show_product_code){?> <span class="jshop_code_prod">(<?php print JText::_('JSHOP_EAN')?>: <span id="product_code"><?php print $this->product->getEan();?></span>)</span><?php }?></h1>
+        <h1><?php print $this->product->name?><?php if ($this->config->show_product_code){?> <span class="jshop_code_prod">(<?php print JText::_('JSHOP_EAN_PRODUCT')?>: <span id="product_code"><?php print $this->product->getEan();?></span>)</span><?php }?></h1>
         
         <?php print $this->_tmp_product_html_start;?>
 
@@ -120,6 +120,11 @@ include(dirname(__FILE__)."/load.js.php");
                 <?php if ($this->config->manufacturer_code_in_product_detail && $this->product->getManufacturerCode()!=""){?>
                     <div class="manufacturer_code">
                         <?php print JText::_('JSHOP_MANUFACTURER_CODE')?>: <span id="manufacturer_code"><?php print $this->product->getManufacturerCode()?></span>
+                    </div>
+                <?php }?>
+				<?php if ($this->config->real_ean_in_product_detail && $this->product->getRealEan()!=""){?>
+                    <div class="real_ean">
+                        <?php print JText::_('JSHOP_EAN')?>: <span id="real_ean"><?php print $this->product->getRealEan()?></span>
                     </div>
                 <?php }?>
 

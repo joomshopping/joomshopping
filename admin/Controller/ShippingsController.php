@@ -59,7 +59,7 @@ class ShippingsController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_extra_column_headers = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayShippings', array(&$view));
 		$view->displayList();

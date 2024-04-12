@@ -8,8 +8,8 @@
 */
 defined('_JEXEC') or die();
 ?>
-<div class="row">
-<div id="j-main-container" class="col-md-12">
+
+<div id="j-main-container" class="j-main-container">
     <form action="index.php?option=com_jshopping" method="post" name="adminForm" id="adminForm">
     <?php print $this->tmp_html_start?>
     <div id="cpanel">
@@ -18,5 +18,4 @@ defined('_JEXEC') or die();
     <?php print $this->tmp_html_end?>
     <input type="hidden" name="task">
     </form>
-</div>
 </div>

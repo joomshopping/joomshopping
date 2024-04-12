@@ -10,8 +10,7 @@ defined('_JEXEC') or die();
 $rows=$this->rows;
 $i=0;
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php \JSHelperAdmin::displaySubmenuConfigs('general');?>
 <form action="index.php?option=com_jshopping&controller=configdisplayprice" method="post" name="adminForm" id="adminForm">
@@ -79,6 +78,4 @@ $i++;
 <input type="hidden" name="boxchecked" value="0" />
 <?php print $this->tmp_html_end?>
 </form>
-</div>
-</div>
 </div>

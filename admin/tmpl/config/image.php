@@ -10,8 +10,7 @@ defined('_JEXEC') or die();
 $jshopConfig = \JSFactory::getConfig();
 \JHTML::_('bootstrap.tooltip');
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php \JSHelperAdmin::displaySubmenuConfigs('image');?>
 <div class="jshop_edit">
@@ -134,7 +133,7 @@ $jshopConfig = \JSFactory::getConfig();
         <?php echo JText::_('JSHOP_OC_image_fill_color')?>
     </td>
     <td>
-        <input type="text" name="image_fill_color" class = "form-control" value ="<?php echo $jshopConfig->image_fill_color?>" />
+      <?php print $this->image_fill_colors;?>
     </td>
 </tr>
 <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
@@ -180,7 +179,5 @@ $jshopConfig = \JSFactory::getConfig();
 
 <?php print $this->tmp_html_end?>
 </form>
-</div>
-</div>
 </div>
 </div>

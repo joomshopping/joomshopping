@@ -15,8 +15,7 @@ if ($saveOrder){
 	Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
 }
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
     <?php JSHelperAdmin::displaySubmenuOptions();?>
     <form action="index.php?option=com_jshopping&controller=manufacturers" method="post" name="adminForm" id="adminForm">
@@ -87,8 +86,6 @@ if ($saveOrder){
     <input type="hidden" name="boxchecked" value="0" >
     <?php print $this->tmp_html_end?>
     </form>
-</div>
-</div>
 </div>
 <script>
 jQuery(function(){

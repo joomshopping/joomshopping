@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 11.12.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,7 +14,7 @@ class LanguagesModel extends BaseadminModel{
     
     protected $nameTable = 'language';
 
-    function getAllLanguages($publish = 1) {
+    public function getAllLanguages($publish = 1) {
         $jshopConfig = \JSFactory::getConfig();
         $db = \JFactory::getDBO();
         $where_add = $publish ? "where `publish`='1'": ""; 
@@ -29,10 +29,15 @@ class LanguagesModel extends BaseadminModel{
         }
         foreach($rows as $k=>$v){
             if (isset($rowssort[0]) && $rowssort[0]->language==$v->language) continue;
-            $rowssort[] = $v;            
+            $rowssort[] = $v;
         }
         unset($rows);
         return $rowssort;
+    }
+
+    public function getAllTags($publish = 1) {
+        $list = $this->getAllLanguages($publish);
+        return array_map(function($lang){return $lang->language;}, $list);
     }
  
 }

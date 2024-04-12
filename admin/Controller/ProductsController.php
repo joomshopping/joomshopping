@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.1 06.10.2022
+* @version      5.3.0 06.12.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,7 +10,6 @@ namespace Joomla\Component\Jshopping\Administrator\Controller;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 
 defined('_JEXEC') or die();
-jimport('joomla.html.pagination');
 
 class ProductsController extends BaseadminController{
 
@@ -77,7 +76,7 @@ class ProductsController extends BaseadminController{
         if ($show_vendor){
             $lists['vendors'] = \JHTML::_('select.genericlist', SelectOptions::getVendors(), 'vendor_id','class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $vendor_id);
         }
-        $lists['treecategories'] = \JHTML::_('select.genericlist', SelectOptions::getCategories(), 'category_id', 'class="form-select" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id );
+        $lists['treecategories'] = \JHTML::_('select.genericlist', SelectOptions::getCategories(1, 0, 1), 'category_id', 'class="form-select" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id );
         $lists['manufacturers'] = \JHTML::_('select.genericlist', SelectOptions::getManufacturers(), 'manufacturer_id','class="form-select" onchange="document.adminForm.submit();"', 'manufacturer_id', 'name', $manufacturer_id);
         if ($jshopConfig->admin_show_product_labels) {
             $lists['labels'] = \JHTML::_('select.genericlist', SelectOptions::getLabels(), 'label_id','style="width: 120px;" class="form-select" onchange="document.adminForm.submit();"','id','name', $label_id);
@@ -108,7 +107,7 @@ class ProductsController extends BaseadminController{
         $view->tmp_html_col_after_td_foot = "";
         $view->tmp_html_end = "";
 		$view->tmp_html_filter_end = '';
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher->triggerEvent('onBeforeDisplayListProductsView', array(&$view));
         $view->display();
     }
@@ -151,7 +150,6 @@ class ProductsController extends BaseadminController{
         $product->load($product_id);
         $_productprice = \JSFactory::getTable('productprice');
         $product->product_add_prices = $_productprice->getAddPrices($product_id);
-        $product->product_add_prices = array_reverse($product->product_add_prices);
         $product->name = $product->getName();
 		$dispatcher->triggerEvent('onBeforeDisplayEditProductStart', array(&$product));
 
@@ -400,7 +398,6 @@ class ProductsController extends BaseadminController{
         $model = \JSFactory::getModel("products");
         $post = $model->getPrepareDataSave($this->input);
         if (!$product = $model->save($post)){
-            print $model->getError(); die();
             \JSError::raiseWarning("100", $model->getError());
             $this->setRedirect("index.php?option=com_jshopping&controller=products&task=edit&product_id=".$post['product_id']);
             return;
@@ -433,13 +430,12 @@ class ProductsController extends BaseadminController{
         $product = \JSFactory::getTable('product');
 
         $all_taxes = \JSFactory::getModel("taxes")->getAllTaxes();
-
         $list_tax = SelectOptions::getTaxs(0, 1);
         if (count($all_taxes)==0) $withouttax = 1; else $withouttax = 0;
 
         $categories = \JSHelper::buildTreeCategory(0,1,0);
-
-        $manufs = SelectOptions::getManufacturers(2, 1);
+        $manufs = SelectOptions::getManufacturers(2, 1);        
+        $languages = \JSFactory::getModel("languages")->getAllLanguages(1);
 
         $price_modification = SelectOptions::getProductAttributPriceModify();
         $lists['price_mod_price'] = \JHTML::_('select.genericlist', $price_modification,'mod_price','class = "form-control form-select"','id','name');
@@ -493,6 +489,7 @@ class ProductsController extends BaseadminController{
         $view->set('withouttax', $withouttax);
         $view->set('display_vendor_select', $display_vendor_select);
 		$view->set('tmpl_extra_fields', $tmpl_extra_fields);
+        $view->languages = $languages;
         $view->set('related_products', []);
         $view->set('etemplatevar', '');
         $dispatcher->triggerEvent('onBeforeDisplayEditListProductView', array(&$view) );
@@ -614,7 +611,7 @@ class ProductsController extends BaseadminController{
         $list = $_productfields->getList(1);
 
         $_productfieldvalues = \JSFactory::getModel("productfieldvalues");
-        $listvalue = $_productfieldvalues->getAllList();
+        $listvalue = $_productfieldvalues->getAllList(10);
 
         $f_option = array();
 		if ($edittype == 'list') {
@@ -624,7 +621,7 @@ class ProductsController extends BaseadminController{
 			$f_option[] = \JHTML::_('select.option', 0, " - - - ", 'id', 'name');
 		}
 
-        $fields = array();
+        $fields = [];
         foreach($list as $v){
             $insert = 0;
 			if ($edittype == 'list') {
@@ -638,30 +635,45 @@ class ProductsController extends BaseadminController{
                     if (in_array($catid, $cats)) $insert = 1;
                 }
             }
+            if ($edittype == 'list' && $v->product_uniq_val) {
+                $insert = 0;
+            }
             if ($insert){
                 $obj = new \stdClass();
                 $obj->id = $v->id;
                 $obj->name = $v->name;
                 $obj->groupname = $v->groupname;
-                $tmp = array();
-                foreach($listvalue as $lv){
-                    if ($lv->field_id==$v->id) $tmp[] = $lv;
-                }
+                $obj->product_uniq_val = $v->product_uniq_val;
                 $name = 'extra_field_'.$v->id;
-                if ($v->type==0){
+                if ($v->type == 0 && $v->product_uniq_val == 0) {
                     if ($v->multilist==1){
-                        $attr = 'multiple="multiple" size="10" class = "form-control form-select" ';
+                        $attr = 'multiple="multiple" size="10" class="form-control form-select" ';
                     }else{
                         $attr = "class = 'form-control form-select' ";
                     }
+                    $tmp = [];
+                    foreach($listvalue as $lv){
+                        if ($lv->field_id==$v->id) $tmp[] = $lv;
+                    }
                     $obj->values = \JHTML::_('select.genericlist', array_merge($f_option, $tmp), 'productfields['.$name.'][]', $attr, 'id', 'name', explode(',', $product->$name ?? ''));
-                }else{
-                    $obj->values = "<input type='text' class = 'form-control' name='".$name."' value='".($product->$name ?? '')."' />";
+                    $view = $this->getView("product_edit", 'html');
+                    $view->setLayout("extrafields_btn_add");
+                    $view->title = \JText::_('JSHOP_ADD_NEW_OPTION_FOR').' "'.$v->name.'"';
+                    $obj->btn = $view->loadTemplate();
+                } elseif ($v->type == 0 && $v->product_uniq_val == 1) {
+                    $obj->values = "<input type='hidden' name='".'productfields['.$name.'][]'."' value='".($product->$name ?? '0')."'>";
+                    $obj->values .= "<span class='prod_extra_fields_uniq_val'>".($listvalue[$product->$name]->name ?? '')."</span>";
+                    $view = $this->getView("product_edit", 'html');
+                    $view->setLayout("extrafields_btn_edit");
+                    $view->title = \JText::_('JSHOP_EDIT').' "'.$v->name.'"';
+                    $obj->btn = $view->loadTemplate();
+                } else {
+                    $obj->values = "<input type='text' class='form-control' name='".$name."' value='".($product->$name ?? '')."' />";
                 }
                 $fields[] = $obj;
             }
         }
-        $view=$this->getView("product_edit", 'html');
+        $view = $this->getView("product_edit", 'html');
         $view->setLayout("extrafields_inner");
         $view->set('fields', $fields);
 		$view->set('product', $product);
@@ -710,6 +722,7 @@ class ProductsController extends BaseadminController{
 		$res['category_id'] = $product->getCategory();
         $res['product_ean'] = $product->product_ean;
         $res['manufacturer_code'] = $product->getManufacturerCode();
+        $res['real_ean'] = $product->getRealEan();
         $res['product_price'] = $product_price;
         $res['delivery_times_id'] = $product->delivery_times_id;
         $res['vendor_id'] = \JSHelper::fixRealVendorId($product->vendor_id);
@@ -797,6 +810,39 @@ class ProductsController extends BaseadminController{
         $model = \JSFactory::getModel('productajaxrequest', 'Site');
 		$model->setData($product_id, $change_attr, $qty, $attribs, $freeattr, $request);
 		print $model->getProductDataJson();
+		die();
+    }
+
+    function get_product_extrafield_value(){
+        $product_id = $this->input->getInt("product_id");
+        $ef_id = $this->input->getInt("ef_id");
+        $ef_val_id = $this->input->getInt("ef_val_id");
+        $productfield = \JSFactory::getTable('productfield');
+        $productfield->load($ef_id);
+
+        if ($ef_val_id) {
+            $value = $ef_val_id;
+        } else {
+            $product = \JSFactory::getTable('product');
+            $product->load($product_id);
+            $ef_data = $product->getExtraFieldsData();
+            $value = $ef_data['extra_field_'.$ef_id] ?? '';
+        }
+        $res = [];
+        $res['type'] = $productfield->type;
+        if ($productfield->type == 0) {
+            $productfieldvalue = \JSFactory::getTable('productfieldvalue');
+            $productfieldvalue->load($value);            
+            $res['id'] = $productfieldvalue->id ?? 0;
+            $res['name'] = [];
+            $langs = \JSFactory::getModel("languages")->getAllLanguages(1);
+            foreach($langs as $lang) {
+                $res['name'][$lang->language] = $productfieldvalue->{'name_'.$lang->language};
+            }            
+        } else {
+            $res['value'] = $value;
+        }
+        print json_encode($res);
 		die();
     }
 

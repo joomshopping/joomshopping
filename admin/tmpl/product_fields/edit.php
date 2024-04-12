@@ -66,16 +66,26 @@ $row=$this->row;
        <?php echo $this->lists['type'];?>
      </td>
    </tr>
-      <tr>
+  <tr>
      <td  class="key">
        <?php echo JText::_('JSHOP_GROUP')?>
      </td>
      <td>
        <?php echo $this->lists['group'];?>
      </td>
-   </tr>
+  </tr>
+  <tr>
+    <td  class="key">
+      <?php echo JText::_('JSHOP_UNIQ_VALUE_FOR_PRODUCT')?>
+    </td>
+    <td>
+      <input type="hidden" name="product_uniq_val" value="0">
+      <input type="checkbox" name="product_uniq_val" value="1" <?php if ($row->product_uniq_val) {?>checked<?php }?>>
+    </td>
+  </tr>
+
    <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
- </table>
+</table>
 </fieldset>
 </div>
 <div class="clr"></div>

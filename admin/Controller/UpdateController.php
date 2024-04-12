@@ -29,7 +29,7 @@ class UpdateController extends BaseadminController{
         $view->set('etemplatevar2', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
 		$view->display(); 
     }
 

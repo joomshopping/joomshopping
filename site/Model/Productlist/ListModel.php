@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 13.09.2022
+* @version      5.3.0 13.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,6 +10,7 @@ namespace Joomla\Component\Jshopping\Site\Model\Productlist;
 use Joomla\Component\Jshopping\Site\Helper\Selects;
 defined('_JEXEC') or die();
 
+#[\AllowDynamicProperties]
 class ListModel{
     	
     public $multi_page_list = 1;
@@ -124,7 +125,7 @@ class ListModel{
     function getBuildQueryListProductDefaultResult($adfields=array()){
         $lang = \JSFactory::getLang();
 		if (count($adfields)>0) $adquery = ",".implode(', ',$adfields); else $adquery = '';
-        return "prod.product_id, pr_cat.category_id, prod.main_category_id, prod.`".$lang->get('name')."` as name, prod.`".$lang->get('short_description')."` as short_description, prod.product_ean, prod.manufacturer_code, prod.image, prod.product_price, prod.currency_id, prod.product_tax_id as tax_id, prod.product_old_price, prod.product_weight, prod.average_rating, prod.reviews_count, prod.hits, prod.weight_volume_units, prod.basic_price_unit_id, prod.label_id, prod.product_manufacturer_id, prod.min_price, prod.product_quantity, prod.different_prices".$adquery;
+        return "prod.product_id, pr_cat.category_id, prod.main_category_id, prod.`".$lang->get('name')."` as name, prod.`".$lang->get('short_description')."` as short_description, prod.product_ean, prod.manufacturer_code, prod.real_ean, prod.image, prod.product_price, prod.currency_id, prod.product_tax_id as tax_id, prod.product_old_price, prod.product_weight, prod.average_rating, prod.reviews_count, prod.hits, prod.weight_volume_units, prod.basic_price_unit_id, prod.label_id, prod.product_manufacturer_id, prod.min_price, prod.product_quantity, prod.different_prices".$adquery;
     }
 
     function getBuildQueryListProduct($type, $restype, &$filters, &$adv_query, &$adv_from, &$adv_result){
@@ -207,16 +208,11 @@ class ListModel{
         }
         if (isset($filters['search']) && $filters['search']){
             $where_search = "";
-			$filters['search_type'] = $filters['search_type'] ?? '';
             if ($filters['search_type']=="exact"){
                 $word = addcslashes($db->escape($filters['search']), "_%");
                 $tmp = array();
                 foreach($jshopConfig->product_search_fields as $field){
-					if (isset($jshopConfig->product_search_fields_exact) && in_array($field, $jshopConfig->product_search_fields_exact)) {
-                        $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '".$word."'";
-                    } else {
-                        $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
-                    }
+                    $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
                 }
                 $where_search = implode(' OR ', $tmp);
             }else{
@@ -226,11 +222,7 @@ class ListModel{
                     $word = addcslashes($db->escape($word), "_%");
                     $tmp = array();
                     foreach($jshopConfig->product_search_fields as $field){
-                        if (isset($jshopConfig->product_search_fields_exact) && in_array($field, $jshopConfig->product_search_fields_exact)) {
-							$tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '".$word."'";
-						} else {
-							$tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
-						}
+                        $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
                     }
                     $where_search_block = implode(' OR ', $tmp);
                     $search_word[] = "(".$where_search_block.")";

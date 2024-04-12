@@ -344,8 +344,12 @@ $order=$this->order;
                         <?php if ($this->config->manufacturer_code_in_cart && $prod->manufacturer_code){?>
                             <div class="manufacturer_code"><?php print JText::_('JSHOP_MANUFACTURER_CODE')?>: <span><?php print $prod->manufacturer_code?></span></div>
                         <?php }?>
+                        <?php if ($this->config->real_ean_in_cart && $prod->real_ean){?>
+                            <div class="real_ean"><?php print JText::_('JSHOP_EAN')?>: <span><?php print $prod->real_ean?></span></div>
+                        <?php }?>
                         <div class="attribs">
                             <?php print \JSHelper::sprintAtributeInOrder($prod->product_attributes).\JSHelper::sprintFreeAtributeInOrder($prod->product_freeattributes);?>
+                            <div class="extra_fields"><?php print \JSHelper::sprintExtraFiledsInOrder($prod->extra_fields)?></div>
                             <?php print $prod->_ext_attribute_html;?>
                         </div>
                         <?php if (count($files)){?>

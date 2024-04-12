@@ -8,9 +8,9 @@
 */
 defined('_JEXEC') or die();
 ?>
-<div class="row">
+
 <?php if ($this->sidebar){?>
-<div id="j-main-container" class="col-md-12">
+<div id="j-main-container" class="j-main-container">
 <?php }?>
 <?php print $this->tmp_html_start?>
 <div class="aboutus">
@@ -84,4 +84,3 @@ defined('_JEXEC') or die();
 <?php if ($this->sidebar){?>
 </div>
 <?php }?>
-</div>

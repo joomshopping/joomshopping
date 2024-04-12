@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.2 23.10.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -135,11 +135,13 @@ class ProductsController extends BaseController{
         $allow_review = $productlist->getAllowReview();
         $action = $productlist->getAction();
         $orderby = $productlist->getOrderBy();
+		$willBeUseFilter = $productlist->getWillBeUseFilter();
 
         $view = $this->getView('products');
         $view->setLayout("products");
         $view->set('config', $jshopConfig);
 		$view->set('template_block_list_product', $productlist->getTmplBlockListProduct());
+		$view->set('template_no_list_product', $productlist->getTmplNoListProduct());
         $view->set('template_block_form_filter', $productlist->getTmplBlockFormFilter());
         $view->set('template_block_pagination', $productlist->getTmplBlockPagination());
         $view->set("header", $header);
@@ -152,6 +154,7 @@ class ProductsController extends BaseController{
         $view->set('shippinginfo', \JSHelper::SEFLink($jshopConfig->shippinginfourl,1));
         $view->set('action', $action);
         $view->set('orderby', $orderby);
+		$view->set('willBeUseFilter', $willBeUseFilter);
         $view->_tmp_list_products_html_start = "";
         $view->_tmp_list_products_html_end = "";
         $view->_tmp_ext_filter_box = "";

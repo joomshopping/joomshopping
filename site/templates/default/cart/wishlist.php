@@ -25,12 +25,6 @@ $countprod = count($this->products);
             <th class="single_price">
                 <?php print JText::_('JSHOP_SINGLEPRICE')?>
             </th>
-            <th class="quantity">
-                <?php print JText::_('JSHOP_NUMBER')?>
-            </th>
-            <th class="total_price">
-                <?php print JText::_('JSHOP_PRICE_TOTAL')?>
-            </th>
             <th class="remove_to_cart">
             </th>
         </tr>
@@ -67,6 +61,9 @@ $countprod = count($this->products);
                     <?php if ($this->config->manufacturer_code_in_cart && $prod['manufacturer_code']){?>
                         <div class="manufacturer_code"><?php print JText::_('JSHOP_MANUFACTURER_CODE')?>: <span><?php print $prod['manufacturer_code'] ?></span></div>
                     <?php }?>
+                    <?php if ($this->config->real_ean_in_cart && $prod['real_ean']){?>
+                        <div class="real_ean"><?php print JText::_('JSHOP_EAN')?>: <span><?php print $prod['real_ean'] ?></span></div>
+                    <?php }?>
                     <?php print \JSHelper::sprintAtributeInCart($prod['attributes_value']);?>
                     <?php print \JSHelper::sprintFreeAtributeInCart($prod['free_attributes_value']);?>
                     <?php print \JSHelper::sprintFreeExtraFiledsInCart($prod['extra_fields']);?>
@@ -86,23 +83,6 @@ $countprod = count($this->products);
                         <div class="basic_price">
                             <?php print JText::_('JSHOP_BASIC_PRICE')?>: <span><?php print \JSHelper::sprintBasicPrice($prod);?></span>
                         </div>
-                    <?php }?>
-                </div>
-            </td>
-            <td class="quantity">
-                <div class="data">
-                    <span class="mobile-cart-inline">
-                        <?php print JText::_('JSHOP_NUMBER')?>:
-                    </span>
-                    <span class="qtyval"><?php print $prod['quantity']?></span><?php print $prod['_qty_unit'];?>
-                </div>
-            </td>
-            <td class="total_price">
-                <div class="data">
-                    <?php print \JSHelper::formatprice($prod['price']*$prod['quantity']);?>
-                    <?php print $prod['_ext_price_total_html']?>
-                    <?php if ($this->config->show_tax_product_in_cart && $prod['tax']>0){?>
-                        <span class="taxinfo"><?php print \JSHelper::productTaxInfo($prod['tax']);?></span>
                     <?php }?>
                 </div>
             </td>

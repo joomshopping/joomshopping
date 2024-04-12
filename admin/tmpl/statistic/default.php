@@ -11,8 +11,7 @@ defined('_JEXEC') or die();
 $rows=$this->rows;
 $paid_status=$this->paid_status;
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php JSHelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping" method="post" name="adminForm" id="adminForm">
@@ -373,8 +372,6 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
 <div class="clearfix"></div>
 <input type="hidden" name="task">
 </form>
-</div>
-</div>
 </div>
 <script>
 jQuery(function(){

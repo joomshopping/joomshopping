@@ -27,6 +27,10 @@ class MultiLangfield{
     function setLang($lang){
         $this->lang = $lang;
     }
+
+    function getLang(){
+        return $this->lang;
+    }
     
     function get($field){
         return $field."_".$this->lang;

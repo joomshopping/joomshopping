@@ -164,6 +164,10 @@ class Order extends \TCPDF{
                 $pdf->SetXY(20, $pdf->getY());
                 $pdf->MultiCell($width_filename, 4, \JText::_('JSHOP_MANUFACTURER_CODE').": ".$prod->manufacturer_code, 0, 'L');
             }
+            if ($jshopConfig->real_ean_in_cart && $prod->real_ean!=''){
+                $pdf->SetXY(20, $pdf->getY());
+                $pdf->MultiCell($width_filename, 4, \JText::_('JSHOP_EAN').": ".$prod->real_ean, 0, 'L');
+            }
             if ($prod->product_attributes!="" || $prod->product_freeattributes!="" || $prod->delivery_time || $prod->extra_fields!=''){
                 if ($prod->delivery_time){
                     $pdt = \JText::_('JSHOP_DELIVERY_TIME').": ".$prod->delivery_time;

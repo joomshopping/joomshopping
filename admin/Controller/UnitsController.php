@@ -24,7 +24,7 @@ class UnitsController extends BaseadminController{
         $view->set('rows', $rows);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();        
+        
         \JFactory::getApplication()->triggerEvent('onBeforeDisplayUnits', array(&$view));
 		$view->displayList();
 	}

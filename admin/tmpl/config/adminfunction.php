@@ -11,8 +11,7 @@ defined('_JEXEC') or die();
 $jshopConfig=\JSFactory::getConfig();
 $lists=$this->lists;
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php \JSHelperAdmin::displaySubmenuConfigs('adminfunction');?>
 <div class="jshop_edit">
@@ -272,7 +271,5 @@ $lists=$this->lists;
 </div>
 <?php print $this->tmp_html_end?>
 </form>
-</div>
-</div>
 </div>
 </div>

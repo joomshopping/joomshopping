@@ -124,6 +124,11 @@ class pm_sofortueberweisung extends PaymentRoot{
             ]
         );
         ?>
+		<html>
+            <head>
+                <meta http-equiv="content-type" content="text/html; charset=utf-8" />            
+            </head>
+            <body>
             <?php echo \JText::_('JSHOP_REDIRECT_TO_PAYMENT_PAGE')?>
             <form id="paymentform" action="https://www.sofortueberweisung.de/payment/start" name="paymentform" method="post">
                 <?php
@@ -137,6 +142,8 @@ class pm_sofortueberweisung extends PaymentRoot{
             <script>
                 document.getElementById('paymentform').submit();
             </script>
+			</body>
+        </html>
         <?php
         die;
 	}

@@ -65,7 +65,7 @@ class StatisticController extends BaseadminController{
         $view->set('usergroups', $usergroups);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayStatistic', array(&$view));
         $view->display();        

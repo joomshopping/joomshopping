@@ -27,7 +27,7 @@ class LanguagesController extends BaseadminController{
         $view->set('defaultLanguage', $jshopConfig->defaultLanguage);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->sidebar = \JHTMLSidebar::render();
+
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayLanguage', array(&$view));
 		$view->display();

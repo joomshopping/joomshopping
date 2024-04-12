@@ -12,8 +12,7 @@ $jshopConfig = \JSFactory::getConfig();
 $lists = $this->lists;
 \JHTML::_('bootstrap.tooltip');
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php \JSHelperAdmin::displaySubmenuConfigs('general');?>
 <form action="index.php?option=com_jshopping&controller=config" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
@@ -130,6 +129,4 @@ $lists = $this->lists;
 </div>
 <?php print $this->tmp_html_end?>
 </form>
-</div>
-</div>
 </div>

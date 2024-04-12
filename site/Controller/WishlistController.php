@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.0 18.12.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -77,6 +77,13 @@ class WishlistController extends BaseController{
             print \JSHelper::getOkMessageJson($cart);
             die();
         }
-        $this->setRedirect( \JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart',1,1) );
+        if ($cart->remove_to_cart) {
+            $this->setRedirect(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart', 1, 1));
+        } else {
+            $wishlist = \JSFactory::getModel('cart', 'Site');
+            $wishlist->load("wishlist");
+            $prod = $wishlist->products[$number_id];
+            $this->setRedirect(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=product&task=view&category_id='.$prod['category_id'].'&product_id='.$prod['product_id'], 1));
+        }
     }
 }

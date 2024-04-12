@@ -25,12 +25,17 @@ class ProductsModel extends BaseadminModel{
         }
         if (isset($filter['category_id']) && $filter['category_id']){
             $category_id = $filter['category_id'];
-            $where .= " AND pr_cat.category_id = '".$db->escape($filter['category_id'])."' ";
+            if ($category_id > 0) {
+                $where .= " AND pr_cat.category_id = '".$db->escape($filter['category_id'])."' ";
+            }
+            if ($category_id == -9) {
+                $where .= " AND pr_cat.category_id IS NULL ";
+            }
         }
         if (isset($filter['text_search']) && $filter['text_search']){
             $text_search = $filter['text_search'];
             $word = addcslashes($db->escape($text_search), "_%");
-            $where .=  "AND (LOWER(pr.`".$lang->get('name')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('short_description')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('description')."`) LIKE '%" . $word . "%' OR pr.product_ean LIKE '%" . $word . "%' OR pr.product_id LIKE '%" . $word . "%' OR pr.manufacturer_code LIKE '%" . $word . "%')";
+            $where .=  "AND (LOWER(pr.`".$lang->get('name')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('short_description')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('description')."`) LIKE '%" . $word . "%' OR pr.product_ean LIKE '%" . $word . "%' OR pr.product_id LIKE '%" . $word . "%' OR pr.manufacturer_code LIKE '%" . $word . "%'  OR pr.real_ean LIKE '%" . $word . "%')";
         }
         if (isset($filter['manufacturer_id']) && $filter['manufacturer_id']){
             $where .= " AND pr.product_manufacturer_id = '".$db->escape($filter['manufacturer_id'])."' ";
@@ -85,6 +90,9 @@ class ProductsModel extends BaseadminModel{
         }
 		if ($jshopConfig->admin_product_list_manufacture_code){
 			$query_filed .= ", pr.manufacturer_code";
+		}
+        if ($jshopConfig->admin_product_list_real_ean){
+			$query_filed .= ", pr.real_ean";
 		}
         
         $db->setQuery("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
@@ -163,7 +171,7 @@ class ProductsModel extends BaseadminModel{
         return $db->loadResult();
     }
 
-    function setCategoryToProduct($product_id, $categories = array()){
+    function setCategoryToProduct($product_id, $categories = []){
         $db = \JFactory::getDBO();
         foreach($categories as $cat_id){
             if (!$this->productInCategory($product_id, $cat_id)){
@@ -264,8 +272,8 @@ class ProductsModel extends BaseadminModel{
         if ($id_vendor_cuser){
             $post['vendor_id'] = $id_vendor_cuser;
         }
-        if ((!isset($post['main_category_id']) || !$post['main_category_id']) && isset($post['category_id'][0])) {
-            $post['main_category_id'] = $post['category_id'][0];
+        if (!isset($post['main_category_id']) || !$post['main_category_id']) {
+            $post['main_category_id'] = $post['category_id'][0] ?? 0;
         }
 
         if (isset($post['attr_count']) && is_array($post['attr_count'])){
@@ -362,7 +370,10 @@ class ProductsModel extends BaseadminModel{
 		$this->saveExtraFields($product_id, $post);
 
         if ($product->parent_id==0){
-            $this->setCategoryToProduct($product_id, $post['category_id']);
+            $this->setCategoryToProduct($product_id, $post['category_id'] ?? []);
+            if (!isset($post['category_id']) || empty($post['category_id'])){
+                \JSError::raiseNotice("", \JText::_('JSHOP_PRODUCT_WILL_NOT_SHOWN_WITHOUT_CATEGORY'));
+            }
         }
 
         $this->saveRelationProducts($product, $product_id, $post);
@@ -782,44 +793,47 @@ class ProductsModel extends BaseadminModel{
 
     function uploadFiles($product, $product_id, $post){
         $jshopConfig = \JSFactory::getConfig();
-        $dispatcher = \JFactory::getApplication();
-        if (!isset($post['product_demo_descr'])) $post['product_demo_descr'] = '';
-        if (!isset($post['product_file_descr'])) $post['product_file_descr'] = '';
-        if (!isset($post['product_file_sort'])) $post['product_file_sort'] = '';
+        if (!isset($post['product_demo_descr'])) $post['product_demo_descr'] = [];
+        if (!isset($post['product_file_descr'])) $post['product_file_descr'] = [];
+        if (!isset($post['product_file_sort'])) $post['product_file_sort'] = [];
 
         for($i=0; $i<$jshopConfig->product_file_upload_count; $i++){
             $file_demo = "";
             $file_sale = "";
             if ($jshopConfig->product_file_upload_via_ftp!=1){
-                $upload = new UploadFile($_FILES['product_demo_file_'.$i]);
-                $upload->setDir($jshopConfig->demo_product_path);
-                $upload->setFileNameMd5(0);
-                $upload->setFilterName(1);
-                if ($upload->upload()){
-                    $file_demo = $upload->getName();
-                    @chmod($jshopConfig->demo_product_path."/".$file_demo, 0777);
-                }else{
-                    if ($upload->getError() != 4){
-                        \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_UPLOADING_FILE_DEMO'));
-                        \JSHelper::saveToLog("error.log", "SaveProduct - Error upload demo. code: ".$upload->getError());
+                if (isset($_FILES['product_demo_file_'.$i])) {
+                    $upload = new UploadFile($_FILES['product_demo_file_'.$i]);
+                    $upload->setDir($jshopConfig->demo_product_path);
+                    $upload->setFileNameMd5(0);
+                    $upload->setFilterName(1);
+                    if ($upload->upload()){
+                        $file_demo = $upload->getName();
+                        @chmod($jshopConfig->demo_product_path."/".$file_demo, 0777);
+                    }else{
+                        if ($upload->getError() != 4){
+                            \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_UPLOADING_FILE_DEMO'));
+                            \JSHelper::saveToLog("error.log", "SaveProduct - Error upload demo. code: ".$upload->getError());
+                        }
                     }
+                    unset($upload);
                 }
-                unset($upload);
 
-                $upload = new UploadFile($_FILES['product_file_'.$i]);
-                $upload->setDir($jshopConfig->files_product_path);
-                $upload->setFileNameMd5(0);
-                $upload->setFilterName(1);
-                if ($upload->upload()){
-                    $file_sale = $upload->getName();
-                    @chmod($jshopConfig->files_product_path."/".$file_sale, 0777);
-                }else{
-                    if ($upload->getError() != 4){
-                        \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_UPLOADING_FILE_SALE'));
-                        \JSHelper::saveToLog("error.log", "SaveProduct - Error upload file sale. code: ".$upload->getError());
+                if (isset($_FILES['product_file_'.$i])) {
+                    $upload = new UploadFile($_FILES['product_file_'.$i]);
+                    $upload->setDir($jshopConfig->files_product_path);
+                    $upload->setFileNameMd5(0);
+                    $upload->setFilterName(1);
+                    if ($upload->upload()){
+                        $file_sale = $upload->getName();
+                        @chmod($jshopConfig->files_product_path."/".$file_sale, 0777);
+                    }else{
+                        if ($upload->getError() != 4){
+                            \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_UPLOADING_FILE_SALE'));
+                            \JSHelper::saveToLog("error.log", "SaveProduct - Error upload file sale. code: ".$upload->getError());
+                        }
                     }
+                    unset($upload);
                 }
-                unset($upload);
             }
 
             if (!$file_demo && isset($post['product_demo_file_name_'.$i]) && $post['product_demo_file_name_'.$i]){
@@ -852,11 +866,8 @@ class ProductsModel extends BaseadminModel{
         return $row->store();
     }
 
-    function productUpdateDescriptionFiles($demo_descr, $file_descr, $ordering, $post = array()){
-        if (!is_array($demo_descr)){
-            return 0;
-        }
-        foreach($demo_descr as $file_id=>$value){
+    function productUpdateDescriptionFiles($demo_descr, $file_descr, $ordering, $post = []) {
+        foreach($ordering as $file_id=>$value){
             $row = \JSFactory::getTable('productFiles');
             $row->id = $file_id;
             $row->demo_descr = $demo_descr[$file_id];
@@ -894,6 +905,7 @@ class ProductsModel extends BaseadminModel{
                 $a_count = $post['attr_count'][$k];
                 $a_ean = $post['attr_ean'][$k] ?? '';
                 $a_manufacturer_code = $post['attr_manufacturer_code'][$k] ?? '';
+                $a_real_ean = $post['attr_real_ean'][$k] ?? '';
                 $a_weight_volume_units = $post['attr_weight_volume_units'][$k] ?? 0;
                 $a_weight = $post['attr_weight'][$k] ?? 0;
 
@@ -909,6 +921,7 @@ class ProductsModel extends BaseadminModel{
                 $productAttribut->set("count", $a_count);
                 $productAttribut->set("ean", $a_ean);
                 $productAttribut->set("manufacturer_code", $a_manufacturer_code);
+                $productAttribut->set("real_ean", $a_real_ean);
                 $productAttribut->set("weight_volume_units", $a_weight_volume_units);
                 $productAttribut->set("weight", $a_weight);
                 foreach($post['attrib_id'] as $field_id=>$val){
@@ -1097,6 +1110,7 @@ class ProductsModel extends BaseadminModel{
 		}
 		if (isset($post['category_id']) && $post['category_id']){
 			$this->setCategoryToProduct($id, $post['category_id']);
+            $product->set('main_category_id', $post['category_id'][0]);
 		}
 		if ($jshopConfig->admin_show_product_extra_field){
 			$_productfields = \JSFactory::getModel("productfields");

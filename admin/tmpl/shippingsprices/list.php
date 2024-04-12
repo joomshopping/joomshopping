@@ -11,8 +11,7 @@ defined('_JEXEC') or die();
 $shipping_prices=$this->rows;
 $i=0;
 ?>
-<div class="row">
-<div class="col-md-12">
+
 <div id="j-main-container" class="j-main-container">
 <?php JSHelperAdmin::displaySubmenuOptions("shippingsprices");?>
 <form name="adminForm" id="adminForm" action="index.php?option=com_jshopping&controller=shippingsprices" method="post">
@@ -80,8 +79,6 @@ $i=0;
 <input type="hidden" name="boxchecked" value="0" />
 <?php print $this->tmp_html_end?>
 </form>
-</div>
-</div>
 </div>
 <script>
 jQuery(function(){

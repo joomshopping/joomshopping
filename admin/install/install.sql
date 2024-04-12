@@ -47,8 +47,9 @@ PRIMARY KEY  (`id`)
 CREATE TABLE IF NOT EXISTS `#__jshopping_products`(
 `product_id` int(11) NOT NULL auto_increment,
 `parent_id` int(11) NOT NULL default 0,
-`product_ean` varchar(32) NOT NULL default 0,
-`manufacturer_code` varchar(32) NOT NULL default 0,
+`product_ean` varchar(32) NOT NULL default '',
+`manufacturer_code` varchar(32) NOT NULL default '',
+`real_ean` varchar(16) NOT NULL default '',
 `product_quantity` DECIMAL(12,2) NOT NULL default 0,
 `unlimited` TINYINT(1) NOT NULL default 0,
 `product_availability` varchar(1) NOT NULL default '',
@@ -357,6 +358,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_order_item`(
 `category_id` int(11) NOT NULL default 0,
 `product_ean` varchar(32) NOT NULL default '',
 `manufacturer_code` varchar(32) NOT NULL default '',
+`real_ean` varchar(16) NOT NULL default '',
 `product_name` VARCHAR(255) NOT NULL default '',
 `product_quantity` DECIMAL(12,2) NOT NULL default 0,
 `product_item_price` DECIMAL(14,4) NOT NULL default 0,
@@ -517,8 +519,9 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products_attr` (
 `price` DECIMAL(14,4) NOT NULL default 0,
 `old_price` DECIMAL(14,4) NOT NULL default 0,
 `count` DECIMAL(14,4) NOT NULL default 0,
-`ean` varchar(32) NOT NULL default 0,
-`manufacturer_code` varchar(32) NOT NULL default 0,
+`ean` varchar(32) NOT NULL default '',
+`manufacturer_code` varchar(32) NOT NULL default '',
+`real_ean` varchar(16) NOT NULL default '',
 `weight` DECIMAL(12,4) NOT NULL default 0,
 `weight_volume_units` DECIMAL(14,4) NOT NULL default 0,
 `ext_attribute_product_id` int(11) NOT NULL default 0,
@@ -538,6 +541,7 @@ PRIMARY KEY  (`id`)
 CREATE TABLE IF NOT EXISTS `#__jshopping_cart_temp` (
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `id_cookie` VARCHAR(255) NOT NULL default '',
+`user_id` INT NOT NULL default 0,
 `cart` text NOT NULL,
 `type_cart` varchar(32) NOT NULL
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -603,6 +607,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products_extra_fields` (
 `type` TINYINT(1) NOT NULL default 0,
 `multilist` TINYINT(1) NOT NULL default 0,
 `group` tinyint(4) NOT NULL default 0,
+`product_uniq_val` TINYINT(1) NOT NULL default 0,
 `ordering` int(6) NOT NULL default 0,
 PRIMARY KEY  (`id`),
 KEY `group` (`group`)

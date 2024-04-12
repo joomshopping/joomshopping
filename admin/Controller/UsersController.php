@@ -63,7 +63,7 @@ class UsersController extends BaseadminController{
         $view->set('e_name', $e_name);
         $view->set('select_user', $select_user);
         $view->set('select_group', $select_group);
-        $view->sidebar = \JHTMLSidebar::render();
+
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
         $view->tmp_html_filter_end = "";
