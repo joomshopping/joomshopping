@@ -17,7 +17,7 @@ defined('_JEXEC') or die();
 <?php print $this->tmp_html_start?>
 <table>
 <tr>
-	<td width="140">
+	<td width="170">
 	    <label for="install_package"><?php echo JText::_('JSHOP_UPDATE_PACKAGE_FILE')?>:</label>
 	</td>
 	<td>
@@ -37,7 +37,7 @@ defined('_JEXEC') or die();
 <legend><?php echo JText::_('JSHOP_UPDATE_UPLOAD_FROM_URL_PACKAGE_FILE')?></legend>
 <table>
 <tr>
-    <td width="140">
+    <td width="170">
         <label for="install_url"><?php echo JText::_('JSHOP_UPDATE_UPLOAD_FROM_URL_PACKAGE_FILE')?>:</label>
     </td>
     <td>

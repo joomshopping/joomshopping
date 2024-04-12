@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 05.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -233,6 +233,7 @@ $config->frontend_attribute_select_size = 1;
 $config->free_shipping_calc_from_total_and_discount = 0;
 $config->auto_backup_addon_files = 1;
 $config->send_admin_mail_order_status_appadmin = 0;
+$config->send_admin_mail_order_status = 1;
 $config->checkout_step4_show_error_shipping_config = 1;
 $config->category_sorting_direction = 'asc';
 $config->manufacturer_sorting_direction = 'asc';
@@ -274,6 +275,8 @@ $config->show_short_descr_insted_of = 1;
 $config->allow_image_upload = array('jpeg','jpg','gif','png','webp');
 $config->use_summ_for_calcule_payment_with_discount = 0;
 $config->product_related_order_by = 'relation.id';
+$config->product_img_seo = 0;
+$config->product_use_main_category_id = 0;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';
@@ -282,7 +285,6 @@ $config->default_template_block_pagination_product = 'list_products/block_pagina
 
 $config->file_jquery_media_js = $config->live_path.'js/jquery/jquery.media.js';
 $config->file_functions_js = $config->live_path.'js/functions.js';
-$config->file_validateform_js = $config->live_path.'js/validateForm.js';
 $config->file_lightbox_js = $config->live_path.'js/jquery/jquery.lightbox.js';
 $config->file_lightbox_css = $config->live_path.'css/jquery.lightbox.css';
 $config->script_lightbox_init = 'var jshopParams = jshopParams || {};
@@ -341,6 +343,7 @@ $other_config = array(
     'tax_on_delivery_address',
     "cart_back_to_shop",
     "product_button_back_use_end_list",
+    "product_use_main_category_id",
     "display_tax_id_in_pdf",
     "product_price_qty_discount",
     "rating_starparts",
@@ -353,6 +356,7 @@ $other_config = array(
     "product_image_upload_count",
     "product_video_upload_count",
     "show_insert_code_in_product_video",
+    "product_img_seo",
     "max_number_download_sale_file",
     "max_day_download_sale_file",
     "order_display_new_digital_products",
@@ -363,17 +367,18 @@ $other_config = array(
     "load_css",
     'list_products_calc_basic_price_from_product_price',
     'hide_from_basic_price','calc_basic_price_from_product_price',
-    'user_discount_not_apply_prod_old_price',
-    'advert'
+    'user_discount_not_apply_prod_old_price'
 );
 
 $other_config_checkbox = array(
     'auto_backup_addon_files',
     'tax_on_delivery_address',
     'product_button_back_use_end_list',
+    "product_use_main_category_id",
     "show_list_price_shipping_weight",
     "display_tax_id_in_pdf",
     "show_insert_code_in_product_video",
+    "product_img_seo",
     "order_display_new_digital_products",
     "display_user_groups_info",
     "display_user_group",
@@ -384,14 +389,14 @@ $other_config_checkbox = array(
     'list_products_calc_basic_price_from_product_price',
     'hide_from_basic_price',
     'calc_basic_price_from_product_price',
-    'user_discount_not_apply_prod_old_price',
-    'advert'
+    'user_discount_not_apply_prod_old_price'
 );
 $other_config_select = array(
     'cart_back_to_shop'=>array(
         'product'=>'product',
         'list'=>'list',
-        'shop'=>'shop'
+        'shop'=>'shop',
+		'home'=>'home'
     ),
     'product_price_qty_discount'=>array(
         '1'=>'price',
@@ -592,6 +597,10 @@ $config->fields_client_check = [
 	'd_fax' => ['string', 'JSHOP_REGWARN_FAX_DELIVERY'],
 	'd_ext_field_1' => ['string', 'JSHOP_REGWARN_EXT_FIELD_1_DELIVERY'],
 	'd_ext_field_2' => ['string', 'JSHOP_REGWARN_EXT_FIELD_2_DELIVERY'],
-	'd_ext_field_3' => ['string', 'JSHOP_REGWARN_EXT_FIELD_3_DELIVERY']
+	'd_ext_field_3' => ['string', 'JSHOP_REGWARN_EXT_FIELD_3_DELIVERY'],
+	'privacy_statement' => ['int', 'JSHOP_REGWARN_PRIVACY_STATEMENT'],
 ];
 
+$config->fields_client_only_check = [
+	'password', 'password2', 'email2', 'privacy_statement'
+];

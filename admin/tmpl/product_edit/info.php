@@ -244,8 +244,14 @@ defined('_JEXEC') or die();
          <?php echo JText::_('JSHOP_CATEGORIES')?>*
        </td>
        <td>
-         <?php echo $lists['categories'];?>
+          <?php echo $lists['categories'];?>
        </td>
+    </tr>
+    <tr style="display: none">
+       <td class="key">
+        <?php echo JText::_('JSHOP_MAIN_CATEGORY')?>
+       </td>
+       <td class="main_category_select" val="<?php echo $row->main_category_id?>"></td>
     </tr>
     <?php if ($jshopConfig->admin_show_vendors && $this->display_vendor_select) { ?>
     <tr>
@@ -317,7 +323,7 @@ defined('_JEXEC') or die();
        </td>
        <td>
          <input type="hidden" name="options[no_return]"  value="0" />
-         <input type="checkbox" name="options[no_return]" value="1" <?php if ($row->product_options['no_return']) echo 'checked = "checked"';?> />
+         <input type="checkbox" name="options[no_return]" value="1" <?php if (isset($row->product_options['no_return']) && $row->product_options['no_return']) echo 'checked = "checked"';?> />
        </td>
     </tr>
     <?php }?>

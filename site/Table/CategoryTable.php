@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -19,6 +19,7 @@ class CategoryTable extends MultilangTable{
     
     function getSubCategories($parentId, $order = 'id', $ordering = 'asc', $publish = 0){
         $db = \JFactory::getDBO();
+        $jshopConfig = \JSFactory::getConfig();
         $lang = \JSFactory::getLang();
         $user = \JFactory::getUser();
         $add_where = ($publish)?(" AND category_publish = '1' "):("");
@@ -29,13 +30,22 @@ class CategoryTable extends MultilangTable{
         if ($order=="ordering") $orderby = "ordering";
         if (!$orderby) $orderby = "ordering";
         
-        $query = "SELECT `".$lang->get('name')."` as name,`".$lang->get('description')."` as description,`".$lang->get('short_description')."` as short_description, category_id, category_publish, ordering, category_image FROM `#__jshopping_categories`
+        $query = "SELECT `".$lang->get('name')."` as name,`".$lang->get('description')."` as description,`".$lang->get('short_description')."` as short_description, category_id, category_publish, ordering, category_image, img_alt, img_title 
+                   FROM `#__jshopping_categories`
                    WHERE category_parent_id = '".$db->escape($parentId)."' ".$add_where."
                    ORDER BY ".$orderby." ".$ordering;
         $db->setQuery($query);
         $categories = $db->loadObJectList();
         foreach($categories as $key=>$value){
             $categories[$key]->category_link = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=category&task=view&category_id='.$categories[$key]->category_id, 1);
+            if (!$jshopConfig->product_img_seo) {
+                if (!$categories[$key]->img_alt) {
+                    $categories[$key]->img_alt = $value->name;
+                }
+                if (!$categories[$key]->img_title) {
+                    $categories[$key]->img_title = $value->name;
+                }
+            }
         }        
         return $categories;
     }
@@ -118,11 +128,11 @@ class CategoryTable extends MultilangTable{
     }
 
     function getChildCategories($order='id', $ordering='asc', $publish=1){
-        return $this->getSubCategories($this->category_id, $order, $ordering, $publish);
+        return $this->getSubCategories((int)$this->category_id, $order, $ordering, $publish);
     }
 
     function getSisterCategories($order, $ordering = 'asc', $publish = 1) {
-        return $this->getSubCategories($this->category_parent_id, $order, $ordering, $publish);
+        return $this->getSubCategories((int)$this->category_parent_id, $order, $ordering, $publish);
     }
 
     function getTreeParentCategories($publish = 1, $access = 1){
@@ -189,6 +199,8 @@ class CategoryTable extends MultilangTable{
                   LEFT JOIN `#__jshopping_manufacturers` as man on prod.product_manufacturer_id=man.manufacturer_id 
                   WHERE categ.category_id=".(int)$this->category_id." AND prod.product_publish=1 AND prod.product_manufacturer_id!=0 ".$adv_query." "
                 . "order by ".$order;
+		$obj = $this;
+        \JFactory::getApplication()->triggerEvent('onGetManufacturersCategoryTable', array(&$obj, &$query));
         $db->setQuery($query);
         $list = $db->loadObJectList();
         return $list;

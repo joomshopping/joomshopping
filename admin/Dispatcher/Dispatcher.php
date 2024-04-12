@@ -12,6 +12,7 @@ namespace Joomla\Component\Jshopping\Administrator\Dispatcher;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Dispatcher\ComponentDispatcher;
+use Joomla\CMS\HTML\HTMLHelper;
 
 class Dispatcher extends ComponentDispatcher{
 	
@@ -47,13 +48,12 @@ class Dispatcher extends ComponentDispatcher{
         \JPluginHelper::importPlugin('jshoppingmenu');
         $app->triggerEvent('onAfterLoadShopParamsAdmin', array());
 
-        //\JHTML::_('behavior.framework');
-        \JHTML::_('bootstrap.framework');
-        $document = \JFactory::getDocument();
-		$document->addScript(\JURI::root() . 'media\vendor\jquery\js\jquery.min.js');
-        $document->addScript($jshopConfig->live_path.'js/functions.js');
-        $document->addScript($jshopConfig->live_admin_path.'js/functions.js');
-        $document->addStyleSheet($jshopConfig->live_admin_path.'css/style.css');
+        HTMLHelper::_('bootstrap.framework');
+		HTMLHelper::_('jquery.framework');
+        $doc = \JFactory::getDocument();
+        $doc->addScript($jshopConfig->live_path.'js/functions.js');
+        $doc->addScript($jshopConfig->live_admin_path.'js/functions.js');
+        $doc->addStyleSheet($jshopConfig->live_admin_path.'css/style.css');
     }
-	
+
 }

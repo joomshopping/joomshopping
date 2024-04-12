@@ -50,7 +50,7 @@ defined('_JEXEC') or die();
        <div class="input-group">
             <input type="text" class = "form-control" size="35" id="related_search" value="" />
             &nbsp;
-            <input type="button" class="btn btn-primary" value="<?php echo JText::_('JSHOP_SEARCH')?>" onclick="jshopAdmin.releted_product_search(0, '<?php echo $row->product_id?>', 1);" />
+            <input type="button" class="btn btn-primary" value="<?php echo JText::_('JSHOP_SEARCH')?>" onclick="jshopAdmin.releted_product_search(0, '<?php echo $row->product_id ?? 0;?>', 1);" />
         </div>
         <br/>
         <div id="list_for_select_related"></div>

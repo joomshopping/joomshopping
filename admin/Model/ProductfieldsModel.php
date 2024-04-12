@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.6 15.07.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -82,10 +82,7 @@ class ProductFieldsModel extends BaseadminModel{
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveProductField', array(&$post));
         $productfield->bind($post);        
-        $categorys = $post['category_id'];
-        if (!is_array($categorys)){
-            $categorys = array();
-        }        
+        $categorys = $post['category_id'] ?? [];
         $productfield->setCategorys($categorys);
         if (!$id){
             $productfield->ordering = null;

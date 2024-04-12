@@ -53,6 +53,7 @@ class CouponsController extends BaseadminController{
         $view->set('text_search', $text_search);
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
+        $view->tmp_html_filter_end = "";
         $view->tmp_extra_column_headers = "";
         $view->tmp_html_end = "";
         $view->deltaColspan  = 0;

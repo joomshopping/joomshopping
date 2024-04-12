@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.7 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -55,24 +55,16 @@ class AddonsController extends BaseadminController{
     }
     
     function save(){
-        $this->saveConfig('save');
-    }
-    
-    function apply(){
-        $this->saveConfig();
-    }
-    
-    private function saveConfig($task = 'apply'){
 		$post = $this->input->post->getArray(array(), null, 'RAW');
 	 	if (isset($post['f-id'])){
 	    	$post['id'] = $post['f-id'];
         	unset($post['f-id']);
     	}
         \JSFactory::getModel("addons")->save($post);
-        if ($task == 'save'){
-            $this->setRedirect("index.php?option=com_jshopping&controller=addons");
+        if ($this->getTask()=='apply') {
+            $this->setRedirect("index.php?option=com_jshopping&controller=addons&task=edit&id=".$post['id']);            
         } else {
-            $this->setRedirect("index.php?option=com_jshopping&controller=addons&task=edit&id=".$post['id']);
+            $this->setRedirect("index.php?option=com_jshopping&controller=addons");
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 13.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -124,7 +124,7 @@ class ListModel{
     function getBuildQueryListProductDefaultResult($adfields=array()){
         $lang = \JSFactory::getLang();
 		if (count($adfields)>0) $adquery = ",".implode(', ',$adfields); else $adquery = '';
-        return "prod.product_id, pr_cat.category_id, prod.`".$lang->get('name')."` as name, prod.`".$lang->get('short_description')."` as short_description, prod.product_ean, prod.manufacturer_code, prod.image, prod.product_price, prod.currency_id, prod.product_tax_id as tax_id, prod.product_old_price, prod.product_weight, prod.average_rating, prod.reviews_count, prod.hits, prod.weight_volume_units, prod.basic_price_unit_id, prod.label_id, prod.product_manufacturer_id, prod.min_price, prod.product_quantity, prod.different_prices".$adquery;
+        return "prod.product_id, pr_cat.category_id, prod.main_category_id, prod.`".$lang->get('name')."` as name, prod.`".$lang->get('short_description')."` as short_description, prod.product_ean, prod.manufacturer_code, prod.image, prod.product_price, prod.currency_id, prod.product_tax_id as tax_id, prod.product_old_price, prod.product_weight, prod.average_rating, prod.reviews_count, prod.hits, prod.weight_volume_units, prod.basic_price_unit_id, prod.label_id, prod.product_manufacturer_id, prod.min_price, prod.product_quantity, prod.different_prices".$adquery;
     }
 
     function getBuildQueryListProduct($type, $restype, &$filters, &$adv_query, &$adv_from, &$adv_result){
@@ -140,7 +140,7 @@ class ListModel{
             $adv_query .=' AND prod.access IN ('.$groups.') AND cat.access IN ('.$groups.')';
         }
 
-        if ($jshopConfig->product_list_show_delivery_time){
+        if (isset($jshopConfig->product_list_show_delivery_time) && $jshopConfig->product_list_show_delivery_time){
             $adv_result .= ", prod.delivery_times_id";
         }
         if ($jshopConfig->admin_show_product_extra_field){
@@ -173,7 +173,7 @@ class ListModel{
                         $tmp[] = " find_in_set('".$db->escape($val_id)."', prod_to_ef.`extra_field_".(int)$f_id."`) ";
                     }
                     $mchfilterlogic = 'OR';
-                    if ($jshopConfig->mchfilterlogic_and[$f_id]) $mchfilterlogic = 'AND';
+                    if (isset($jshopConfig->mchfilterlogic_and[$f_id]) && $jshopConfig->mchfilterlogic_and[$f_id]) $mchfilterlogic = 'AND';
                     $_tmp_adv_query = implode(' '.$mchfilterlogic.' ', $tmp);
                     $adv_query .= " AND (".$_tmp_adv_query.")";
                 }elseif(is_string($vals) && $vals!=""){
@@ -189,23 +189,23 @@ class ListModel{
 						$tmp[] = " prod_to_ef.`extra_field_".(int)$f_id."`='".$db->escape($val)."'";
                     }
                     $mchfilterlogic = 'OR';
-                    if ($jshopConfig->mchfilterlogic_and[$f_id]) $mchfilterlogic = 'AND';
+                    if (isset($jshopConfig->mchfilterlogic_and[$f_id]) && $jshopConfig->mchfilterlogic_and[$f_id]) $mchfilterlogic = 'AND';
                     $_tmp_adv_query = implode(' '.$mchfilterlogic.' ', $tmp);
 					$adv_query .= " AND (".$_tmp_adv_query.")";
                 }
             }
         }
 
-        if ($filters['date_to'] && \JSHelper::checkMyDate($filters['date_to'])) {
+        if (isset($filters['date_to']) && $filters['date_to'] && \JSHelper::checkMyDate($filters['date_to'])) {
             $adv_query .= " AND prod.product_date_added <= '".$db->escape($filters['date_to'])."'";
         }
-        if ($filters['date_from'] && \JSHelper::checkMyDate($filters['date_from'])) {
+        if (isset($filters['date_from']) && $filters['date_from'] && \JSHelper::checkMyDate($filters['date_from'])) {
             $adv_query .= " AND prod.product_date_added >= '".$db->escape($filters['date_from'])."'";
         }
-        if ($filters['products'] && is_array($filters['products']) && count($filters['products'])){
+        if (isset($filters['products']) && $filters['products'] && is_array($filters['products']) && count($filters['products'])){
             $adv_query .= " AND prod.product_id in (".implode(',', array_map('intval', $filters['products'])).") ";
         }
-        if ($filters['search']){
+        if (isset($filters['search']) && $filters['search']){
             $where_search = "";
             if ($filters['search_type']=="exact"){
                 $word = addcslashes($db->escape($filters['search']), "_%");

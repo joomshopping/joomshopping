@@ -108,7 +108,7 @@ class ShippingMethodTable extends MultilangTable{
             $alias = $this->alias;
         }
         $JshopConfig = \JSFactory::getConfig();
-        $script = str_replace(array('.','/'),'', $alias);
+        $script = str_replace(array('.','/'),'', $alias ?? '');
         $patch = $JshopConfig->path.'shippingform/'.$script."/".$script.'.php';
         if ($script!='' && file_exists($patch)){
             include_once($patch);

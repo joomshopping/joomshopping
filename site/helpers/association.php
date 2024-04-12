@@ -90,22 +90,16 @@ abstract class JshoppingHelperAssociation{
     private static function checkPageUrl($page, $urlData){
         $check = 1;
         foreach($page['url'] as $k=>$v){
-            if (!preg_match('/'.$v.'/', $urlData[$k])){
+			if (!isset($urlData[$k]) || !preg_match('/'.$v.'/', $urlData[$k])){
                 $check = 0;
             }
         }
-        /*if ($check){
-        print_r($page['url']);
-        print_r($urlData);
-        print "\n\n<br>";
-        }*/
-        
-        if ($check && $page['exact']){
+        if ($check && isset($page['exact']) && $page['exact']){
             if (count($page['url'])!=count($urlData)){
                 $check = 0;
             }
         }
         return $check;
     }
-    
+
 }

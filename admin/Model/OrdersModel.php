@@ -19,7 +19,7 @@ class OrdersModel extends BaseadminModel{
         if ($filters['status_id']){
             $where .= " and O.order_status = '".$db->escape($filters['status_id'])."'";
         }
-        if($filters['user_id']) $where .= " and O.user_id = '".$db->escape($filters['user_id'])."'";
+        if ($filters['user_id']) $where .= " and O.user_id = '".$db->escape($filters['user_id'])."'";
         if ($filters['text_search']){
             $search = $db->escape($filters['text_search']);
             $where .= " and (O.`order_number` like '%".$search."%' or O.`f_name` like '%".$search."%' or O.`l_name` like '%".$search."%' or O.`email` like '%".$search."%' or O.`firma_name` like '%".$search."%' or O.`d_f_name` like '%".$search."%' or O.`d_l_name` like '%".$search."%' or O.`d_firma_name` like '%".$search."%' or O.order_add_info like '%".$search."%') ";
@@ -128,20 +128,20 @@ class OrdersModel extends BaseadminModel{
             $order_item->order_id = $order_id;
             $order_item->product_id = $post['product_id'][$k];
 			$order_item->category_id = $post['category_id'][$k];
-            $order_item->product_ean = $post['product_ean'][$k];
-            $order_item->manufacturer_code = $post['manufacturer_code'][$k];
+            $order_item->product_ean = $post['product_ean'][$k] ?? '';
+            $order_item->manufacturer_code = $post['manufacturer_code'][$k] ?? '';
             $order_item->product_name = $post['product_name'][$k];
             $order_item->product_quantity = \JSHelper::saveAsPrice($post['product_quantity'][$k]);
             $order_item->product_item_price = $post['product_item_price'][$k];
-            $order_item->product_tax = $post['product_tax'][$k];
-            $order_item->product_attributes = $post['product_attributes'][$k];
+            $order_item->product_tax = $post['product_tax'][$k] ?? 0;
+            $order_item->product_attributes = $post['product_attributes'][$k] ?? '';
             if (json_decode($post['attributes'][$k])){
                 $attribute = (array)json_decode($post['attributes'][$k]);
                 $order_item->attributes = serialize($attribute);
             }else{
                 $order_item->attributes = $post['attributes'][$k];
             }
-            $order_item->product_freeattributes = isset($post['product_freeattributes'][$k]) ? $post['product_freeattributes'][$k] : '';
+            $order_item->product_freeattributes = $post['product_freeattributes'][$k] ?? '';
             $order_item->weight = $post['weight'][$k];
             if (isset($post['delivery_times_id'][$k])){
                 $order_item->delivery_times_id = $post['delivery_times_id'][$k];
@@ -173,7 +173,7 @@ class OrdersModel extends BaseadminModel{
             $prod = array();
             $prod['product_id'] = $v['product_id'];
             $prod['quantity'] = $v['product_quantity'];
-            $prod['tax'] = $v['product_tax'];
+            $prod['tax'] = $v['product_tax'] ?? 0;
             $prod['product_name'] = $v['product_name'];
             $prod['thumb_image'] = $v['thumb_image'];
             $prod['ean'] = $v['product_ean'];
@@ -528,10 +528,10 @@ class OrdersModel extends BaseadminModel{
 
         $dispatcher->triggerEvent('onBeforeSaveOrder', array(&$post, &$file_generete_pdf_order, &$order));
 
-        $applyCoupon = $order->applyCoupon($post['coupon_code']);
+        $applyCoupon = $order->applyCoupon($post['coupon_code'] ?? '');
 
         $order->bind($post);
-		$order->delivery_times_id = $post['order_delivery_times_id'];
+		$order->delivery_times_id = $post['order_delivery_times_id'] ?? 0;
         $order->store();
         $order_id = $order->order_id;
         $order_items = $order->getAllItems();

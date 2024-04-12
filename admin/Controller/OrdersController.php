@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.7 31.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -137,6 +137,7 @@ class OrdersController extends BaseadminController{
         $view->_tmp_order_list_html_end = '';
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
+        $view->tmp_html_filter_end = "";
         $view->_tmp_cols_1 = "";
         $view->_tmp_cols_after_user = "";
         $view->_tmp_cols_3 = "";
@@ -290,7 +291,8 @@ class OrdersController extends BaseadminController{
         $order->store();
 		$order->updateProductsInStock(1);
         
-        \JSFactory::loadLanguageFile($order->getLang());
+        \JSFactory::loadLanguageFile($order->getLang(), true);
+		$lang = \JSFactory::getLang($order->getLang());
         $checkout = \JSFactory::getModel('checkout', 'Site');
         if ($jshopConfig->send_order_email){
             $checkout->sendOrderEmail($order_id, 1);
@@ -321,7 +323,8 @@ class OrdersController extends BaseadminController{
         $id_vendor_cuser = \JSHelperAdmin::getIdVendorForCUser();
         if ($jshopConfig->admin_show_vendors && $id_vendor_cuser){
             if ($order->vendor_id!=$id_vendor_cuser) {
-                $app->redirect('index.php', \JText::_('ALERTNOTAUTH'));
+				$app->enqueueMessage(\JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
+                $app->redirect('index.php');
                 return 0;
             }
         }

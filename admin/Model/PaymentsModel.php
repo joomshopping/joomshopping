@@ -82,7 +82,7 @@ class PaymentsModel extends BaseadminModel{
         if (!$payment->payment_id){
             $payment->payment_ordering = $this->getMaxOrdering() + 1;
         }
-        $payment->setConfigs($post['pm_params']);		
+        $payment->setConfigs($post['pm_params'] ?? []);
         if (!$payment->check()){
             print $payment->getError();
             $this->setError($payment->getError());            

@@ -12,7 +12,7 @@ defined('_JEXEC') or die();
 class VendorModel extends ListModel{
 
     function getCountProductsPerPage(){
-        $count = $this->table->products_page;
+        $count = isset($this->table->products_page) ? $this->table->products_page : 0;
         if (!$count){
 		    $count = \JSFactory::getConfig()->count_products_to_page;
         }
@@ -20,7 +20,7 @@ class VendorModel extends ListModel{
     }
 
     function getCountProductsToRow(){
-        $count = $this->table->products_row;
+		$count = isset($this->table->products_row) ? $this->table->products_row : 0;
         if (!$count){
 		    $count = \JSFactory::getConfig()->count_products_to_row;
         }
@@ -28,7 +28,7 @@ class VendorModel extends ListModel{
     }
 
     function getProductFieldSorting($order){
-        if ($order==4){
+        if ($order==4) {
             $order = 1;
         }
         return \JSFactory::getConfig()->sorting_products_field_s_select[$order];

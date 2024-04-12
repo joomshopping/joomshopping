@@ -50,7 +50,7 @@ $i=0;
    </td>
    <td>
     <a href='index.php?option=com_jshopping&controller=config&task=seoedit&id=<?php print $row->id?>'>
-    <?php if (defined("JText::_('JSHP_SEOPAGE_')".$row->alias)) print constant("JText::_('JSHP_SEOPAGE_')".$row->alias); else print $row->alias;?>
+		<?php if (JText::_('JSHP_SEOPAGE_'.$row->alias) != 'JSHP_SEOPAGE_'.$row->alias) print JText::_('JSHP_SEOPAGE_'.$row->alias); else print $row->alias;?>
     </a>
    </td>
    <td>

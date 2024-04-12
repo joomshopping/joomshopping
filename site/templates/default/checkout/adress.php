@@ -184,7 +184,7 @@ JHtml::_('behavior.formvalidator');
                     </label>
                   </div>
                   <div class="controls">
-                    <input type="text" name="email2" id="email2" value="<?php print $this->user->email2?>" class="input form-control validate-email <?php if ($config_fields['email2']['require']):?>required<?php endif?>">
+                    <input type="text" name="email2" id="email2" value="<?php print $this->user->email?>" class="input form-control validate-email <?php if ($config_fields['email2']['require']):?>required<?php endif?>">
                   </div>
                 </div>
                 <?php endif; ?>

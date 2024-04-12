@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.6 08.07.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -15,15 +15,19 @@ class PaymentMethodTable extends MultilangTable{
         parent::__construct('#__jshopping_payment_method', 'payment_id', $_db);
         \JPluginHelper::importPlugin('jshoppingcheckout');
     }
-    
-    function loadFromClass($class){
+
+	function loadFromClass($class, $use_scriptname = 0){
         $db = \JFactory::getDBO();
-        $query = "SELECT payment_id FROM `#__jshopping_payment_method` WHERE payment_class='".$db->escape($class)."'";
+		$field = 'payment_class';
+		if ($use_scriptname) {
+			$field = 'scriptname';
+		}
+        $query = "SELECT payment_id FROM `#__jshopping_payment_method` WHERE ".$field."='".$db->escape($class)."'";
         extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $id = $db->loadResult();
         return $this->load($id);
-    }
+	}
 
     function getAllPaymentMethods($publish = 1, $shipping_id = 0){
         $db = \JFactory::getDBO();

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 08.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -524,6 +524,9 @@ class OrderTable extends ShopbaseTable{
         $this->products = $this->getAllItems();
         $this->weight = $this->getWeightItems();
 		
+        if ($page=='order_show'){
+            $this->delivery_time_name = '';
+        }
         if ($JshopConfig->show_delivery_time_checkout){
             $deliverytimes = \JSFactory::getAllDeliveryTime();
             if (isset($deliverytimes[$this->delivery_times_id])){
@@ -538,6 +541,7 @@ class OrderTable extends ShopbaseTable{
                 $this->delivery_time_name = $this->order_delivery_time;
             }
         }
+
         $this->order_tax_list = $this->getTaxExt();
         
         if (!isset($this->country_id)){
@@ -841,5 +845,12 @@ class OrderTable extends ShopbaseTable{
             }
         }
     }
+
+	public function getCurrentOrderStatus() {
+		$db = \JFactory::getDBO();
+        $query = "SELECT order_status, order_created FROM `#__jshopping_orders` WHERE order_id=".$db->q($this->order_id);
+        $db->setQuery($query);
+        return $db->loadObject();
+	}
 
 }

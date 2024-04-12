@@ -70,7 +70,7 @@ class CurrenciesModel extends BaseadminModel{
     
     public function getPrepareDataSave($input){
         $post = $input->post->getArray();
-        $post['currency_publish'] = (int)$post['currency_publish'];
+        $post['currency_publish'] = $post['currency_publish'] ?? 0;
         $post['currency_value'] = \JSHelper::saveAsPrice($post['currency_value']);
         return $post;
     }

@@ -62,8 +62,8 @@ class CategoryController extends BaseController{
         $category->getDescription();
         $dispatcher->triggerEvent('onAfterLoadCategory', array(&$category, &$user));
 
-		if (!$category->checkView($user)){
-            \JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+		if (!$category->checkView($user)){            
+			throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
         

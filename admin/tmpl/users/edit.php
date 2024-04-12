@@ -398,10 +398,10 @@ $config_fields=$this->config_fields;
 	<?php if ($config_fields['d_email']['display']){ ?>
     <tr>
       <td class="key">
-        <?php echo _JSHOP_EMAIL;?>
+        <?php echo JText::_('JSHOP_EMAIL');?>
       </td>
       <td>
-        <input type="text" class="inputbox endes" name="d_email" value="<?php echo $user->d_email ?>" />
+        <input type="text" class="form-control inputbox endes" name="d_email" value="<?php echo $user->d_email ?>" />
       </td>
     </tr>
     <?php } ?>

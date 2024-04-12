@@ -358,6 +358,7 @@ td.reviews{
     padding-bottom:15px;
     margin-bottom:25px;
     box-sizing: border-box;
+	transition: box-shadow 0.2s;
 }
 .jshop_list_product .block_product:hover{
     border-radius: 0.40rem;

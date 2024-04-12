@@ -45,8 +45,14 @@ class CheckoutModel extends BaseModel{
         $pm_method = \JSFactory::getTable('paymentMethod');
         $pm_method->load($order->payment_method_id);
         $pmconfigs = $pm_method->getConfigs();
-        $status = $pmconfigs['transaction_cancel_status'];
-        if (!$status){
+		$paymentsysdata = $pm_method->getPaymentSystemData();
+		$payment_system = $paymentsysdata->paymentSystem;
+		if ($payment_system) {
+			$payment_system->beforeCancel($pmconfigs, $order, $pm_method);
+		}
+		if (isset($pmconfigs['transaction_cancel_status']) && $pmconfigs['transaction_cancel_status']) {
+			$status = $pmconfigs['transaction_cancel_status'];
+		} else {
 			$status = $pmconfigs['transaction_failed_status'];
 		}
         if ($order->order_created) 

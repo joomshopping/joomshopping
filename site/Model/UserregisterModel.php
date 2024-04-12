@@ -60,12 +60,11 @@ class UserregisterModel  extends UserbaseModel{
 		}
     }
     
-    public function check($type = "register"){        
-        $this->user->password = isset($this->data['password']) ? $this->data['password'] : null;
-        $this->user->password2 = isset($this->data['password2']) ? $this->data['password2'] : null;
-		if (isset($this->data['email2'])) {
-			$this->user->email2 = $this->data['email2'];
-		}
+    public function check($type = "register"){
+		$jshopConfig = \JSFactory::getConfig();
+		foreach($jshopConfig->fields_client_only_check as $_field) {
+			$this->user->$_field = isset($this->data[$_field]) ? $this->data[$_field] : null;
+		}        
         if (!$this->user->check($type)){
             $this->savePostData();
             $this->setError($this->user->getError());
@@ -73,9 +72,9 @@ class UserregisterModel  extends UserbaseModel{
         }else{
             $res = 1;
         }
-        unset($this->user->password);
-        unset($this->user->password2);
-        unset($this->user->email2);
+		foreach($jshopConfig->fields_client_only_check as $_field) {
+			unset($this->user->$_field);
+		}
         return $res;
     }
     

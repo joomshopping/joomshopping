@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.7 24.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -52,12 +52,14 @@ class CartPreviewModel extends BaseModel{
     public function getBackUrlShop(){
         $jshopConfig = \JSFactory::getConfig();
         $modelproduct = \JSFactory::getModel('productShop', 'Site');
-        $shopurl = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=category', 1);
-        if ($jshopConfig->cart_back_to_shop=="product"){
+		$shopurl = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=category', 1);
+        if ($jshopConfig->cart_back_to_shop=="product") {
             $endpagebuyproduct = \JSHelper::xhtmlUrl($modelproduct->getEndPageBuy());
-        }elseif ($jshopConfig->cart_back_to_shop=="list"){
+        } elseif ($jshopConfig->cart_back_to_shop=="list") {
             $endpagebuyproduct =  \JSHelper::xhtmlUrl($modelproduct->getEndPageList());
-        }
+        } elseif ($jshopConfig->cart_back_to_shop=="home") {
+			$endpagebuyproduct = \JURI::base();
+		}
         if (isset($endpagebuyproduct) && $endpagebuyproduct){
             $shopurl = $endpagebuyproduct;
         }

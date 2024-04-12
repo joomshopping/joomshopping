@@ -9,7 +9,7 @@
 namespace Joomla\Component\Jshopping\Site\Table;
 defined('_JEXEC') or die();
 
-class ConfigDisplayPriceTable extends ShopbaseTable{
+class ConfigdisplaypriceTable extends ShopbaseTable{
     
     function __construct(&$_db){
         parent::__construct('#__jshopping_config_display_prices', 'id', $_db);

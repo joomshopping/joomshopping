@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.6 28.06.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -43,15 +43,16 @@ class UsereditModel  extends UserbaseModel{
 		if (!isset($post['password'])) $post['password'] = '';
         if (!isset($post['password_2'])) $post['password_2'] = '';
 		if (isset($post['password2'])) $post['password_2'] = $post['password2'];
+		if ($post['password_2']!='') $post['password2'] = $post['password_2'];
         if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = \JSHelper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
         if (isset($post['d_birthday']) && $post['d_birthday']) $post['d_birthday'] = \JSHelper::getJsDateDB($post['d_birthday'], $jshopConfig->field_birthday_format);
         unset($post['user_id']);
 		if (!$this->admin_registration){
 			$post['lang'] = $jshopConfig->getLang();
 			unset($post['usergroup_id']);
-			if (!$jshopConfig->not_update_user_joomla && $post['email']){
+			if (!$jshopConfig->not_update_user_joomla && isset($post['email'])){
 				$field = $jshopConfig->getListFieldsRegisterType('register');
-				if ($field['u_name']['display'] == 0){
+				if ($field['u_name']['display'] == 0 && $post['email']){
 					$post['u_name'] = $post['email'];
 				}
 			}
@@ -69,20 +70,19 @@ class UsereditModel  extends UserbaseModel{
 			$this->setError(\JText::_('JSHOP_ERROR_DATA'));
 			return 0;
 		}
-        $this->user->password = $this->data['password'];
-        $this->user->password2 = $this->data['password_2'];
-		if (isset($this->data['email2'])) {
-			$this->user->email2 = $this->data['email2'];
-		}
+        $jshopConfig = \JSFactory::getConfig();
+		foreach($jshopConfig->fields_client_only_check as $_field) {
+			$this->user->$_field = isset($this->data[$_field]) ? $this->data[$_field] : null;
+		}		
 		if (!$this->user->check($type)){
             $this->setError($this->user->getError());
 			$res = 0;
 		}else{
 			$res = 1;
 		}
-		unset($this->user->password);
-        unset($this->user->password2);
-		unset($this->user->email2);
+		foreach($jshopConfig->fields_client_only_check as $_field) {
+			unset($this->user->$_field);
+		}
 		return $res;
     }
 	

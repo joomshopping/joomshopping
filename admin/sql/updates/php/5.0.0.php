@@ -1,4 +1,13 @@
-<?php 
+<?php
+/**
+* @version      5.1.0 14.09.2022
+* @author       MAXXmarketing GmbH
+* @package      Jshopping
+* @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
+* @license      GNU/GPL
+*/
+
+defined('_JEXEC') or die();
 
 class jshoppingUpdate500{
 	
@@ -30,12 +39,22 @@ class jshoppingUpdate500{
 				$table->store();
 			}
 		}
+		foreach($list as $v){
+			$this->_delOldFieldProductCharactiristic($v->id);
+		}
 	}
 	
-	function _addNewFieldProductCharactiristic($id){
+	function _addNewFieldProductCharactiristic($id) {
 		$jshopConfig = \JSFactory::getConfig();
         $db = \JFactory::getDBO();
         $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` ADD `extra_field_".(int)$id."` ".$jshopConfig->new_extra_field_type." NOT NULL";
+        $db->setQuery($query);
+        $db->execute();
+	}
+	
+	function _delOldFieldProductCharactiristic($id) {
+        $db = \JFactory::getDBO();
+        $query = "ALTER TABLE `#__jshopping_products` DROP `extra_field_".(int)$id."`";
         $db->setQuery($query);
         $db->execute();
 	}

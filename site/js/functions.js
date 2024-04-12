@@ -29,16 +29,6 @@ var jshopClass = function(){
       return (value1 == value2);
     };
 
-    this.validateFormAdvancedSearch = function(formName){
-        var arrayId            = new Array('date_from', 'date_to', 'price_from', 'price_to');
-        var arrayType          = new Array('date|em', 'date|em', 'fl|em|0', 'fl|em');
-        var arrayParams        = new Array('', '');
-        var arrayErrorMessages = new Array('', '');
-        var myForm = new validateForm(formName, arrayId, arrayType, arrayParams, arrayErrorMessages, 2);
-        error = myForm.validate();
-    return error;
-    };
-
     this.checkAGBAndNoReturn = function(agb, no_return){
         var result1=result2=true;
         if (agb=='1') result1 = this.checkAGB();
@@ -176,9 +166,10 @@ var jshopClass = function(){
     this.formatprice = function(price){
         if (typeof(jshopParams.decimal_count)==='undefined') jshopParams.decimal_count = 2;
         if (typeof(jshopParams.decimal_symbol)==='undefined') jshopParams.decimal_symbol = ".";
+		if (typeof(jshopParams.format_currency)==='undefined') jshopParams.format_currency = "00 Symb";
         price = price.toFixed(jshopParams.decimal_count).toString();
         price = price.replace('.',jshopParams.decimal_symbol);
-        res = this.format_currency.replace("Symb",jshopParams.currency_code);
+        res = jshopParams.format_currency.replace("Symb",jshopParams.currency_code);
         res = res.replace("00",price);
     return res;
     };
@@ -255,7 +246,7 @@ var jshopClass = function(){
                 if (json.pricedefault){
                     jQuery("#pricedefault").html(json.pricedefault);
                 }
-                if (json.qty){
+                if (typeof json.qty !== 'undefined'){
                     jQuery("#product_qty").html(json.qty);
                 }
                 if (json.oldprice){
@@ -264,29 +255,6 @@ var jshopClass = function(){
                 }else{
                     jQuery(".old_price").hide();
                 }
-
-                /*if (json.images && json.images.length>0){
-                    var count_prod_img = json.images.length;
-                    var html_thumb_img = "";
-                    var html_middle_img = "";
-                    var html_zoom_img = '';
-                    if (typeof(that.jshop_product_hide_zoom_image)==='undefined') that.jshop_product_hide_zoom_image = 0;
-                    if (!that.jshop_product_hide_zoom_image){
-                        html_zoom_img = ' <div class="text_zoom"><img alt="zoom" src="'+jshopParams.liveimgpath+'/search.png" /> '+jshopParams.translate_zoom_image+'</div>';
-                    }
-                    for(var j=0;j<count_prod_img;j++){
-                        html_thumb_img+='<img class="jshop_img_thumb" src="'+jshopParams.liveproductimgpath+'/thumb_'+json.images[j]+'" onclick = "jshop.showImage('+j+')" />';
-                        tmp = 'style="display:none"';
-                        if (j==0) tmp = '';
-                        html_middle_img+='<a class="lightbox" id="main_image_full_'+j+'" href="'+jshopParams.liveproductimgpath+'/full_'+json.images[j]+'" '+tmp+'><img id="main_image_'+j+'" src="'+jshopParams.liveproductimgpath+'/'+json.images[j]+'" />'+html_zoom_img+'</a>';
-                    }
-                    if (json.displayimgthumb=="1")
-                        jQuery("#list_product_image_thumb").html(html_thumb_img);
-                    else
-                        jQuery("#list_product_image_thumb").html("");
-                    jQuery("#list_product_image_middle").html(html_middle_img);
-                    initJSlightBox();
-                }*/
 
                 if (json.block_image_thumb || json.block_image_middle){
                     jQuery("#list_product_image_thumb").html(json.block_image_thumb);
@@ -473,11 +441,11 @@ jQuery(document).ready(function(){
     if (typeof(jshopParams)!=='undefined' && jshopParams.initJSlightBox){
         jshop.initJSlightBox();
     }
-    
-    jQuery('.jshop .cart .cart_reload').on('click', function(){
+
+	jQuery(document).on('click', '.jshop .cart .cart_reload', function(){
        jQuery('.jshop form#updateCart').submit(); 
     });
-	
+
 	jQuery('.jshop #payment_form').on('submit', function(){
 		return jshop.checkPaymentForm();
 	});

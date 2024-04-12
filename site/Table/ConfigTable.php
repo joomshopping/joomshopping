@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.6 03.07.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -58,7 +58,7 @@ class ConfigTable{
                 continue;
             }            
             $data = $this->getFieldFromKey($k, $config_id);
-            if ($data->id) {
+            if (isset($data->id) && $data->id) {
                 $this->updateRow($data->id, $k, $v, $config_id);
             } else {
                 $this->insertRow($k, $v, $config_id);
@@ -96,8 +96,8 @@ class ConfigTable{
     }
 
     function transformPdfParameters() {
-        if (is_array($this->pdf_parameters)){
-            $this->pdf_parameters = implode(":",$this->pdf_parameters);
+        if (isset($this->pdf_parameters) && is_array($this->pdf_parameters)) {
+            $this->pdf_parameters = implode(":", $this->pdf_parameters);
         }
     }
 
@@ -109,7 +109,7 @@ class ConfigTable{
         $main_currency = $this->mainCurrency;
         if ($this->default_frontend_currency){
             $main_currency = $this->default_frontend_currency;
-        }
+        }		
         
         if ($session->get('Js_id_currency_orig') && $session->get('Js_id_currency_orig')!=$main_currency) {
             $id_currency_session = 0;
@@ -119,7 +119,6 @@ class ConfigTable{
         if (!$id_currency && $id_currency_session){
             $id_currency = $id_currency_session;
         }
-
         $session->set('Js_id_currency_orig', $main_currency);
 
         if ($id_currency){
@@ -130,13 +129,13 @@ class ConfigTable{
         if (!$app->isClient('administrator')){
             $session->set('Js_id_currency', $this->cur_currency);
         }
-        
         $all_currency = \JSFactory::getAllCurrency();
-        $current_currency = $all_currency[$this->cur_currency];
-        if (!isset($current_currency)){
-            $current_currency = array_shift($all_currency);
-        }
-        if (!$current_currency->currency_value){
+		if (isset($all_currency[$this->cur_currency])) {
+			$current_currency = $all_currency[$this->cur_currency];
+		} else {
+			$current_currency = array_shift($all_currency);
+		}        
+        if (!$current_currency->currency_value) {
             $current_currency->currency_value = 1;
         }
         $this->currency_value = $current_currency->currency_value;
@@ -160,7 +159,7 @@ class ConfigTable{
                 $country_id = $this->default_country;
             }    
             if ($country_id){
-                $configDisplayPrice = \JSFactory::getTable('configDisplayPriceTable');
+                $configDisplayPrice = \JSFactory::getTable('configdisplaypriceTable');
                 $rows = $configDisplayPrice->getList();
                 foreach($rows as $v){
                     if (in_array($country_id, $v->countries)){

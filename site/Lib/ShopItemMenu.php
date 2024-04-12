@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.8 03.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,8 +10,9 @@ namespace Joomla\Component\Jshopping\Site\Lib;
 defined('_JEXEC') or die();
 
 class ShopItemMenu{
-    static private $instance = array();
+    static private $instance = [];
     public $list = null;
+    public $list_product = null;
     public $list_category = null;
     public $list_manufacturer = null;
     public $list_content = null;
@@ -45,9 +46,10 @@ class ShopItemMenu{
     function init($lang = ''){
 		$this->lang = $lang;
         $list = $this->getList();
-        $this->list_category = array();
-        $this->list_manufacturer = array();
-        $this->list_content = array();
+        $this->list_product = [];
+        $this->list_category = [];
+        $this->list_manufacturer = [];
+        $this->list_content = [];
         $this->cart = 0;
         $this->wishlist = 0;
         $this->search = 0;
@@ -69,6 +71,9 @@ class ShopItemMenu{
                 $data['controller'] = $data['view'];
                 unset($data['view']);
                 unset($data['layout']);
+            }
+            if (count($data)==4 && $data['controller']=="product" && isset($data['task']) && $data['task']=="view" && isset($data['category_id']) && isset($data['product_id'])){
+                $this->list_product[$data['product_id']] = $v->id;
             }
             if (count($data)==3 && $data['controller']=="category" && $data['task']=="view" && $data['category_id']){
                 $this->list_category[$data['category_id']] = $v->id;
@@ -136,7 +141,7 @@ class ShopItemMenu{
             $db->setQuery($query);
             $this->list = $db->loadObjectList();
             foreach($this->list as $k=>$v){
-                $data = array();
+                $data = [];
                 $v->link = str_replace("index.php?option=com_jshopping&","",$v->link);
                 $tmp = explode('&', $v->link);
                 foreach($tmp as $k2=>$v2){
@@ -149,6 +154,10 @@ class ShopItemMenu{
             }
         }
     return $this->list;
+    }
+
+    function getListProduct(){
+    return $this->list_product;
     }
     
     function getListCategory(){
@@ -221,24 +230,38 @@ class ShopItemMenu{
 
     function getItemIdFromQuery($query){
         $Itemid = 0;
+		if (!isset($query['controller'])) {
+			$query['controller'] = null;
+		}
+		if (!isset($query['task'])) {
+			$query['task'] = null;
+		}
         if ($query['controller']=="category" && $query['task']=="view" && $query['category_id']){
             $categoryitemidlist = $this->getListCategory();
-            $Itemid = $categoryitemidlist[$query['category_id']];
-        }
-        if ($query['controller']=="product" && $query['task']=="view" && $query['category_id'] && $query['product_id']){			
-            $categoryitemidlist = $this->getListCategory();
-            $prodalias = \JSFactory::getAliasProduct($this->lang);            
-            if (isset($categoryitemidlist[$query['category_id']]) && isset($prodalias[$query['product_id']])){
+			if (isset($categoryitemidlist[$query['category_id']])) {
 				$Itemid = $categoryitemidlist[$query['category_id']];
+			}
+        }
+        if ($query['controller']=="product" && $query['task']=="view" && $query['category_id'] && $query['product_id']){
+            $productitemidlist = $this->getListProduct();
+            if (isset($productitemidlist[$query['product_id']])) {
+                $Itemid = $productitemidlist[$query['product_id']];
+            }
+            if (!$Itemid) {
+                $categoryitemidlist = $this->getListCategory();
+                $prodalias = \JSFactory::getAliasProduct($this->lang);
+                if (isset($categoryitemidlist[$query['category_id']]) && isset($prodalias[$query['product_id']])){
+                    $Itemid = $categoryitemidlist[$query['category_id']];
+                }
             }
         }
         if ($query['controller']=="manufacturer" && $this->getManufacturer()){
             $Itemid = $this->getManufacturer();
         }
         if ($query['controller']=="manufacturer" && $query['task']=="view" && $query['manufacturer_id']){         
-            $manufactureritemidlist = $this->getListManufacturer();            
+            $manufactureritemidlist = $this->getListManufacturer();
 			if (isset($manufactureritemidlist[$query['manufacturer_id']])){
-				$Itemid = $manufactureritemidlist[$query['manufacturer_id']];                
+				$Itemid = $manufactureritemidlist[$query['manufacturer_id']];
             }
         }
         if ($query['controller']=="content" && $query['task']=="view" && $query['page']){

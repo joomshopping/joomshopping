@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.7 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -53,7 +53,8 @@ abstract class UsershopbaseTable extends ShopbaseTable{
                         continue;
                     }
                 }
-                if (!$checkfield->$typecheck($this->$field)) {
+				
+                if ($typecheck && !$checkfield->$typecheck($this->$field)) {
                     $this->_error = \JText::_($fields_client_check[$field][1]);
                     return false;
                 }
@@ -75,27 +76,30 @@ abstract class UsershopbaseTable extends ShopbaseTable{
 				return false;
 			}
 		}
-		
+
+		if (!isset($config_fields['password'])){
+			$config_fields['password'] = ['display' => 0, 'require' => 0];
+		}
 		if (($config_fields['password']['require'] || ($config_fields['password']['display'] && $this->password)) && !$checkfield->password($this->password)){
 			$this->_error = $checkfield->getLastErrorMsg();
 			return false;
 		}
 
-		if (($this->password || $this->password2) && $config_fields['password_2']['display'] && $this->password!=$this->password2){
+		if (isset($config_fields['password_2']['display']) && $config_fields['password_2']['display'] && ($this->password || $this->password2) && $this->password!=$this->password2){
 			$this->_error = \JText::_('JSHOP_REGWARN_PASSWORD_NOT_MATCH');
 			return false;
 		}
-		
-		if (($this->email && $this->email2) && $config_fields['email2']['display'] && $this->email != $this->email2){
+
+		if (isset($config_fields['email2']['display']) && $config_fields['email2']['display'] && ($this->email && $this->email2) && $this->email != $this->email2){
 			$this->_error = \JText::_('JSHOP_REGWARN_EMAIL_NOT_MATCH');
 			return false;
 		}
-        
+
 		if ($this->email!='' && $check_exist_email){
 			$query = "SELECT id FROM #__users WHERE email='".$db->escape($this->email)."' AND id != ".(int)$this->user_id;
             $obj = $this;
             \JFactory::getApplication()->triggerEvent('onBeforeCheckUserEmailExistJshopUserShop', array(&$obj, &$type, &$config_fields, &$type2, &$query));
-			$db->setQuery($query);			
+			$db->setQuery($query);
 			if (intval($db->loadResult())){
 				$this->_error = (\JText::_('JSHOP_REGWARN_EMAIL_INUSE'));
 				return false;

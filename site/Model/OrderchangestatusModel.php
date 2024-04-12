@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.7 25.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -86,7 +86,7 @@ class OrderChangeStatusModel  extends BaseModel{
 		$prev_order_status = $this->orderStatusStore();
 		
 		if ($this->getAppAdmin()){
-			\JSFactory::loadLanguageFile($this->order->getLang());
+			\JSFactory::loadLanguageFile($this->order->getLang(), true);
 			\JSFactory::getLang($this->order->getLang());
 		}
         
@@ -255,7 +255,7 @@ class OrderChangeStatusModel  extends BaseModel{
 				$send = $this->sendmessage;
 			}
 			if ($type=='admin'){
-				$send = $this->sendmessage && $this->admin_send_order;
+				$send = $this->sendmessage && $this->admin_send_order && $jshopConfig->send_admin_mail_order_status;
 			}
 			if ($type=='vendor'){
 				$send = $this->sendmessage && ($this->vendors_send_message || $this->vendor_send_order);

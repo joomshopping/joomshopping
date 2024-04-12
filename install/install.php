@@ -109,26 +109,10 @@ class com_jshoppingInstallerScript{
         $view = new \Joomla\Component\Jshopping\Administrator\View\Panel\HtmlView($view_config);
         $view->setLayout("info");
         $view->sidebar='';
+        $view->installpage = 1;
 		$view->tmp_html_start='';
 		$view->tmp_html_end='';
         $view->displayInfo();
-        ?>
-        <br/>
-        <table align="center" style="font-weight:bold">
-        <tr>
-        <td width="250">
-        <a href="index.php?option=com_jshopping">
-            <img src="components/com_jshopping/images/jshop_categories_b.png" align="left" style="margin-right:10px;" /><div style="line-height:48px;">JoomShopping</div>
-        </a>
-        </td>
-        <td width="250">
-        <a href="index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm1:demo_products_5.0.0.zip&back=<?php print urldecode("index.php?option=com_jshopping")?>">
-            <img src="components/com_jshopping/images/jshop_import_export_b.png" align="left" style="margin-right:8px;" /><div style="line-height:48px;">&nbsp;<?php print \JText::_('JSHOP_LOAD_SAMPLE_DATA')?></div>
-        </a>
-        </td>
-        </tr>
-        </table><br/>
-    <?php
     }
     
     public function uninstall($parent){

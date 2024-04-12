@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.8 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -28,7 +28,7 @@ class HtmlView extends BaseHtmlView{
     }
     function displayShow($tpl=null){
         \JToolBarHelper::title($this->order->order_number, 'generic.png');
-        \JToolBarHelper::back();
+        \JToolBarHelper::back('JTOOLBAR_BACK', 'index.php?option=com_jshopping&controller=orders');
 		\JToolBarHelper::custom('send', 'mail', 'mail', \JText::_('JSHOP_SEND_MAIL'), false);
 		\JToolBarHelper::custom('edit', 'edit', 'edit', \JText::_('JSHOP_EDIT'), false);
         parent::display($tpl);

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 14.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -65,10 +65,13 @@ class ManufacturersModel extends BaseadminModel{
     }
     
     public function imageUpload(array $post, $image){
-        $jshopConfig = \JSFactory::getConfig();        
+        $jshopConfig = \JSFactory::getConfig();
         $upload = new UploadFile($image);
         $upload->setAllowFile($jshopConfig->allow_image_upload);
         $upload->setDir($jshopConfig->image_manufs_path);
+        if (isset($post["image_name"])) {
+            $upload->setNameWithoutExt($post["image_name"]);
+        }
         $upload->setFileNameMd5(0);
         $upload->setFilterName(1);
         if ($upload->upload()){            
@@ -107,8 +110,10 @@ class ManufacturersModel extends BaseadminModel{
     }
     
     public function save(array $post, $image = null){
+        $jshopConfig = \JSFactory::getConfig();
         $dispatcher = \JFactory::getApplication();
         $man = \JSFactory::getTable('manufacturer');
+        $man->load($post["manufacturer_id"]);
         if (!$post['manufacturer_publish']){
             $post['manufacturer_publish'] = 0;
         }
@@ -124,8 +129,14 @@ class ManufacturersModel extends BaseadminModel{
                 $man->manufacturer_logo = $image_name;
             }
         }
+        if ((!isset($image_name) || !$image_name) && $man->manufacturer_logo && $post['image_name']) {
+            $man->manufacturer_logo = \Joomla\Component\Jshopping\Site\Helper\File::rename(
+                $jshopConfig->image_manufs_path,
+                $man->manufacturer_logo,
+                $post['image_name']
+            );
+        }
         if (!$man->store()){
-            print_r($man); die();
             $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
         }

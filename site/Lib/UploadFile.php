@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 27.08.2021
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -145,9 +145,9 @@ class UploadFile{
     */
     function parseNameFile($name){
         $pathinfo=pathinfo($name);
-        $ext=$pathinfo['extension'];
+        $ext=$pathinfo['extension'] ?? '';
         $name=$pathinfo['basename'];
-        $dir=$pathinfo['dirname'];
+        $dir=$pathinfo['dirname'] ?? '';
         if ($ext!="") $b_name=substr($name,0,strlen($name)-strlen($ext)-1); else $b_name=$name;
     return array('name'=>$b_name, "ext"=>$ext, "dir"=>$dir);
     }

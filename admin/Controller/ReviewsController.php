@@ -78,6 +78,7 @@ class ReviewsController extends BaseadminController{
         $view->set('config', $jshopConfig);
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
+        $view->tmp_html_filter_end = "";
         $view->_tmp_cols_14 = "";
         $view->tmp_html_end = "";
         $view->sidebar = \JHTMLSidebar::render();

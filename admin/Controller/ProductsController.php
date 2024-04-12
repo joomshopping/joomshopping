@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.8 06.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -107,6 +107,7 @@ class ProductsController extends BaseadminController{
         $view->tmp_html_col_before_td_foot = "";
         $view->tmp_html_col_after_td_foot = "";
         $view->tmp_html_end = "";
+		$view->tmp_html_filter_end = '';
         $view->sidebar = \JHTMLSidebar::render();
         $dispatcher->triggerEvent('onBeforeDisplayListProductsView', array(&$view));
         $view->display();
@@ -172,21 +173,21 @@ class ProductsController extends BaseadminController{
             $videos = $product->getVideos();
             $files  = $product->getFiles();
             $categories_select = $product->getCategories();
-            $categories_select_list = array();
+            $categories_select_list = [];
             foreach($categories_select as $v){
                 $categories_select_list[] = $v->category_id;
             }
             $related_products = $products->getRelatedProducts($product_id);
         } else {
-            $images = array();
-            $videos = array();
-            $files = array();
+            $images = [];
+            $videos = [];
+            $files = [];
             $categories_select = null;
+            $categories_select_list = [];
             if ($category_id) {
-                $categories_select = $category_id;
+                $categories_select_list[] = $category_id;
             }
-            $related_products = array();
-            $categories_select_list = array();
+            $related_products = [];
         }
         if ($jshopConfig->tax){
             $list_tax = SelectOptions::getTaxs();
@@ -214,7 +215,7 @@ class ProductsController extends BaseadminController{
         $lists['attribs_values'] = $_attribut_value->getAllAttributeValues(2);
         $all_attributes = $list_all_attributes['dependent'];
 
-        $lists['ind_attribs_gr'] = array();
+        $lists['ind_attribs_gr'] = [];
         foreach($lists['ind_attribs'] as $v){
             $lists['ind_attribs_gr'][$v->attr_id][] = $v;
         }
@@ -223,7 +224,7 @@ class ProductsController extends BaseadminController{
             $lists['attribs'][$key]->count = floatval($attribs->count);
         }
 
-        $first = array();
+        $first = [];
         $first[] = \JHTML::_('select.option', '0',\JText::_('JSHOP_SELECT'), 'value_id','name');
 
         foreach ($all_attributes as $key => $value){
@@ -286,13 +287,7 @@ class ProductsController extends BaseadminController{
         //product extra field
         if ($jshopConfig->admin_show_product_extra_field){
 			$product->loadExtraFieldsData();
-            $categorys_id = array();
-            if (is_array($categories_select)){
-                foreach($categories_select as $tmp){
-                    $categorys_id[] = $tmp->category_id;
-                }
-            }
-            $tmpl_extra_fields = $this->_getHtmlProductExtraFields($categorys_id, $product);
+            $tmpl_extra_fields = $this->_getHtmlProductExtraFields($categories_select_list, $product);
         }
         //
 
@@ -301,7 +296,7 @@ class ProductsController extends BaseadminController{
             $_freeattributes = \JSFactory::getModel("freeattribut");
             $listfreeattributes = $_freeattributes->getAll();
             $activeFreeAttribute = $product->getListFreeAttributes();
-            $listIdActiveFreeAttribute = array();
+            $listIdActiveFreeAttribute = [];
             foreach($activeFreeAttribute as $_obj){
                 $listIdActiveFreeAttribute[] = $_obj->id;
             }
@@ -331,15 +326,19 @@ class ProductsController extends BaseadminController{
             $product->product_price2 = '';
         }
 
-        $category_select_onclick = "";
+        $category_select_onclick = 'onclick="';
         if ($jshopConfig->admin_show_product_extra_field){
-            $category_select_onclick = 'onclick="jshopAdmin.reloadProductExtraField(\''.$product_id.'\')"';
+            $category_select_onclick .= 'jshopAdmin.reloadProductExtraField(\''.$product_id.'\');';
         }
+        if ($jshopConfig->product_use_main_category_id) {
+            $category_select_onclick .= 'jshopAdmin.reloadSelectMainCategory(this);';
+        }
+        $category_select_onclick .= '"';
 
         if ($jshopConfig->tax){
             $lists['tax'] = \JHTML::_('select.genericlist', $list_tax,'product_tax_id','class = "inputbox form-control" onchange = "jshopAdmin.updatePrice2('.$jshopConfig->display_price_admin.');"','tax_id','tax_name',$product->product_tax_id);
         }
-        $lists['categories'] = \JHTML::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-control" size="10" multiple = "multiple" '.$category_select_onclick, 'category_id', 'name', $categories_select);
+        $lists['categories'] = \JHTML::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-control" size="10" multiple = "multiple" '.$category_select_onclick, 'category_id', 'name', $categories_select_list);
         $lists['templates'] = \JSHelperAdmin::getTemplates('product', $product->product_template);
 
         $_product_option = \JSFactory::getTable('productoption');
@@ -348,7 +347,7 @@ class ProductsController extends BaseadminController{
 
         if ($jshopConfig->return_policy_for_product){
             $_statictext = \JSFactory::getModel("statictext");
-            $first = array();
+            $first = [];
             $first[] = \JHTML::_('select.option', '0', \JText::_('JSHP_STPAGE_return_policy'), 'id', 'alias');
             $statictext_list = $_statictext->getList(1);
             $product_options['return_policy'] = isset($product_options['return_policy']) ? $product_options['return_policy'] : "";
@@ -377,9 +376,9 @@ class ProductsController extends BaseadminController{
         $view->dep_attr_td_header = "";
         $view->dep_attr_td_row_empty = "";
         $view->dep_attr_td_footer = "";
-        $view->dep_attr_td_row = array();
-        $view->ind_attr_td_row = array();
-        $view->ind_attr_td_footer = array();
+        $view->dep_attr_td_row = [];
+        $view->ind_attr_td_row = [];
+        $view->ind_attr_td_footer = [];
         foreach($languages as $lang){
             $view->set('plugin_template_description_'.$lang->language, '');
         }
@@ -404,9 +403,9 @@ class ProductsController extends BaseadminController{
             $this->setRedirect("index.php?option=com_jshopping&controller=products&task=edit&product_id=".$post['product_id']);
             return;
         }
-        if ($product->parent_id!=0){
+        if (intval($product->parent_id)!=0){
             print "<script type='text/javascript'>window.close();</script>";
-            die();
+			return;
         }
         if ($this->getTask()=='apply'){
             $this->setRedirect("index.php?option=com_jshopping&controller=products&task=edit&product_id=".$product->product_id, \JText::_('JSHOP_PRODUCT_SAVED'));
@@ -427,7 +426,7 @@ class ProductsController extends BaseadminController{
         $jshopConfig = \JSFactory::getConfig();
 
         $dispatcher = \JFactory::getApplication();
-        $dispatcher->triggerEvent('onLoadEditListProduct', array());
+        $dispatcher->triggerEvent('onLoadEditListProduct', []);
 
         $product = \JSFactory::getTable('product');
 
@@ -496,7 +495,7 @@ class ProductsController extends BaseadminController{
 
     function savegroup(){
         $dispatcher = \JFactory::getApplication();
-        $dispatcher->triggerEvent('onBeforSaveListProduct', array());
+        $dispatcher->triggerEvent('onBeforSaveListProduct', []);
         $cid = $this->input->getVar('cid');
         $post = $this->input->post->getArray();
         $model = \JSFactory::getModel("products");
@@ -578,6 +577,8 @@ class ProductsController extends BaseadminController{
         $view->set('limit', $limit);
         $view->set('pages', $page);
         $view->set('no_id', $no_id);
+		$view->tmp_html_start = '';
+        $view->tmp_html_end = '';
         $view->display();
         die();
     }
@@ -587,6 +588,7 @@ class ProductsController extends BaseadminController{
         $cat_id = $this->input->getVar("cat_id");
         $product = \JSFactory::getTable('product');
         $product->load($product_id);
+        $product->loadExtraFieldsData();
 
         $categorys = array();
         if (is_array($cat_id)){
@@ -599,7 +601,7 @@ class ProductsController extends BaseadminController{
         die();
     }
 
-    function _getHtmlProductExtraFields($categorys=array(), $product = null){
+    function _getHtmlProductExtraFields($categorys = [], $product = null){
 		if($product === null) $product = new \stdClass;
 		$_productfields = \JSFactory::getModel("productfields");
         $list = $_productfields->getList(1);
@@ -637,7 +639,7 @@ class ProductsController extends BaseadminController{
                     }else{
                         $attr = "class = 'form-control' ";
                     }
-                    $obj->values = \JHTML::_('select.genericlist', array_merge($f_option, $tmp), 'productfields['.$name.'][]', $attr, 'id', 'name', explode(',',$product->$name));
+                    $obj->values = \JHTML::_('select.genericlist', array_merge($f_option, $tmp), 'productfields['.$name.'][]', $attr, 'id', 'name', explode(',', $product->$name ?? ''));
                 }else{
                     $obj->values = "<input type='text' class = 'form-control' name='".$name."' value='".$product->$name."' />";
                 }

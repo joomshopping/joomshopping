@@ -320,30 +320,30 @@ class ConfigController extends BaseadminController{
             $post['fields_register'] = serialize($post['field']);
         }
         
-        if ($tab != 4){            
+        if ($tab != 4){
 		    $config = \JSFactory::getTable('Config');
-		    $config->id = $jshopConfig->load_id;            
-		    if (!$config->bind($post, ['task', 'tab', 'option', 'controller'])) {                
+		    $config->id = $jshopConfig->load_id;
+		    if (!$config->bind($post, ['task', 'tab', 'option', 'controller'])) {
 			    \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_BIND'));
 			    $this->setRedirect('index.php?option=com_jshopping&controller=config');
 			    return 0;
 		    }
             
-            if ($tab==6 && $jshopConfig->admin_show_product_extra_field){                
-                $config->setProductListDisplayExtraFields((array)$post['product_list_display_extra_fields']);
-                $config->setFilterDisplayExtraFields((array)$post['filter_display_extra_fields']);
-                $config->setProductHideExtraFields((array)$post['product_hide_extra_fields']);
-                $config->setCartDisplayExtraFields((array)$post['cart_display_extra_fields']);
+            if ($tab==6 && $jshopConfig->admin_show_product_extra_field){
+                $config->setProductListDisplayExtraFields($post['product_list_display_extra_fields'] ?? []);
+                $config->setFilterDisplayExtraFields($post['filter_display_extra_fields'] ?? []);
+                $config->setProductHideExtraFields($post['product_hide_extra_fields'] ?? []);
+                $config->setCartDisplayExtraFields($post['cart_display_extra_fields'] ?? []);
             }
 		    
 		    $config->transformPdfParameters();
-		    if (!$config->store()) {                
+		    if (!$config->store()) {
 			    \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
 			    $this->setRedirect('index.php?option=com_jshopping&controller=config');
 			    return 0;
 		    }
             
-        }        
+        }
 
 		if (isset($_FILES['header'])){
 			if ($_FILES['header']['size']){
@@ -525,7 +525,8 @@ class ConfigController extends BaseadminController{
         $order->city = "City";
         $order->country = "Country";
         $order->order_number = \JSHelper::outputDigit(1, 8);
-        $order->order_date = strftime($jshopConfig->store_date_format, time());
+        $order->order_date = \JSHelper::formatdate(date('Y-m-d'));
+        $order->invoice_date = \JSHelper::formatdate(date('Y-m-d'));
         $order->weight = 0;
         $order->products = array();
         $prod = new \stdClass();

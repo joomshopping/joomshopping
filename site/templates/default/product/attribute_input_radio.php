@@ -1,4 +1,15 @@
-<?php foreach($this->options as $el){?>
+<?php
+/**
+* @version      5.1.0 14.09.2022
+* @author       MAXXmarketing GmbH
+* @package      Jshopping
+* @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
+* @license      GNU/GPL
+*/
+
+defined('_JEXEC') or die();
+
+foreach($this->options as $el){?>
 <?php $id = 'jshop_attr_id'.$this->attr_id.$el->val_id;?>
 <?php if ($el->val_id == $this->active) $sel = ' checked="checked"'; else $sel = '';?>
 <span class="input_type_radio">

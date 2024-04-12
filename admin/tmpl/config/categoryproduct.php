@@ -306,7 +306,7 @@ $jshopConfig=\JSFactory::getConfig();
     </td>
     <td>
         <input type="hidden" name="product_list_show_delivery_time" value="0">
-        <input type="checkbox" name="product_list_show_delivery_time" value="1" <?php if ($jshopConfig->product_list_show_delivery_time) echo 'checked="checked"';?> />
+        <input type="checkbox" name="product_list_show_delivery_time" value="1" <?php if (isset($jshopConfig->product_list_show_delivery_time) && $jshopConfig->product_list_show_delivery_time) echo 'checked="checked"';?> />
     </td>
 </tr>
 <?php }?>

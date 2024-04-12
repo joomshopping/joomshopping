@@ -49,7 +49,7 @@ $row=$this->row;
             <?php foreach($this->list_shippings as $shipping){?>
                 <div style="padding:5px 0px;">
                     <input type="hidden" name="shipping[<?php print $shipping->shipping_id?>]" value="0">
-                    <input type="checkbox" name="shipping[<?php print $shipping->shipping_id?>]" value="1" <?php if ($this->shippings_conects[$shipping->shipping_id]!=="0") print "checked"?>>                    
+                    <input type="checkbox" name="shipping[<?php print $shipping->shipping_id?>]" value="1" <?php if (!isset($this->shippings_conects[$shipping->shipping_id]) || $this->shippings_conects[$shipping->shipping_id]!=="0") print "checked"?>>
                     <?php print $shipping->name;?>
                 </div>
             <?php }?>

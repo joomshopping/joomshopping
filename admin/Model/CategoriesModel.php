@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -198,13 +198,15 @@ class CategoriesModel extends BaseadminModel{
 
     function uploadImage($post, $image = null){
         $jshopConfig = \JSFactory::getConfig();
-        
         if (is_null($image)){
             $image = $_FILES['category_image'];
         }
         $upload = new UploadFile($image);
         $upload->setAllowFile($jshopConfig->allow_image_upload);
         $upload->setDir($jshopConfig->image_category_path);
+        if (isset($post["image_name"])) {
+            $upload->setNameWithoutExt($post["image_name"]);
+        }
         $upload->setFileNameMd5(0);
         $upload->setFilterName(1);
         if ($upload->upload()){
@@ -270,7 +272,9 @@ class CategoriesModel extends BaseadminModel{
     }
     
     public function save(array $post, $image = null){
+        $jshopConfig = \JSFactory::getConfig();
         $category = \JSFactory::getTable("category");
+        $category->load($post["category_id"]);
         if (!$post["category_id"]){
             $post['category_add_date'] = \JSHelper::getJsDate();
         }
@@ -289,6 +293,13 @@ class CategoriesModel extends BaseadminModel{
             if ($upload_image!=''){
                 $category->category_image = $upload_image;
             }
+        }
+        if ((!isset($upload_image) || !$upload_image) && $category->category_image && $post['image_name']) {
+            $category->category_image = \Joomla\Component\Jshopping\Site\Helper\File::rename(
+                $jshopConfig->image_category_path,
+                $category->category_image,
+                $post['image_name']
+            );
         }
         $this->_reorderCategory($category);
  
@@ -330,7 +341,7 @@ class CategoriesModel extends BaseadminModel{
             $category->load($value);
             $name_category = $category->getName();
             $childs = $category->getChildCategories();
-            if ($allCatCountProducts[$value] || count($childs)){
+            if ((isset($allCatCountProducts[$value]) && $allCatCountProducts[$value]) || count($childs)){
                 if ($msg){
                     $app->enqueueMessage(sprintf(\JText::_('JSHOP_CATEGORY_NO_DELETED'), $name_category), 'error');
                 }

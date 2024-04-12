@@ -64,7 +64,7 @@ class ProductController extends BaseController{
         $all_attr_values = $model->getAllAttrValues();
 
 		if (!$product->checkView($category, $user, $category_id, $listcategory)){
-            \JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
         

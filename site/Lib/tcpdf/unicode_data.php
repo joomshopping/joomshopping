@@ -27,7 +27,7 @@
  * @package com.tecnick.tcpdf
  * @version 2.1.000
  * @link http://tcpdf.sourceforge.net
- * @license http://www.gnu.org/copyleft/lesser.html LGPL
+ * @license GNU/GPL
  * @since 2.1.000 (2008-01-08)
 */
 defined('_JEXEC') or die;

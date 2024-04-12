@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.7 19.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,7 +22,7 @@ class AttributTable extends MultilangTable{
         if ($groupordering){
             $ordering = "G.ordering, A.attr_ordering";
         }        
-        $query = "SELECT A.attr_id, A.`".$lang->get("name")."` as name, A.`".$lang->get("description")."` as description, A.attr_type, A.independent, A.allcats, A.cats, A.attr_ordering, G.`".$lang->get("name")."` as groupname
+        $query = "SELECT A.attr_id, A.`".$lang->get("name")."` as name, A.`".$lang->get("description")."` as description, A.attr_type, A.independent, A.allcats, A.cats, A.attr_ordering, G.`".$lang->get("name")."` as groupname, G.id as group_id
                   FROM `#__jshopping_attr` as A left Join `#__jshopping_attr_groups` as G on A.`group`=G.id
                   ORDER BY ".$ordering;
         $db->setQuery($query);

@@ -52,8 +52,8 @@ $i=0;
      <?php echo \JHTML::_('grid.id', $i, $row->id);?>
    </td>
    <td>
-    <a href='index.php?option=com_jshopping&controller=config&task=statictextedit&id=<?php print $row->id?>'>
-    <?php if (defined("JText::_('JSHP_STPAGE_')".$row->alias)) print constant("JText::_('JSHP_STPAGE_')".$row->alias); else print $row->alias;?>
+    <a href='index.php?option=com_jshopping&controller=config&task=statictextedit&id=<?php print $row->id?>'>    
+		<?php if (JText::_('JSHP_STPAGE_'.$row->alias) != 'JSHP_STPAGE_'.$row->alias) print JText::_('JSHP_STPAGE_'.$row->alias); else print $row->alias;?>
     </a>
    </td>
    <td class="center">

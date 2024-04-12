@@ -80,9 +80,10 @@ class CurrenciesController extends BaseadminController{
         $jshopConfig = \JSFactory::getConfig();
         $cid = $this->input->getVar("cid");
         if ($cid[0]){
-            $jshopConfig->id = $jshopConfig->load_id;
-            $jshopConfig->mainCurrency = $cid[0];
-            $jshopConfig->store();
+            $config = \JSFactory::getTable('Config');
+            $config->id = $jshopConfig->load_id;             
+            $config->mainCurrency = $cid[0];
+            $config->store();
         }
         $this->setRedirect("index.php?option=com_jshopping&controller=currencies");
     }

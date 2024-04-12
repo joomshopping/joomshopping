@@ -57,7 +57,7 @@ class ManufacturerController extends BaseController{
         $dispatcher->triggerEvent('onBeforeDisplayManufacturer', array(&$manufacturer));
         
         if (!$manufacturer->checkView()){
-            \JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
 

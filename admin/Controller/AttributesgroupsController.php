@@ -22,6 +22,8 @@ class AttributesGroupsController extends BaseadminController{
         $view = $this->getView("attributesgroups", 'html');
         $view->setLayout("list");
         $view->set('rows', $rows);
+		$view->tmp_html_start = "";
+        $view->tmp_html_end = "";
         $view->sidebar = \JHTMLSidebar::render();
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayAttributesGroups', array(&$view));
@@ -43,6 +45,9 @@ class AttributesGroupsController extends BaseadminController{
         $view->set('row', $row);
         $view->set('languages', $languages);
         $view->set('multilang', $multilang);
+		$view->etemplatevar = "";
+        $view->tmp_html_start = "";
+        $view->tmp_html_end = "";
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditAttributesGroups', array(&$view));
         $view->displayEdit();

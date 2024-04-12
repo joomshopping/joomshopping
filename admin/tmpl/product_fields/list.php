@@ -119,7 +119,7 @@ if ($saveOrder){
        <td>
         <?php if ($row->type==0){?>
          <a href="index.php?option=com_jshopping&controller=productfieldvalues&field_id=<?php echo $row->id?>"><?php echo JText::_('JSHOP_OPTIONS')?></a>
-         (<?php if (is_array($this->vals[$row->id])) echo implode(", ", $this->vals[$row->id]);?>)
+         (<?php if (isset($this->vals[$row->id]) && is_array($this->vals[$row->id])) echo implode(", ", $this->vals[$row->id]);?>)
          <?php }else{?>
             -
          <?php }?>
@@ -156,3 +156,8 @@ if ($saveOrder){
 </div>
 </div>
 </div>
+<script>
+jQuery(function(){
+	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+});
+</script>

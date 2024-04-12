@@ -49,14 +49,14 @@ class VendorController extends BaseController{
 		$vendor_id = $this->input->getInt("vendor_id");
 		
         if (!$jshopConfig->product_show_vendor_detail){
-            \JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
 
         $vendor = \JSFactory::getTable('vendor');
         $vendor->load($vendor_id);
         if (!$vendor->id){
-            \JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
         
@@ -86,7 +86,7 @@ class VendorController extends BaseController{
         $vendor = \JSFactory::getTable('vendor');
         $vendor->load($vendor_id);
         if (!$vendor->id){
-            \JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
 

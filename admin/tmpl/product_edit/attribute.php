@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.7 06.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -97,8 +97,8 @@ defined('_JEXEC') or die();
                     $tmp_field="attr_".$value->attr_id;
                     $tmp_val=$v->$tmp_field;
                     $tmp_val_val = isset($lists['attribs_values'][$tmp_val]->name) ? $lists['attribs_values'][$tmp_val]->name : '';
-                    $tmp_val_val=$lists['attribs_values'][$tmp_val]->name;
-                    $image_="";
+                    $tmp_val_val = $lists['attribs_values'][$tmp_val]->name ?? '';
+                    $image_= "";
                     if (isset($lists['attribs_values'][$tmp_val]->image) && $lists['attribs_values'][$tmp_val]->image!=''){
                         $image_="<img src='".$jshopConfig->image_attributes_live_path."/".$lists['attribs_values'][$tmp_val]->image."' align='left' hspace='5' width='16' height='16' style='margin-right:5px;' class='img_attrib'>";
                     }

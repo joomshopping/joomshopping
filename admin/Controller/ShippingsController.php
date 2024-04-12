@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.6 26.07.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -35,7 +35,7 @@ class ShippingsController extends BaseadminController{
             $shippings_prices[$row->shipping_method_id][] = $row;
         }
         foreach($rows as $k=>$v){
-            if (is_array($shippings_prices[$v->shipping_id])){
+            if (isset($shippings_prices[$v->shipping_id])){
                 $rows[$k]->count_shipping_price = count($shippings_prices[$v->shipping_id]);
             }else{
 				$not_set_price[] = '<a href="index.php?option=com_jshopping&controller=shippingsprices&task=edit&shipping_id_back='.$rows[$k]->shipping_id.'">'.$rows[$k]->name.'</a>';

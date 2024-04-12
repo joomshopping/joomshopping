@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,19 +18,28 @@ class ManufacturerTable extends MultilangTable{
 
 	function getAllManufacturers($publish = 0, $order = "ordering", $dir ="asc" ) {
 		$lang = \JSFactory::getLang();
+        $jshopConfig = \JSFactory::getConfig();
 		$db = \JFactory::getDBO();
         if ($order=="id") $orderby = "manufacturer_id";
         if ($order=="name") $orderby = "name";
         if ($order=="ordering") $orderby = "ordering";
         if (!$orderby) $orderby = "ordering"; 
 		$query_where = ($publish)?("WHERE manufacturer_publish = '1'"):("");
-		$query = "SELECT manufacturer_id, manufacturer_url, manufacturer_logo, manufacturer_publish, `".$lang->get('name')."` as name, `".$lang->get('description')."` as description,  `".$lang->get('short_description')."` as short_description
+		$query = "SELECT manufacturer_id, manufacturer_url, manufacturer_logo, manufacturer_publish, `".$lang->get('name')."` as name, `".$lang->get('description')."` as description,  `".$lang->get('short_description')."` as short_description, img_alt, img_title 
 				  FROM `#__jshopping_manufacturers` $query_where ORDER BY ".$orderby." ".$dir;
 		$db->setQuery($query);
 		$list = $db->loadObJectList();
 		
 		foreach($list as $key=>$value){
             $list[$key]->link = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=manufacturer&task=view&manufacturer_id='.$list[$key]->manufacturer_id, 1);
+            if (!$jshopConfig->product_img_seo) {
+                if (!$list[$key]->img_alt) {
+                    $list[$key]->img_alt = $value->name;
+                }
+                if (!$list[$key]->img_title) {
+                    $list[$key]->img_title = $value->name;
+                }
+            }
         }
         extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));		
 		return $list;

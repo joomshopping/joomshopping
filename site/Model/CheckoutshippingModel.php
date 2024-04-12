@@ -149,7 +149,7 @@ class CheckoutShippingModel  extends CheckoutModel{
         if ($jshopConfig->show_delivery_date){
             $delivery_date = '';
             $deliverytimedays = \JSFactory::getAllDeliveryTimeDays();
-            $day = $deliverytimedays[$shipping_method_price->delivery_times_id];
+            $day = $deliverytimedays[$shipping_method_price->delivery_times_id] ?? 0;
             if ($day){
                 $delivery_date = \JSHelper::getCalculateDeliveryDay($day);
             }else{

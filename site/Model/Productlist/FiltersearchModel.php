@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 07.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -67,19 +67,19 @@ class FiltersearchModel{
 	}
 	
 	public function getCategoryId(){
-		return (int)$this->request['category_id'];
+		return (int)($this->request['category_id'] ?? 0);
 	}
 	
 	public function getManufacturerId(){
-		return (int)$this->request['manufacturer_id'];
+		return (int)($this->request['manufacturer_id'] ?? 0);
 	}
     
     public function getManufacturers(){
-        $manufacturers = array();        
+        $manufacturers = [];
         if (isset($this->request['manufacturers'])){
             $manufacturers = $this->request['manufacturers'];
             $manufacturers = \JSHelper::filterAllowValue($manufacturers, "int+");
-        }elseif($this->request['manufacturer_id']){            
+        }elseif(isset($this->request['manufacturer_id']) && $this->request['manufacturer_id']){
             $manufacturers[] = $this->getManufacturerId();
         }
 		return $manufacturers;
@@ -132,11 +132,11 @@ class FiltersearchModel{
 	}
 	
 	public function getSearch(){
-		return trim($this->request['search']);
+		return trim($this->request['search'] ?? '');
 	}
 	
 	public function getSearchType(){
-		$search_type = $this->request['search_type'];
+		$search_type = $this->request['search_type'] ?? '';
         if (!$search_type) $search_type = "any";
 		return $search_type;
 	}

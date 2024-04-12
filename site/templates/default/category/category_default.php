@@ -24,7 +24,7 @@ print $this->_tmp_category_html_start;
                 <div class="sblock<?php echo $this->count_category_to_row;?> jshop_categ category">
                     <div class="image">
                         <a href="<?php print $category->category_link;?>">
-                            <img class="jshop_img" src="<?php print $this->image_category_path;?>/<?php if ($category->category_image) print $category->category_image; else print $this->noimage;?>" alt="<?php print htmlspecialchars($category->name)?>" title="<?php print htmlspecialchars($category->name)?>" />
+                            <img class="jshop_img" src="<?php print $this->image_category_path;?>/<?php if ($category->category_image) print $category->category_image; else print $this->noimage;?>" alt="<?php print htmlspecialchars($category->img_alt)?>" title="<?php print htmlspecialchars($category->img_title)?>" />
                         </a>
                     </div>
                     <div class="category_info">

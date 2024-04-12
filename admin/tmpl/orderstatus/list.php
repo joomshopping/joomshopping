@@ -80,3 +80,9 @@ $i++;
 </div>
 </div>
 </div>
+<script>
+jQuery(function(){
+	jQuery('ul li a.mm-active').removeClass('mm-active');
+	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+});
+</script>

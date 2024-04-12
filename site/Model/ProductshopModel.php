@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.8 06.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -34,14 +34,18 @@ class ProductShopModel extends BaseModel{
 		return $this->product;
 	}
 	
-	public function storeEndPageBuy(){	
+	public function storeEndPageBuy(){
+		if (\JFactory::getApplication()->input->get("tmpl") == 'component') return 0;
 		$session = \JFactory::getSession();
         $session->set("jshop_end_page_buy_product", $_SERVER['REQUEST_URI']);
+		return 1;
 	}
 	
 	public function storeEndPageList(){
+		if (\JFactory::getApplication()->input->get("tmpl") == 'component') return 0;
 		$session = \JFactory::getSession();
 		$session->set("jshop_end_page_list_product", $_SERVER['REQUEST_URI']);
+		return 1;
 	}
 	
 	public function storeEndPages(){

@@ -107,16 +107,16 @@ class PaymentRoot{
         $status = 0;
         $types_status = array(
             0=>0, 
-            1=>$pmconfigs['transaction_end_status'], 
-            2=>$pmconfigs['transaction_pending_status'], 
-            3=>$pmconfigs['transaction_failed_status'], 
-            4=>$pmconfigs['transaction_cancel_status'], 
-            5=>$pmconfigs['transaction_open_status'], 
-            6=>$pmconfigs['transaction_shipping_status'], 
-            7=>$pmconfigs['transaction_refunded_status'], 
-            8=>$pmconfigs['transaction_confirm_status'], 
-            9=>$pmconfigs['transaction_complete_status'], 
-            10=>$pmconfigs['transaction_other_status'],
+            1=>$pmconfigs['transaction_end_status'] ?? 0, 
+            2=>$pmconfigs['transaction_pending_status'] ?? 0, 
+            3=>$pmconfigs['transaction_failed_status'] ?? 0, 
+            4=>$pmconfigs['transaction_cancel_status'] ?? 0, 
+            5=>$pmconfigs['transaction_open_status'] ?? 0, 
+            6=>$pmconfigs['transaction_shipping_status'] ?? 0, 
+            7=>$pmconfigs['transaction_refunded_status'] ?? 0, 
+            8=>$pmconfigs['transaction_confirm_status'] ?? 0, 
+            9=>$pmconfigs['transaction_complete_status'] ?? 0, 
+            10=>$pmconfigs['transaction_other_status'] ?? 0,
             99=>0
         );
         if (isset($types_status[$rescode])){
@@ -155,6 +155,12 @@ class PaymentRoot{
     * exec complete. StepFinish.
     */
     function complete($pmconfigs, $order, $payment){
+    }
+	
+	/**
+    * exec after url act=cancel.
+    */
+    function beforeCancel($pmconfigs, $order, $payment){
     }
     
     /**

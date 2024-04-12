@@ -82,6 +82,7 @@ class UserController extends BaseController{
         $view->_tmpl_register_html_3 = "";
         $view->_tmpl_register_html_4 = "";
         $view->_tmpl_register_html_5 = "";
+		$view->_tmpl_register_html_51 = "";
         $view->_tmpl_register_html_6 = "";
         $dispatcher->triggerEvent('onBeforeDisplayLoginView', array(&$view));
 		if ($jshopConfig->show_registerform_in_logintemplate){
@@ -160,6 +161,7 @@ class UserController extends BaseController{
         $view->_tmpl_register_html_3 = "";
         $view->_tmpl_register_html_4 = "";
         $view->_tmpl_register_html_5 = "";
+		$view->_tmpl_register_html_51 = "";
         $view->_tmpl_register_html_6 = "";
         $dispatcher->triggerEvent('onBeforeDisplayRegisterView', array(&$view));
         $view->display();

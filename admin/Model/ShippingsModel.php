@@ -75,7 +75,7 @@ class ShippingsModel extends BaseadminModel{
         unset($list);
         foreach($rows as $k=>$row){
             $rows[$k]->countries = "";
-            if (is_array($shipping_countries[$row->sh_pr_method_id])){
+            if (isset($shipping_countries[$row->sh_pr_method_id])){
                 if (count($shipping_countries[$row->sh_pr_method_id])>10){
                     $tmp =  array_slice($shipping_countries[$row->sh_pr_method_id],0,10);
                     $rows[$k]->countries = implode(", ",$tmp)."...";
@@ -174,7 +174,7 @@ class ShippingsModel extends BaseadminModel{
         if (!$shipping->shipping_id){
             $shipping->ordering = $this->getMaxOrdering() + 1;
         }
-		$shipping->setParams($post['s_params']);
+		$shipping->setParams($post['s_params'] ?? NULL);
 		if (!$shipping->store()){
 			$this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE')." ".$shipping->getError());
 			return 0;

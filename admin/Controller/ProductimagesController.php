@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,7 +13,7 @@ class ProductimagesController extends BaseadminController{
     
     function display($cachable = false, $urlparams = false){
 		$jshopConfig = \JSFactory::getConfig();        
-		$filter = $this->input->getVar('filter');
+		$filter = $this->input->getVar('filter', '');
 		$path_length = strlen($jshopConfig->image_product_path) + 1;
         $files = [];
 		foreach( new \RecursiveIteratorIterator ( new \RecursiveDirectoryIterator ( $jshopConfig->image_product_path ), \RecursiveIteratorIterator::SELF_FIRST ) as $v ) {

@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -200,6 +200,32 @@ $jshopConfig = $this->config;
            <input type="file" name="category_image" />
          </td>
        </tr>
+       <?php if ($jshopConfig->product_img_seo) {?>
+       <tr>
+         <td class="key">
+           <?php echo JText::_('JSHOP_IMG_ALT')?>
+         </td>
+         <td>
+          <input type="text" class="inputbox form-control" name="img_alt" value="<?php print $row->img_alt;?>" />
+         </td>
+       </tr>
+       <tr>
+         <td class="key">
+           <?php echo JText::_('JSHOP_TITLE')?>
+         </td>
+         <td>
+          <input type="text" class="inputbox form-control" name="img_title" value="<?php print $row->img_title;?>" />
+         </td>
+       </tr>
+       <tr>
+         <td class="key">
+           <?php echo JText::_('JSHOP_IMG_NAME')?>
+         </td>
+         <td>
+          <input type="text" class="inputbox form-control" name="image_name">
+         </td>
+       </tr>
+       <?php } ?>
        <tr>
          <td class="key">
            <?php echo JText::_('JSHOP_IMAGE_THUMB_SIZE')?>

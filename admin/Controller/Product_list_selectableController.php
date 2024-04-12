@@ -9,12 +9,11 @@
 namespace Joomla\Component\Jshopping\Administrator\Controller;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
-jimport('joomla.html.pagination');
 
 class Product_List_SelectableController extends BaseadminController{
     
 	function display($cachable = false, $urlparams = false){
-        \JSHelperAdmin::checkAccessController("product_list_selectable");		
+        \JSHelperAdmin::checkAccessController("product_list_selectable");
 		$app = \JFactory::getApplication();
 		$jshopConfig = \JSFactory::getConfig();
 		$prodMdl = \JSFactory::getModel('Products');
@@ -36,9 +35,9 @@ class Product_List_SelectableController extends BaseadminController{
 		$label_id = $app->getUserStateFromRequest($context.'label_id', 'label_id', 0, 'int');
 		$publish = $app->getUserStateFromRequest($context.'publish', 'publish', 0, 'int');
 		$text_search = $app->getUserStateFromRequest($context.'text_search', 'text_search', '');
-        $eName = $this->input->getVar('e_name');
-		$jsfname = $this->input->getVar('jsfname');
-        $eName = preg_replace('#[^A-Z0-9\-\_\[\]]#i', '', $eName);        
+        $eName = $this->input->getVar('e_name') ?? '';
+		$jsfname = $this->input->getVar('jsfname') ?? '';
+        $eName = preg_replace('#[^A-Z0-9\-\_\[\]]#i', '', $eName);
         if (!$jsfname) $jsfname = 'selectProductBehaviour';
 		
 		$filter = array("category_id" => $category_id,"manufacturer_id" => $manufacturer_id, "label_id" => $label_id,"publish" => $publish,"text_search" => $text_search);
@@ -70,6 +69,7 @@ class Product_List_SelectableController extends BaseadminController{
 		$view->set('jsfname', $jsfname);
 		$view->tmp_html_start = "";
 		$view->tmp_html_filter = "";
+		$view->tmp_html_filter_end = "";
 		$view->show_vendor = "";
 		$view->tmp_html_col_after_title = "";
 		$view->tmp_html_col_before_td_foot = "";

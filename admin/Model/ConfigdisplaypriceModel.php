@@ -53,10 +53,10 @@ class ConfigDisplayPriceModel extends BaseadminModel{
     }
     
     public function save(array $post){
-        $configdisplayprice = \JSFactory::getTable('configDisplayPrice');        
-        $dispatcher = \JFactory::getApplication();        
-        $dispatcher->triggerEvent('onBeforeSaveConfigDisplayPrice', array(&$post));                
-        if (!$post['countries_id']){
+        $configdisplayprice = \JSFactory::getTable('configDisplayPrice');
+        $dispatcher = \JFactory::getApplication();
+        $dispatcher->triggerEvent('onBeforeSaveConfigDisplayPrice', array(&$post));
+        if (!isset($post['countries_id'])){
             $this->setError(\JText::_('JSHOP_ERROR_BIND'));
             return 0;
         }

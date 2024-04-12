@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 13.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -20,56 +20,77 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		$lang = isset($query['lang']) ? $query['lang'] : '';
 		$shim = ShopItemMenu::getInstance($lang);
 		\JPluginHelper::importPlugin('jshoppingrouter');
-		$dispatcher = \JFactory::getApplication();
-		$dispatcher->triggerEvent('onBeforeBuildRoute', array(&$query, &$segments));
-		$categoryitemidlist = $shim->getListCategory();
 		$app = \JFactory::getApplication();
-		$menu = $app->getMenu();
-        
+		$app->triggerEvent('onBeforeBuildRoute', array(&$query, &$segments));
+		$categoryitemidlist = $shim->getListCategory();
+		$menu = \Joomla\CMS\Menu\SiteMenu::getInstance('site');
+
 		if (isset($query['view']) && !isset($query['controller'])){
 			$query['controller'] = $query['view'];
 		}
         unset($query['view']);
+		if (!isset($query['controller'])) {
+			$query['controller'] = null;
+		}
+		if (!isset($query['task'])) {
+			$query['task'] = null;
+		}
 
 		if (isset($query['controller'])){
 			$controller = $query['controller'];
 		}else{
 			$controller = "";
 		}
-		if (in_array($controller, array('category', 'manufacturer', 'vendor'))){
+		if (in_array($controller, array('category', 'manufacturer', 'vendor', 'product'))){
 			unset($query['layout']);
 		}
-        
-		if (isset($query['Itemid']) && $query['Itemid']){
+        $catalias = \JSFactory::getAliasCategory($lang);
+
+		if (isset($query['Itemid']) && $query['Itemid']) {
             $clearQuery = 1;
             $menuItem = $menu->getItem($query['Itemid']);
-            if ($query['controller']=='category' && $query['task']!='' && !$menuItem->query['category_id']){
+			$miquery = $menuItem->query ?? [];
+			if (isset($menuItem->type) && $menuItem->type == 'url') {
+				$clearQuery = 0;
+			}
+            if ($query['controller']=='category' && $query['task']!='' && isset($miquery['category_id']) && !$miquery['category_id']){
                 $clearQuery = 0;
             }
-            if ($query['controller']=='manufacturer' && $query['task']!='' && !$menuItem->query['manufacturer_id']){
+            if ($query['controller']=='category' && $query['task']=="view" && $query['category_id'] && !isset($catalias[$query['category_id']]) && !isset($miquery['category_id'])) {
                 $clearQuery = 0;
             }
-            if ($query['controller']!=$menuItem->query['view']){
+            if ($query['controller']=='manufacturer' && $query['task']!='' && isset($miquery['manufacturer_id']) && !$miquery['manufacturer_id']){
                 $clearQuery = 0;
             }
-            if ($menuItem->query['task'] && $query['task']!=$menuItem->query['task']){
+			if ($query['controller']=='manufacturer' && $query['task']!='' && isset($query['manufacturer_id']) && !isset($miquery['manufacturer_id'])){
                 $clearQuery = 0;
             }
-            if ($clearQuery){                
-                foreach($menuItem->query as $k=>$v){
+            if (isset($miquery['view']) && $query['controller']!=$miquery['view']){
+                $clearQuery = 0;
+            }
+            if (isset($miquery['task']) && $query['task']!=$miquery['task']){
+                $clearQuery = 0;
+            }
+            if ($clearQuery) {
+                foreach($miquery as $k=>$v){
                     if ($k=='option') continue;
-                    if ($query[$k]==$v){
+                    if (isset($query[$k]) && $query[$k] == $v) {
                         unset($query[$k]);
                     }
                     if ($k=='view' && $query['controller']==$v){
                         unset($query['controller']);
                     }
                 }
+				if (isset($miquery['view']) && $miquery['view']=="product" && isset($miquery['category_id']) && isset($query['category_id'])) {
+					unset($query['category_id']);
+				}
             }
 		}
+        if (!isset($query['task'])) {
+			$query['task'] = null;
+		}
 
-		if ($controller=="category" && $query['task']=="view" && $query['category_id']){
-            $catalias = \JSFactory::getAliasCategory($lang);
+		if ($controller=="category" && $query['task']=="view" && $query['category_id']) {
             if (isset($catalias[$query['category_id']])){
                 $segments[] = $catalias[$query['category_id']];
                 unset($query['controller']);
@@ -77,9 +98,8 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
                 unset($query['category_id']);
             }
 		}
-        
 
-		if ($controller=="product" && $query['task']=="view" && $query['category_id'] && $query['product_id']){
+		if ($controller=="product" && $query['task']=="view" && isset($query['category_id']) && isset($query['product_id'])){
 			$prodalias = \JSFactory::getAliasProduct($lang);
 			$catalias = \JSFactory::getAliasCategory($lang);
 			if (isset($categoryitemidlist[$query['category_id']]) && isset($prodalias[$query['product_id']])){				
@@ -144,7 +164,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 			}
 		}
 
-		$dispatcher->triggerEvent('onAfterBuildRoute', array(&$query, &$segments));
+		$app->triggerEvent('onAfterBuildRoute', array(&$query, &$segments));
 		return $segments;
 	}
 
@@ -154,65 +174,69 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		$reservedFirstAlias = \JSFactory::getReservedFirstAlias();
 		$menu = \JFactory::getApplication()->getMenu();
 		$menuItem = $menu->getActive();
-		if (!isset($menuItem)) $menuItem = new \stdClass();
+		if (!isset($menuItem) || !isset($menuItem->query)) {
+			$miquery = [];
+		} else {
+			$miquery = $menuItem->query;
+		}
 		\JPluginHelper::importPlugin('jshoppingrouter');
-		$dispatcher = \JFactory::getApplication();
-		$dispatcher->triggerEvent('onBeforeParseRoute', array(&$vars, &$segments));
+		$app = \JFactory::getApplication();
+		$app->triggerEvent('onBeforeParseRoute', array(&$vars, &$segments));
 		foreach($segments as $k=>$v){
 			$segments[$k] = \JSHelper::getSeoSegment($v);
 		}
 		if (!isset($segments[1])){
 			$segments[1] = '';
 		}
-
-		if (!isset($menuItem->query['controller']) && isset($menuItem->query['view'])){
-			$menuItem->query['controller'] = $menuItem->query['view'];
+		if (!isset($miquery['controller']) && isset($miquery['view'])){
+			$miquery['controller'] = $miquery['view'];
 		}
+        $miquery['task'] = isset($miquery['task']) ? $miquery['task'] : "";
 
-		if (isset($menuItem->query['controller'])){
-			if ($menuItem->query['controller']=="cart"){
+		if (isset($miquery['controller'])){
+			if ($miquery['controller']=="cart"){
 				$vars['controller'] = "cart";
 				$vars['task'] = $segments[0];
-				$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
 			}
-			if ($menuItem->query['controller']=="wishlist"){
+			if ($miquery['controller']=="wishlist"){
 				$vars['controller'] = "wishlist";
 				$vars['task'] = $segments[0];
-				$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
 			}
-			if ($menuItem->query['controller']=="search"){
+			if ($miquery['controller']=="search"){
 				$vars['controller'] = "search";
 				$vars['task'] = $segments[0];
-				$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
 			}
-			if ($menuItem->query['controller']=="user" && $menuItem->query['task']==""){
+			if ($miquery['controller']=="user" && $miquery['task']==""){
 				$vars['controller'] = "user";
 				$vars['task'] = $segments[0];
-				$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
 			}
-			if ($menuItem->query['controller']=="checkout"){
+			if ($miquery['controller']=="checkout"){
 				$vars['controller'] = "checkout";
 				$vars['task'] = $segments[0];
-				$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
 			}
-			if ($menuItem->query['controller']=="vendor" && $menuItem->query['task']==""){
+			if ($miquery['controller']=="vendor" && $miquery['task']==""){
 				$vars['controller'] = "vendor";
 				$vars['task'] = $segments[0];
-				$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
 			}
-			if ($menuItem->query['controller']=="content" && $menuItem->query['task']=="view"){
+			if ($miquery['controller']=="content" && $miquery['task']=="view"){
 				$vars['controller'] = "content";
                 if (count($segments)==2){
                     $vars['task'] = $segments[0];
@@ -220,22 +244,22 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
                 }else{
                     $vars['page'] = $segments[0];
                 }
-				$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
 			}
-			if ($menuItem->query['controller']=="category" && $menuItem->query['category_id'] && $segments[1]==""){
+			if ($miquery['controller']=="category" && isset($miquery['category_id']) && $miquery['category_id'] && $segments[1]=="") {
 				$prodalias = \JSFactory::getAliasProduct();
 				$product_id = array_search($segments[0], $prodalias, true);
 				if (!$product_id){
-					\JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+					throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
 				}
 
 				$vars['controller'] = "product";
 				$vars['task'] = "view";
-				$vars['category_id'] = $menuItem->query['category_id'];
+				$vars['category_id'] = $miquery['category_id'];
 				$vars['product_id'] = $product_id;
-				$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
 			}
@@ -248,7 +272,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 				$vars['controller'] = "category";
 				$vars['task'] = "view";
 				$vars['category_id'] = $category_id;
-				$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
 			}
@@ -257,14 +281,14 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 				$prodalias = \JSFactory::getAliasProduct();
 				$product_id = array_search($segments[1], $prodalias, true);
 				if (!$product_id){
-					\JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+					throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
 				}
 				if ($category_id && $product_id){
 					$vars['controller'] = "product";
 					$vars['task'] = "view";
 					$vars['category_id'] = $category_id;
 					$vars['product_id'] = $product_id;
-					$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+					$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 					$segments = [];
 					return $vars;
 				}
@@ -277,13 +301,18 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 					$vars['controller'] = "manufacturer";
 					$vars['task'] = "view";
 					$vars['manufacturer_id'] = $manufacturer_id;
-					$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+					$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 					$segments = [];
 					return $vars;
 				}
 			}
+			
+			$app->triggerEvent('onAfterParseRouteNodef', array(&$vars, &$segments, &$miquery));
+			if (count($vars) > 0) {
+				return $vars;
+			}
 
-			\JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+			throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
 
 		}else{
 			$vars['controller'] = $segments[0];
@@ -312,7 +341,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 
 		}
 
-	$dispatcher->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+	$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 	$segments = [];
 	return $vars;
 	}

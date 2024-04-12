@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.6 25.07.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -21,14 +21,14 @@ class ShippingsPricesModel extends BaseadminModel{
         $post['shipping_stand_price'] = \JSHelper::saveAsPrice($post['shipping_stand_price']);
         $post['package_stand_price'] = \JSHelper::saveAsPrice($post['package_stand_price']);
         $dispatcher->triggerEvent('onBeforeSaveShippingPrice', array(&$post));
-        $countries = $post['shipping_countries_id'];
+        $countries = $post['shipping_countries_id'] ?? [];
 		$shipping_pr->bind($post);
-        if( isset($post['sm_params']) ) {
+        if (isset($post['sm_params'])) {
             $shipping_pr->setParams($post['sm_params']);
         } else {
             $shipping_pr->setParams(array());
 		}
-		if (!$shipping_pr->store() ) {
+		if (!$shipping_pr->store()) {
             $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE').' '.$shipping_pr->getError());
 			return 0;
 		}

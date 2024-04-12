@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -27,7 +27,7 @@ defined('_JEXEC') or die;
 			<div class="sblock<?php echo $this->count_manufacturer_to_row?> jshop_categ manufacturer">
 				<div class="image">
 					<a href="<?php print $row->link;?>">
-						<img class="jshop_img" src="<?php print $this->image_manufs_live_path;?>/<?php if ($row->manufacturer_logo) print $row->manufacturer_logo; else print $this->noimage;?>" alt="<?php print htmlspecialchars($row->name);?>" />
+						<img class="jshop_img" src="<?php print $this->image_manufs_live_path;?>/<?php if ($row->manufacturer_logo) print $row->manufacturer_logo; else print $this->noimage;?>" alt="<?php print htmlspecialchars($row->img_alt);?>" title="<?php print htmlspecialchars($row->img_title);?>">
 					</a>
 				</div>
 				<div class="manufacturer_info">

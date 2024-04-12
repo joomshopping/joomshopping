@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_categories` (
 `products_page` int(8) NOT NULL default '12',
 `products_row` int(3) NOT NULL default '3',
 `access` int(3) NOT NULL default '1',
+`img_alt` varchar(255) NOT NULL default '',
+`img_title` varchar(255) NOT NULL default '',
 PRIMARY KEY  (`category_id`),
 KEY `sort_add_date` (`category_add_date`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -75,6 +77,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products`(
 `basic_price_unit_id` int(3) NOT NULL default 0,
 `label_id` int(11) NOT NULL default 0,
 `vendor_id` int(11) NOT NULL default 0,
+`main_category_id` int(11) NOT NULL default 0,
 `access` int(3) NOT NULL default '1',
 PRIMARY KEY  (`product_id`),
 KEY `product_manufacturer_id` (`product_manufacturer_id`)
@@ -85,6 +88,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products_images` (
 `product_id` int(11) NOT NULL default 0,
 `image_name` VARCHAR(255) NOT NULL default '',
 `name` VARCHAR(255) NOT NULL default '',
+`title` VARCHAR(255) NOT NULL default '',
 `ordering` tinyint(4) NOT NULL default 0,
 PRIMARY KEY  (`image_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -169,6 +173,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_manufacturers` (
 `products_page` int(11) NOT NULL default 0, 
 `products_row` int(11) NOT NULL default 0,
 `ordering` int(6) NOT NULL default 0,
+`img_alt` varchar(255) NOT NULL default '',
+`img_title` varchar(255) NOT NULL default '',
  PRIMARY KEY (`manufacturer_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 

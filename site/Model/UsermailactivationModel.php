@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.6 11.06.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,22 +13,20 @@ class UserMailActivationModel  extends MailModel{
     
     public function getSubjectMail(){
         $data = $this->getData();
-        $subject = \JText::sprintf(
-			'COM_USERS_EMAIL_ACTIVATED_BY_ADMIN_ACTIVATION_SUBJECT',
-			$data['name'],
-			$data['sitename']
-		);
+        $subject = \JText::_('COM_USERS_EMAIL_ACTIVATED_BY_ADMIN_ACTIVATION_SUBJECT');
+		$search = ['{NAME}', '{SITENAME}'];
+        $replace = [$data['name'], $data['sitename']];
+        $subject = str_replace($search, $replace, $subject);
         return $subject;
     }
     
     public function getMessageMail(){
         $data = $this->getData();
-        $emailBody = \JText::sprintf(
-			'COM_USERS_EMAIL_ACTIVATED_BY_ADMIN_ACTIVATION_BODY',
-			$data['name'],
-			$data['siteurl'],
-			$data['username']
-		);
+        $emailBody = \JText::_('COM_USERS_EMAIL_ACTIVATED_BY_ADMIN_ACTIVATION_BODY');
+		$search = ['{NAME}', '{SITEURL}', '{USERNAME}'];
+        $replace = [$data['name'], $data['siteurl'], $data['username']];
+        $emailBody = str_replace($search, $replace, $emailBody);
+		
         $view = $this->getView('user');
         $view->setLayout("activationmail");
         $view->set('data', $data);
@@ -54,24 +52,21 @@ class UserMailActivationModel  extends MailModel{
     
     public function getSubjectMailAdmin(){
         $data = $this->getData();
-        $subject = \JText::sprintf(
-			'COM_USERS_EMAIL_ACTIVATE_WITH_ADMIN_ACTIVATION_SUBJECT',
-			$data['name'],
-			$data['sitename']
-        );
+		$subject = \JText::_('COM_USERS_EMAIL_ACTIVATE_WITH_ADMIN_ACTIVATION_SUBJECT');
+		$search = ['{NAME}', '{SITENAME}'];
+        $replace = [$data['name'], $data['sitename']];
+        $subject = str_replace($search, $replace, $subject);
         return $subject;
     }
     
     public function getMessageMailAdmin(){
         $data = $this->getData();
-        $emailBody = \JText::sprintf(
-			'COM_USERS_EMAIL_ACTIVATE_WITH_ADMIN_ACTIVATION_BODY',
-			$data['sitename'],
-			$data['name'],
-			$data['email'],
-			$data['username'],
-			$data['siteurl'].'index.php?option=com_jshopping&controller=user&task=activate&token='.$data['activation']
-		);
+		$activateurl = $data['siteurl'].'index.php?option=com_jshopping&controller=user&task=activate&token='.$data['activation'];
+		$emailBody = \JText::_('COM_USERS_EMAIL_ACTIVATE_WITH_ADMIN_ACTIVATION_BODY');
+		$search = ['{SITENAME}', '{NAME}', '{EMAIL}', '{USERNAME}', '{ACTIVATE}'];
+        $replace = [$data['sitename'], $data['name'], $data['email'], $data['username'], $activateurl];
+        $emailBody = str_replace($search, $replace, $emailBody);
+
         $view = $this->getView('user');
         $view->setLayout("activationmailadmin");
         $view->set('data', $data);

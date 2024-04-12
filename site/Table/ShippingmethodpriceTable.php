@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.7 09.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -56,12 +56,12 @@ class ShippingMethodPriceTable extends ShopbaseTable{
 
     function getTax(){        
         $taxes = \JSFactory::getAllTaxes();        
-        return $taxes[$this->shipping_tax_id];
+        return $taxes[$this->shipping_tax_id] ?? 0;
     }
     
     function getTaxPackage(){
         $taxes = \JSFactory::getAllTaxes();
-        return $taxes[$this->package_tax_id];
+        return $taxes[$this->package_tax_id] ?? 0;
     }
     
     function getGlobalConfigPriceNull($cart){
@@ -77,12 +77,12 @@ class ShippingMethodPriceTable extends ShopbaseTable{
     function calculateSum(&$cart){
         $JshopConfig = \JSFactory::getConfig();
         if ($this->getGlobalConfigPriceNull($cart)){
-            return 0;
+            return ['shipping' => 0, 'package' => 0];
         }
 
         $price = $this->shipping_stand_price;
         $package = $this->package_stand_price;
-        $prices = array('shipping'=>$price,'package'=>$package);
+        $prices = ['shipping'=>$price,'package'=>$package];
 
         $extensions = \JSFactory::getShippingExtList($this->shipping_method_id);
         foreach($extensions as $extension){

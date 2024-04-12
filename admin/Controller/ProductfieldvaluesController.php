@@ -46,6 +46,10 @@ class ProductFieldValuesController extends BaseadminController{
 		$view->set('text_search', $text_search);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
+		$view->tmp_html_start = "";
+        $view->tmp_html_filter = "";
+        $view->tmp_html_filter_end = "";
+        $view->tmp_html_end = "";
         $view->sidebar = \JHTMLSidebar::render();
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayProductFieldValues', array(&$view));
@@ -71,6 +75,9 @@ class ProductFieldValuesController extends BaseadminController{
         $view->set('languages', $languages);
         $view->set('multilang', $multilang);
         $view->set('field_id', $field_id);
+		$view->tmp_html_start = "";
+        $view->tmp_html_end = "";
+        $view->etemplatevar = "";
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditProductFieldValues', array(&$view));
         $view->displayEdit();

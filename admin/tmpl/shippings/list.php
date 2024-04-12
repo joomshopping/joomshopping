@@ -51,7 +51,7 @@ if ($saveOrder){
     </thead>
     <tbody <?php if ($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($this->filter_order_Dir); ?>" data-nested="false"<?php endif; ?>>
     <?php foreach($shippings as $i=>$shipping){ ?>
-    <tr class="row<?php echo $i % 2; ?>" data-draggable-group="1" item-id="<?php echo $row->shipping_id; ?>" parents="" level="1">
+    <tr class="row<?php echo $i % 2; ?>" data-draggable-group="1" item-id="<?php echo $shipping->shipping_id; ?>" parents="" level="1">
         <td class="order text-center d-none d-md-table-cell">
             <span class="sortable-handler <?php if (!$saveOrder) echo 'inactive';?>">
                 <span class="icon-ellipsis-v" aria-hidden="true"></span>
@@ -101,3 +101,8 @@ if ($saveOrder){
 </div>
 </div>
 </div>
+<script>
+jQuery(function(){
+	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+});
+</script>

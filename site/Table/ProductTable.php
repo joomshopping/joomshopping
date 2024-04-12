@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 14.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -42,8 +42,11 @@ class ProductTable extends MultilangTable{
                 }
                 $query = "select PA.* from `#__jshopping_products_attr` as PA where PA.product_id=".(int)$this->product_id." ".$where;
                 $db->setQuery($query);
-                $this->attribute_active_data = $db->loadObJect();
-                if ($JshopConfig->use_extend_attribute_data && $this->attribute_active_data->ext_attribute_product_id){
+                $this->attribute_active_data = $db->loadObject();
+				if (!isset($this->attribute_active_data)) {
+                    $this->attribute_active_data = new \stdClass();
+                }
+                if ($JshopConfig->use_extend_attribute_data && isset($this->attribute_active_data->ext_attribute_product_id) && $this->attribute_active_data->ext_attribute_product_id){
                     $this->attribute_active_data->ext_data = $this->getExtAttributeData($this->attribute_active_data->ext_attribute_product_id);
                 }
             }
@@ -213,7 +216,7 @@ class ProductTable extends MultilangTable{
             $options = $this->getAttribValue($attr_id, $actived, $JshopConfig->hide_product_not_avaible_stock);
             $data['attributeValues'][$attr_id] = $options;
             if (!$JshopConfig->product_attribut_first_value_empty){
-                $actived[$attr_id] = $options[0]->val_id;
+                $actived[$attr_id] = $options[0]->val_id ?? 0;
             }
             if (isset($selected[$attr_id])){
                 $testActived = 0;
@@ -361,6 +364,7 @@ class ProductTable extends MultilangTable{
 
     function getImages(){
         $db = \JFactory::getDBO();
+        $jshopConfig = \JSFactory::getConfig();
         if (isset($this->attribute_active_data->ext_data) && $this->attribute_active_data->ext_data){
             $list = $this->attribute_active_data->ext_data->getImages();
             if (count($list)){
@@ -374,11 +378,19 @@ class ProductTable extends MultilangTable{
         $db->setQuery($query);
         $list = $db->loadObJectList();
         foreach($list as $k=>$v){
-            $title = $v->name;
-            if (!$title){
-                $title = $this->getName();
+            $list[$k]->img_alt = $v->name;
+            $list[$k]->img_title = $v->title;
+            if ($v->name) {
+                $list[$k]->_title = $v->name;
+            } else {
+                $list[$k]->_title = $this->getName();
             }
-            $list[$k]->_title = $title;
+            if (!$jshopConfig->product_img_seo) {
+                if (!$list[$k]->img_alt) {
+                    $list[$k]->img_alt = $this->getName();
+                }
+                $list[$k]->img_title = $list[$k]->img_alt;
+            }
             $list[$k]->image_thumb = \JSHelper::getPatchProductImage($v->image_name, 'thumb');
             $list[$k]->image_full = \JSHelper::getPatchProductImage($v->image_name, 'full');
         }
@@ -469,11 +481,25 @@ class ProductTable extends MultilangTable{
         $user = \JFactory::getUser();
         $groups = implode(',', $user->getAuthorisedViewLevels());
         $adv_query =' AND cat.access IN ('.$groups.')';
-        $query = "SELECT pr_cat.category_id FROM `#__jshopping_products_to_categories` AS pr_cat
+        $main_category_id = 0;
+        if ($this->main_category_id) {
+            $query = "SELECT pr_cat.category_id FROM `#__jshopping_products_to_categories` AS pr_cat
                 LEFT JOIN `#__jshopping_categories` AS cat ON pr_cat.category_id = cat.category_id
-                WHERE pr_cat.product_id=".(int)$this->product_id." AND cat.category_publish=1 ".$adv_query;
-        $db->setQuery($query);
-        $this->category_id = $db->loadResult();
+                WHERE pr_cat.product_id=".(int)$this->product_id." AND cat.category_publish=1 AND cat.category_id=".(int)$this->main_category_id." ".$adv_query;
+            $db->setQuery($query);
+            $main_category_id = $db->loadResult();
+        }
+        if ($main_category_id) {
+            $this->category_id = $main_category_id;
+        } else {
+            $query = "SELECT pr_cat.category_id FROM `#__jshopping_products_to_categories` AS pr_cat
+                    LEFT JOIN `#__jshopping_categories` AS cat ON pr_cat.category_id = cat.category_id
+                    WHERE pr_cat.product_id=".(int)$this->product_id." AND cat.category_publish=1 ".$adv_query;
+            $db->setQuery($query);
+            $this->category_id = $db->loadResult();
+        }
+		$obj = $this;
+        \JFactory::getApplication()->triggerEvent('onBeforeProductGetCategory', array(&$obj));
         return $this->category_id;
     }
 
@@ -716,17 +742,17 @@ class ProductTable extends MultilangTable{
 
 	function getBasicPrice(){
         if (!isset($this->product_basic_price_wvu)) $this->getBasicPriceInfo();
-        return $this->product_basic_price_calculate = isset($this->product_basic_price_calculate) ? $this->product_basic_price_calculate : 0;
+        return $this->product_basic_price_calculate ?? 0;
     }
 
 	function getBasicWeight(){
         if (!isset($this->product_basic_price_wvu)) $this->getBasicPriceInfo();
-        return $this->product_basic_price_weight;
+        return $this->product_basic_price_weight ?? 0;
     }
 
 	function getBasicPriceUnit(){
         if (!isset($this->product_basic_price_wvu)) $this->getBasicPriceInfo();
-        return $this->product_basic_price_unit_name;
+        return $this->product_basic_price_unit_name ?? '';
     }
 
     function getAddPrices(){
@@ -757,7 +783,7 @@ class ProductTable extends MultilangTable{
 
     function getTax(){
         $taxes = \JSFactory::getAllTaxes();
-        $this->product_tax = $taxes[$this->product_tax_id];
+		$this->product_tax = isset($taxes[$this->product_tax_id]) ? $taxes[$this->product_tax_id] : 0;
         $dispatcher = \JFactory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeGetTaxProduct', array(&$obj));
@@ -835,7 +861,7 @@ class ProductTable extends MultilangTable{
                     $rows[] = array("id"=>$field_id, "name"=>$listfield[$field_id]->name, "description"=>$listfield[$field_id]->description, "value"=>$extra_field_value, "groupname"=>$listfield[$field_id]->groupname, 'field_value_ids'=>$listid);
                 }
             }else{
-                if ($productExtraField[$field_name]!=""){
+                if (isset($productExtraField[$field_name]) && $productExtraField[$field_name]!=""){
                     $rows[] = array("id"=>$field_id, "name"=>$listfield[$field_id]->name, "description"=>$listfield[$field_id]->description, "value"=>$productExtraField[$field_name], "groupname"=>$listfield[$field_id]->groupname);
                 }
             }

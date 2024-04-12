@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.7 31.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -26,10 +26,8 @@ class HelperAdmin{
     <?php
     }
 	
-	public static function tooltip($text){    
-    ?>
-	<span class="jsTooltip" title="<?php print htmlspecialchars($text, ENT_COMPAT, 'UTF-8');?>"><img src="components/com_jshopping/images/jshop_info_s.png" alt="Tooltip"></span>    
-    <?php
+	public static function tooltip($text) {
+		return '<span class="jsTooltip" title="'.htmlspecialchars($text, ENT_COMPAT, 'UTF-8').'"><img src="components/com_jshopping/images/jshop_info_s.png" alt="Tooltip"></span>';  
     }
 
     public static function btnHome(){
@@ -317,12 +315,12 @@ class HelperAdmin{
         $access["addons"] = $user->authorise('core.admin', 'com_jshopping')==1;
         $access["logs"] = $user->authorise('core.admin', 'com_jshopping')==1;
         $access["update"] = $user->authorise('core.admin.install', 'com_jshopping')==1;
-        
-        
+
         \JFactory::getApplication()->triggerEvent('onBeforeAdminCheckAccessController', array(&$access));
         
-        if (isset($access[$name]) && !$access[$name]){
-            $app->redirect('index.php', \JText::_('JERROR_ALERTNOAUTHOR'));
+        if (isset($access[$name]) && !$access[$name]) {
+			$app->enqueueMessage(\JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
+            $app->redirect('index.php');
             return 0;
         }
     }
@@ -358,23 +356,25 @@ class HelperAdmin{
         $product = \JSFactory::getTable('product');
         $product->load($product_id);
         if ($product->vendor_id!=$id_vendor_cuser){
-            $app->redirect('index.php', \JText::_('JERROR_ALERTNOAUTHOR'));
+			$app->enqueueMessage(\JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
+            $app->redirect('index.php');
             return 0;
         }
     }
-
-    public static function SEFLinkFromAdmin($link, $fullurl = 0, $langprefix=''){
-        $config =\JFactory::getConfig();
-        $app = \JApplication::getInstance('site');
-        $router = $app->getRouter();
-        if (!preg_match('/Itemid/', $link)){
-            $Itemid = getDefaultItemid();
-            if (preg_match('/\?/', $link)) $sp = "&"; else $sp = "?";
-            $link.=$sp.'Itemid='.$Itemid;
-        }
-        $uri = $router->build($link);
-        $url = $uri->toString();
-        $url = str_replace('/administrator', '', $url);
+	
+	public static function SEFLinkFromAdmin($link, $fullurl = 0, $langprefix=''){
+		$config =\JFactory::getConfig();
+        $liveurlhost = \JURI::getInstance()->toString(array("scheme",'host', 'port'));
+		$shop_item_id = \JSHelper::getDefaultItemid($link);
+		$app = \Joomla\CMS\Application\CMSApplication::getInstance('site');
+		$router = $app::getRouter();
+		if (!preg_match('/Itemid=/', $link)){
+			if (!preg_match('/\?/', $link)) $sp = "?"; else $sp = "&";
+			$link .= $sp."Itemid=".$shop_item_id;
+		}
+		$uri = $router->build($link);
+		$url = $uri->toString();
+		$url = str_replace('/administrator', '', $url);
         if ($langprefix!=''){
             if ($config->get('sef_rewrite')){
                 $url = "/".$langprefix.$url;
@@ -383,10 +383,8 @@ class HelperAdmin{
             }
         }
         if ($fullurl){
-            $juri = JURI::getInstance();
-            $liveurlhost = $juri->toString( array("scheme",'host', 'port'));
             $url = $liveurlhost.$url;
         }
-    return $url;
+		return $url;
     }
 }

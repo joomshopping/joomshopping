@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -53,8 +53,8 @@ include(dirname(__FILE__)."/load.js.php");
 						<?php }?>
 						
 						<?php foreach($this->images as $k=>$image){?>
-							<a class="lightbox" id="main_image_full_<?php print $image->image_id?>" href="<?php print $this->image_product_path?>/<?php print $image->image_full;?>" <?php if ($k!=0){?>style="display:none"<?php }?> title="<?php print htmlspecialchars($image->_title)?>">
-								<img id="main_image_<?php print $image->image_id?>" class="image" src="<?php print $this->image_product_path?>/<?php print $image->image_name;?>" alt="<?php print htmlspecialchars($image->_title)?>" title="<?php print htmlspecialchars($image->_title)?>" />
+							<a class="lightbox" id="main_image_full_<?php print $image->image_id?>" href="<?php print $this->image_product_path?>/<?php print $image->image_full;?>" <?php if ($k!=0){?>style="display:none"<?php }?> title="<?php print htmlspecialchars($image->img_title)?>">
+								<img id="main_image_<?php print $image->image_id?>" class="image" src="<?php print $this->image_product_path?>/<?php print $image->image_name;?>" alt="<?php print htmlspecialchars($image->img_alt)?>" title="<?php print htmlspecialchars($image->img_title)?>" />
 								<div class="text_zoom">
 									<span class="icon-zoom-in"></span>
 									<?php print JText::_('JSHOP_ZOOM_IMAGE')?>
@@ -73,7 +73,7 @@ include(dirname(__FILE__)."/load.js.php");
                         <?php if ( (count($this->images)>1) || (count($this->videos) && count($this->images)) ) {?>
                             <?php foreach($this->images as $k=>$image){?>
                                 <div class="sblock0">
-                                    <img class="jshop_img_thumb" src="<?php print $this->image_product_path?>/<?php print $image->image_thumb?>" alt="<?php print htmlspecialchars($image->_title)?>" title="<?php print htmlspecialchars($image->_title)?>" onclick="jshop.showImage(<?php print $image->image_id?>)">
+                                    <img class="jshop_img_thumb" src="<?php print $this->image_product_path?>/<?php print $image->image_thumb?>" alt="<?php print htmlspecialchars($image->img_alt)?>" title="<?php print htmlspecialchars($image->img_title)?>" onclick="jshop.showImage(<?php print $image->image_id?>)">
                                 </div>
                             <?php }?>
                         <?php }?>
@@ -310,7 +310,7 @@ include(dirname(__FILE__)."/load.js.php");
                         </div>
 
                         <div class="prod_qty_input">
-                            <input type="<?php print $this->prod_qty_input_type?>" name="quantity" id="quantity" onkeyup="jshop.reloadPrices();" class="inputbox" value="<?php print $this->default_count_product?>" min="0" ><?php print $this->_tmp_qty_unit;?>
+                            <input type="<?php print $this->prod_qty_input_type?>" name="quantity" id="quantity" oninput="jshop.reloadPrices();" class="inputbox" value="<?php print $this->default_count_product?>" min="0" ><?php print $this->_tmp_qty_unit;?>
                         </div>
 
                         <div class="buttons product-buttons">

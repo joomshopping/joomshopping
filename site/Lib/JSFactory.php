@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Lib;
+use Joomla\CMS\HTML\HTMLHelper;
 defined('_JEXEC') or die();
 
 class JSFactory{
@@ -96,9 +97,9 @@ class JSFactory{
             $jshopConfig = \JSFactory::getConfig();
             $document = \JFactory::getDocument();
             if ($jshopConfig->load_javascript) {
-                \JHTML::_('bootstrap.framework');
-				$document->addScript(\JURI::root() . 'media\vendor\jquery\js\jquery.min.js');
-                $document->addScript($jshopConfig->file_functions_js);                
+                HTMLHelper::_('bootstrap.framework');
+				HTMLHelper::_('jquery.framework');
+                $document->addScript($jshopConfig->file_functions_js);
             }
             $load = 1;
         }

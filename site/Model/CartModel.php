@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -21,6 +21,8 @@ class CartModel{
     public $rabatt_type = 0;
     public $rabatt_summ = 0;
 	public $model_temp_cart = 'tempcart';
+	public $display_item_shipping  = 0;
+	public $display_item_payment  = 0;
     
     function __construct(){
         \JPluginHelper::importPlugin('jshoppingcheckout');
@@ -114,7 +116,7 @@ class CartModel{
         if (count($this->products)){
             $taxes = \JSFactory::getAllTaxes();
             foreach ($this->products as $k=>$prod) {
-                $this->products[$k]['tax'] = $taxes[$prod['tax_id']];
+                $this->products[$k]['tax'] = isset($taxes[$prod['tax_id']]) ? $taxes[$prod['tax_id']] : 0;
             }
         }
     }
@@ -199,12 +201,14 @@ class CartModel{
             $lst = $this->getShippingTaxList();
             foreach($lst as $tax=>$value){
                 if ($tax!=0 && $value!=0){
+					if (!isset($tax_summ[$tax])) $tax_summ[$tax] = 0;
                     $tax_summ[$tax] += $value;
                 }
             }
             $lst = $this->getPackageTaxList();
             foreach($lst as $tax=>$value){
                 if ($tax!=0 && $value!=0){
+					if (!isset($tax_summ[$tax])) $tax_summ[$tax] = 0;
                     $tax_summ[$tax] += $value;
                 }
             }
@@ -214,6 +218,7 @@ class CartModel{
             $lpt = $this->getPaymentTaxList();
             foreach($lpt as $tax=>$value){
                 if ($tax!=0 && $value!=0){
+					if (!isset($tax_summ[$tax])) $tax_summ[$tax] = 0;
                     $tax_summ[$tax] += $value;
                 }
             }
@@ -843,7 +848,7 @@ class CartModel{
             $temp_product['freeattributes'] = $free_attr_serialize;
             if ($jshopConfig->show_manufacturer_in_cart){
                 $manufacturer_info = $product->getManufacturerInfo();
-                $temp_product['manufacturer'] = $manufacturer_info->name;
+                $temp_product['manufacturer'] = $manufacturer_info->name ?? '';
             }else{
                 $temp_product['manufacturer'] = '';
             }
@@ -1020,8 +1025,7 @@ class CartModel{
         $dispatcher = \JFactory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeCheckCouponStep5save', array(&$obj, &$coupon));
-		
-        if (!$coupon->coupon_publish || $coupon->used || ($coupon->type == 1 && $coupon->coupon_value < $this->rabatt_value)){
+        if (!$coupon->coupon_publish || $coupon->used || ($coupon->coupon_type == 1 && $coupon->coupon_value < $this->rabatt_value)){
             return 0;
         }else{
             return 1;
@@ -1067,12 +1071,10 @@ class CartModel{
             $sum = $this->getPriceBruttoProducts();
         }
         if ($jshopConfig->discount_use_full_sum){
-            $this->display_item_shipping = isset($this->display_item_shipping) ? $this->display_item_shipping : 0;
             if ($this->display_item_shipping) {
                 $sum += $this->getShippingBruttoPrice();
                 $sum += $this->getPackageBruttoPrice();
             }
-            $this->display_item_payment = isset($this->display_item_payment) ? $this->display_item_payment : 0;
             if ($this->display_item_payment) $sum += $this->getPaymentBruttoPrice();
         }
         extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
@@ -1153,7 +1155,7 @@ class CartModel{
         $min_days = 0;
         $max_days = 0;
         foreach($this->products as $prod){
-            if ($prod['delivery_times_id']){
+            if (isset($prod['delivery_times_id']) && $prod['delivery_times_id']){
                 if ($min_days==0){
                     $min_days = $deliverytimesdays[$prod['delivery_times_id']];
                     $min_id = $prod['delivery_times_id'];
@@ -1168,9 +1170,9 @@ class CartModel{
                 }
             }
         }
-        if ($min_id==$max_id){
+        if ($min_id==$max_id || $max_id == 0) {
             $delivery = isset($deliverytimes[$min_id]) ? $deliverytimes[$min_id] : 0;
-        }else{
+        } else {
             $delivery = $deliverytimes[$min_id]." - ".$deliverytimes[$max_id];
         }
     return $delivery;
@@ -1181,7 +1183,7 @@ class CartModel{
         $deliverytimesdays = \JSFactory::getAllDeliveryTimeDays();
         $day = 0;
         foreach($this->products as $prod){
-            if ($prod['delivery_times_id']){
+            if (isset($prod['delivery_times_id']) && $prod['delivery_times_id']){
                 if ($deliverytimesdays[$prod['delivery_times_id']]>$day){
                     $day = $deliverytimesdays[$prod['delivery_times_id']];
                 }

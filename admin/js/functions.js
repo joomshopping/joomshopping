@@ -342,43 +342,43 @@ var jshopAdminClass = function(){
                 tmpmass[id] = option.value;
             }
 
-            field="<input type='text' name='attrib_price[]' value='"+entered_price+"'>";
+            field="<input class='form-control' type='text' name='attrib_price[]' value='"+entered_price+"'>";
             html+="<td>"+field+"</td>";
 
             html+=this.jstriggers.addAttributValueHtml;
 
             if (this.use_stock=="1"){
-                field="<input type='text' name='attr_count[]' value='"+entered_count+"'>";
+                field="<input class='form-control' type='text' name='attr_count[]' value='"+entered_count+"'>";
                 html+="<td>"+field+"</td>";
             }
 
             if (this.use_product_ean=="1"){
-                field="<input type='text' name='attr_ean[]' value='"+entered_ean+"'>";
+                field="<input class='form-control' type='text' name='attr_ean[]' value='"+entered_ean+"'>";
                 html+="<td>"+field+"</td>";
             }
 
             if (this.use_manufacturer_code=="1"){
-                field="<input type='text' name='attr_manufacturer_code[]' value='"+entered_manufacturer_code+"'>";
+                field="<input class='form-control' type='text' name='attr_manufacturer_code[]' value='"+entered_manufacturer_code+"'>";
                 html+="<td>"+field+"</td>";
             }
 
             if (this.use_weight=="1"){
-                field="<input type='text' name='attr_weight[]' value='"+entered_weight+"'>";
+                field="<input class='form-control' type='text' name='attr_weight[]' value='"+entered_weight+"'>";
                 html+="<td>"+field+"</td>";
             }
 
             if (this.use_basic_price=="1"){
-                field="<input type='text' name='attr_weight_volume_units[]' value='"+entered_weight_volume_units+"'>";
+                field="<input class='form-control' type='text' name='attr_weight_volume_units[]' value='"+entered_weight_volume_units+"'>";
                 html+="<td>"+field+"</td>";
             }
 
             if (this.use_product_old_price=="1"){
-                field="<input type='text' name='attrib_old_price[]' value='"+entered_old_price+"'>";
+                field="<input class='form-control' type='text' name='attrib_old_price[]' value='"+entered_old_price+"'>";
                 html+="<td>"+field+"</td>";
             }
 
             if (this.use_bay_price=="1"){
-                field="<input type='text' name='attrib_buy_price[]' value='"+entered_buy_price+"'>";
+                field="<input class='form-control' type='text' name='attrib_buy_price[]' value='"+entered_buy_price+"'>";
                 html+="<td>"+field+"</td>";
             }
 
@@ -562,7 +562,7 @@ var jshopAdminClass = function(){
     };
 
     this.editAttributeExtendParams = function(id){
-        window.open('index.php?option=com_jshopping&controller=products&task=edit&product_attr_id='+id,'windowae','width=1000, height=760, scrollbars=yes,status=no,toolbar=no,menubar=no,resizable=yes,location=yes');
+        prod_attr_poup = window.open('index.php?option=com_jshopping&controller=products&task=edit&product_attr_id='+id,'windowae','width=1000, height=760, scrollbars=yes,status=no,toolbar=no,menubar=no,resizable=yes,location=yes');
     };
 
     this.addOrderItemRow = function(){
@@ -584,6 +584,7 @@ var jshopAdminClass = function(){
         html+='<input type="hidden" name="delivery_times_id['+i+']" value="">';
         html+='<input type="hidden" name="thumb_image['+i+']" value="">';
         html+='<input type="hidden" name="attributes['+i+']" value="">';
+        html+='<input type="hidden" name="category_id['+i+']" value="">';
         if (this.admin_order_edit_more){
             html+='<div>'+this.lang_weight+' <input type="text" name="weight['+i+']" value=""  class="form-control"></div>';
             html+='<div>'+this.lang_vendor+' ID <input type="text" name="vendor_id['+i+']" value=""  class="form-control"></div>';
@@ -813,10 +814,12 @@ var jshopAdminClass = function(){
         isChecked = jQuery(obj).is(':checked');
         var div_inputs = jQuery(obj).parents('div:first');        
         if (isChecked) {
+            div_inputs.find(".product_img_name").hide();
             div_inputs.find(".product_file_image").hide();
             div_inputs.find(".product_file_image input").val('');
             div_inputs.find('.product_folder_image').show();
         } else {
+            div_inputs.find(".product_img_name").show();
             div_inputs.find(".product_folder_image").hide();
             div_inputs.find(".product_folder_image input[type=text]").val('');
             div_inputs.find('.product_file_image').show();
@@ -966,7 +969,49 @@ var jshopAdminClass = function(){
             that.updateOrderTotalValue();
         });
     };
-    
+
+	this.setMainMenuActive = function(currentUrl) {
+		var wrapper2 = document.getElementById('wrapper');
+		var allLinks2 = wrapper2.querySelectorAll('a.no-dropdown, a.collapse-arrow, .menu-dashboard > a');
+		allLinks2.forEach(link => {	
+			if (currentUrl.indexOf(link.href) === 0) {
+				link.setAttribute('aria-current', 'page');
+				link.classList.add('mm-active');
+				if (!link.parentNode.classList.contains('parent')) {
+					const firstLevel = link.closest('.collapse-level-1');
+					const secondLevel = link.closest('.collapse-level-2');
+					if (firstLevel) firstLevel.parentNode.classList.add('mm-active');
+					if (firstLevel) firstLevel.classList.add('mm-show');
+					if (secondLevel) secondLevel.parentNode.classList.add('mm-active');
+					if (secondLevel) secondLevel.classList.add('mm-show');
+				}
+			}
+		});
+	}
+
+    this.reloadSelectMainCategory = function(obj) {
+        if (jQuery('option:selected', obj).length > 1) {
+            var main_cat_sel = '<select name="main_category_id" class="inputbox form-control" onchange="jshopAdmin.updateMainCategoryVal(this.value)">';
+            jQuery('option:selected', obj).each(function(){
+                main_cat_sel += '<option value="'+$(this).val()+'">'+$(this).text()+'</option>';
+            });
+            main_cat_sel += '</select>';
+            jQuery('td.main_category_select').html(main_cat_sel);
+            var cur_val = jQuery('td.main_category_select').attr('val');
+            if (cur_val && cur_val != '0') {
+                jQuery('td.main_category_select select').val(cur_val);
+            }
+            jQuery('td.main_category_select').closest('tr').show();
+        } else {
+            jQuery('td.main_category_select').html('');
+            jQuery('td.main_category_select').closest('tr').hide();
+        }
+    }
+
+    this.updateMainCategoryVal = function(val) {
+        jQuery('td.main_category_select').attr('val', val);
+    }
+
 }
 var jshopAdmin = new jshopAdminClass();
 

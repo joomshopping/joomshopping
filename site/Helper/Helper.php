@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 14.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,7 +22,7 @@ class Helper{
         return $controller;
     }
     
-    public static function js_add_trigger($vars = array(), $name = ''){
+    public static function js_add_trigger($vars = [], $name = ''){
         list(,$caller) = debug_backtrace();
         $caller['class'] = isset($caller['class']) ? $caller['class'] : "";
         $trigger_name = 'on'.ucfirst(str_replace('\\', '', $caller['class'])).ucfirst($caller['function']).ucfirst($name);
@@ -69,6 +69,7 @@ class Helper{
 
     public static function parseParamsToArray($string) {
         $temp = explode("\n",$string);
+		$array = [];
         foreach ($temp as $key => $value) {
             if(!$value) continue;
             $temp2 = explode("=",$value);
@@ -81,7 +82,7 @@ class Helper{
         if ($data!=""){
             return unserialize($data);
         }else{
-            return array();
+            return [];
         }
     }
 
@@ -166,6 +167,7 @@ class Helper{
 
     public static function formatprice($price, $currency_code = null, $currency_exchange = 0, $style_currency = 0) {
         $jshopConfig = \JSFactory::getConfig();
+		$price = floatval($price);
 
         if ($currency_exchange){
             $price = $price * $jshopConfig->currency_value;
@@ -195,7 +197,7 @@ class Helper{
         $jshopConfig = \JSFactory::getConfig();
         $format = $jshopConfig->store_date_format;
         if ($showtime) $format = $format." %H:%M:%S";
-        return strftime($format, strtotime($date));
+        return @strftime($format, strtotime($date));
     }
 
     public static function formattax($val){
@@ -251,11 +253,11 @@ class Helper{
     */
     public static function getAllLanguages($client=0){
         jimport('joomla.filesystem.folder');
-        $pattern = '#(.*?)\(#is';        
-        $rows = array();        
-        $path = JPATH_ROOT.'/language';        
-        $dirs = \JFolder::folders($path);        
-        foreach($dirs as $dir){            
+        $pattern = '#(.*?)\(#is';
+        $rows = [];
+        $path = JPATH_ROOT.'/language';
+        $dirs = \JFolder::folders($path);
+        foreach($dirs as $dir){
             $files = \JFolder::files( $path.'/'.$dir, '^([-_A-Za-z]*)\.xml$' );
             foreach($files as $file){
                 $data = \JInstaller::parseXMLInstallFile($path.'/'.$dir.'/'.$file);
@@ -268,10 +270,10 @@ class Helper{
                 $row->lang = substr($row->language, 0, 2);
                 $row->name = $data['name'];
                 preg_match($pattern, $row->name, $matches);
-                if (isset($matches[1])) $row->name = trim($matches[1]);                
+                if (isset($matches[1])) $row->name = trim($matches[1]);
                 $rows[] = $row;
             }
-        }		
+        }
         return $rows;
     }
 
@@ -279,7 +281,7 @@ class Helper{
         $db =\JFactory::getDBO();
         $jshopConfig = \JSFactory::getConfig();
         $session =\JFactory::getSession();
-        $joomlaLangs = self::getAllLanguages();		
+        $joomlaLangs = self::getAllLanguages();	
         $checkedlanguage = $session->get('jshop_checked_language');
         if (is_array($checkedlanguage)){
             $newlanguages = 0;
@@ -292,14 +294,14 @@ class Helper{
         $query = "select * from #__jshopping_languages";
         $db->setQuery($query);
         $shopLangs = $db->loadObjectList();
-        $shopLangsTag = array();
+        $shopLangsTag = [];
         foreach($shopLangs as $lang){
             $shopLangsTag[] = $lang->language;
         }
 
         if (!$defaultLanguage) $defaultLanguage = $jshopConfig->defaultLanguage;
 
-        $checkedlanguage = array();
+        $checkedlanguage = [];
         $installed_new_lang = 0;
 
         foreach($joomlaLangs as $lang){
@@ -311,7 +313,7 @@ class Helper{
                     $query = "insert into #__jshopping_languages set `language`='".$db->escape($lang->language)."', `name`='".$db->escape($lang->name)."', `publish`='1', ordering=1";
                     $db->setQuery($query);
                     $db->execute();
-                    if ($show_message){                        
+                    if ($show_message){
                         \JFactory::getApplication()->enqueueMessage(\JText::_('JSHOP_INSTALLED_NEW_LANGUAGES').": ".$lang->name, 'notice');
                     }
                 }
@@ -353,7 +355,7 @@ class Helper{
     }
 
     public static function _getCategoryParent($cat, $parent){
-        $res = array();
+        $res = [];
         foreach($cat as $obj){
             if ($obj->category_parent_id == $parent){
                 $res[] = $obj;
@@ -387,8 +389,6 @@ class Helper{
         $arr = explode("-",$date);
     return checkdate($arr[1],$arr[2],$arr[0]);
     }
-
-    
 
     public static function checkUserLogin(){
         $jshopConfig = \JSFactory::getConfig();
@@ -516,8 +516,8 @@ class Helper{
     public static function getFullUrlSefLink($link, $useDefaultItemId = 0, $redirect = 0, $ssl=null){
         $app = \JFactory::getApplication();
         $liveurlhost = \JURI::getInstance()->toString(array("scheme",'host', 'port'));
-        if ($app->isClient('administrator')){
-            $shop_item_id = self::getShopMainPageItemid();
+        if ($app->isClient('administrator')) {
+			$shop_item_id = self::getDefaultItemid($link);
             $app = \Joomla\CMS\Application\CMSApplication::getInstance('site');            
             $router = $app::getRouter();
             if (!preg_match('/Itemid=/', $link)){
@@ -595,7 +595,8 @@ class Helper{
     }
 
     public static function saveAsPrice($val){
-        $val = str_replace(",",".",$val);
+		if (!isset($val)) return 0;
+        $val = str_replace(",", ".", $val);
         preg_match('/-?[0-9]+(\.[0-9]+)?/', $val, $matches);
         return isset($matches[0]) ? floatval($matches[0]) : 0;
     }
@@ -748,7 +749,9 @@ class Helper{
 
             if ($value->tax_id){
                 $products[$key]->tax = $taxes[$value->tax_id];
-            }
+            } else {
+				$products[$key]->tax = 0;
+			}
 
             if ($jshopConfig->product_list_show_manufacturer && $value->product_manufacturer_id && isset($manufacturers[$value->product_manufacturer_id])){
                 $products[$key]->manufacturer = $manufacturers[$value->product_manufacturer_id];
@@ -772,7 +775,7 @@ class Helper{
                 $products[$key]->delivery_times_id = 0;
                 $value->delivery_times_id = 0;
             }
-            if ($jshopConfig->show_delivery_time && $value->delivery_times_id){
+            if ($jshopConfig->show_delivery_time && isset($value->delivery_times_id) && $value->delivery_times_id) {
                 $products[$key]->delivery_time = $deliverytimes[$value->delivery_times_id];
             }else{
                 $products[$key]->delivery_time = '';
@@ -804,6 +807,18 @@ class Helper{
             }
             if ($jshopConfig->display_short_descr_multiline){
                 $products[$key]->short_description = nl2br($products[$key]->short_description);
+            }            
+            if ($jshopConfig->product_use_main_category_id && isset($products[$key]->main_category_id) && $products[$key]->main_category_id && self::checkCategoryAccess($products[$key]->main_category_id)) {
+                $products[$key]->orig_category_id = $products[$key]->category_id;
+                $products[$key]->category_id = $products[$key]->main_category_id;
+            }
+            if (!$jshopConfig->product_img_seo) {
+                $products[$key]->img_alt = $products[$key]->name;
+                $products[$key]->img_title = $products[$key]->name;
+            } else {
+                $main_image = self::getProductImageInfo($products[$key]->product_id, $products[$key]->product_name_image);
+                $products[$key]->img_alt = $main_image->name ?? '';
+                $products[$key]->img_title = $main_image->title ?? '';
             }
         }
 
@@ -813,6 +828,26 @@ class Helper{
 
         $app->triggerEvent('onListProductUpdateData', array(&$products));
     return $products;
+    }
+
+    public static function getProductImageInfo($product_id, $image_name) {
+        $db = \JFactory::getDBO();
+        $query = "SELECT * FROM `#__jshopping_products_images` WHERE product_id=".$db->q($product_id)." AND image_name=".$db->q($image_name);
+        $db->setQuery($query);
+        return $db->loadObject();
+    }
+
+    public static function checkCategoryAccess($cat_id) {
+        $app = \JFactory::getApplication();
+        $db = \JFactory::getDBO();
+        $user = \JFactory::getUser();
+        $groups = implode(',', $user->getAuthorisedViewLevels());
+        $adv_query =' AND cat.access IN ('.$groups.')';
+        $query = "SELECT cat.category_id FROM `#__jshopping_categories` AS cat
+            WHERE cat.category_publish=1 AND cat.category_id=".(int)$cat_id." ".$adv_query;
+        $app->triggerEvent('onListProductUpdateDatacheckCategoryAccess', array(&$cat_id, &$query));
+        $db->setQuery($query);
+        return ($db->loadResult() > 0);
     }
 
     public static function getProductBasicPriceInfo($obj, $price){
@@ -834,15 +869,17 @@ class Helper{
         $fields = \JSFactory::getAllProductExtraField();
         $fieldvalues = \JSFactory::getAllProductExtraFieldValue();
         $displayfields = \JSFactory::getDisplayListProductExtraFieldForCategory($product->category_id);
-        $rows = array();
+        $rows = [];
         foreach($displayfields as $field_id){
             $field_name = "extra_field_".$field_id;
             if ($fields[$field_id]->type==0){
                 if ($product->$field_name!=0){
                     $listid = explode(',', $product->$field_name);
-                    $tmp = array();
+                    $tmp = [];
                     foreach($listid as $extrafiledvalueid){
-                        $tmp[] = $fieldvalues[$extrafiledvalueid];
+						if (isset($fieldvalues[$extrafiledvalueid])) {
+							$tmp[] = $fieldvalues[$extrafiledvalueid];
+						}
                     }
                     $extra_field_value = implode(", ", $tmp);
                     $rows[$field_id] = array("name"=>$fields[$field_id]->name, "description"=>$fields[$field_id]->description, "value"=>$extra_field_value);
@@ -857,7 +894,7 @@ class Helper{
     }
 
     public static function getPriceTaxRatioForProducts($products, $group='tax'){
-        $prodtaxes = array();
+        $prodtaxes = [];
         foreach($products as $k=>$v){
             if (!isset($prodtaxes[$v[$group]])) $prodtaxes[$v[$group]] = 0;
             $prodtaxes[$v[$group]]+= $v['price']*$v['quantity'];
@@ -880,16 +917,16 @@ class Helper{
         }
         $taxoriginal = \JSFactory::getAllTaxesOriginal();
         $taxes = \JSFactory::getAllTaxes();
-        $tax = $taxes[$tax_id];
-        $tax2 = $taxoriginal[$tax_id];
-        if ($tax!=$tax2){
+        $tax = $taxes[$tax_id] ?? 0;
+        $tax2 = $taxoriginal[$tax_id] ?? 0;
+        if ($tax != $tax2){
             $price = $price / (1 + $tax2 / 100);
             $price = $price * (1+$tax/100);
         }
     return $price;
     }
 
-    public static function getPriceCalcParamsTax($price, $tax_id, $products=array()){
+    public static function getPriceCalcParamsTax($price, $tax_id, $products=[]){
         $jshopConfig = \JSFactory::getConfig();
         $taxes = \JSFactory::getAllTaxes();
         if ($tax_id==-1){
@@ -899,7 +936,7 @@ class Helper{
             $price = self::getFixBrutopriceToTax($price, $tax_id);
         }
         if ($jshopConfig->display_price_admin==0 && $tax_id==-1){
-            $prices = array();
+            $prices = [];
             $prodtaxesid = \JSHelper::getPriceTaxRatioForProducts($products,'tax_id');
             foreach($prodtaxesid as $k=>$v){
                 $prices[$k] = self::getFixBrutopriceToTax($price*$v, $k);
@@ -907,15 +944,15 @@ class Helper{
             $price = array_sum($prices);
         }
         if ($tax_id>0){
-            $tax = $taxes[$tax_id];
+            $tax = $taxes[$tax_id] ?? 0;
         }elseif ($tax_id==-1){
-            $prices = array();
+            $prices = [];
             foreach($prodtaxes as $k=>$v){
                 $prices[] = array('tax'=>$k, 'price'=>$price*$v);
             }
         }else{
             $taxlist = array_values($taxes);
-            $tax = $taxlist[0];
+            $tax = $taxlist[0] ?? 0;
         }
         if ($jshopConfig->display_price_admin == 1 && $jshopConfig->display_price_front_current == 0){
             if ($tax_id==-1){
@@ -942,7 +979,6 @@ class Helper{
 
     public static function changeDataUsePluginContent(&$data, $type){
         $app =\JFactory::getApplication();
-        $dispatcher =\JFactory::getApplication();
         \JPluginHelper::importPlugin('content');
         $obj = new \stdClass();
         $params = $app->getParams('com_content');
@@ -959,7 +995,7 @@ class Helper{
         if (!isset($data->name)) $data->name = '';
         $obj->text = $data->description;
         $obj->title = $data->name;
-        $results = \JFactory::getApplication()->triggerEvent('onContentPrepare', array('com_content.article', &$obj, &$params, 0));
+        $results = $app->triggerEvent('onContentPrepare', array('com_content.article', &$obj, &$params, 0));
         $data->description = $obj->text;
         return 1;
     }
@@ -997,12 +1033,11 @@ class Helper{
     return $tax_value;
     }
 
-    public static function getCorrectedPriceForQueryFilter($price){
-    $jshopConfig = \JSFactory::getConfig();
-
+    public static function getCorrectedPriceForQueryFilter($price) {
+        $jshopConfig = \JSFactory::getConfig();
         $taxes = \JSFactory::getAllTaxes();
         $taxlist = array_values($taxes);
-        $tax = $taxlist[0];
+        $tax = $taxlist[0] ?? 0;
 
         if ($jshopConfig->display_price_admin == 1 && $jshopConfig->display_price_front_current == 0){
             $price = $price / (1 + $tax / 100);
@@ -1016,7 +1051,7 @@ class Helper{
         return $price;
     }
 
-    public static function updateAllprices( $ignore = array() ){
+    public static function updateAllprices( $ignore = [] ){
         $cart = \JSFactory::getModel('cart', 'Site');
         $cart->load();
         $cart->updateCartProductPrice();
@@ -1119,7 +1154,7 @@ class Helper{
     }
 
     public static function getListFromStr($stelist){
-        if (preg_match('/\,/', $stelist)){
+        if (isset($stelist) && preg_match('/\,/', $stelist)){
             return self::filterAllowValue(explode(',',$stelist), 'int+');
         }else{
             return null;
@@ -1144,7 +1179,7 @@ class Helper{
 
     public static function getLicenseKeyAddon($alias){
     static $keys;
-        if (!isset($keys)) $keys = array();
+        if (!isset($keys)) $keys = [];
         if (!isset($keys[$alias])){
             $addon = \JSFactory::getTable('addon');
             $keys[$alias] = $addon->getKeyForAlias($alias);
@@ -1204,11 +1239,15 @@ class Helper{
     }
 
     public static function getMessageJson(){
-        $errors = \JSError::getErrors();
-        $rows = array();       
-        foreach($errors as $e){
+        $errors = \JSError::getErrors();        
+        $rows = [];       
+        foreach($errors as $k => $e){
             $message = str_replace("<br/>", "\n", $e['message']);
-            $rows[] = array("level"=>self::getMessageLevel($e['type']),"code"=>0, "message"=>$message);
+            $code = 0;
+            if ($k == (count($errors) - 1)) {
+                $code = \JSError::getLastErrorCode();
+            }
+            $rows[] = array("level"=>self::getMessageLevel($e['type']), "code"=>$code, "message"=>$message);
         }
     return json_encode($rows);
     }
@@ -1358,7 +1397,7 @@ class Helper{
 
     public static function getDataProductQtyInStock($product){
         $qty = $product->product_quantity;
-        if ($product instanceof jshopProduct){
+        if (method_exists($product, 'getQty')) {
             $qty = $product->getQty();
         }
         $qty = floatval($qty);
@@ -1396,7 +1435,7 @@ class Helper{
     }
 
     public static function jsFilterUrl($url, $extra = 0){
-        $url = strip_tags($url);
+        $url = strip_tags($url ?? '');
         if ($extra){
             $url = filter_var($url, FILTER_SANITIZE_URL);
             $trans = array("'"=>"&#039;", '"'=>"&quot;", '('=>'&#40;', ')'=>'&#41;', ';'=>'&#59;');
@@ -1428,7 +1467,11 @@ class Helper{
     }
 
     public static function datenull($date){
-    return substr($date,0,1) == false;
+        if (!isset($date)) {
+            return true;
+        } else {
+            return substr($date,0,1) == false;
+        }
     }
 
     public static function file_get_content_curl($url, $timeout = 5){

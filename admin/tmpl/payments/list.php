@@ -102,7 +102,6 @@ if ($saveOrder){
     </tbody>
     </table>
 
-
     <input type="hidden" name="filter_order" value="<?php echo $this->filter_order?>" />
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter_order_Dir?>" />
     <input type="hidden" name="task" value="" />
@@ -113,3 +112,8 @@ if ($saveOrder){
 </div>
 </div>
 </div>
+<script>
+jQuery(function(){
+	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+});
+</script>

@@ -19,7 +19,7 @@ class ContentController extends BaseController{
     }
     
     function display($cachable = false, $urlparams = false){
-        \JSError::raiseError(404, \JText::_('JSHOP_PAGE_NOT_FOUND'));
+        throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
     }
 
     function view(){        

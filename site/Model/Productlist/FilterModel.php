@@ -91,7 +91,7 @@ class FilterModel{
             unset($filters[$filterkey]);
         }
         \JPluginHelper::importPlugin('jshoppingproducts');
-        $app->triggerEvent('afterGetBuildFilterListProduct', array(&$filters));
+        $app->triggerEvent('onAfterGetBuildFilterListProduct', array(&$filters));
     return $filters;
     }
 
@@ -105,6 +105,9 @@ class FilterModel{
                 $res = 1;
             }
             if (is_string($v) && $v!=''){
+                $res = 1;
+            }
+			if (is_array($v) && count($v)>0){
                 $res = 1;
             }
         }

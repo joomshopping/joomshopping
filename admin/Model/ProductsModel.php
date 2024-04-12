@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 13.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -55,7 +55,7 @@ class ProductsModel extends BaseadminModel{
             if ($category_id) $fields['ordering'] = "pr_cat.product_ordering";
             if (strtolower($orderDir)!="asc") $orderDir = "desc";
 			if ($orderDir=="desc") $fields['qty'] ='pr.unlimited desc, qty';
-            if (!$fields[$order]) return "";
+            if (!isset($fields[$order]) || !$fields[$order]) return "";
             return "order by ".$fields[$order]." ".$orderDir;
         }else{
             return "";
@@ -123,7 +123,6 @@ class ProductsModel extends BaseadminModel{
     }
 
     function getCountAllProducts($filter){
-        $lang = \JSFactory::getLang();
         $db = \JFactory::getDBO();
         if (isset($filter['category_id']))
             $category_id = $filter['category_id'];
@@ -231,7 +230,7 @@ class ProductsModel extends BaseadminModel{
         $id_vendor_cuser = \JSHelperAdmin::getIdVendorForCUser();
 
         if ($id_vendor_cuser && $post['product_id']){
-            checkAccessVendorToProduct($id_vendor_cuser, $post['product_id']);
+            \JSHelperAdmin::checkAccessVendorToProduct($id_vendor_cuser, $post['product_id']);
         }
 		$post['different_prices'] = 0;
         if (isset($post['product_is_add_price']) && $post['product_is_add_price']){
@@ -247,8 +246,8 @@ class ProductsModel extends BaseadminModel{
         }else{
             $post['product_buy_price'] = null;
         }
-        $post['product_weight'] = \JSHelper::saveAsPrice($post['product_weight']);
-        $post['weight_volume_units'] = \JSHelper::saveAsPrice($post['weight_volume_units']);
+        if (isset($post['product_weight'])) $post['product_weight'] = \JSHelper::saveAsPrice($post['product_weight']);
+        if (isset($post['weight_volume_units'])) $post['weight_volume_units'] = \JSHelper::saveAsPrice($post['weight_volume_units']);
         if (!isset($post['related_products'])) $post['related_products'] = array();
         if (!$post['product_id']) $post['product_date_added'] = \JSHelper::getJsDate();
         if (!isset($post['attrib_price'])) $post['attrib_price'] = null;
@@ -258,10 +257,15 @@ class ProductsModel extends BaseadminModel{
         if (!isset($post['freeattribut'])) $post['freeattribut'] = null;
         $post['date_modify'] = \JSHelper::getJsDate();
         $post['edit'] = intval($post['product_id']);
-        if (!isset($post['product_add_discount'])) $post['product_add_discount'] = 0;
+        if (!isset($post['product_add_discount'])) $post['product_add_discount'] = [];
+        if (!isset($post['quantity_start'])) $post['quantity_start'] = [];
+		if (!isset($post['quantity_finish'])) $post['quantity_finish'] = [];
         $post['min_price'] = $this->getMinimalPrice($post['product_price'], $post['attrib_price'], array($post['attrib_ind_id'], $post['attrib_ind_price_mod'], $post['attrib_ind_price']), $post['product_is_add_price'], $post['product_add_discount']);
         if ($id_vendor_cuser){
             $post['vendor_id'] = $id_vendor_cuser;
+        }
+        if ((!isset($post['main_category_id']) || !$post['main_category_id']) && isset($post['category_id'][0])) {
+            $post['main_category_id'] = $post['category_id'][0];
         }
 
         if (isset($post['attr_count']) && is_array($post['attr_count'])){
@@ -278,7 +282,7 @@ class ProductsModel extends BaseadminModel{
             $post['product_quantity'] = 1;
         }
 
-		$post['product_quantity'] = \JSHelper::saveAsPrice($post['product_quantity']);
+		if (isset($post['product_quantity'])) $post['product_quantity'] = \JSHelper::saveAsPrice($post['product_quantity']);
 
         if (isset($post['productfields']) && is_array($post['productfields'])){
             foreach($post['productfields'] as $productfield=>$val){
@@ -362,7 +366,9 @@ class ProductsModel extends BaseadminModel{
         }
 
         $this->saveRelationProducts($product, $product_id, $post);
-        $this->saveProductOptions($product_id, (array)$post['options']);
+		if (isset($post['options'])) {
+			$this->saveProductOptions($product_id, (array)$post['options']);
+		}
 
         $dispatcher->triggerEvent('onAfterSaveProductEnd', array($product->product_id));
 
@@ -376,7 +382,7 @@ class ProductsModel extends BaseadminModel{
         $db->execute();
 
         $counter = 0;
-        if (count($product_add_discount)){
+        if (isset($product_add_discount) && count($product_add_discount)){
             foreach ($product_add_discount as $key=>$value){
 
                 if ((!$quantity_start[$key] && !$quantity_finish[$key])) continue;
@@ -466,9 +472,9 @@ class ProductsModel extends BaseadminModel{
             $minprice = $startprice;
         }
 
-        if ($is_add_price && is_array($add_discounts)){
+        if ($is_add_price && is_array($add_discounts) && count($add_discounts)){
             $jshopConfig = \JSFactory::getConfig();
-            $max_discount = max($add_discounts);
+            $max_discount = floatval(max($add_discounts));
             if ($jshopConfig->product_price_qty_discount == 1){
                 $minprice = $minprice - $max_discount; //discount value
             }else{
@@ -581,6 +587,9 @@ class ProductsModel extends BaseadminModel{
 			if ($jshopConfig->product_imagename_lowercase){
 				$upload->name = strtolower($upload->name);
 			}
+            if (isset($post["product_image_name_".$i]) && $post["product_image_name_".$i] != '') {
+                $upload->setNameWithoutExt($post["product_image_name_".$i]);
+            }
             $upload->setFileNameMd5(0);
             $upload->setFilterName(1);
             $upload->setMaxSizeFile($jshopConfig->image_product_max_size_file);
@@ -652,7 +661,7 @@ class ProductsModel extends BaseadminModel{
                 }
 
                 if (!$error){
-                    $this->addToProductImage($product_id, $name_image, $post["product_image_descr_".$i]);
+                    $this->addToProductImage($product_id, $name_image, $post["product_image_descr_".$i], $post["product_image_title_".$i] ?? null);
                     $dispatcher->triggerEvent('onAfterSaveProductImage', array($product_id, $name_image));
                 }
             }else{
@@ -671,7 +680,7 @@ class ProductsModel extends BaseadminModel{
 					$name_image = $post['product_folder_image_'.$i];
 					$name_thumb = 'thumb_'.$name_image;
 					$name_full = 'full_'.$name_image;
-					$this->addToProductImage($product_id, $name_image, $post["product_image_descr_".$i]);
+					$this->addToProductImage($product_id, $name_image, $post["product_image_descr_".$i], $post["product_image_title_".$i] ?? null);
 					$dispatcher->triggerEvent('onAfterSaveProductFolerImage', array($product_id, $name_full, $name_image, $name_thumb));
 				}
 			}
@@ -688,7 +697,10 @@ class ProductsModel extends BaseadminModel{
         }
 
         if (isset($post['old_image_descr'])){
-            $this->renameProductImageOld($post['old_image_descr'], $post['old_image_ordering']);
+            $this->renameProductImageOld($post['old_image_descr'], $post['old_image_ordering'], $post['old_image_title'] ?? null);
+        }
+        if (isset($post['old_image_name'])) {
+            $this->renameFileProductImageOld($product, $post['old_image_name']);
         }
     }
 
@@ -712,22 +724,56 @@ class ProductsModel extends BaseadminModel{
         return 1;
     }
 
-    function addToProductImage($product_id, $name_image, $image_descr) {
+    function addToProductImage($product_id, $name_image, $alt, $title = null) {
         $image = \JSFactory::getTable('image');
         $image->set("image_id", 0);
         $image->set("product_id", $product_id);
         $image->set("image_name", $name_image);
-        $image->set("name", $image_descr);
+        $image->set("name", $alt);
+        $image->set("title", $title);
         $image->set("ordering", $image->getNextOrder("product_id='".intval($product_id)."'"));
         $image->store();
     }
 
-    function renameProductImageOld($image_descr, $image_ordering){
+    function renameProductImageOld($image_descr, $image_ordering, $title = null){
         $db = \JFactory::getDBO();
         foreach($image_descr as $id=>$v){
-            $query = "update `#__jshopping_products_images` set `name`='".$db->escape($image_descr[$id])."', `ordering`='".$db->escape($image_ordering[$id])."' where `image_id`='".$db->escape($id)."'";
+            $ext_query = '';
+            if (isset($title[$id])) {
+                $ext_query = ', `title`='.$db->q($title[$id]);
+            }
+            $query = "update `#__jshopping_products_images` set `name`='".$db->escape($image_descr[$id])."', `ordering`='".$db->escape($image_ordering[$id])."' ".$ext_query." where `image_id`='".$db->escape($id)."'";
             $db->setQuery($query);
             $db->execute();
+        }
+    }
+
+    function renameFileProductImageOld($product, $names = []) {
+        $jshopConfig = \JSFactory::getConfig();
+        $dir = $jshopConfig->image_product_path;        
+        foreach($names as $id => $name) {
+            if ($name) {
+                $image = \JSFactory::getTable('image');
+                $image->load($id);
+                $oldname = $image->image_name;
+                $newname = \Joomla\Component\Jshopping\Site\Helper\File::rename($dir, $oldname, $name);
+                if ($newname) {
+                    if (!\Joomla\Component\Jshopping\Site\Helper\File::rename($dir,'thumb_'.$oldname, 'thumb_'.$newname, 0)) {
+                        \JSHelper::saveToLog("error.log", "SaveProduct - Error rename image ".'thumb_'.$oldname.' => '.'thumb_'.$newname);
+                    }
+                    if (!\Joomla\Component\Jshopping\Site\Helper\File::rename($dir,'full_'.$oldname, 'full_'.$newname, 0)) {
+                        \JSHelper::saveToLog("error.log", "SaveProduct - Error rename image ".'full_'.$oldname.' => '.'full_'.$newname);
+                    }
+                    $image->image_name = $newname;
+                    $image->store();
+                    if ($oldname == $product->image) {
+                        $product->image = $newname;
+                        $product->store();
+                    }
+                } else {
+                    \JSHelper::saveToLog("error.log", "SaveProduct - Error rename image ".$oldname.' => '.$name);
+                }
+            }
         }
     }
 
@@ -840,13 +886,13 @@ class ProductsModel extends BaseadminModel{
         if (is_array($post['attrib_price'])){
             foreach($post['attrib_price'] as $k=>$v){
                 $a_price = \JSHelper::saveAsPrice($post['attrib_price'][$k]);
-                $a_old_price = \JSHelper::saveAsPrice($post['attrib_old_price'][$k]);
-                $a_buy_price = \JSHelper::saveAsPrice($post['attrib_buy_price'][$k]);
+                $a_old_price = \JSHelper::saveAsPrice($post['attrib_old_price'][$k] ?? 0);
+                $a_buy_price = \JSHelper::saveAsPrice($post['attrib_buy_price'][$k] ?? 0);
                 $a_count = $post['attr_count'][$k];
-                $a_ean = $post['attr_ean'][$k];
-                $a_manufacturer_code = $post['attr_manufacturer_code'][$k];
-                $a_weight_volume_units = $post['attr_weight_volume_units'][$k];
-                $a_weight = $post['attr_weight'][$k];
+                $a_ean = $post['attr_ean'][$k] ?? '';
+                $a_manufacturer_code = $post['attr_manufacturer_code'][$k] ?? '';
+                $a_weight_volume_units = $post['attr_weight_volume_units'][$k] ?? 0;
+                $a_weight = $post['attr_weight'][$k] ?? 0;
 
                 if ($post['product_attr_id'][$k]){
                     $productAttribut->load($post['product_attr_id'][$k]);

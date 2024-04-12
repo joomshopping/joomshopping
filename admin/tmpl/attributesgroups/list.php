@@ -40,7 +40,7 @@ $i = 0;
     </thead>
     <tbody <?php if ($saveOrder) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="asc" data-nested="false"<?php endif; ?>>
     <?php foreach ($rows as $row){?>
-    <tr class="row<?php echo $i % 2; ?>" data-draggable-group="1" item-id="<?php echo $row->attr_id; ?>" parents="" level="1">
+    <tr class="row<?php echo $i % 2; ?>" data-draggable-group="1" item-id="<?php echo $row->id; ?>" parents="" level="1">
         <td class="order text-center d-none d-md-table-cell">
             <span class="sortable-handler <?php if (!$saveOrder) echo 'inactive';?>">
                 <span class="icon-ellipsis-v" aria-hidden="true"></span>
@@ -78,3 +78,8 @@ $i = 0;
 </div>
 </div>
 </div>
+<script>
+jQuery(function(){
+	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+});
+</script>

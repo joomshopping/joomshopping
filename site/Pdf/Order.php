@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.8 06.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -27,10 +27,10 @@ class Order extends \TCPDF{
 		$jshopConfig = \JSFactory::getConfig();
         $vendorinfo = $this->_vendorinfo;
 		if (file_exists($jshopConfig->path.'images/'.$this->img_header)){
-			$this->Image($jshopConfig->path.'images/'.$this->img_header,1,1,$jshopConfig->pdf_header_width,$jshopConfig->pdf_header_height);
+			$this->Image($jshopConfig->path.'images/'.$this->img_header, 1, 1, (int)$jshopConfig->pdf_header_width, (int)$jshopConfig->pdf_header_height);
 		}
 		if (file_exists($jshopConfig->path.'images/'.$this->img_footer)){
-			$this->Image($jshopConfig->path.'images/'.$this->img_footer,1,265,$jshopConfig->pdf_footer_width,$jshopConfig->pdf_footer_height);
+			$this->Image($jshopConfig->path.'images/'.$this->img_footer, 1, 265, (int)$jshopConfig->pdf_footer_width, (int)$jshopConfig->pdf_footer_height);
 		}
         $this->SetFont('freesans','',8);
         $this->SetXY(115,12);
@@ -105,7 +105,7 @@ class Order extends \TCPDF{
         if ($jshopConfig->date_invoice_in_invoice){
             $y+=12;
             $pdf->SetXY(110,$y);
-            $pdf->MultiCell(80,4.5,\JText::_('JSHOP_INVOICE_DATE')." ".strftime($jshopConfig->store_date_format, strtotime($order->invoice_date)), 0, 'R');
+            $pdf->MultiCell(80,4.5,\JText::_('JSHOP_INVOICE_DATE')." ".\JSHelper::formatdate($order->invoice_date), 0, 'R');
         }
         if ($jshopConfig->user_number_in_invoice && $order->user_id && $user->number){
             $y+=11;
@@ -285,10 +285,10 @@ class Order extends \TCPDF{
             $pdf->SetXY(20,$y);
             $pdf->Rect(20,$y,170,5,'F');
             $_pdf_ext_discount_text = isset($order->_pdf_ext_discount_text) ? $order->_pdf_ext_discount_text : '';
-            $pdf->MultiCell(130,5,_JSHOP_RABATT_VALUE.$_pdf_ext_discount_text,'1','R');
+            $pdf->MultiCell(130,5, \JText::_('JSHOP_RABATT_VALUE').$_pdf_ext_discount_text,'1','R');
             $pdf->SetXY(150,$y);
             $_pdf_ext_discount = isset($order->_pdf_ext_discount) ? $order->_pdf_ext_discount : '';
-            $pdf->MultiCell(40,5, "-".\JSHelper::formatprice($order->order_discount, $order->currency_code, 0, -1).$order->_pdf_ext_discount,'1','R');       		
+            $pdf->MultiCell(40,5, "-".\JSHelper::formatprice($order->order_discount, $order->currency_code, 0, -1).$_pdf_ext_discount,'1','R');
         }
         
         if (!$jshopConfig->without_shipping){
@@ -362,7 +362,7 @@ class Order extends \TCPDF{
         if ($jshopConfig->show_delivery_time_checkout && ($order->delivery_times_id || $order->delivery_time)){
             if ($y > 250){ $pdf->addNewPage(); $y = 60; }
             $deliverytimes = \JSFactory::getAllDeliveryTime();
-            $delivery = $deliverytimes[$order->delivery_times_id];
+            $delivery = $deliverytimes[$order->delivery_times_id] ?? '';
             if ($delivery==""){
                 $delivery = $order->delivery_time;
             }

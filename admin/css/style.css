@@ -174,21 +174,68 @@ td.right, th.right, tr.right td, tr.right th, .table td.right, .table th.right{
 table.table_attr{
 	padding-bottom:15px;
 }
-#contacts table {
-	background: #EBF0F3;
+.contacts{
+    width: 320px;
+    padding: 20px;
+	background: #ebf0f3;
+    border-radius: 10px;
+    font-size: 16px;
+    border:1px solid #ddd;
 }
-#contacts td {
-	height: 80px;
-	font-size: 11px;
-	font-weight: bold;
-	color: #3B4449;
+.contacts .jslogo{
+    background: #f8fcff;
+    text-align: center;
+    padding: 12px;
+    border-radius: 10px;
+    position: relative;
 }
-#contacts img {
-	margin: 0px 40px 0px 10px;
+.contacts .jslogo .version{
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-weight: bold;
+    font-size: 18px;
 }
-#contacts a:link,#contacts a:visited,#contacts a:active {
-	color: #515152;
+.contacts .firm{
+    font-size: 18px;
+    text-align: center;
+    padding: 15px 5px 25px 5px;
 }
+.contacts .info{
+    display: flex;
+    color: #2a5082;
+    align-items: center;
+}
+.contacts .info .img{
+    width: 65px;
+}
+.contacts .info{
+    line-height: 140%;
+}
+.contacts .info.mb-3{
+    margin-bottom: 30px;
+}
+.contacts a:link,.contacts a:visited,.contacts a:active {
+	color: #2a5082;
+}
+.contacts .blue{
+    color: #2a5082;
+}
+.aboutus{
+    display: flex;    
+    flex-wrap: wrap;
+}
+.aboutus > div{
+    margin-right: 15px;
+    margin-bottom: 20px;
+}
+.contacts.firminfo{
+    width: 360px;
+    line-height: 130%;
+    color: #757575;
+}
+
+
 img.tab_image{
 	vertical-align: middle;
 }
@@ -294,8 +341,11 @@ div#element-box .jssubmenu div.m {
 }
 #list_attr_value input{
     width:85px;
-    padding-left: 0.2rem;
-    padding-right: 0.2rem; 
+    padding-left: 5px;
+    padding-right: 5px;
+}
+#list_attr_value select {
+    padding-left: 5px;
 }
 #list_attr_value input[type="checkbox"]{
     width: auto;

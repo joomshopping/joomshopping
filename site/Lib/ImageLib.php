@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -177,6 +177,9 @@ class ImageLib{
         if ((int)ini_get("memory_limit")<120){
             ini_set("memory_limit", "120M");
         }
+		
+		self::imageFixOrientation($img);
+		
 		$new_w = $w;
 		$new_h = $h;
 		$path = pathinfo($img); 
@@ -234,7 +237,7 @@ class ImageLib{
             return 0;
         }
 
-		$thumb = imagecreatetruecolor($w, $h);
+		$thumb = imagecreatetruecolor((int)$w, (int)$h);
         
         if ($fill_flag){
             if ($fill_flag==2){
@@ -257,18 +260,13 @@ class ImageLib{
         }
 
 		if ($thumb_flag){
-            
-			imagecopyresampled ($thumb, $image, ($w-$new2_w)/2, ($h-$new2_h)/2, 0, 0, $new2_w, $new2_h, $imagedata[0], $imagedata[1]);
-            
+			imagecopyresampled ($thumb, $image, intval(($w-$new2_w)/2), intval(($h-$new2_h)/2), 0, 0, intval($new2_w), intval($new2_h), $imagedata[0], $imagedata[1]);            
 		}elseif ($fill_flag){
-            
-	        if ($new2_w<$w) imagecopyresampled ($thumb, $image, ($w-$new2_w)/2, 0, 0, 0, $new2_w, $new2_h, $imagedata[0], $imagedata[1]);
-            if ($new2_h<$h) imagecopyresampled ($thumb, $image, 0, ($h-$new2_h)/2, 0, 0, $new2_w, $new2_h, $imagedata[0], $imagedata[1]);
-            if ($new2_w==$w && $new2_h==$h) imagecopyresampled ($thumb, $image, 0, 0, 0, 0, $new2_w, $new2_h, $imagedata[0], $imagedata[1]);
-            
-		}else{
-            
-            $thumb = @imagecreatetruecolor($new2_w, $new2_h);
+	        if ($new2_w<$w) imagecopyresampled ($thumb, $image, intval(($w-$new2_w)/2), 0, 0, 0, intval($new2_w), intval($new2_h), $imagedata[0], $imagedata[1]);
+            if ($new2_h<$h) imagecopyresampled ($thumb, $image, 0, intval(($h-$new2_h)/2), 0, 0, intval($new2_w), intval($new2_h), $imagedata[0], $imagedata[1]);
+            if ($new2_w==$w && $new2_h==$h) imagecopyresampled ($thumb, $image, 0, 0, 0, 0, intval($new2_w), intval($new2_h), $imagedata[0], $imagedata[1]);            
+		}else{            
+            $thumb = @imagecreatetruecolor(intval($new2_w), intval($new2_h));
             if ($ext=="png"){
                 imagealphablending($thumb, false);
                 imagesavealpha($thumb, true);
@@ -279,21 +277,15 @@ class ImageLib{
                 imagecolortransparent($thumb, $trnprt_color);
                 imagetruecolortopalette($thumb, true, 256);
             }
-            imagecopyresampled ($thumb, $image, 0, 0, 0, 0, $new2_w, $new2_h, $imagedata[0], $imagedata[1]);
-
+            imagecopyresampled ($thumb, $image, 0, 0, 0, 0, intval($new2_w), intval($new2_h), $imagedata[0], $imagedata[1]);
 		}
 
         if ($interlace){
 		    imageinterlace($thumb, 1);
         }
 	
-		if ($ext=="png") {       
-            if (phpversion()>='5.1.2'){                
-                imagepng($thumb, $name, 10-max(intval($qty/10),1));
-            }
-            else{    
-                imagepng($thumb, $name);
-            }
+		if ($ext=="png") {
+            imagepng($thumb, $name, 10-max(intval($qty/10),1));
         }
 		if ($ext=="gif"){
             if ($name)    
@@ -309,6 +301,37 @@ class ImageLib{
 		}
 		
 		return 1;	
+	}
+	
+	static function imageFixOrientation($img) {
+		if (!function_exists('exif_read_data')) {
+			return 0;
+		}
+        $exif = @exif_read_data($img);
+        if (isset($exif['Orientation']) && ($exif['Orientation']==3 OR $exif['Orientation']==6 OR $exif['Orientation']==8)) {
+			$path = pathinfo($img); 
+			$ext = $path['extension']; 
+			$ext = strtolower($ext);
+			if ($ext=="jpg" or $ext=="jpeg") {
+				$imageResource = imagecreatefromjpeg($img); 
+				switch ($exif['Orientation']) {
+					case 3:
+					$image = imagerotate($imageResource, 180, 0);
+					break;
+					case 6:
+					$image = imagerotate($imageResource, -90, 0);
+					break;
+					case 8:
+					$image = imagerotate($imageResource, 90, 0);
+					break;
+				}
+				imagejpeg($image, $img);
+				imagedestroy($imageResource);
+				imagedestroy($image);
+				return 1;
+			}
+        }
+		return 0;
 	}
 	
 	/**
@@ -334,4 +357,3 @@ class ImageLib{
 	}
 
 }
-?>

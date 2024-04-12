@@ -532,7 +532,7 @@ h3{
         <div style="padding-bottom:4px;"><?php print $this->order->payment_name;?></div>
         <div style="font-size:12px;">
         <?php
-            print nl2br($this->order->payment_information);
+            print nl2br($this->order->payment_information ?? '');
             print $this->order->payment_description;
         ?>
         </div>

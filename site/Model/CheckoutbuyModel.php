@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.8 08.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -132,6 +132,12 @@ class CheckoutBuyModel  extends CheckoutModel{
 	public function loadUrlParams(){
 		$pm_method = \JSFactory::getTable('paymentMethod');
         $pm_method->loadFromClass($this->payment_method_class);
+		$load_by_scriptname = 0;
+		if (!$pm_method->payment_id) {
+			$pm_method->loadFromClass($this->payment_method_class, 1);
+			$load_by_scriptname = 1;
+			\JSHelper::saveToLog("payment.log", "load url by scriptname ".$this->payment_method_class);
+		}
 
         $paymentsysdata = $pm_method->getPaymentSystemData();
         $payment_system = $paymentsysdata->paymentSystem;
@@ -151,6 +157,25 @@ class CheckoutBuyModel  extends CheckoutModel{
         $hash = $urlParamsPS['hash'];
         $checkHash = $urlParamsPS['checkHash'];
         $checkReturnParams = $urlParamsPS['checkReturnParams'];
+		
+		if ($load_by_scriptname && $order_id) {
+			$order = \JSFactory::getTable('order');
+			$order->load($order_id);
+			$pm_method->load($order->payment_method_id);
+			$paymentsysdata = $pm_method->getPaymentSystemData();
+			$payment_system = $paymentsysdata->paymentSystem;
+			if ($this->payment_method_class != $pm_method->scriptname || !$order->payment_method_id) {
+				\JSHelper::saveToLog("payment.log", "#0011 - Error load by script name ".$this->payment_method_class." / order_id ".$order_id);
+				$this->setError(_JSHOP_ERROR_PAYMENT);
+				return 0;
+			}
+			$this->payment_method_class = $pm_method->payment_class;
+			$pmconfigs = $pm_method->getConfigs();
+			\JSHelper::saveToLog("payment.log", "payment alias ".$pm_method->payment_class." / order_id ".$order_id);
+		}
+		if ($load_by_scriptname && !$order_id) {
+			\JSHelper::saveToLog("payment.log", "info: real payment not loaded by scriptname");
+		}
 
 		$this->setPmMethod($pm_method);
 		$this->setPaymentSystem($payment_system);
@@ -178,10 +203,8 @@ class CheckoutBuyModel  extends CheckoutModel{
 		$order = \JSFactory::getTable('order');
         $order->load($order_id);
 
-        if ($this->getNoLang()){
-            \JSFactory::loadLanguageFile($order->getLang());
-            $lang = \JSFactory::getLang($order->getLang());
-        }
+		\JSFactory::loadLanguageFile($order->getLang(), true);
+		$lang = \JSFactory::getLang($order->getLang());
 
         if ($checkHash && $order->order_hash != $hash){
             \JSHelper::saveToLog("payment.log", "#003 - Error order hash. Order id ".$order_id);
@@ -208,8 +231,8 @@ class CheckoutBuyModel  extends CheckoutModel{
         $res = $payment_system->checkTransaction($pmconfigs, $order, $act);
         $rescode = $res[0];
         $restext = $res[1];
-        $transaction = $res[2];
-        $transactiondata = $res[3];
+		$transaction = $res[2] ?? null;
+        $transactiondata = $res[3] ?? null;
 
         $status = $payment_system->getStatusFromResCode($rescode, $pmconfigs);
 
@@ -221,7 +244,8 @@ class CheckoutBuyModel  extends CheckoutModel{
             \JSHelper::saveToLog("payment.log", $restext);
         }
 
-        if ($status && !$order->order_created){
+		$curOrderStatus = $order->getCurrentOrderStatus();
+        if ($status && !$curOrderStatus->order_created){
             $order->order_created = 1;
             $order->order_status = $status;
             \JSFactory::getModel('checkoutorder', 'Site')->couponFinished($order);
@@ -232,9 +256,7 @@ class CheckoutBuyModel  extends CheckoutModel{
                 $this->sendOrderEmail($order->order_id);
             }
             $this->changeStatusOrder($order_id, $status, 0);
-        }
-
-        if ($status && $order->order_status != $status){
+        } elseif ($status && $curOrderStatus->order_status != $status){
            $this->changeStatusOrder($order_id, $status, 1);
         }
 
@@ -262,8 +284,10 @@ class CheckoutBuyModel  extends CheckoutModel{
 
 	public function saveToLogPaymentData(){
 		$str = "url: ".$_SERVER['REQUEST_URI']."\n";
-        foreach($_POST as $k=>$v) $str .= $k."=".$v."\n";
+        foreach($_POST as $k=>$v) $str .= $k."=".$v."\n";		
         \JSHelper::saveToLog("paymentdata.log", $str);
+		$raw = file_get_contents('php://input');
+		if ($raw) \JSHelper::saveToLog("paymentdata.log", $raw);
 	}
 
     public function noCheckReturnExecute(){

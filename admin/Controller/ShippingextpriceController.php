@@ -24,7 +24,8 @@ class ShippingExtPriceController extends BaseadminController{
         $view->setLayout("list");
 		$view->set('rows', $rows);
         $view->sidebar = \JHTMLSidebar::render();
-
+		$view->tmp_html_start = "";
+        $view->tmp_html_end = "";
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayShippingExtPrices', array(&$view));
 		$view->displayList();
@@ -53,7 +54,9 @@ class ShippingExtPriceController extends BaseadminController{
         $view->set('row', $row);
         $view->set('list_shippings', $list_shippings);
         $view->set('shippings_conects', $shippings_conects);
-
+		$view->tmp_html_start = "";
+        $view->tmp_html_end = "";
+        $view->etemplatevar = "";
         $dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditShippingExtPrice', array(&$view));
         $view->displayEdit();

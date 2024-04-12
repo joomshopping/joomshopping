@@ -95,3 +95,8 @@ foreach($rows as $i=>$row){?>
 </div>
 </div>
 </div>
+<script>
+jQuery(function(){
+	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+});
+</script>
