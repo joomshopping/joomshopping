@@ -250,6 +250,7 @@ var jshopAdminClass = function(){
         var count_attributs = this.attrib_ids.length;
         var index = 0;
         var option = {};
+        jshopAdmin.ajaxLoadAnimate().show();
 
         for (var i=0; i<count_attributs; i++){
             current_index_list[i] = 0;
@@ -258,12 +259,12 @@ var jshopAdminClass = function(){
             selectedval[id] = [];
             num = 0;
             jQuery("#"+ide+" :selected").each(function(j, selected){
-              value = jQuery(selected).val();
-              text = jQuery(selected).text();
-              if (value!=0){
-                  selectedval[id][num] = {"text":text, "value":value};
-                  num++;
-              }
+                value = jQuery(selected).val();
+                text = jQuery(selected).text();
+                if (value!=0){
+                    selectedval[id][num] = {"text":text, "value":value};
+                    num++;
+                }
             });
 
             if (selectedval[id].length==0){
@@ -281,23 +282,47 @@ var jshopAdminClass = function(){
             var attr_id = VRegExp.exec(jQuery(this).attr('name'))[1];
             first_attr[attr_id] = jQuery(this).val();
         });
-        if (first_attr.length > 0){
+        if (first_attr.length > 0) {
+            let active_attr_names = [];
+            for(let k in first_attr) {
+                active_attr_names.push(this.attrib_names[k]);
+            }
+            let active_attr_names_text = active_attr_names.join(', ');
             for (var k=0; k<count_attributs; k++){
                 id = this.attrib_ids[k];
                 if (first_attr[id] !== undefined){
                     if (first_attr[id]==0 && selectedval[id][0].value != 0){
-                        alert(this.lang_error_attribute);
+                        jshopAdmin.ajaxLoadAnimate().hide();
+                        alert(this.lang_error_attribute+' ('+active_attr_names_text+')');
                         return 0;
                     }
                     if (first_attr[id]!=0 && selectedval[id][0].value == 0){
-                        alert(this.lang_error_attribute);
+                        jshopAdmin.ajaxLoadAnimate().hide();
+                        alert(this.lang_error_attribute+' ('+active_attr_names_text+')');
+                        return 0;
+                    }
+                } else {
+                    if (selectedval[id][0].value != 0) {
+                        jshopAdmin.ajaxLoadAnimate().hide();
+                        alert(this.lang_error_attribute+' ('+active_attr_names_text+')');
                         return 0;
                     }
                 }
             }
+        } else {
+            jQuery('#list_attr_value thead tr th.atr').remove();
+            let htmlatr = '';
+            for (var k=0; k<count_attributs; k++){
+                id = this.attrib_ids[k];
+                if (selectedval[id][0].value != 0) {
+                    htmlatr += '<th class="atr">'+this.attrib_names[id]+'</th>';
+                }
+            }
+            jQuery('#list_attr_value thead tr').prepend(htmlatr);
         }
 
         if (count_attr_sel==0){
+            jshopAdmin.ajaxLoadAnimate().hide();
             alert(this.lang_error_attribute);
             return 0;
         }
@@ -336,16 +361,18 @@ var jshopAdminClass = function(){
         for(var j=0; j<combination; j++){
             tmpmass = {};
             html = "<tr id='attr_row_"+this.attr_tmp_row_num+"'>";
-            for (var i=0; i<count_attributs; i++){
+            for (var i=0; i < count_attributs; i++){
                 id = this.attrib_ids[i];
                 num = list_key[j][i];
                 option = selectedval[id][num];
-                hidden = "<input type='hidden' name='attrib_id["+id+"][]' value='"+option.value+"'>";
-                tmpimg="";
-                if (option.value!=0 && this.attrib_images[option.value]!=""){
-                    tmpimg ='<img src="'+this.folder_image_attrib+'/'+this.attrib_images[option.value]+'" style="margin-right:5px;" width="16" height="16" class="img_attrib">';
+                if (option.value != 0) {
+                    hidden = "<input type='hidden' name='attrib_id["+id+"][]' value='"+option.value+"'>";
+                    tmpimg="";
+                    if (option.value!=0 && this.attrib_images[option.value]!=""){
+                        tmpimg ='<img src="'+this.folder_image_attrib+'/'+this.attrib_images[option.value]+'" style="margin-right:5px;" width="16" height="16" class="img_attrib">';
+                    }
+                    html+="<td class='atr'>" + hidden + tmpimg + option.text + "</td>";
                 }
-                html+="<td>" + hidden + tmpimg + option.text + "</td>";
                 tmpmass[id] = option.value;
             }
 
@@ -397,7 +424,6 @@ var jshopAdminClass = function(){
             html+="<td></td><td class='center'><input type='hidden' name='product_attr_id[]' value='0'><input type='checkbox' class='ch_attr_delete' value='"+this.attr_tmp_row_num+"'></td>";
 
             html+="</tr>";
-            html+="";
 
             var existcheck = 0;
             for ( var k in this.attrib_exist ){
@@ -413,7 +439,7 @@ var jshopAdminClass = function(){
             }
 
             if (!existcheck){
-                jQuery("#list_attr_value #attr_row_end").before(html);
+                jQuery("table#list_attr_value tbody").append(html);
                 this.attrib_exist[this.attr_tmp_row_num] = tmpmass;
                 this.attr_tmp_row_num++;
                 count_added_rows++;
@@ -421,12 +447,14 @@ var jshopAdminClass = function(){
         }
 
         if (count_added_rows==0){
+            jshopAdmin.ajaxLoadAnimate().hide();
             alert(this.lang_attribute_exist);
             return 0;
         }
         jQuery.each(this.jstriggers.addAttributValueEvents, function(key, handler){
             handler.call(this, count_added_rows);
         });
+        jshopAdmin.ajaxLoadAnimate().hide();
         return 1;
     };
 
@@ -436,11 +464,11 @@ var jshopAdminClass = function(){
     };
 
     this.selectAllListAttr = function(checked){
-        jQuery(".ch_attr_delete").attr('checked', checked);
+        jQuery(".ch_attr_delete").prop('checked', checked);
     };
 
     this.deleteListAttr = function(){
-        jQuery("#ch_attr_delete_all").attr('checked', false);
+        jQuery("#ch_attr_delete_all").prop('checked', false);
         jQuery(".ch_attr_delete").each(function(i){
             if (jQuery(this).is(':checked')){
                 that.deleteTmpRowAttrib(jQuery(this).val());

@@ -72,9 +72,14 @@ class AttributTable extends MultilangTable{
     
     public function addNewFieldProductsAttr(){
         $db = \JFactory::getDBO();
-        $query = "ALTER TABLE `#__jshopping_products_attr` ADD `attr_".$this->attr_id."` INT(11) NOT NULL";
-        $db->setQuery($query);
-        $db->execute();
+        $table = "#__jshopping_products_attr";
+        $field = "attr_".$this->attr_id;
+        $listfields = $db->getTableColumns($table);
+        if (!isset($listfields[$field])){
+            $query = "ALTER TABLE ".$db->qn($table)." ADD ".$db->qn($field)."  INT(11) NOT NULL";
+            $db->setQuery($query);
+            $db->execute();
+        }
     }
     
     public function reorder($where = '', $fieldordering = 'ordering'){

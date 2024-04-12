@@ -34,6 +34,8 @@ class CategoryTable extends MultilangTable{
                    FROM `#__jshopping_categories`
                    WHERE category_parent_id = '".$db->escape($parentId)."' ".$add_where."
                    ORDER BY ".$orderby." ".$ordering;
+        $obj = $this;
+        \JFactory::getApplication()->triggerEvent('onGetSubCategoriesCategoryTable', array(&$obj, &$query));
         $db->setQuery($query);
         $categories = $db->loadObJectList();
         foreach($categories as $key=>$value){

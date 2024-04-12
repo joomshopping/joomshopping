@@ -30,149 +30,150 @@ defined('_JEXEC') or die();
 <?php }?>
 <?php if (count($lists['all_attributes'])){ ?>
     <script type="text/javascript">
-        jshopAdmin.attrib_ids=new Array();
-        jshopAdmin.attrib_exist=new Object();
+        jshopAdmin.attribs_dep_active = <?php print json_encode($lists['attribs_dep_active'])?>;
+        jshopAdmin.attrib_names = <?php print json_encode($lists['attrib_names']);?>;
+        jshopAdmin.attrib_ids = new Array();
+        jshopAdmin.attrib_exist = new Object();
         <?php $i=0; foreach($lists['all_attributes'] as $key=>$value){ ?>
-            jshopAdmin.attrib_ids[<?php print $i++;?>]="<?php echo $value->attr_id ?>";
-       <?php } ?>
+            jshopAdmin.attrib_ids[<?php print $i++;?>] = "<?php echo $value->attr_id ?>";
+        <?php } ?>
+        <?php
+        $attr_tmp_row_num=0;
+        if (count($lists['attribs'])){
+            
+            foreach($lists['attribs'] as $k=>$v){
+                $attr_tmp_row_num++;
+                print "jshopAdmin.attrib_exist[".$attr_tmp_row_num."]={};\n";
+                foreach($lists['all_attributes'] as $key=>$value){
+                        $tmp_field="attr_".$value->attr_id;
+                        $tmp_val=$v->$tmp_field;
+                        print "jshopAdmin.attrib_exist[".$attr_tmp_row_num."][".$value->attr_id."]='".$tmp_val."';\n";
+                }
+            
+            }
+        }
+        print "jshopAdmin.attr_tmp_row_num=$attr_tmp_row_num;\n";
+        ?>       
+        </script>
        
-       <?php
-       $attr_tmp_row_num=0;
-       if (count($lists['attribs'])){
-           
-           foreach($lists['attribs'] as $k=>$v){
-               $attr_tmp_row_num++;
-               print "jshopAdmin.attrib_exist[".$attr_tmp_row_num."]={};\n";
-               foreach($lists['all_attributes'] as $key=>$value){
-                    $tmp_field="attr_".$value->attr_id;
-                    $tmp_val=$v->$tmp_field;
-                    print "jshopAdmin.attrib_exist[".$attr_tmp_row_num."][".$value->attr_id."]='".$tmp_val."';\n";
-               }
-           
-           }
-       }
-       print "jshopAdmin.attr_tmp_row_num=$attr_tmp_row_num;\n";
-       ?>       
-       </script>
-       
-       <table class="table table-striped" id="list_attr_value">
-       <thead>
-       <tr>
-       <?php foreach($lists['all_attributes'] as $key=>$value){ ?>
-            <th width="100"><?php echo $value->name?></th>
-       <?php } ?>
-            <th width="100"><?php print JText::_('JSHOP_PRICE')?></th>
+        <table class="table table-striped table-dependent-attribute" id="list_attr_value">
+        <thead>
+        <tr>
+        <?php foreach($lists['all_attributes'] as $key=>$value){ ?>
+            <?php if (in_array($key, $lists['attribs_dep_active'])) {?>
+                <th class="atr"><?php echo $value->name?></th>
+            <?php } ?>
+        <?php } ?>
+            <th><?php print JText::_('JSHOP_PRICE')?></th>
             <?php print $this->dep_attr_td_header?>
-			<?php if ($jshopConfig->stock){?>            
-                <th width="100"><?php print JText::_('JSHOP_QUANTITY_PRODUCT')?></th>
+			<?php if ($jshopConfig->stock){?>
+                <th><?php print JText::_('JSHOP_QUANTITY_PRODUCT')?></th>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['product_ean'] == 0){?>
-                <th width="100"><?php print JText::_('JSHOP_EAN_PRODUCT')?></th>
+                <th><?php print JText::_('JSHOP_EAN_PRODUCT')?></th>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['manufacturer_code'] == 0){?>
-                <th width="100"><?php print JText::_('JSHOP_MANUFACTURER_CODE')?></th>
+                <th><?php print JText::_('JSHOP_MANUFACTURER_CODE')?></th>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['real_ean'] == 0){?>
-                <th width="100"><?php print JText::_('JSHOP_EAN')?></th>
+                <th><?php print JText::_('JSHOP_EAN')?></th>
             <?php }?>
 			<?php if ($jshopConfig->admin_show_weight){?>
-                <th width="100"><?php print JText::_('JSHOP_PRODUCT_WEIGHT')?> (<?php print \JSHelper::sprintUnitWeight()?>)</th>
+                <th><?php print JText::_('JSHOP_PRODUCT_WEIGHT')?> (<?php print \JSHelper::sprintUnitWeight()?>)</th>
 			<?php }?>
             <?php if ($jshopConfig->admin_show_product_basic_price){?>
-                <th width="100"><?php print JText::_('JSHOP_WEIGHT_VOLUME_UNITS')?></th>
+                <th><?php print JText::_('JSHOP_WEIGHT_VOLUME_UNITS')?></th>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['product_old_price'] == 0){?>
-                <th width="100"><?php print JText::_('JSHOP_OLD_PRICE')?></th>
+                <th><?php print JText::_('JSHOP_OLD_PRICE')?></th>
             <?php }?>
             <?php if ($jshopConfig->admin_show_product_bay_price){?>
-                <th width="100"><?php print JText::_('JSHOP_PRODUCT_BUY_PRICE')?></th>
+                <th><?php print JText::_('JSHOP_PRODUCT_BUY_PRICE')?></th>
             <?php }?>
-            <th></th>
-            <th width="50" class="center"><input type='checkbox' id='ch_attr_delete_all' onclick="jshopAdmin.selectAllListAttr(this.checked)"></th>
-       </tr>
-       </thead>
-       <?php       
-       if (count($lists['attribs'])){
-           $attr_tmp_row_num=0;
-           foreach($lists['attribs'] as $k=>$v){
-               $attr_tmp_row_num++;
-               print "<tr id='attr_row_".$attr_tmp_row_num."'>";
-               foreach($lists['all_attributes'] as $key=>$value){
-                    $tmp_field="attr_".$value->attr_id;
-                    $tmp_val=$v->$tmp_field;
-                    $tmp_val_val = isset($lists['attribs_values'][$tmp_val]->name) ? $lists['attribs_values'][$tmp_val]->name : '';
-                    $tmp_val_val = $lists['attribs_values'][$tmp_val]->name ?? '';
-                    $image_= "";
-                    if (isset($lists['attribs_values'][$tmp_val]->image) && $lists['attribs_values'][$tmp_val]->image!=''){
-                        $image_="<img src='".$jshopConfig->image_attributes_live_path."/".$lists['attribs_values'][$tmp_val]->image."' align='left' hspace='5' width='16' height='16' style='margin-right:5px;' class='img_attrib'>";
+            <th class="attr_adt_val"></th>
+            <th class="center attr_td_del">
+                <input type='checkbox' id='ch_attr_delete_all' onclick="jshopAdmin.selectAllListAttr(this.checked)">
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        if (count($lists['attribs'])){
+            $attr_tmp_row_num = 0;
+            foreach($lists['attribs'] as $k=>$v){
+                $attr_tmp_row_num++;
+                print "<tr id='attr_row_".$attr_tmp_row_num."'>";
+                foreach($lists['all_attributes'] as $key => $value) {
+                    if (in_array($key, $lists['attribs_dep_active'])) {
+                        $tmp_field = "attr_".$value->attr_id;
+                        $tmp_val = $v->$tmp_field;
+                        $tmp_val_val = isset($lists['attribs_values'][$tmp_val]->name) ? $lists['attribs_values'][$tmp_val]->name : '';
+                        $tmp_val_val = $lists['attribs_values'][$tmp_val]->name ?? '';
+                        $image_= "";
+                        if (isset($lists['attribs_values'][$tmp_val]->image) && $lists['attribs_values'][$tmp_val]->image!=''){
+                            $image_ = "<img src='".$jshopConfig->image_attributes_live_path."/".$lists['attribs_values'][$tmp_val]->image."' align='left' hspace='5' width='16' height='16' style='margin-right:5px;' class='img_attrib'>";
+                        }
+                        print "<td class='atr'><input type='hidden' name='attrib_id[".$value->attr_id."][]' value='".$tmp_val."'>".$image_.$tmp_val_val."</td>";
                     }
-                    print "<td><input type='hidden' name='attrib_id[".$value->attr_id."][]' value='".$tmp_val."'>".$image_.$tmp_val_val."</td>";
-               }
-               print "<td><input type='text' name='attrib_price[]' class = 'form-control' value='".floatval($v->price)."'></td>";
-               print isset($this->dep_attr_td_row[$k]) ? $this->dep_attr_td_row[$k] : "";
-               if ($jshopConfig->stock){
-                print "<td><input type='text' name='attr_count[]' class = 'form-control' value='".$v->count."'></td>";
-               }
-               if ($jshopConfig->disable_admin['product_ean'] == 0){
-                print "<td><input type='text' name='attr_ean[]' class = 'form-control' value='".$v->ean."'></td>";
-               }
-               if ($jshopConfig->disable_admin['manufacturer_code'] == 0){
-                print "<td><input type='text' name='attr_manufacturer_code[]' class = 'form-control' value='".$v->manufacturer_code."'></td>";
-               }
-               if ($jshopConfig->disable_admin['real_ean'] == 0){
-                print "<td><input type='text' name='attr_real_ean[]' class='form-control' value='".$v->real_ean."'></td>";
-               }
-			   if ($jshopConfig->admin_show_weight){
-				  print "<td><input type='text' name='attr_weight[]' class = 'form-control' value='".$v->weight."'></td>";
-			   }
-               if ($jshopConfig->admin_show_product_basic_price){
-                print "<td><input type='text' name='attr_weight_volume_units[]' class = 'form-control' value='".$v->weight_volume_units."'></td>";
-               }
-               if ($jshopConfig->disable_admin['product_old_price'] == 0){
-                print "<td><input type='text' name='attrib_old_price[]' class = 'form-control' value='".$v->old_price."'></td>";
-               }
-               if ($jshopConfig->admin_show_product_bay_price){
-                  print "<td><input type='text' name='attrib_buy_price[]' class = 'form-control' value='".floatval($v->buy_price)."'></td>";
-               }
-               print "<td>";
-               if ($jshopConfig->use_extend_attribute_data){
-                   print "<a class='btn btn-mini' target='_blank' href='index.php?option=com_jshopping&controller=products&task=edit&product_attr_id=".$v->product_attr_id."' onclick='jshopAdmin.editAttributeExtendParams(".$v->product_attr_id.");return false;'>".JText::_('JSHOP_ATTRIBUTE_EXTEND_PARAMS')."</a>";
-               }
-               print "</td>";
-               print "<td class='center'><input type='hidden' name='product_attr_id[]' value='".$v->product_attr_id."'><input type='checkbox' class='ch_attr_delete' value='".$attr_tmp_row_num."'></td>";
-               print "</tr>";
-           }           
-       }
-       print "<tr id='attr_row_end'>";
-       foreach($lists['all_attributes'] as $key=>$value){
-           print "<td></td>";
-       }
-	   print "<td></td>";
-	   print $this->dep_attr_td_row_empty;
-       if ($jshopConfig->stock) print "<td></td>";
-	   if ($jshopConfig->disable_admin['product_ean'] == 0) print "<td></td>";
-       if ($jshopConfig->disable_admin['manufacturer_code'] == 0) print "<td></td>";
-       if ($jshopConfig->disable_admin['real_ean'] == 0) print "<td></td>";
-	   if ($jshopConfig->admin_show_weight) print "<td></td>";
-       if ($jshopConfig->admin_show_product_basic_price) print "<td></td>";
-       if ($jshopConfig->disable_admin['product_old_price'] == 0) print "<td></td>";
-       if ($jshopConfig->admin_show_product_bay_price) print "<td></td>";              
-       print "<td></td>";
-       print "<td><input type='button' class='btn btn-danger' value='".JText::_('JSHOP_DELETE')."' onclick='jshopAdmin.deleteListAttr()'></td>";
-       print "</tr>";
-       ?>
-       </table>
-       <br/>
-       <div class="col width-55">
+                }
+                print "<td><input type='text' name='attrib_price[]' class = 'form-control' value='".floatval($v->price)."'></td>";
+                print isset($this->dep_attr_td_row[$k]) ? $this->dep_attr_td_row[$k] : "";
+                if ($jshopConfig->stock){
+                    print "<td><input type='text' name='attr_count[]' class = 'form-control' value='".$v->count."'></td>";
+                }
+                if ($jshopConfig->disable_admin['product_ean'] == 0){
+                    print "<td><input type='text' name='attr_ean[]' class = 'form-control' value='".$v->ean."'></td>";
+                }
+                if ($jshopConfig->disable_admin['manufacturer_code'] == 0){
+                    print "<td><input type='text' name='attr_manufacturer_code[]' class = 'form-control' value='".$v->manufacturer_code."'></td>";
+                }
+                if ($jshopConfig->disable_admin['real_ean'] == 0){
+                    print "<td><input type='text' name='attr_real_ean[]' class='form-control' value='".$v->real_ean."'></td>";
+                }
+                if ($jshopConfig->admin_show_weight){
+                    print "<td><input type='text' name='attr_weight[]' class = 'form-control' value='".$v->weight."'></td>";
+                }
+                if ($jshopConfig->admin_show_product_basic_price){
+                    print "<td><input type='text' name='attr_weight_volume_units[]' class = 'form-control' value='".$v->weight_volume_units."'></td>";
+                }
+                if ($jshopConfig->disable_admin['product_old_price'] == 0){
+                    print "<td><input type='text' name='attrib_old_price[]' class = 'form-control' value='".$v->old_price."'></td>";
+                }
+                if ($jshopConfig->admin_show_product_bay_price){
+                    print "<td><input type='text' name='attrib_buy_price[]' class = 'form-control' value='".floatval($v->buy_price)."'></td>";
+                }
+                print "<td>";
+                if ($jshopConfig->use_extend_attribute_data){
+                    print "<a class='btn btn-sm btn-secondary' target='_blank' href='index.php?option=com_jshopping&controller=products&task=edit&product_attr_id=".$v->product_attr_id."' onclick='jshopAdmin.editAttributeExtendParams(".$v->product_attr_id.");return false;'>".JText::_('JSHOP_ATTRIBUTE_EXTEND_PARAMS')."</a>";
+                }
+                print "</td>";
+                print "<td class='center'><input type='hidden' name='product_attr_id[]' value='".$v->product_attr_id."'><input type='checkbox' class='ch_attr_delete' value='".$attr_tmp_row_num."'></td>";
+                print "</tr>";
+            }
+        }
+        ?>
+        </tbody>
+        </table>
+        <div class="text-end">
+            <input type='button' class='btn btn-danger' value='<?php echo JText::_('JSHOP_DELETE')?>' onclick='jshopAdmin.deleteListAttr()'>
+        </div>
+        <br/>
+
+        <div class="col width-55">
         <fieldset class="adminform" style="margin-left:0px;">
-        <legend><?php echo JText::_('JSHOP_ADD_ATTRIBUT')?></legend>
+        <legend><b><?php echo JText::_('JSHOP_ADD_ATTRIBUT')?></b></legend>
             <table class="admintable">
-            <?php foreach($lists['all_attributes'] as $key=>$value){ ?>
+            <?php 
+            foreach($lists['all_attributes'] as $key => $value){
+                if (!isset($value->hidden_for_category) || $value->hidden_for_category == 0) {
+            ?>
                 <tr>
                     <td class="key"><?php echo $value->name?></td>
                     <td><?php echo $value->values_select;?></td>
                 </tr>    
-            <?php } ?>
+            <?php }
+            }
+            ?>
             <tr>
                 <td class="key"><?php print JText::_('JSHOP_PRICE')?>*</td>
                 <td><input type="text" class = "form-control middle2" id="attr_price" value="<?php echo $row->product_price?>"></td>
@@ -233,19 +234,20 @@ defined('_JEXEC') or die();
                 <?php print $lists['dep_attr_button_add']?>
                 </div>
                 </td>
-            </tr>            
+            </tr>
             </table>
-        </fieldset>    
+        </fieldset>
        </div>
        <div class="clr"></div>
        <br/>
-   <?php
-   }
+    <?php
+    }
    
    
-   if (count($lists['all_independent_attributes'])){
-   ?>
-    <?php foreach($lists['all_independent_attributes'] as $ind_attr){?>
+    if (count($lists['all_independent_attributes'])){
+    foreach($lists['all_independent_attributes'] as $ind_attr){
+        if (!isset($ind_attr->hidden_for_category) || $ind_attr->hidden_for_category == 0) {
+    ?>
         
         <div style="padding-top:20px;">
         <table class="table table-striped" id="list_attr_value_ind_<?php print $ind_attr->attr_id?>">
@@ -292,7 +294,9 @@ defined('_JEXEC') or die();
         </tr>
         </table>
         </div>
-    <?php }?>
+    <?php }
+    }
+    ?>
     
    <br/><br/>
    <?php

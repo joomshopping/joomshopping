@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.1 25.01.2024
+* @version      5.3.3 21.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -64,7 +64,7 @@ class Dispatcher extends ComponentDispatcher{
 		HTMLHelper::_('jquery.framework');
         $doc = \JFactory::getDocument();
         $doc->addScript($jshopConfig->live_path.'js/functions.js');
-        $doc->addScript($jshopConfig->live_admin_path.'js/functions.js');
+        $doc->addScript($jshopConfig->live_admin_path.'js/functions.js?5.3.3');
         $doc->addStyleSheet($jshopConfig->live_admin_path.'css/style.css');
         if (version_compare(JVERSION, '5.0.0') >= 0) {
             $doc->addStyleSheet($jshopConfig->live_admin_path.'css/stylej5.css');

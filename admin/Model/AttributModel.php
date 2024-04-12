@@ -22,7 +22,7 @@ class AttributModel extends BaseadminModel{
         return $db->loadResult();
     }
     
-    public function getAllAttributes($result = 0, $categorys = null, $order = null, $orderDir = null){
+    public function getAllAttributes($result = 0, $categorys = null, $order = null, $orderDir = null, $params = []){
         $lang = \JSFactory::getLang();
         $db = \JFactory::getDBO();
         $ordering = "A.attr_ordering asc";
@@ -49,7 +49,11 @@ class AttributModel extends BaseadminModel{
                         if (in_array($cid, $cats)) $enable = 1;
                     }
                     if (!$enable){
-                        unset($list[$k]);
+                        if (isset($params['not_delete_for_category']) && $params['not_delete_for_category'] == 1) {
+                            $list[$k]->hidden_for_category = 1;
+                        } else {
+                            unset($list[$k]);
+                        }
                     }
                 }
             } 
@@ -109,10 +113,10 @@ class AttributModel extends BaseadminModel{
             $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
         }        
-        if (!$attr_id){
+        if ($attribut->independent == 0){
             $attribut->addNewFieldProductsAttr();
-        }        
-        $dispatcher->triggerEvent('onAfterSaveAttribut', array(&$attribut));        
+        }
+        $dispatcher->triggerEvent('onAfterSaveAttribut', array(&$attribut));
         return $attribut;
     }
     

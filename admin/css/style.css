@@ -347,21 +347,45 @@ div#element-box .jssubmenu div.m {
 .table .product_label{
     position: absolute;
 }
-#list_attr_value input{
-    width:85px;
-    padding-left: 5px;
-    padding-right: 5px;
+.table.table-dependent-attribute{
+    margin-bottom: 5px;
 }
-#list_attr_value select {
+.table.table-dependent-attribute thead th{
+    white-space: normal;
+    font-weight: normal;
+    font-size: 0.9rem;
+    line-height: 120%;
+    padding: 5px 3px;
+    width: 100px;
+}
+.table.table-dependent-attribute thead th.attr_adt_val{
+    width: auto;
+}
+.table.table-dependent-attribute thead th.attr_td_del{
+    width: 50px;
+}
+.table.table-dependent-attribute td{
+    padding: 3px;
+    font-size: 0.9rem;
+}
+.table.table-dependent-attribute td a{
+    font-size: 0.9rem;
+}
+.table.table-dependent-attribute input{
+    font-size: 0.9rem;
+    width: 85px;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.table.table-dependent-attribute select {
+    font-size: 0.9rem;
     padding-left: 5px;
 }
-#list_attr_value input[type="checkbox"]{
+.table.table-dependent-attribute input[type="checkbox"]{
     width: auto;
 }
 .table .inputordering{
     width: 40px;
-}
-.jshop_block_filter{
 }
 .jshop_box_filter{
     white-space: nowrap;
@@ -600,7 +624,7 @@ img.productlabels{
     height: 64px;
     margin: 8px;
     border-radius: 50%;
-    border: 6px solid #fff;    
+    border: 6px solid #fff;
 	border-color: #888 transparent #888 transparent;
     animation: lds-dual-ring 1.2s linear infinite;
 }

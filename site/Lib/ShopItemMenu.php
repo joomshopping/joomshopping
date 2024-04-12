@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.8 03.09.2022
+* @version      5.3.3 19.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -128,8 +128,19 @@ class ShopItemMenu{
             }            
         }
     }
-    
-    function getList(){
+
+    public function getIdByUrl($url) {
+        $user = \JFactory::getUser();
+        $groups = implode(',', $user->getAuthorisedViewLevels());
+        $db = \JFactory::getDBO();
+        $query = "SELECT id FROM #__menu 
+                  WHERE published=1 and link like ".$db->q($url)." and client_id=0 
+                  and (language='*' or language=".$db->q($this->lang).") and access IN (".$groups.")";
+        $db->setQuery($query);
+        return $db->loadResult();
+    }
+
+    public function getList(){
         if (!is_array($this->list)){
             $jshopConfig = \JSFactory::getConfig();
             $user = \JFactory::getUser();
@@ -137,7 +148,7 @@ class ShopItemMenu{
             $db = \JFactory::getDBO();
             $query = "select id,link from #__menu 
 			          where `type`='component' and published=1 and link like '%option=com_jshopping%' and client_id=0 
-					  and (language='*' or language='".$db->escape($this->lang)."') and access IN (".$groups.")";
+					  and (language='*' or language=".$db->q($this->lang).") and access IN (".$groups.")";
             $db->setQuery($query);
             $this->list = $db->loadObjectList();
             foreach($this->list as $k=>$v){

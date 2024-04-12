@@ -880,11 +880,9 @@ class ProductsModel extends BaseadminModel{
     }
 
     function saveAttributes($product, $product_id, $post){
-
-        $dispatcher = \JFactory::getApplication();
+        $app = \JFactory::getApplication();
         $productAttribut = \JSFactory::getTable('productAttribut');
         $productAttribut->set("product_id", $product_id);
-
         $list_exist_attr = $product->getAttributes();
         if (isset($post['product_attr_id'])){
             $list_saved_attr = $post['product_attr_id'];
@@ -899,6 +897,8 @@ class ProductsModel extends BaseadminModel{
 
         if (is_array($post['attrib_price'])){
             foreach($post['attrib_price'] as $k=>$v){
+                $productAttribut = \JSFactory::getTable('productAttribut');
+                $productAttribut->set("product_id", $product_id);
                 $a_price = \JSHelper::saveAsPrice($post['attrib_price'][$k]);
                 $a_old_price = \JSHelper::saveAsPrice($post['attrib_old_price'][$k] ?? 0);
                 $a_buy_price = \JSHelper::saveAsPrice($post['attrib_buy_price'][$k] ?? 0);
@@ -908,7 +908,6 @@ class ProductsModel extends BaseadminModel{
                 $a_real_ean = $post['attr_real_ean'][$k] ?? '';
                 $a_weight_volume_units = $post['attr_weight_volume_units'][$k] ?? 0;
                 $a_weight = $post['attr_weight'][$k] ?? 0;
-
                 if ($post['product_attr_id'][$k]){
                     $productAttribut->load($post['product_attr_id'][$k]);
                 }else{
@@ -927,7 +926,7 @@ class ProductsModel extends BaseadminModel{
                 foreach($post['attrib_id'] as $field_id=>$val){
                     $productAttribut->set("attr_".intval($field_id), $val[$k]);
                 }
-                $dispatcher->triggerEvent('onBeforeProductAttributStore', array(&$productAttribut, &$product, &$product_id, &$post, $k));
+                $app->triggerEvent('onBeforeProductAttributStore', array(&$productAttribut, &$product, &$product_id, &$post, $k));
                 if ($productAttribut->check()){
                     $productAttribut->store();
                 }
@@ -951,7 +950,7 @@ class ProductsModel extends BaseadminModel{
                 $productAttribut2->set("attr_value_id", $a_value_id);
                 $productAttribut2->set("price_mod", $a_mod_price);
                 $productAttribut2->set("addprice", $a_price);
-                $dispatcher->triggerEvent('onBeforeProductAttribut2Store', array(&$productAttribut2, &$product, &$product_id, &$post, $k));
+                $app->triggerEvent('onBeforeProductAttribut2Store', array(&$productAttribut2, &$product, &$product_id, &$post, $k));
                 if ($productAttribut2->check()){
                     $productAttribut2->store();
                 }
@@ -1558,6 +1557,50 @@ class ProductsModel extends BaseadminModel{
                 $rows[$k]->vendor_name = $main_vendor->f_name." ".$main_vendor->l_name;
             }
         }
+    }
+
+    public function getAttribsDependentActiveByAttrList($list) {
+        $attr = [];
+        if (isset($list[0])) {
+            foreach($list[0] as $k => $v) {
+                if ($v && preg_match('/attr_(\d+)/', $k, $matches)) {
+                    $attr[] = $matches[1];
+                }
+            }
+        }
+        return $attr;
+    }
+
+    public function getAttribsInDependentActiveByAttrList($list) {
+        $attr = [];
+        foreach($list as $v) {
+            if (!in_array($v->attr_id, $attr)) {
+                $attr[] = $v->attr_id;
+            }
+        }
+        return $attr;
+    }
+
+    public function getAttribsHiddenForCategoryByAttrList($list) {
+        $attr = [];
+        foreach($list as $sublist) {
+            foreach($sublist as $v) {
+                if (isset($v->hidden_for_category) && $v->hidden_for_category == 1) {
+                    $attr[] = $v->attr_id;
+                }
+            }
+        }
+        return $attr;
+    }
+
+    public function getAttribsNamesByAttrList($list) {
+        $attr = [];
+        foreach($list as $sublist) {
+            foreach($sublist as $v) {
+                $attr[$v->attr_id] = $v->name;
+            }
+        }
+        return $attr;
     }
 
 }

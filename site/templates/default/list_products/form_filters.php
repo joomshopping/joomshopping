@@ -8,6 +8,7 @@
 */
 defined('_JEXEC') or die();
 ?>
+<?php print $this->_tmp_before_form_filter_html ?? '';?>
 <form action="<?php print $this->action;?>" method="post" name="sort_count" id="sort_count" class="form-horizontal">
 <div class="form_sort_count">
 <?php if ($this->config->show_sort_product || $this->config->show_count_select_products) : ?>
@@ -110,3 +111,4 @@ defined('_JEXEC') or die();
 <input type="hidden" name="orderby" id="orderby" value="<?php print $this->orderby?>">
 <input type="hidden" name="limitstart" value="0">
 </form>
+<?php print $this->_tmp_after_form_filter_html ?? '';?>

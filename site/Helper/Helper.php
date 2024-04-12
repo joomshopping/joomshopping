@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.1 19.09.2022
+* @version      5.3.3 19.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -433,6 +433,10 @@ class Helper{
             }
         }
     }
+    public static function getDirectUrlItemId($url, $lang = ''){
+        $shim = ShopItemMenu::getInstance($lang);
+        return $shim->getIdByUrl($url);
+    }
 
     public static function getThisURLMainPageShop(){
         $shopMainPageItemid = self::getShopMainPageItemid();
@@ -484,25 +488,27 @@ class Helper{
     * set Sef Link
     *
     * @param string $link
-    * @param int $useDefaultItemId - (0 - current itemid, 1 - shop page itemid, 2 -manufacturer itemid)
+    * @param int $useDefaultItemId - (0 - current itemid, 1 - shop page itemid, 2 -manufacturer itemid, 3 - direct item menu)
     * @param int $redirect
     */
     public static function SEFLink($link, $useDefaultItemId = 1, $redirect = 0, $ssl=null){
         $app = \JFactory::getApplication();
-        \JPluginHelper::importPlugin('jshoppingproducts');        
+        \JPluginHelper::importPlugin('jshoppingproducts');
         \JFactory::getApplication()->triggerEvent('onLoadJshopSEFLink', array(&$link, &$useDefaultItemId, &$redirect, &$ssl));
         $defaultItemid = self::getDefaultItemid($link);
-        if ($useDefaultItemId==2){
+        if ($useDefaultItemId==3){
+            $Itemid = self::getDirectUrlItemId($link);
+        } elseif ($useDefaultItemId==2){
             $Itemid = self::getShopManufacturerPageItemid();
             if (!$Itemid) $Itemid = $defaultItemid;
-        }elseif ($useDefaultItemId==1){
+        } elseif ($useDefaultItemId==1){
             $Itemid = $defaultItemid;
-        }else{
+        } else {
             $Itemid = $app->input->getInt('Itemid');
             if (!$Itemid) $Itemid = $defaultItemid;
         }
         \JFactory::getApplication()->triggerEvent('onAfterLoadJshopSEFLinkItemid', array(&$Itemid, &$link, &$useDefaultItemId, &$redirect, &$ssl));
-        if (!preg_match('/Itemid=/', $link)){
+        if (!preg_match('/Itemid=/', $link) && $Itemid){
             if (!preg_match('/\?/', $link)) $sp = "?"; else $sp = "&";
             $link .= $sp.'Itemid='.$Itemid;
         }

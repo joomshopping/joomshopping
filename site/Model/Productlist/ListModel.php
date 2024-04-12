@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 13.09.2022
+* @version      5.3.3 20.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -35,8 +35,8 @@ class ListModel{
 	}
 
 	public function load(){
-        $dispatcher = \JFactory::getApplication();
-		$dispatcher->triggerEvent('onBeforeLoadProductList', array());
+        $app = \JFactory::getApplication();
+		$app->triggerEvent('onBeforeLoadProductList', array());
 
 		$this->loadRequestData();
 		$limitstart = $this->getLimitStart();
@@ -53,7 +53,7 @@ class ListModel{
 
         if ($this->getMultiPageList()){
             $total = $this->getLoadCountProducts($filters, $field_order, $orderbyq);
-            $dispatcher->triggerEvent('onBeforeFixLimitstartDisplayProductList', array(&$limitstart, &$total, $this->getProductListName()));
+            $app->triggerEvent('onBeforeFixLimitstartDisplayProductList', array(&$limitstart, &$total, $this->getProductListName()));
 			$this->setTotal($total);
             if ($limitstart>=$total){
                 $limitstart = 0;
@@ -67,7 +67,7 @@ class ListModel{
 
         $products = $this->getLoadProducts($filters, $field_order, $orderbyq, $limitstart, $limit);
 
-		$dispatcher->triggerEvent('onBeforeDisplayProductList', array(&$products));
+		$app->triggerEvent('onBeforeDisplayProductList', array(&$products));
         $this->setProducts($products);
 		return 1;
 	}
@@ -80,8 +80,8 @@ class ListModel{
         $this->getBuildQueryListProduct($this->getProductListName(), "list", $filters, $adv_query, $adv_from, $adv_result);
         $order_query = $this->getBuildQueryOrderListProduct($order, $orderby, $adv_from);
 
-        $dispatcher = \JFactory::getApplication();
-        $dispatcher->triggerEvent('onBeforeQueryGetProductList', array($this->getProductListName(), &$adv_result, &$adv_from, &$adv_query, &$order_query, &$filters));
+        $app = \JFactory::getApplication();
+        $app->triggerEvent('onBeforeQueryGetProductList', array($this->getProductListName(), &$adv_result, &$adv_from, &$adv_query, &$order_query, &$filters));
         $query = "SELECT $adv_result FROM `#__jshopping_products` AS prod
                   LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat USING (product_id)
                   LEFT JOIN `#__jshopping_categories` AS cat ON pr_cat.category_id = cat.category_id
@@ -89,7 +89,7 @@ class ListModel{
                   WHERE prod.product_publish=1 AND cat.category_publish=1 ".$adv_query."
                   GROUP BY prod.product_id ".$order_query;
         $obj = $this;
-        $dispatcher->triggerEvent('onBeforeExeQueryGetProductList', array($this->getProductListName(), &$query, &$filters, &$obj));
+        $app->triggerEvent('onBeforeExeQueryGetProductList', array($this->getProductListName(), &$query, &$filters, &$obj));
         if ($limit){
             $db->setQuery($query, $limitstart, $limit);
         }else{
@@ -109,15 +109,15 @@ class ListModel{
         $adv_result = "COUNT(distinct prod.product_id)";
         $this->getBuildQueryListProduct($this->getProductListName(), "count", $filters, $adv_query, $adv_from, $adv_result);
 
-        $dispatcher = \JFactory::getApplication();
-        $dispatcher->triggerEvent('onBeforeQueryCountProductList', array($this->getProductListName(), &$adv_result, &$adv_from, &$adv_query, &$filters) );
+        $app = \JFactory::getApplication();
+        $app->triggerEvent('onBeforeQueryCountProductList', array($this->getProductListName(), &$adv_result, &$adv_from, &$adv_query, &$filters) );
         $query = "SELECT $adv_result  FROM `#__jshopping_products` as prod
                   LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat USING (product_id)
                   LEFT JOIN `#__jshopping_categories` AS cat ON pr_cat.category_id = cat.category_id
                   $adv_from
                   WHERE prod.product_publish=1 AND cat.category_publish=1 ".$adv_query;
         $obj = $this;
-        $dispatcher->triggerEvent('onBeforeExeQueryCountProductList', array($this->getProductListName(), &$query, &$filters, &$obj));
+        $app->triggerEvent('onBeforeExeQueryCountProductList', array($this->getProductListName(), &$query, &$filters, &$obj));
         $db->setQuery($query);
         return $db->loadResult();
     }
@@ -131,6 +131,7 @@ class ListModel{
     function getBuildQueryListProduct($type, $restype, &$filters, &$adv_query, &$adv_from, &$adv_result){
         $jshopConfig = \JSFactory::getConfig();
         $user = \JFactory::getUser();
+        $app = \JFactory::getApplication();
         $db = \JFactory::getDBO();
         $originaladvres = $adv_result;
 
@@ -175,6 +176,7 @@ class ListModel{
                     }
                     $mchfilterlogic = 'OR';
                     if (isset($jshopConfig->mchfilterlogic_and[$f_id]) && $jshopConfig->mchfilterlogic_and[$f_id]) $mchfilterlogic = 'AND';
+                    $app->triggerEvent('onGetBuildQueryListProductExtraFields', array(&$tmp, &$f_id, &$vals, &$mchfilterlogic, &$adv_from, &$adv_query, &$filters));
                     $_tmp_adv_query = implode(' '.$mchfilterlogic.' ', $tmp);
                     $adv_query .= " AND (".$_tmp_adv_query.")";
                 }elseif(is_string($vals) && $vals!=""){
@@ -208,7 +210,7 @@ class ListModel{
         }
         if (isset($filters['search']) && $filters['search']){
             $where_search = "";
-            if ($filters['search_type']=="exact"){
+            if (isset($filters['search_type']) && $filters['search_type']=="exact"){
                 $word = addcslashes($db->escape($filters['search']), "_%");
                 $tmp = array();
                 foreach($jshopConfig->product_search_fields as $field){
@@ -227,7 +229,7 @@ class ListModel{
                     $where_search_block = implode(' OR ', $tmp);
                     $search_word[] = "(".$where_search_block.")";
                 }
-                if ($filters['search_type']=="any"){
+                if (isset($filters['search_type']) && $filters['search_type']=="any"){
                     $where_search = implode(" OR ", $search_word);
                 }else{
                     $where_search = implode(" AND ", $search_word);
@@ -309,8 +311,8 @@ class ListModel{
         }
 
         \JPluginHelper::importPlugin('jshoppingproducts');
-        $dispatcher = \JFactory::getApplication();
-        $dispatcher->triggerEvent('onBuildQueryListProductFilterPrice', array($filters, &$adv_query, &$adv_from, &$adv_query2, &$adv_from2) );
+        $app = \JFactory::getApplication();
+        $app->triggerEvent('onBuildQueryListProductFilterPrice', array($filters, &$adv_query, &$adv_from, &$adv_query2, &$adv_from2) );
 
         $adv_query .= $adv_query2;
         $adv_from .= $adv_from2;
@@ -341,8 +343,8 @@ class ListModel{
         }
 
         \JPluginHelper::importPlugin('jshoppingproducts');
-        $dispatcher = \JFactory::getApplication();
-        $dispatcher->triggerEvent('onBuildQueryOrderListProduct', array($order, $orderby, &$adv_from, &$order_query, $order_original) );
+        $app = \JFactory::getApplication();
+        $app->triggerEvent('onBuildQueryOrderListProduct', array($order, $orderby, &$adv_from, &$order_query, $order_original) );
 
     return $order_query;
     }

@@ -276,6 +276,7 @@ $jshopConfig = $this->config;
             <?php print sprintf(JText::_('JSHOP_SIZE_FILES_INFO'), ini_get("upload_max_filesize"), ini_get("post_max_size"));?>
         </div>
     </div>
+	<?php print $this->tmp_html_extra_image ?? ''?>	
    </div>
    </div>
    <input type="hidden" name="task" value="" />

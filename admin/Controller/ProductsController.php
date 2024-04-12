@@ -207,12 +207,21 @@ class ProductsController extends BaseadminController{
 
         //Attributes
         $_attribut = \JSFactory::getModel('attribut');
-        $list_all_attributes = $_attribut->getAllAttributes(2, $categories_select_list);
-        $_attribut_value =\JSFactory::getModel('attributvalue');
+        $list_all_attributes = $_attribut->getAllAttributes(2, $categories_select_list, null, null, ['not_delete_for_category' => 1]);
+        $_attribut_value = \JSFactory::getModel('attributvalue');
         $lists['attribs'] = $product->getAttributes();
+        $lists['attribs_dep_active'] = $products->getAttribsDependentActiveByAttrList($lists['attribs']);
         $lists['ind_attribs'] = $product->getAttributes2();
+        $lists['attribs_indep_active'] = $products->getAttribsInDependentActiveByAttrList($lists['ind_attribs']);
         $lists['attribs_values'] = $_attribut_value->getAllAttributeValues(2);
         $all_attributes = $list_all_attributes['dependent'];
+        $attr_hidden_for_category = $products->getAttribsHiddenForCategoryByAttrList($list_all_attributes);
+        $lists['attrib_names'] = $products->getAttribsNamesByAttrList($list_all_attributes);
+        foreach($attr_hidden_for_category as $_attr_id) {
+            if (in_array($_attr_id, $lists['attribs_dep_active']) || in_array($_attr_id, $lists['attribs_indep_active'])) {
+                \JSError::raiseNotice(0, \JText::_('JSHOP_ERROR_CONFIG_ATTRIBUTE').": ".$lists['attrib_names'][$_attr_id]);
+            }
+        }
 
         $lists['ind_attribs_gr'] = [];
         foreach($lists['ind_attribs'] as $v){
