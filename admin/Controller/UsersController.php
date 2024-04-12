@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -41,8 +41,6 @@ class UsersController extends BaseadminController{
         
         $users = \JSFactory::getModel("users");        
         $total = $users->getCountAllUsers($text_search, $filter);
-        
-        jimport('joomla.html.pagination');
         $pageNav = new \JPagination($total, $limitstart, $limit);
         $rows = $users->getAllUsers($pageNav->limitstart, $pageNav->limit, $text_search, $filter_order, $filter_order_Dir, $filter);
 
@@ -88,12 +86,12 @@ class UsersController extends BaseadminController{
 		
         $user_site = new \JUser($user_id);
 		
-		$lists['country'] = Selects::getCountry($user->country, 'class = "form-control"');
-		$lists['d_country'] = Selects::getCountry($user->d_country, 'class = "inputbox endes form-control"', 'd_country');
-		$lists['select_titles'] = Selects::getTitle($user->title, 'class = "form-control"');
-		$lists['select_d_titles'] = Selects::getTitle($user->d_title, 'class = "inputbox endes form-control"', 'd_title');
-		$lists['select_client_types'] = Selects::getClientType($user->client_type, 'class = "form-control"');
-        $lists['usergroups'] = \JHTML::_('select.genericlist', SelectOptions::getUserGroups(), 'usergroup_id', 'class = "inputbox form-control form-select"', 'usergroup_id', 'usergroup_name', $user->usergroup_id);
+		$lists['country'] = Selects::getCountry($user->country, 'class = "form-select"');
+		$lists['d_country'] = Selects::getCountry($user->d_country, 'class = "inputbox endes form-select"', 'd_country');
+		$lists['select_titles'] = Selects::getTitle($user->title, 'class = "form-select"');
+		$lists['select_d_titles'] = Selects::getTitle($user->d_title, 'class = "inputbox endes form-select"', 'd_title');
+		$lists['select_client_types'] = Selects::getClientType($user->client_type, 'class = "form-select"');
+        $lists['usergroups'] = \JHTML::_('select.genericlist', SelectOptions::getUserGroups(), 'usergroup_id', 'class = "inputbox form-select"', 'usergroup_id', 'usergroup_name', $user->usergroup_id);
         $lists['block'] = \JHTML::_('select.booleanlist',  'block', 'class="inputbox"', $user_site->get('block') );  
         
         \JSHelper::filterHTMLSafe($user, ENT_QUOTES);

@@ -63,7 +63,7 @@ class HelperAdmin{
             $list[] = \JHTML::_('select.option', $val, $val, 'id', 'value');
         }
         
-        return \JHTML::_('select.genericlist', $list, $name,'class = "inputbox form-control form-select"','id','value', $default);
+        return \JHTML::_('select.genericlist', $list, $name,'class = "inputbox form-select"','id','value', $default);
     }
 
     public static function getShopTemplatesSelect($default){
@@ -81,7 +81,7 @@ class HelperAdmin{
         foreach($temp as $val){
             $list[] = \JHTML::_('select.option', $val, $val, 'id', 'value');
         }
-        return \JHTML::_('select.genericlist', $list, "template",'class = "inputbox form-control form-select"','id','value', $default);
+        return \JHTML::_('select.genericlist', $list, "template",'class = "inputbox form-select"','id','value', $default);
     }
 
     public static function getFileName($name) {

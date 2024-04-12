@@ -15,7 +15,7 @@ $currency = $this->currency;
 
 $dispatcher = \JFactory::getApplication();
 ?>
-<div class="jshop_edit">
+<div class="jshop_edit product_edit">
 <script type="text/javascript">jshopAdmin.lang_delete="<?php print JText::_('JSHOP_DELETE')?>";</script>
 <form action="index.php?option=com_jshopping&controller=products" method="post" enctype="multipart/form-data" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start ?? '';?>

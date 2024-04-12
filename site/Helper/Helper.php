@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.3 19.09.2022
+* @version      5.3.1 19.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -651,11 +651,11 @@ class Helper{
             $productLabel = \JSFactory::getTable('productlabel');
             $listLabels = $productLabel->getListLabels();
         }
-        $obj = $listLabels[$id];
+		$obj = $listLabels[$id] ?? null;
         if ($type==1)
-            return $obj->image;
+            return $obj->image ?? '';
         else
-            return $obj->name;
+            return $obj->name ?? '';
     }
 
     public static function getPriceFromCurrency($price, $currency_id = 0, $current_currency_value = 0){

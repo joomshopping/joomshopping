@@ -59,7 +59,7 @@ class CurrenciesController extends BaseadminController{
         }
         $first[] = \JHTML::_('select.option', '0',\JText::_('JSHOP_ORDERING_FIRST'),'currency_ordering','currency_name');
         $rows = array_merge($first, $currencies->getAllCurrencies(0));
-        $lists['order_currencies'] = \JHTML::_('select.genericlist', $rows,'currency_ordering','class="inputbox form-control form-select" ','currency_ordering','currency_name',$currency->currency_ordering);
+        $lists['order_currencies'] = \JHTML::_('select.genericlist', $rows,'currency_ordering','class="inputbox form-select" ','currency_ordering','currency_name',$currency->currency_ordering);
         $edit = ($currency_id)?($edit = 1):($edit = 0);
         \JFilterOutput::objectHTMLSafe($currency, ENT_QUOTES);
         

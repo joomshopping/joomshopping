@@ -1001,7 +1001,7 @@ var jshopAdminClass = function(){
 
     this.reloadSelectMainCategory = function(obj) {
         if (jQuery('option:selected', obj).length > 1) {
-            var main_cat_sel = '<select name="main_category_id" class="inputbox form-control form-select" onchange="jshopAdmin.updateMainCategoryVal(this.value)">';
+            var main_cat_sel = '<select name="main_category_id" class="inputbox form-select" onchange="jshopAdmin.updateMainCategoryVal(this.value)">';
             jQuery('option:selected', obj).each(function(){
                 main_cat_sel += '<option value="'+$(this).val()+'">'+$(this).text()+'</option>';
             });

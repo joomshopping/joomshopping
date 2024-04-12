@@ -228,7 +228,7 @@ class ProductsController extends BaseadminController{
 
         foreach ($all_attributes as $key => $value){
             $values_for_attribut = $_attribut_value->getAllValues($value->attr_id);
-            $all_attributes[$key]->values_select = \JHTML::_('select.genericlist', array_merge($first, $values_for_attribut),'value_id['.$value->attr_id.']','class = "inputbox form-control form-select" size = "5" multiple="multiple" id = "value_id_'.$value->attr_id.'"','value_id','name');
+            $all_attributes[$key]->values_select = \JHTML::_('select.genericlist', array_merge($first, $values_for_attribut),'value_id['.$value->attr_id.']','class = "inputbox form-select" size = "5" multiple="multiple" id = "value_id_'.$value->attr_id.'"','value_id','name');
             $all_attributes[$key]->values = $values_for_attribut;
         }
         $lists['all_attributes'] = $all_attributes;
@@ -241,9 +241,9 @@ class ProductsController extends BaseadminController{
 
         foreach ($all_independent_attributes as $key => $value){
             $values_for_attribut = $_attribut_value->getAllValues($value->attr_id);
-            $all_independent_attributes[$key]->values_select = \JHTML::_('select.genericlist', array_merge($first, $values_for_attribut),'attr_ind_id_tmp_'.$value->attr_id.'','class = "inputbox form-control middle2" ','value_id','name');
+            $all_independent_attributes[$key]->values_select = \JHTML::_('select.genericlist', array_merge($first, $values_for_attribut),'attr_ind_id_tmp_'.$value->attr_id.'','class = "inputbox form-select middle2" ','value_id','name');
             $all_independent_attributes[$key]->values = $values_for_attribut;
-            $all_independent_attributes[$key]->price_modification_select = \JHTML::_('select.genericlist', $price_modification,'attr_price_mod_tmp_'.$value->attr_id.'','class = "inputbox form-control  form-select small3" ','id','name');
+            $all_independent_attributes[$key]->price_modification_select = \JHTML::_('select.genericlist', $price_modification,'attr_price_mod_tmp_'.$value->attr_id.'','class = "inputbox form-select small3" ','id','name');
             $all_independent_attributes[$key]->submit_button = '<input type="button" class="btn btn-primary" onclick = "jshopAdmin.addAttributValue2('.$value->attr_id.');" value = "'.\JText::_('JSHOP_ADD_ATTRIBUT').'" />';
         }
         $lists['all_independent_attributes'] = $all_independent_attributes;
@@ -251,33 +251,33 @@ class ProductsController extends BaseadminController{
         // End work with attributes and values
 
         if ($jshopConfig->admin_show_delivery_time){
-            $lists['deliverytimes'] = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes(),'delivery_times_id','class = "inputbox form-control form-select"','id','name',$product->delivery_times_id);
+            $lists['deliverytimes'] = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes(),'delivery_times_id','class = "inputbox form-select"','id','name',$product->delivery_times_id);
         }
 
         // units
         $allunits = SelectOptions::getUnits();
         if ($jshopConfig->admin_show_product_basic_price){
-            $lists['basic_price_units'] = \JHTML::_('select.genericlist', $allunits, 'basic_price_unit_id','class = "inputbox form-control form-select"','id','name',$product->basic_price_unit_id);
+            $lists['basic_price_units'] = \JHTML::_('select.genericlist', $allunits, 'basic_price_unit_id','class = "inputbox form-select"','id','name',$product->basic_price_unit_id);
         }
         if (!$product->add_price_unit_id) $product->add_price_unit_id = $jshopConfig->product_add_price_default_unit;
-        $lists['add_price_units'] = \JHTML::_('select.genericlist', $allunits, 'add_price_unit_id','class = "inputbox form-control middle form-select"','id','name', $product->add_price_unit_id);
+        $lists['add_price_units'] = \JHTML::_('select.genericlist', $allunits, 'add_price_unit_id','class = "inputbox middle form-select"','id','name', $product->add_price_unit_id);
         //
 
         if ($jshopConfig->admin_show_product_labels){
-            $lists['labels'] = \JHTML::_('select.genericlist', SelectOptions::getLabels(2), 'label_id','class = "inputbox form-control form-select"','id','name',$product->label_id);
+            $lists['labels'] = \JHTML::_('select.genericlist', SelectOptions::getLabels(2), 'label_id','class = "inputbox form-select"','id','name',$product->label_id);
         }
 
-        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-control form-select"','id','title', $product->access);
+        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $product->access);
 
         //currency
         $current_currency = $product->currency_id;
         if (!$current_currency) $current_currency = $jshopConfig->mainCurrency;
-        $lists['currency'] = \JHTML::_('select.genericlist', SelectOptions::getCurrencies(), 'currency_id','class = "inputbox form-control middle form-select"','currency_id','currency_code', $current_currency);
+        $lists['currency'] = \JHTML::_('select.genericlist', SelectOptions::getCurrencies(), 'currency_id','class = "inputbox middle form-select"','currency_id','currency_code', $current_currency);
 
         // vendors
         $display_vendor_select = 0;
         if ($jshopConfig->admin_show_vendors){
-            $lists['vendors'] = \JHTML::_('select.genericlist', SelectOptions::getVendors(0), 'vendor_id','class = "inputbox form-control form-select"', 'id', 'name', $product->vendor_id);
+            $lists['vendors'] = \JHTML::_('select.genericlist', SelectOptions::getVendors(0), 'vendor_id','class = "inputbox form-select"', 'id', 'name', $product->vendor_id);
             $display_vendor_select = 1;
             if ($id_vendor_cuser > 0) $display_vendor_select = 0;
         }
@@ -306,7 +306,7 @@ class ProductsController extends BaseadminController{
             }
         }
 
-        $lists['manufacturers'] = \JHTML::_('select.genericlist', $manufs,'product_manufacturer_id','class = "inputbox form-control form-select"','manufacturer_id','name',$product->product_manufacturer_id);
+        $lists['manufacturers'] = \JHTML::_('select.genericlist', $manufs,'product_manufacturer_id','class = "inputbox form-select"','manufacturer_id','name',$product->product_manufacturer_id);
 
         if ($jshopConfig->tax){
             $tax_value = \JSFactory::getModel("taxes")->getValue($product->product_tax_id);
@@ -335,9 +335,9 @@ class ProductsController extends BaseadminController{
         $category_select_onclick .= '"';
 
         if ($jshopConfig->tax){
-            $lists['tax'] = \JHTML::_('select.genericlist', $list_tax,'product_tax_id','class = "inputbox form-control form-select" onchange = "jshopAdmin.updatePrice2('.$jshopConfig->display_price_admin.');"','tax_id','tax_name',$product->product_tax_id);
+            $lists['tax'] = \JHTML::_('select.genericlist', $list_tax,'product_tax_id','class = "inputbox form-select" onchange = "jshopAdmin.updatePrice2('.$jshopConfig->display_price_admin.');"','tax_id','tax_name',$product->product_tax_id);
         }
-        $lists['categories'] = \JHTML::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-control form-select" size="10" multiple = "multiple" '.$category_select_onclick, 'category_id', 'name', $categories_select_list);
+        $lists['categories'] = \JHTML::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-select" size="10" multiple = "multiple" '.$category_select_onclick, 'category_id', 'name', $categories_select_list);
         $lists['templates'] = \JSHelperAdmin::getTemplates('product', $product->product_template);
 
         $_product_option = \JSFactory::getTable('productoption');
@@ -350,7 +350,7 @@ class ProductsController extends BaseadminController{
             $first[] = \JHTML::_('select.option', '0', \JText::_('JSHP_STPAGE_return_policy'), 'id', 'alias');
             $statictext_list = $_statictext->getList(1);
             $product_options['return_policy'] = isset($product_options['return_policy']) ? $product_options['return_policy'] : "";
-            $lists['return_policy'] = \JHTML::_('select.genericlist', array_merge($first, $statictext_list), 'options[return_policy]','class = "inputbox form-control form-select"','id','alias', $product_options['return_policy']);
+            $lists['return_policy'] = \JHTML::_('select.genericlist', array_merge($first, $statictext_list), 'options[return_policy]','class = "inputbox form-select"','id','alias', $product_options['return_policy']);
         }
 
         $dispatcher->triggerEvent('onBeforeDisplayEditProduct', array(&$product, &$related_products, &$lists, &$listfreeattributes, &$tax_value));
@@ -438,28 +438,28 @@ class ProductsController extends BaseadminController{
         $languages = \JSFactory::getModel("languages")->getAllLanguages(1);
 
         $price_modification = SelectOptions::getProductAttributPriceModify();
-        $lists['price_mod_price'] = \JHTML::_('select.genericlist', $price_modification,'mod_price','class = "form-control form-select"','id','name');
-        $lists['price_mod_old_price'] = \JHTML::_('select.genericlist', $price_modification,'mod_old_price','class = "form-control form-select"','id','name');
+        $lists['price_mod_price'] = \JHTML::_('select.genericlist', $price_modification,'mod_price','class = "form-select"','id','name');
+        $lists['price_mod_old_price'] = \JHTML::_('select.genericlist', $price_modification,'mod_old_price','class = "form-select"','id','name');
         if ($jshopConfig->admin_show_delivery_time) {
-            $lists['deliverytimes'] = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes(2, 1),'delivery_times_id','class = "inputbox form-control form-select"','id','name');
+            $lists['deliverytimes'] = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes(2, 1),'delivery_times_id','class = "inputbox form-select"','id','name');
         }
         if ($jshopConfig->admin_show_product_basic_price){
-            $lists['basic_price_units'] = \JHTML::_('select.genericlist', SelectOptions::getUnits(), 'basic_price_unit_id','class = "inputbox form-control form-select"','id','name');
+            $lists['basic_price_units'] = \JHTML::_('select.genericlist', SelectOptions::getUnits(), 'basic_price_unit_id','class = "inputbox form-select"','id','name');
         }
         if ($jshopConfig->admin_show_product_labels) {
-            $lists['labels'] = \JHTML::_('select.genericlist', SelectOptions::getLabels(2, 1), 'label_id','class = "inputbox form-control form-select"','id','name');
+            $lists['labels'] = \JHTML::_('select.genericlist', SelectOptions::getLabels(2, 1), 'label_id','class = "inputbox form-select"','id','name');
         }
-        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(0, 1), 'access','class = "inputbox form-control form-select"','id','title');
+        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(0, 1), 'access','class = "inputbox form-select"','id','title');
 
         //currency
         $current_currency = $product->currency_id;
         if (!$current_currency) $current_currency = $jshopConfig->mainCurrency;
-        $lists['currency'] = \JHTML::_('select.genericlist', SelectOptions::getCurrencies(), 'currency_id','class = "inputbox form-control form-select"','currency_id','currency_code', $current_currency);
+        $lists['currency'] = \JHTML::_('select.genericlist', SelectOptions::getCurrencies(), 'currency_id','class = "inputbox form-select"','currency_id','currency_code', $current_currency);
 
         // vendors
         $display_vendor_select = 0;
         if ($jshopConfig->admin_show_vendors){
-            $lists['vendors'] = \JHTML::_('select.genericlist', SelectOptions::getVendors('- - -'), 'vendor_id','class = "inputbox form-control form-select"', 'id', 'name');
+            $lists['vendors'] = \JHTML::_('select.genericlist', SelectOptions::getVendors('- - -'), 'vendor_id','class = "inputbox form-select"', 'id', 'name');
             $display_vendor_select = 1;
             if ($id_vendor_cuser > 0) $display_vendor_select = 0;
         }
@@ -470,16 +470,16 @@ class ProductsController extends BaseadminController{
         }
         //
 
-        $lists['product_publish'] = \JHTML::_('select.genericlist', SelectOptions::getPublishGroup(), 'product_publish', 'class = "inputbox form-control form-select"', 'value', 'name');
-        $lists['manufacturers'] = \JHTML::_('select.genericlist', $manufs,'product_manufacturer_id','class = "inputbox form-control form-select"','manufacturer_id','name');
-        $lists['tax'] = \JHTML::_('select.genericlist', $list_tax,'product_tax_id','class = "inputbox form-control form-select"','tax_id','tax_name');
-        $lists['categories'] = \JHTML::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-control form-select" size="10" multiple = "multiple" ', 'category_id', 'name');
+        $lists['product_publish'] = \JHTML::_('select.genericlist', SelectOptions::getPublishGroup(), 'product_publish', 'class = "inputbox form-select"', 'value', 'name');
+        $lists['manufacturers'] = \JHTML::_('select.genericlist', $manufs,'product_manufacturer_id','class = "inputbox form-select"','manufacturer_id','name');
+        $lists['tax'] = \JHTML::_('select.genericlist', $list_tax,'product_tax_id','class = "inputbox form-select"','tax_id','tax_name');
+        $lists['categories'] = \JHTML::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-select" size="10" multiple = "multiple" ', 'category_id', 'name');
         $lists['templates'] = \JSHelperAdmin::getTemplates('product', "", 1);
         $option = array();
         $option[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_ADD_NEW'), 'id', 'name');
         $option[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_OVERWRITE'), 'id', 'name');
         $option[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_DELETE_OLD'), 'id', 'name');
-        $lists['add_new_related'] = \JHTML::_('select.genericlist', $option, 'add_new_related','class="inputbox form-control form-select"','id','name');
+        $lists['add_new_related'] = \JHTML::_('select.genericlist', $option, 'add_new_related','class="inputbox form-select"','id','name');
 
         $view = $this->getView("product_edit", 'html');
         $view->setLayout("editlist");
@@ -647,9 +647,9 @@ class ProductsController extends BaseadminController{
                 $name = 'extra_field_'.$v->id;
                 if ($v->type == 0 && $v->product_uniq_val == 0) {
                     if ($v->multilist==1){
-                        $attr = 'multiple="multiple" size="10" class="form-control form-select" ';
+                        $attr = 'multiple="multiple" size="10" class="form-select" ';
                     }else{
-                        $attr = "class = 'form-control form-select' ";
+                        $attr = "class = 'form-select' ";
                     }
                     $tmp = [];
                     foreach($listvalue as $lv){

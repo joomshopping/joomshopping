@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.1 15.01.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -128,7 +128,7 @@ class CheckoutOrderModel  extends CheckoutModel{
         }
 
         $order->ip_address = $_SERVER['REMOTE_ADDR'];
-        $order->order_add_info = $post['order_add_info'];
+        $order->order_add_info = $post['order_add_info'] ?? '';
         $order->currency_code = $jshopConfig->currency_code;
         $order->currency_code_iso = $jshopConfig->currency_code_iso;
         $order->order_number = $order->formatOrderNumber($orderNumber);

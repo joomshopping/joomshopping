@@ -332,13 +332,13 @@ class OrdersController extends BaseadminController{
 
         $order_items = $order->getAllItems();
         
-        $select_language = \JHTML::_('select.genericlist', SelectOptions::getLanguages(), 'lang', 'class = "inputbox form-control form-select" style="float:none"','language', 'name', $order->lang);
+        $select_language = \JHTML::_('select.genericlist', SelectOptions::getLanguages(), 'lang', 'class = "inputbox form-select" style="float:none"','language', 'name', $order->lang);
         
-		$select_countries = Selects::getCountry($order->country, 'class = "form-control"');
-		$select_d_countries = Selects::getCountry($order->d_country, 'class = "inputbox ende form-control"', 'd_country');
-		$select_titles = Selects::getTitle($order->title, 'class = "form-control"');
-		$select_d_titles = Selects::getTitle($order->d_title, 'class = "inputbox endes form-control"', 'd_title');
-		$select_client_types = Selects::getClientType($order->client_type, 'class = "form-control"');
+		$select_countries = Selects::getCountry($order->country, 'class="form-select"');
+		$select_d_countries = Selects::getCountry($order->d_country, 'class = "inputbox ende form-select"', 'd_country');
+		$select_titles = Selects::getTitle($order->title, 'class = "form-select"');
+		$select_d_titles = Selects::getTitle($order->d_title, 'class = "inputbox endes form-select"', 'd_title');
+		$select_client_types = Selects::getClientType($order->client_type, 'class = "form-select"');
 
         $order->prepareBirthdayFormat();
         
@@ -361,12 +361,12 @@ class OrdersController extends BaseadminController{
         foreach($currency_list as $k=>$v){
             if ($v->currency_code_iso==$order->currency_code_iso) $order_currency = $v->currency_id;
         }
-        $select_currency = \JHTML::_('select.genericlist', $currency_list, 'currency_id','class = "inputbox form-control form-select"','currency_id','currency_code', $order_currency);
-        $display_price_select = \JHTML::_('select.genericlist', SelectOptions::getPriceType(), 'display_price', 'class="form-control form-select" onchange="jshopAdmin.updateOrderTotalValue();"', 'id', 'name', $order->display_price);
-        $shippings_select = \JHTML::_('select.genericlist', SelectOptions::getShippings(), 'shipping_method_id', 'class="form-control form-select" onchange="jshopAdmin.order_shipping_calculate()"', 'shipping_id', 'name', $order->shipping_method_id);
-        $payments_select = \JHTML::_('select.genericlist', SelectOptions::getPayments(), 'payment_method_id', 'class="form-control form-select" onchange="jshopAdmin.order_payment_calculate()"', 'payment_id', 'name', $order->payment_method_id);
-        $delivery_time_select = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes('- - -'), 'order_delivery_times_id','class = "form-control form-select"', 'id', 'name', $order->delivery_times_id);
-        $users_list_select = \JHTML::_('select.genericlist', SelectOptions::getUsers(0, 1), 'user_id', 'class="form-control form-select" onchange="jshopAdmin.updateBillingShippingForUser(this.value);"', 'user_id', 'name', $order->user_id);        
+        $select_currency = \JHTML::_('select.genericlist', $currency_list, 'currency_id','class = "inputbox form-select"','currency_id','currency_code', $order_currency);
+        $display_price_select = \JHTML::_('select.genericlist', SelectOptions::getPriceType(), 'display_price', 'class="form-select" onchange="jshopAdmin.updateOrderTotalValue();"', 'id', 'name', $order->display_price);
+        $shippings_select = \JHTML::_('select.genericlist', SelectOptions::getShippings(), 'shipping_method_id', 'class="form-select" onchange="jshopAdmin.order_shipping_calculate()"', 'shipping_id', 'name', $order->shipping_method_id);
+        $payments_select = \JHTML::_('select.genericlist', SelectOptions::getPayments(), 'payment_method_id', 'class="form-select" onchange="jshopAdmin.order_payment_calculate()"', 'payment_id', 'name', $order->payment_method_id);
+        $delivery_time_select = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes('- - -'), 'order_delivery_times_id','class = "form-select"', 'id', 'name', $order->delivery_times_id);
+        $users_list_select = \JHTML::_('select.genericlist', SelectOptions::getUsers(0, 1), 'user_id', 'class="form-select" onchange="jshopAdmin.updateBillingShippingForUser(this.value);"', 'user_id', 'name', $order->user_id);        
         
         \JSHelper::filterHTMLSafe($order);
         foreach($order_items as $k=>$v){
@@ -497,7 +497,7 @@ class OrdersController extends BaseadminController{
     function loadshippingprice(){
         $post = $this->input->post->getArray();
         $data_order = (array)$post['data_order'];
-        $products = (array)$data_order['product'];
+        $products = (array)($data_order['product'] ?? []);
 
         $orders = \JSFactory::getModel("orders");
         $prices = $orders->loadshippingprice($data_order, $products);
@@ -508,7 +508,7 @@ class OrdersController extends BaseadminController{
     function loadpaymentprice(){
         $post = $this->input->post->getArray();
         $data_order = (array)$post['data_order'];
-        $products = (array)$data_order['product'];
+        $products = (array)($data_order['product'] ?? []);
 
         $orders = \JSFactory::getModel("orders");
         $price = $orders->loadpaymentprice($data_order, $products);

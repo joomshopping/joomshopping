@@ -96,8 +96,8 @@ class ExtTaxesController extends BaseadminController{
             $zone_countries[] = $obj;
         }
 
-        $lists['taxes'] = \JHTML::_('select.genericlist', SelectOptions::getTaxs(), 'tax_id', 'class="custom-select"', 'tax_id', 'tax_name', $tax->tax_id);
-        $lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'countries_id[]', 'size = "10", class="custom-select", multiple = "multiple"', 'country_id', 'name', $zone_countries);        
+        $lists['taxes'] = \JHTML::_('select.genericlist', SelectOptions::getTaxs(), 'tax_id', 'class="form-select"', 'tax_id', 'tax_name', $tax->tax_id);
+        $lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'countries_id[]', 'size = "10" class="form-select" multiple="multiple"', 'country_id', 'name', $zone_countries);        
 
         $view = $this->getView("taxes_ext", 'html');
         $view->setLayout("edit");

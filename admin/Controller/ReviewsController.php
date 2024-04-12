@@ -99,7 +99,7 @@ class ReviewsController extends BaseadminController{
 		} else {
 			$review = \JSFactory::getTable('review');        
 		}
-        $mark = \JHTML::_('select.genericlist', SelectOptions::getReviewMarks(), 'mark', 'class = "inputbox form-control form-select"', 'value', 'text', $review->mark ?? 0);
+        $mark = \JHTML::_('select.genericlist', SelectOptions::getReviewMarks(), 'mark', 'class = "inputbox form-select"', 'value', 'text', $review->mark ?? 0);
         \JFilterOutput::objectHTMLSafe($review, ENT_QUOTES);
 
         $view = $this->getView("comments", 'html');

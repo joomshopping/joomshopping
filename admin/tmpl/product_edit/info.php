@@ -32,7 +32,8 @@ defined('_JEXEC') or die();
          <?php echo JText::_('JSHOP_PRODUCT_PRICE')?>*
        </td>
        <td>
-         <input type="text" name="product_price" class = "form-control" id="product_price" value="<?php echo $row->product_price?>" <?php if (!$this->withouttax){?> onkeyup="jshopAdmin.updatePrice2(<?php print $jshopConfig->display_price_admin;?>)" <?php }?> /> <?php echo $this->lists['currency'];?>
+         <input type="text" name="product_price" class = "form-control" id="product_price" value="<?php echo $row->product_price?>" <?php if (!$this->withouttax){?> onkeyup="jshopAdmin.updatePrice2(<?php print $jshopConfig->display_price_admin;?>)" <?php }?> />
+         <?php echo $this->lists['currency'];?>
        </td>
     </tr>
     <?php if (!$this->withouttax){?>

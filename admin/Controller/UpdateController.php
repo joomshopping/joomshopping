@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.4.0 19.01.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -9,10 +9,6 @@
 namespace Joomla\Component\Jshopping\Administrator\Controller;
 
 defined('_JEXEC') or die();
-//jimport('joomla.filesystem.file');
-//jimport('joomla.filesystem.folder');
-//jimport('joomla.filesystem.archive');
-//jimport('joomla.filesystem.path');
 
 class UpdateController extends BaseadminController{
     
@@ -23,7 +19,7 @@ class UpdateController extends BaseadminController{
         $language->load('com_installer');
     }
 
-    function display($cachable = false, $urlparams = false){		                
+    function display($cachable = false, $urlparams = false){
 		$view = $this->getView("update", 'html');  
         $view->set('etemplatevar1', '');
         $view->set('etemplatevar2', '');
@@ -33,7 +29,7 @@ class UpdateController extends BaseadminController{
 		$view->display(); 
     }
 
-	function update(){       
+	function update(){
         $installtype = $this->input->getVar('installtype');
         $jshopConfig = \JSFactory::getConfig();
         $back = $this->input->getVar('back');
@@ -62,12 +58,12 @@ class UpdateController extends BaseadminController{
                 $this->setRedirect("index.php?option=com_jshopping&controller=update");
                 return false;
             }
-            $config = \JFactory::getConfig();            
-            $tmp_dest = $config->get('tmp_path').'/'.$userfile['name'];            
+            $config = \JFactory::getConfig();
+            $tmp_dest = $config->get('tmp_path').'/'.$userfile['name'];
             $tmp_src = $userfile['tmp_name'];
             jimport('joomla.filesystem.file');
             $uploaded = \JFile::upload($tmp_src, $tmp_dest, false, true);
-            $archivename = $tmp_dest;            
+            $archivename = $tmp_dest;
             $tmpdir = uniqid('install_');
             $extractdir = \JPath::clean(dirname($archivename).'/'.$tmpdir);
             $archivename = \JPath::clean($archivename);
@@ -112,7 +108,7 @@ class UpdateController extends BaseadminController{
 		$pathinfo = pathinfo($archivename);
 		$this->backup_folder = 'jsbk'.date('ymdHis').'_'.$pathinfo['filename'];
         
-        if (file_exists($extractdir."/checkupdate.php")) include($extractdir."/checkupdate.php");                        
+        if (file_exists($extractdir."/checkupdate.php")) include($extractdir."/checkupdate.php");
         if (file_exists($extractdir."/configupdate.php")) include($extractdir."/configupdate.php");
         
         if (isset($configupdate['version']) && !$this->checkVersionUpdate($configupdate['version'])){
@@ -131,7 +127,7 @@ class UpdateController extends BaseadminController{
             $db = \JFactory::getDBO();
             $lines = file($extractdir."/update.sql");
             $fullline = implode(" ", $lines);
-            $queryes = $db->splitSql($fullline);            
+            $queryes = $db->splitSql($fullline);
             foreach($queryes as $query){
                 if (trim($query)!=''){
                     try{
@@ -142,7 +138,7 @@ class UpdateController extends BaseadminController{
                         \JSHelper::saveToLog("install.log", "Update - ".$e->getMessage());
                     }
                 }
-            }            
+            }
         }
         if (file_exists($extractdir."/update.php")) include($extractdir."/update.php");
         $dispatcher = \JFactory::getApplication();
@@ -152,7 +148,7 @@ class UpdateController extends BaseadminController{
         
         $session = \JFactory::getSession();
         $checkedlanguage = array();
-        $session->set("jshop_checked_language", $checkedlanguage);        
+        $session->set("jshop_checked_language", $checkedlanguage);
         $msg = \JText::_('JSHOP_COMPLETED');
         if (isset($configupdate['MASSAGE_COMPLETED'])){
             $msg = $configupdate['MASSAGE_COMPLETED'];

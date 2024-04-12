@@ -56,12 +56,15 @@ span.jshop_green{
 .adminlist{
     width: 100%;
 }
-.jshop_edit .form-control{
-    width:240px;
+.jshop_edit .form-control, .jshop_edit .form-select{
+    width: 240px;
 }
-.w100, td .form-control.w100{
+.w100, td .form-control.w100, td .form-select.w100{
     width: 100%;
     max-width: 100%;
+}
+td .form-select{
+    display: inline-block;
 }
 div.jshop_quote {
     text-align: left;
@@ -84,22 +87,22 @@ input{
 	padding: 0;
 	margin: 0;
 }
-input.small, select.small, td .form-control.small, .jshop_edit .form-control.small, .inputbox.small {
+input.small, select.small, td .form-control.small, .jshop_edit .form-control.small, .inputbox.small, .jshop_edit .form-select.small {
     width:50px;
 }
-input.small2, select.small2, td .form-control.small2, .jshop_edit .form-control.small2, .inputbox.small2{
+input.small2, select.small2, td .form-control.small2, .jshop_edit .form-control.small2, .inputbox.small2, .jshop_edit .form-select.small2{
     width:80px;
 }
-input.small3, select.small3, td .form-control.small3, .jshop_edit .form-control.small3, .inputbox.small3{
+input.small3, select.small3, td .form-control.small3, .jshop_edit .form-control.small3, .inputbox.small3, .jshop_edit .form-select.small3{
     width:90px;
 }
-input.middle, select.middle, td .form-control.middle, .jshop_edit .form-control.middle .inputbox.middle {
+input.middle, select.middle, td .form-control.middle, .jshop_edit .form-control.middle .inputbox.middle, .jshop_edit .form-select.middle{
     width:100px;
 }
-input.middle2, select.middle2, td .form-control.middle2, .jshop_edit .form-control.middle2, .inputbox.middle2 {
+input.middle2, select.middle2, td .form-control.middle2, .jshop_edit .form-control.middle2, .inputbox.middle2, .jshop_edit .form-select.middle2{
     width:130px;
 }
-input.middle3, select.middle3, td .form-control.middle3, .jshop_edit .form-control.middle3, .inputbox.middle3 {
+input.middle3, select.middle3, td .form-control.middle3, .jshop_edit .form-control.middle3, .inputbox.middle3, .jshop_edit .form-select.middle3{
     max-width:240px;
 }
 input.wide, select.wide, textarea.wide, td .form-control.wide, .inputbox.wide {
@@ -370,7 +373,6 @@ div#element-box .jssubmenu div.m {
 .images_list{
     display: flex;
     flex-wrap:wrap;
-    
 }
 .images_list .one_image {	
 	flex-grow:1;
@@ -420,6 +422,7 @@ div#element-box .jssubmenu div.m {
 .js-filters > div{
     margin-bottom: 5px;
     margin-right: 5px;
+    max-width: 250px;
 }
 .js-stools .js-stools-field-list, .js-stools .js-stools-field-filter {
     display: inline-block;
@@ -527,6 +530,10 @@ a.saveorder{
 
 #extrafields_option_popup .modal-body{
     padding: 10px 20px;
+}
+
+.product_edit #currency_id{
+    display: inline-block;
 }
 
 .mr-2 {

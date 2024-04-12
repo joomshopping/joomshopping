@@ -66,15 +66,15 @@ class ShippingsPricesController extends BaseadminController{
         $sh_method_price->prices = $sh_method_price->getPrices();
         if ($jshopConfig->tax){
             $list_tax = SelectOptions::getTaxs(0, 0, array('product_tax_rate'=>1));
-            $lists['taxes'] = \JHTML::_('select.genericlist', $list_tax, 'shipping_tax_id','class="inputbox form-control form-select"','tax_id','tax_name',$sh_method_price->shipping_tax_id);
-            $lists['package_taxes'] = \JHTML::_('select.genericlist', $list_tax, 'package_tax_id','class="inputbox form-control form-select"','tax_id','tax_name',$sh_method_price->package_tax_id);
+            $lists['taxes'] = \JHTML::_('select.genericlist', $list_tax, 'shipping_tax_id','class="inputbox form-select"','tax_id','tax_name',$sh_method_price->shipping_tax_id);
+            $lists['package_taxes'] = \JHTML::_('select.genericlist', $list_tax, 'package_tax_id','class="inputbox form-select"','tax_id','tax_name',$sh_method_price->package_tax_id);
         }
         $actived = $sh_method_price->shipping_method_id;
         if (!$actived) $actived = $shipping_id_back;
-		$lists['shipping_methods'] = \JHTML::_('select.genericlist', SelectOptions::getShippings(0),'shipping_method_id','class = "inputbox form-control form-select"','shipping_id','name', $actived);
-		$lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'shipping_countries_id[]','class = "inputbox form-control form-select" size = "10", multiple = "multiple"','country_id','name', $sh_method_price->getCountries());
+		$lists['shipping_methods'] = \JHTML::_('select.genericlist', SelectOptions::getShippings(0),'shipping_method_id','class = "inputbox form-select"','shipping_id','name', $actived);
+		$lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'shipping_countries_id[]','class = "inputbox form-select" size = "10", multiple = "multiple"','country_id','name', $sh_method_price->getCountries());
         if ($jshopConfig->admin_show_delivery_time){
-            $lists['deliverytimes'] = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes(), 'delivery_times_id','class = "inputbox form-control form-select"','id','name', $sh_method_price->delivery_times_id);
+            $lists['deliverytimes'] = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes(), 'delivery_times_id','class = "inputbox form-select"','id','name', $sh_method_price->delivery_times_id);
         }
 
         $currency = \JSFactory::getTable('currency');

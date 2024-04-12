@@ -63,7 +63,7 @@ $jshopConfig=$this->config;
                 }
                 $option[] = \JHTML::_('select.option', $k2, $option_name, 'id', 'name');
             }
-            print \JHTML::_('select.genericlist', $option, $k, 'class = "inputbox form-control form-select"', 'id', 'name', $jshopConfig->$k);
+            print \JHTML::_('select.genericlist', $option, $k, 'class = "inputbox form-select"', 'id', 'name', $jshopConfig->$k);
             ?>
         <?php }else{?>
 		    <input type="text" name="<?php print $k?>" class = "form-control" value="<?php echo $jshopConfig->$k?>">

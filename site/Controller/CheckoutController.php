@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -555,14 +555,16 @@ class CheckoutController extends BaseController{
         $jshopConfig = \JSFactory::getConfig();
         $order_id = $checkout->getEndOrderId();
 		$text = $checkout->getFinishStaticText();
-
+		$text_end = '';
+		
         Metadata::checkoutFinish();
 
-        \JFactory::getApplication()->triggerEvent('onBeforeDisplayCheckoutFinish', array(&$text, &$order_id));
+        \JFactory::getApplication()->triggerEvent('onBeforeDisplayCheckoutFinish', array(&$text, &$order_id, &$text_end));
 
         $view = $this->getView("checkout");
         $view->setLayout("finish");
         $view->set('text', $text);
+		$view->set('text_end', $text_end);
         $view->display();
 
         if ($order_id){

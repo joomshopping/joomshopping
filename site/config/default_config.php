@@ -62,6 +62,7 @@ $config->xml_update_path = "http://www.webdesigner-profi.de/joomla-webdesign/upd
 $config->updates_site_path = "http://www.webdesigner-profi.de/joomla-webdesign/joomla-shop/downloads/updates.html";
 $config->updates_server['sm0'] = "http://www.webdesigner-profi.de/joomla-webdesign/update/sm0";
 $config->updates_server['sm1'] = "http://demo.joomshopping.com/demo";
+$config->updates_server['sm2'] = "http://www.webdesigner-profi.de/joomla-webdesign/components/com_jshopping/files/demo_products";
 $config->display_updates_version = 1;
 $config->noimage = 'noimage.gif';
 $config->shippinginfourl = 'index.php?option=com_jshopping&controller=content&task=view&page=shipping';

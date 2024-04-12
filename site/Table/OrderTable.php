@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.2 08.09.2022
+* @version      5.3.1 08.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -123,6 +123,7 @@ class OrderTable extends ShopbaseTable{
                   WHERE orders.user_id = '".$db->escape($id_user)."' and orders.order_created='1'
                   GROUP BY order_item.order_id 
                   ORDER BY orders.order_date DESC";
+		\JFactory::getApplication()->triggerEvent('onBeforeGetOrdersForUser', array(&$query, &$id_user));
         $db->setQuery($query);
         return $db->loadObJectList();
     }
@@ -711,6 +712,9 @@ class OrderTable extends ShopbaseTable{
     }
 	
 	function updateProductsInStock($order_create = 0){
+		$jshopConfig = \JSFactory::getConfig(); 
+        if (!$jshopConfig->stock) return;
+		
 		$product_stock_removed = $this->getProductStockRemoved($this->order_status, $order_create);
         
         if ($this->order_created && !$product_stock_removed && $this->product_stock_removed==1){

@@ -327,7 +327,7 @@ class CategoriesModel extends BaseadminModel{
         $first[] = \JHTML::_('select.option', '0',\JText::_('JSHOP_ORDERING_FIRST'),'ordering','name');
         $rows = array_merge($first, $rows);
         $currentOrdering = (!$currentOrdering) ? ($rows[count($rows) - 1]->ordering) : ($currentOrdering);
-        return (\JHTML::_('select.genericlist', $rows,'ordering','class="inputbox form-control form-select"','ordering','name', $currentOrdering));
+        return (\JHTML::_('select.genericlist', $rows,'ordering','class="inputbox form-select"','ordering','name', $currentOrdering));
     }
     
     public function deleteList(array $cid, $msg = 1){
