@@ -1,0 +1,1 @@
+ALTER TABLE `#__jshopping_cart_temp` ADD INDEX `user_id_type_cart` (`user_id`, `type_cart`);

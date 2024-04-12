@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.3 01.04.2023
+* @version      5.3.2 01.02.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -1110,7 +1110,9 @@ class ProductsModel extends BaseadminModel{
 		}
 		if (isset($post['category_id']) && $post['category_id']){
 			$this->setCategoryToProduct($id, $post['category_id']);
-            $product->set('main_category_id', $post['category_id'][0]);
+			if (!in_array($product->main_category_id, $post['category_id'])) {
+				$product->set('main_category_id', $post['category_id'][0]);
+			}
 		}
 		if ($jshopConfig->admin_show_product_extra_field){
 			$_productfields = \JSFactory::getModel("productfields");

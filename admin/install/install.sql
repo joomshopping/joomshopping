@@ -748,6 +748,7 @@ ALTER TABLE `#__jshopping_attr_values` ADD INDEX(`value_ordering`);
 
 ALTER TABLE `#__jshopping_cart_temp` ADD INDEX(`id_cookie`);
 ALTER TABLE `#__jshopping_cart_temp` ADD INDEX(`type_cart`);
+ALTER TABLE `#__jshopping_cart_temp` ADD INDEX `user_id_type_cart` (`user_id`, `type_cart`);
 
 ALTER TABLE `#__jshopping_categories` ADD INDEX(`category_parent_id`);
 ALTER TABLE `#__jshopping_categories` ADD INDEX(`category_publish`);

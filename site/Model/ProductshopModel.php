@@ -181,7 +181,9 @@ class ProductShopModel extends BaseModel{
             $image = \JSHelper::getNameImageLabel($product->label_id);
             if ($image){
                 $product->_label_image = $jshopConfig->image_labels_live_path."/".$image;
-            }
+            } else {
+				$product->_label_image = null;
+			}
             $product->_label_name = \JSHelper::getNameImageLabel($product->label_id, 2);
         }
 		

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.3.2 10.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -36,11 +36,7 @@ class TempCartModel{
         if (!$this->checkAccessToTempCart($cart->type_cart)){
             return 0;
         }
-		$id_cookie = $this->getIdTempCart();
-		if (!$id_cookie) {
-			$id_cookie = $this->getUniqId();
-			$this->setIdTempCart($id_cookie);
-		}		
+		$id_cookie = $this->getIdTempCart($cart->type_cart);
 		if (!count($cart->products)) {
 			$this->delete($id_cookie, $cart->type_cart);
 			return 1;
@@ -65,17 +61,7 @@ class TempCartModel{
 		$table->type_cart = $type;
 		$table->store();
 		$id = $table->id;
-		if ($user_id) {
-			$rows = $this->getListRowsByUserId($user_id, $type);
-			foreach($rows as $v) {
-				if ($v->id != $id) {
-					$table = \JSFactory::getTable('tempcart');
-					$table->id = $v->id;
-					$table->cart = serialize($products);
-					$table->store();
-				}
-			}
-		}
+		\JFactory::getApplication()->triggerEvent('onAfterSaveTempCart', array(&$table));
 	}
 	
 	function delete($id_cookie, $type){
@@ -83,33 +69,57 @@ class TempCartModel{
 		if (!$user_id) {
 			$user_id = $this->getUserIdByCookieId($id_cookie, $type);
 		}
+		$this->deleteRow($id_cookie, $type);
+		if ($user_id) {
+			$this->deleteRowByUserId($user_id, $type);
+		}
+	}
 
+	function deleteRow($id_cookie, $type) {
 		$db = \JFactory::getDBO();
 		$query = "DELETE FROM `#__jshopping_cart_temp` WHERE `id_cookie`=".$db->q($id_cookie)." AND `type_cart`=".$db->q($type);
         $db->setQuery($query);
-        $db->execute();
-		if ($user_id) {
-			$query = "DELETE FROM `#__jshopping_cart_temp` WHERE `user_id`=".$db->q($user_id)." AND `type_cart`=".$db->q($type);
-			$db->setQuery($query);
-			$db->execute();
-		}
+        return $db->execute();
+	}
+
+	function deleteRowByUserId($user_id, $type) {
+		$db = \JFactory::getDBO();
+		$query = "DELETE FROM `#__jshopping_cart_temp` WHERE `user_id`=".$db->q($user_id)." AND `type_cart`=".$db->q($type);
+		$db->setQuery($query);
+		$db->execute();
 	}
 	
 	function getProducts($type){
-		return $this->getTempCart($this->getIdTempCart(), $type);
+		return $this->getTempCart($this->getIdTempCart($type), $type);
 	}
 	
-	function setIdTempCart($id_cookie){
+	function setIdTempCart($id_cookie, $type){
 		$patch = "/";
         if (\JURI::base(true) != ""){
 			$patch = \JURI::base(true);
 		}
 		$time = time() + 3600 * 24 * $this->savedays;
-		setcookie('jshopping_temp_cart', $id_cookie, $time, $patch);
+		$keyname = $this->getCookieKeyName($type);
+		setcookie($keyname, $id_cookie, $time, $patch);
+		$_COOKIE[$keyname] = $id_cookie;
+	}
+
+	function getCookieKeyName($type) {
+		if ($type == 'wishlist') {
+			return 'jshopping_temp_cart';
+		} else {
+			return 'jshopping_temp_cart_'.$type;
+		}
 	}
 	
-	function getIdTempCart(){
-		return isset($_COOKIE['jshopping_temp_cart']) ? (string)$_COOKIE['jshopping_temp_cart'] : '';
+	function getIdTempCart($type){
+		$keyname = $this->getCookieKeyName($type);
+		$id_cookie = isset($_COOKIE[$keyname]) ? (string)$_COOKIE[$keyname] : '';
+		if (!$id_cookie) {
+			$id_cookie = $this->getUniqId();
+			$this->setIdTempCart($id_cookie, $type);
+		}
+		return $id_cookie;
 	}
 
     function getTempCart($id_cookie, $type_cart = "wishlist"){
@@ -142,7 +152,13 @@ class TempCartModel{
 							$exist_pid[] = $check;
 						}
 					}
+					$new_id_cookie = $v->id_cookie;
 				}
+			}
+			if (isset($new_id_cookie)) {
+				$this->setIdTempCart($new_id_cookie, $type_cart);
+				$this->save($new_id_cookie, $type_cart, $products);
+				$this->deleteRow($id_cookie, $type_cart);
 			}
 		}
 		return $products;

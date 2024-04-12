@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.2 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -41,7 +41,7 @@ class UserGroupTable extends ShopbaseTable{
         $field = $lang->get("name");
 		$name = $this->$field;
 		if ($name==''){
-			$name = $thid->usergroup_name;
+			$name = $this->usergroup_name;
 		}
 		return $name;
     }

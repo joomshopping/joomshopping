@@ -54,12 +54,8 @@ class CartModel{
 	
 	function loadProductsFromTempCart(){
 		$tempcart = \JSFactory::getModel($this->model_temp_cart, 'Site');
-        if ($tempcart->getIdTempCart() && $tempcart->checkAccessToTempCart($this->type_cart)) {
-			$products = $tempcart->getProducts($this->type_cart);
-            if (isset($products) && count($products)) {
-                $this->products = $products;
-                $this->saveToSession();
-            }
+        if ($tempcart->checkAccessToTempCart($this->type_cart)) {
+			$this->products = $tempcart->getProducts($this->type_cart);
 		}
 	}
 
@@ -1231,8 +1227,9 @@ class CartModel{
         $this->rabatt_type = 0;
         $this->rabatt_summ = 0;
         $this->summ = 0;
-        $this->count_product = 0;        
-        $this->price_product = 0;        
+        $this->count_product = 0;
+        $this->price_product = 0;
+        $this->saveToSession();
         $session->set($this->type_cart, "");
         $session->set("pm_method", "");
         $session->set("pm_params", "");

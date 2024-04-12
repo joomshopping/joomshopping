@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.2 06.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -11,7 +11,7 @@ defined('_JEXEC') or die();
 
 abstract class UserbaseModel  extends BaseModel{
 	
-	protected $userparams = null;
+	public $userparams = null;
 	
 	public function getUserParams(){
         return $this->userparams;

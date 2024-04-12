@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.3.2 31.01.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -285,7 +285,8 @@ class CheckoutModel extends BaseModel{
 
         $cart = \JSFactory::getModel('cart', 'Site');
         $cart->load("cart");
-        if ($cart->add($prod['product_id'], $jshopConfig->min_count_order_one_product, $attr, $freeattribut)) {
+		$qty = $jshopConfig->min_count_order_one_product > 0 ? $jshopConfig->min_count_order_one_product : 1;
+        if ($cart->add($prod['product_id'], $qty, $attr, $freeattribut)) {
             $wishlist->delete($number_id);
             $cart->remove_to_cart = 1;
         } else {

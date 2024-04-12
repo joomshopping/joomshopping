@@ -807,7 +807,9 @@ class Helper{
                 $image = \JSHelper::getNameImageLabel($products[$key]->label_id);
                 if ($image){
                     $products[$key]->_label_image = $jshopConfig->image_labels_live_path."/".$image;
-                }
+                } else {
+					$products[$key]->_label_image = null;
+				}
                 $products[$key]->_label_name = \JSHelper::getNameImageLabel($products[$key]->label_id, 2);
             }
             if ($jshopConfig->display_short_descr_multiline){

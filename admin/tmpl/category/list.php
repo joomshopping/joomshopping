@@ -50,7 +50,7 @@ if ($saveOrder){
                         <input type="checkbox" name="checkall-toggle" value=""
                             title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
                     </th>
-                    <th width="200" align="left">
+                    <th align="left">
                         <?php echo \JHTML::_('grid.sort', 'JSHOP_TITLE', 'name', $this->filter_order_Dir, $this->filter_order); ?>
                     </th>
                     <?php print $this->tmp_html_col_after_title?>
