@@ -1,0 +1,33 @@
+@media (prefers-color-scheme: dark) {
+	.nav-tabs .nav-link {
+		color: #fff;
+	}
+	div.jshop_quote{
+		background-color: #444;
+	}
+	.helpbox{
+		background: #444;
+		color: #fff;
+	}
+	.contacts{
+		background: #444;
+	}
+	.contacts .info{
+		color: #aaa;
+	}
+	.contacts a:link, .contacts a:visited, .contacts a:active {
+		color: #aaa;
+	}
+	.jssubmenu{
+		background: #444;
+	}
+	.contacts .blue{
+		color: #aaa;
+	}
+	.contacts .jslogo{
+		background: #555;
+	}
+    select.form-control{
+        background-color: var(--body-bg);
+    }
+}
