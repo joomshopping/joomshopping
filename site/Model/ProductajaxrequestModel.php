@@ -110,6 +110,9 @@ class ProductAjaxRequestModel  extends BaseModel{
         if (is_array($product->product_add_prices)){
             foreach($product->product_add_prices as $k=>$v){
                 $rows['pq_'.$v->product_quantity_start] = \JSHelper::formatprice($v->price).(isset($v->ext_price) ? $v->ext_price : '');
+                if (isset($v->basic_price)) {
+                    $rows['pqb_'.$v->product_quantity_start] = \JSHelper::formatprice($v->basic_price);
+                }
             }
         }
         if ($product->product_old_price){

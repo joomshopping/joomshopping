@@ -12,7 +12,7 @@ defined('_JEXEC') or die();
 
 class ShippingsModel extends BaseadminModel{
     
-    protected $nameTable = 'shippingMethod';
+    protected $nameTable = 'shippingmethod';
 
     public function getAllShippings($publish = 1, $order = null, $orderDir = null) {
         $db = \JFactory::getDBO();

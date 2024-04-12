@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.6 03.07.2022
+* @version      5.1.3 03.07.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -106,7 +106,7 @@ class ConfigTable{
         $session = \JFactory::getSession();
         $id_currency_session = $session->get('Js_id_currency');
         $id_currency = $app->input->getInt('id_currency');
-        $main_currency = $this->mainCurrency;
+        $main_currency = $this->mainCurrency ?? 0;
         if ($this->default_frontend_currency){
             $main_currency = $this->default_frontend_currency;
         }		
@@ -423,6 +423,8 @@ class ConfigTable{
 		$this->generate_pdf = ($this->order_send_pdf_client || $this->order_send_pdf_admin);        
         $this->user_number_in_invoice = isset($this->user_number_in_invoice) ? $this->user_number_in_invoice : 0;
         $this->not_redirect_in_wishlist_after_buy = isset($this->not_redirect_in_wishlist_after_buy) ? $this->not_redirect_in_wishlist_after_buy : 0;
+		$this->max_mark = (!isset($this->max_mark) || $this->max_mark<1) ? 10 : $this->max_mark;
+		$this->rating_starparts = (!isset($this->rating_starparts) || $this->rating_starparts<1) ? 1 : $this->rating_starparts;
 	}
 	
 	function getAdminContactEmails(){

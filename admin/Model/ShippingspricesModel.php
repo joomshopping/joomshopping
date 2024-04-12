@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 
 class ShippingsPricesModel extends BaseadminModel{
     
-    protected $nameTable = 'shippingMethodPrice';
+    protected $nameTable = 'shippingmethodprice';
 
     function save(array $post){
         $dispatcher = \JFactory::getApplication();

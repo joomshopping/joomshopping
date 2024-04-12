@@ -28,6 +28,45 @@ class UsercheckfieldModel {
     }
 
     public function email($val) {
+		$domains = \JComponentHelper::getParams('com_users')->get('domains');
+		if ($domains) {
+			$emailDomain = explode('@', $val);
+			$emailDomain = $emailDomain[1];
+			$emailParts  = array_reverse(explode('.', $emailDomain));
+			$emailCount  = \count($emailParts);
+			$allowed     = true;
+
+			foreach ($domains as $domain) {
+				$domainParts = array_reverse(explode('.', $domain->name));
+				$status      = 0;
+
+				// Don't run if the email has less segments than the rule.
+				if ($emailCount < \count($domainParts)) {
+					continue;
+				}
+
+				foreach ($emailParts as $key => $emailPart) {
+					if (!isset($domainParts[$key]) || $domainParts[$key] == $emailPart || $domainParts[$key] == '*') {
+						$status++;
+					}
+				}
+
+				// All segments match, check whether to allow the domain or not.
+				if ($status === $emailCount) {
+					if ($domain->rule == 0) {
+						$allowed = false;
+					} else {
+						$allowed = true;
+					}
+				}
+			}
+
+			// If domain is not allowed, fail validation. Otherwise continue.
+			if (!$allowed) {
+				throw new \UnexpectedValueException(\JText::sprintf('JGLOBAL_EMAIL_DOMAIN_NOT_ALLOWED', $emailDomain));
+			}
+		}
+		
         return trim($val) != '' && \JMailHelper::isEmailAddress($val);
     }
 

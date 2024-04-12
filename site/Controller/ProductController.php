@@ -275,6 +275,7 @@ class ProductController extends BaseController{
         $media_id = $this->input->getInt('media_id');
         $file = \JSFactory::getTable('productfiles');
         $file->load($media_id);
+		$scripts_load = '';
         
         $view = $this->getView("product");
         $view->setLayout("playmedia");

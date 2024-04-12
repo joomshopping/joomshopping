@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 class UsergroupsModel extends BaseadminModel{
     
-    protected $nameTable = 'userGroup';
+    protected $nameTable = 'usergroup';
 
     function getAllUsergroups($order = null, $orderDir = null){
         $ordering = "usergroup_id";

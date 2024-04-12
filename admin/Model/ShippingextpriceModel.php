@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 
 class ShippingExtPriceModel extends BaseadminModel{
     
-    protected $nameTable = 'shippingExt';
+    protected $nameTable = 'shippingext';
     
     function getList($active = 0){
         $db = \JFactory::getDBO();

@@ -20,9 +20,9 @@ $jshopConfig = \JSFactory::getConfig();
 <input type="hidden" name="task" value="">
 <input type="hidden" name="tab" value="3">
 
-<div class="col100">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_IMAGE_VIDEO_PARAMETERS')?></legend>
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_IMAGE_VIDEO_PARAMETERS')?></h3>
+<div class="card-body">    
 <table class="admintable table-striped">
   <tr>
     <td class="key" style="width:200px;">
@@ -139,13 +139,13 @@ $jshopConfig = \JSFactory::getConfig();
 </tr>
 <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
 </table>
-</<fieldset>
 </div>
-<div class="clr"></div>
+</div>
 
-<div class="col100">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_PRODUCT_VIDEOS')?></legend>
+
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_PRODUCT_VIDEOS')?></h3>
+<div class="card-body">    
 <table class="admintable table-striped">
 <tr>
     <td class="key" style="width:200px;">
@@ -175,9 +175,9 @@ $jshopConfig = \JSFactory::getConfig();
 
 <?php $pkey="etemplatevar2";if (isset($this->$pkey)){print $this->$pkey;}?>
 </table>
-</fieldset>
 </div>
-<div class="clr"></div>
+</div>
+
 <?php print $this->tmp_html_end?>
 </form>
 </div>

@@ -92,9 +92,9 @@ class CategoriesController extends BaseadminController{
         $categories = SelectOptions::getCategories(\JText::_('JSHOP_TOP_LEVEL'));
         $lists['templates'] = \JSHelperAdmin::getTemplates('category', $category->category_template);
         $lists['onelevel'] = $rows;
-        $lists['treecategories'] = \JHTML::_('select.genericlist', $categories, 'category_parent_id','class="inputbox form-control" onchange = "jshopAdmin.changeCategory()"','category_id','name', $parentid);
+        $lists['treecategories'] = \JHTML::_('select.genericlist', $categories, 'category_parent_id','class="inputbox form-control form-select" onchange = "jshopAdmin.changeCategory()"','category_id','name', $parentid);
         $lists['parentid'] = $parentid;
-        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-control"','id','title', $category->access);
+        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-control form-select"','id','title', $category->access);
 
         $view = $this->getView("category", 'html');
         $view->setLayout("edit");

@@ -169,18 +169,24 @@ class OrderMailModel  extends BaseModel{
 		$subject = $this->getSubjectMail($type, $this->order);
 		$pdfsendtype = $this->getPdfSendType($type);		
 		
-		$mailer = \JFactory::getMailer();
-		$mailer->setSender(array($mailfrom, $fromname));
-		$mailer->addRecipient($recipient);
-		$mailer->setSubject($subject);
-		$mailer->setBody($message);
-		if ($pdfsendtype){
-			$mailer->addAttachment($jshopConfig->pdf_orders_path."/".$this->order->pdf_file);
+		try {
+			$mailer = \JFactory::getMailer();
+			$mailer->setSender(array($mailfrom, $fromname));
+			$mailer->addRecipient($recipient);
+			$mailer->setSubject($subject);
+			$mailer->setBody($message);
+			if ($pdfsendtype){
+				$mailer->addAttachment($jshopConfig->pdf_orders_path."/".$this->order->pdf_file);
+			}
+			$mailer->isHTML(true);
+			$dispatcher->triggerEvent($this->getSendMailTriggerType($type), 
+				array(&$mailer, &$this->order, &$manuallysend, &$pdfsend, &$vendor, &$this->vendors_send_message, &$this->vendor_send_order));
+			$res = $mailer->Send();
+		} catch (\Exception $e) {
+			$res = 0;
+			\JSHelper::saveToLog('error.log', 'Ordermail mail send error: '.$e->getMessage());			
 		}
-		$mailer->isHTML(true);
-		$dispatcher->triggerEvent($this->getSendMailTriggerType($type), 
-			array(&$mailer, &$this->order, &$manuallysend, &$pdfsend, &$vendor, &$this->vendors_send_message, &$this->vendor_send_order));
-		return $mailer->Send();
+		return $res;
 	}
 	
 	protected function loadOrderData(){

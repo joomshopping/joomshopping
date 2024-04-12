@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.1 19.10.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -91,7 +91,7 @@ class FilterModel{
             unset($filters[$filterkey]);
         }
         \JPluginHelper::importPlugin('jshoppingproducts');
-        $app->triggerEvent('onAfterGetBuildFilterListProduct', array(&$filters));
+        $app->triggerEvent('onAfterGetBuildFilterListProduct', array(&$filters, &$no_filter));
     return $filters;
     }
 

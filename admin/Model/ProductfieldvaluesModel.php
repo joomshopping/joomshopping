@@ -11,7 +11,7 @@ namespace Joomla\Component\Jshopping\Administrator\Model; defined('_JEXEC') or d
 
 class ProductFieldValuesModel extends BaseadminModel{
     
-    protected $nameTable = 'productFieldValue';
+    protected $nameTable = 'productfieldvalue';
 
 	function getList($field_id, $order = null, $orderDir = null, $filter=array()){
         $db = \JFactory::getDBO();

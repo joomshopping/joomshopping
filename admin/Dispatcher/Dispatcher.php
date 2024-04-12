@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.1 29.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,8 +13,14 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Dispatcher\ComponentDispatcher;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 class Dispatcher extends ComponentDispatcher{
+	
+	public function getController(string $name, string $client = '', array $config = array()): BaseController{
+        \JFactory::getApplication()->triggerEvent('onAfterGetJsAdminRequestController', array(&$name));
+		return parent::getController($name, $client, $config);
+	}
 	
 	public function dispatch(){
 		$this->initShop();

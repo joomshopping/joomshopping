@@ -82,7 +82,7 @@ class ShippingsController extends BaseadminController{
             $active_payments = array(0);
         }
 
-        $lists['payments'] = \JHTML::_('select.genericlist', SelectOptions::getPayments(\JText::_('JSHOP_ALL')), 'listpayments[]', 'class="inputbox form-control" size="10" multiple = "multiple"', 'payment_id', 'name', $active_payments);
+        $lists['payments'] = \JHTML::_('select.genericlist', SelectOptions::getPayments(\JText::_('JSHOP_ALL')), 'listpayments[]', 'class="inputbox form-control form-select" size="10" multiple = "multiple"', 'payment_id', 'name', $active_payments);
 
         $nofilter = array();
         \JFilterOutput::objectHTMLSafe($shipping, ENT_QUOTES, $nofilter);

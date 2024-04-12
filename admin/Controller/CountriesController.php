@@ -63,7 +63,7 @@ class CountriesController extends BaseadminController{
 		$country_id = $this->input->getInt("country_id");
 		$country = \JSFactory::getTable('country');
 		$country->load($country_id);
-		$lists['order_countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountryOrdering(), 'ordering','class="inputbox form-control"','ordering','name', $country->ordering);
+		$lists['order_countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountryOrdering(), 'ordering','class="inputbox form-control form-select"','ordering','name', $country->ordering);
         
         $_lang = \JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);

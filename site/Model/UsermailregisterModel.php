@@ -79,15 +79,18 @@ class UserMailRegisterModel  extends MailModel{
         $emailBody = $this->getMessageMail();
         $data = $this->getData();
         $dispatcher->triggerEvent('onBeforeRegisterSendMailClient', array(&$this->registration_request_data, &$data, &$emailSubject, &$emailBody));
-        
-        $mailer = \JFactory::getMailer();
-        $mailer->setSender(array($data['mailfrom'], $data['fromname']));
-        $mailer->addRecipient($data['email']);
-        $mailer->setSubject($emailSubject);
-        $mailer->setBody($emailBody);
-        $mailer->isHTML(\JSFactory::getConfig()->register_mail_html_format);
-        $dispatcher->triggerEvent('onBeforeRegisterMailerSendMailClient', array(&$mailer, &$this->registration_request_data, &$data, &$emailSubject, &$emailBody));
-        $mailer->Send();
+        try{
+            $mailer = \JFactory::getMailer();
+            $mailer->setSender(array($data['mailfrom'], $data['fromname']));
+            $mailer->addRecipient($data['email']);
+            $mailer->setSubject($emailSubject);
+            $mailer->setBody($emailBody);
+            $mailer->isHTML(\JSFactory::getConfig()->register_mail_html_format);
+            $dispatcher->triggerEvent('onBeforeRegisterMailerSendMailClient', array(&$mailer, &$this->registration_request_data, &$data, &$emailSubject, &$emailBody));
+            $mailer->Send();
+        } catch (\Exception $e) {
+            \JSHelper::saveToLog('error.log', 'Usermailregister mail send error: '.$e->getMessage());			
+        }
     }
     
     public function getSubjectMailAdmin(){
@@ -123,7 +126,11 @@ class UserMailRegisterModel  extends MailModel{
         $mode = \JSFactory::getConfig()->register_mail_admin_html_format;
         foreach($rows as $row){
             $dispatcher->triggerEvent('onBeforeRegisterSendMailAdmin', array(&$this->registration_request_data, &$data, &$emailSubject, &$emailBodyAdmin, &$row, &$mode));
-            \JFactory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $row->email, $emailSubject, $emailBodyAdmin, $mode);
+            try { 
+                \JFactory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $row->email, $emailSubject, $emailBodyAdmin, $mode);
+            } catch (\Exception $e) {   
+                \JSHelper::saveToLog('error.log', 'Usermailregister mail send error: '.$e->getMessage());			
+            }
         }
     }
     

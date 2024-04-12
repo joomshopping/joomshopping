@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.1 28.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -24,8 +24,8 @@ class JSFactory{
             if (file_exists(JPATH_JOOMSHOPPING.'/config/user_config.php')){
 				include(JPATH_JOOMSHOPPING.'/config/user_config.php');
 			}
-            $dispatcher->triggerEvent('onBeforeLoadJshopConfig', array($config));
-            $config->load($config->load_id);            
+            $dispatcher->triggerEvent('onBeforeLoadJshopConfig', array(&$config));
+            $config->load($config->load_id);
             $config->loadCurrencyValue();
             $config->loadFrontLand();
             $config->loadLang();
@@ -97,8 +97,12 @@ class JSFactory{
             $jshopConfig = \JSFactory::getConfig();
             $document = \JFactory::getDocument();
             if ($jshopConfig->load_javascript) {
-                HTMLHelper::_('bootstrap.framework');
-				HTMLHelper::_('jquery.framework');
+				if ($jshopConfig->load_javascript_bootstrap) {
+					HTMLHelper::_('bootstrap.framework');
+				}
+				if ($jshopConfig->load_javascript_jquery) {
+					HTMLHelper::_('jquery.framework');
+				}
                 $document->addScript($jshopConfig->file_functions_js);
             }
             $load = 1;
@@ -534,6 +538,19 @@ class JSFactory{
             foreach($_list as $row){
                 $list[$row->currency_id] = $row;
             }
+			if (empty($list)) {
+				$row = (object)[
+					'currency_id' => 1555, 
+					'currency_name' => 'EUR', 
+					'currency_code' => 'EUR', 
+					'currency_code_iso' => 'EUR', 
+					'currency_code_num' => 978, 
+					'currency_ordering' => 1,
+					'currency_value' => 1, 
+					'currency_publish' => 1
+				];
+				$list[1] = $row;
+			}
         }
     return $list;
     }

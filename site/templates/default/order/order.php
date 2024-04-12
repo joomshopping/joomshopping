@@ -522,11 +522,11 @@ $order=$this->order;
             </div>
             
             <div class="shipping_info">
-                <?php print nl2br($order->shipping_info);?>
+                <?php print nl2br($order->shipping_info ?? '');?>
             </div>
             
             <div class="order_shipping_params">
-                <?php print nl2br($order->shipping_params);?>
+                <?php print nl2br($order->shipping_params ?? '');?>
             </div>
             
             <?php if ($order->delivery_time_name){?>
@@ -553,7 +553,7 @@ $order=$this->order;
                 <?php print $order->payment_name;?>
             </div>
             <div class="order_payment_params">
-                <?php print nl2br($order->payment_params);?>
+                <?php print nl2br($order->payment_params ?? '');?>
                 <?php print $order->payment_description;?>
             </div>
         </div>

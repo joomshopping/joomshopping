@@ -82,7 +82,7 @@ $print = $this->print;
               <?php echo JText::_('JSHOP_ORDER_STATUS')?>
             </td>
             <td>
-              <?php echo \JHTML::_('select.genericlist', $lists['status'], 'order_status', 'class="inputbox form-control" style = "width: 250px"', 'status_id', 'name', $order->order_status ); ?>
+              <?php echo \JHTML::_('select.genericlist', $lists['status'], 'order_status', 'class="inputbox form-select" style = "width: 250px"', 'status_id', 'name', $order->order_status ); ?>
             </td>
             <td style="padding-left:5px;">
               <input type="button" class="button btn btn-primary" name="update_status" onclick="jshopAdmin.verifyStatus(<?php echo $order->order_status?>, <?php echo $order->order_id?>, '<?php echo addslashes(JText::_('JSHOP_CHANGE_ORDER_STATUS'))?>', 1)" value="<?php echo addslashes(JText::_('JSHOP_UPDATE_STATUS'))?>" />
@@ -96,9 +96,9 @@ $print = $this->print;
                 <textarea id="comments" name="comments" class="form-control"></textarea>
               </td>
               <td style="padding-left:5px;">
-                <input type="checkbox" class="inputbox" name="notify" id="notify" value="1">
-                <label for="notify">  <?php echo JText::_('JSHOP_NOTIFY_USER')?></label><br />
-                <input type="checkbox" class="inputbox" name="include" id="include" value="1">
+                <input type="checkbox" class="inputbox" name="notify" id="notify" value="1" checked>
+                <label for="notify">  <?php echo JText::_('JSHOP_NOTIFY_USER')?></label><br>
+                <input type="checkbox" class="inputbox" name="include" id="include" value="1" checked>
                 <label for="include">  <?php echo JText::_('JSHOP_INCLUDE_COMMENT')?></label>
               </td>
           </tr>
@@ -106,7 +106,7 @@ $print = $this->print;
         </table>
       </div>
       <div id="second-page" class="tab-pane">
-        <table class="table">
+        <table class="table small">
             <tr class="bold">
               <td>
                 <?php echo JText::_('JSHOP_DATE_ADDED')?>
@@ -120,6 +120,10 @@ $print = $this->print;
               <td>
                 <?php echo JText::_('JSHOP_COMMENT')?>
               </td>
+			  <td>
+                <?php echo JText::_('JSHOP_INCLUDE_COMMENT')?>
+              </td>
+			  
 			  <?php print $this->tmp_html_table_history_field?>
             </tr>
           <?php foreach($order_history as $history) {?>
@@ -136,6 +140,10 @@ $print = $this->print;
               </td>
               <td>
                 <?php echo $history->comments?>
+              </td>
+			  <td>
+				<?php $include_comment_img = ($history->include_comment) ? ('tick.png'): ('publish_x.png');?>
+                <img src="components/com_jshopping/images/<?php echo $include_comment_img?>" alt="include_comment" border="0" />
               </td>
               <?php if (isset($history->tmp_html_table_history_field)) echo $history->tmp_html_table_history_field?>
             </tr>

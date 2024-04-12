@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 15.09.2022
+* @version      5.1.1 15.10.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -28,7 +28,7 @@ class CategoryTable extends MultilangTable{
         if ($order=="id") $orderby = "category_id";
         if ($order=="name") $orderby = "`".$lang->get('name')."`";
         if ($order=="ordering") $orderby = "ordering";
-        if (!$orderby) $orderby = "ordering";
+        if (!isset($orderby)) $orderby = "ordering";
         
         $query = "SELECT `".$lang->get('name')."` as name,`".$lang->get('description')."` as description,`".$lang->get('short_description')."` as short_description, category_id, category_publish, ordering, category_image, img_alt, img_title 
                    FROM `#__jshopping_categories`
@@ -78,7 +78,7 @@ class CategoryTable extends MultilangTable{
             $this->preparePluginContent();
         }        
 		return $this->description;
-    }    
+    }
 
     function getTreeChild() {
         $category_parent_id = $this->category_parent_id;
@@ -161,7 +161,7 @@ class CategoryTable extends MultilangTable{
         }
         return array_reverse($cats_tree);
     }
-	    
+
     function getDescriptionMainPage($preparePluginContent = 1){
         $statictext = \JSFactory::getTable("statictext");
         $row = $statictext->loadData("home");
@@ -177,7 +177,7 @@ class CategoryTable extends MultilangTable{
         }
 		return $this->description;
     }
-        
+
     function getManufacturers(){
         $JshopConfig = \JSFactory::getConfig();
         $user = \JFactory::getUser();
@@ -194,7 +194,7 @@ class CategoryTable extends MultilangTable{
         }else{
             $order = 'man.ordering';
         }
-        $query = "SELECT distinct man.manufacturer_id as id, man.`".$lang->get('name')."` as name FROM `#__jshopping_products` AS prod
+        $query = "SELECT distinct man.manufacturer_id as id, man.`".$lang->get('name')."` as name, man.manufacturer_logo FROM `#__jshopping_products` AS prod
                   LEFT JOIN `#__jshopping_products_to_categories` AS categ USING (product_id)
                   LEFT JOIN `#__jshopping_manufacturers` as man on prod.product_manufacturer_id=man.manufacturer_id 
                   WHERE categ.category_id=".(int)$this->category_id." AND prod.product_publish=1 AND prod.product_manufacturer_id!=0 ".$adv_query." "
@@ -204,8 +204,7 @@ class CategoryTable extends MultilangTable{
         $db->setQuery($query);
         $list = $db->loadObJectList();
         return $list;
-           
-    }    
+    }
         
     function preparePluginContent(){
         if (\JSFactory::getConfig()->use_plugin_content){

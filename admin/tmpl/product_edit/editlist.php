@@ -11,12 +11,17 @@ $jshopConfig=$this->config;
 $lists=$this->lists;
 ?>
 <div class="jshop_edit">
+<script type="text/javascript">jshopAdmin.lang_delete="<?php print JText::_('JSHOP_DELETE')?>";</script>
 <form action="index.php?option=com_jshopping&controller=products" method="post" name="adminForm" id="adminForm" id="item-form">
 <ul class="joomla-tabs nav nav-tabs">    
     <li class="nav-item"><a href="#main-page" class="nav-link active" data-toggle="tab"><?php echo JText::_('JSHOP_INFO_PRODUCT')?></a></li>
     <?php if ($jshopConfig->admin_show_product_extra_field) {?>
     <li class="nav-item"><a href="#product_extra_fields" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_EXTRA_FIELDS')?></a></li>
     <?php } ?>
+    <?php if ($jshopConfig->admin_show_product_related || isset($this->ptab_related)){?>
+        <li class="nav-item"><a href="#product_related" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_PRODUCT_RELATED')?></a></li>
+    <?php }?>
+    <?php print $this->_nav_tab ?? ''; ?>
 </ul>
 
 <div id="editdata-document" class="tab-content">
@@ -189,6 +194,10 @@ $lists=$this->lists;
 </div>
 </div>
 <?php if ($jshopConfig->admin_show_product_extra_field) include(dirname(__FILE__)."/extrafields.php"); ?>
+<?php if ($jshopConfig->admin_show_product_related || isset($this->ptab_related)){
+		include(dirname(__FILE__)."/related.php");
+} ?>
+<?php print $this->_content_tab ?? ''; ?>
 </div>
 <input type="hidden" name="task" value="">
 <?php foreach($this->cid as $cid){?>

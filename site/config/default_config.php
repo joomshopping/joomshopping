@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 05.09.2022
+* @version      5.2.0 13.05.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -130,10 +130,11 @@ $config->product_attribute_type_template = array(
     2=>'attribute_input_radio'
 );
 
-$config->payment_status_enable_download_sale_file = array(5, 6, 7);
-$config->payment_status_return_product_in_stock = array(3, 4);
+$config->payment_status_enable_download_sale_file = [5, 6, 7];
+$config->payment_status_return_product_in_stock = [3, 4];
 $config->payment_status_for_cancel_client = 3;
-$config->payment_status_disable_cancel_client = array(7);
+$config->payment_status_disable_cancel_client = [7];
+$config->payment_status_no_create_order = [3];
 $config->payment_status_paid = 6;
 $config->order_stock_removed_only_paid_status = 0;
 $config->cart_back_to_shop = "list"; //product, list, shop
@@ -240,7 +241,7 @@ $config->manufacturer_sorting_direction = 'asc';
 $config->get_vendors_order_query = 'shop_name';
 $config->order_notfinished_default = 0;
 $config->display_tax_0 = 0;
-$config->rating_star_width = 16;
+$config->rating_star_width = 20;
 $config->video_html5 = 1;
 $config->video_html5_type = '';
 $config->audio_html5_type = '';
@@ -283,6 +284,8 @@ $config->default_template_no_list_product = 'list_products/no_products.php';
 $config->default_template_block_form_filter_product = 'list_products/form_filters.php';
 $config->default_template_block_pagination_product = 'list_products/block_pagination.php';
 
+$config->load_javascript_bootstrap = 1;
+$config->load_javascript_jquery = 1;
 $config->file_jquery_media_js = $config->live_path.'js/jquery/jquery.media.js';
 $config->file_functions_js = $config->live_path.'js/functions.js';
 $config->file_lightbox_js = $config->live_path.'js/jquery/jquery.lightbox.js';

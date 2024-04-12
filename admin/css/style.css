@@ -162,6 +162,11 @@ a.jshop_order_status{
 	font-size: 14px;
 	font-weight: bold;
 }
+tr.order_not_created, tr.order_not_created td, .table tr.order_not_created td{
+	font-style:italic; 
+	color: #b00;
+	opacity:0.8;
+}
 tr.bold td, tr.bold th, td.bold, th.bold{
 	font-weight:bold;
 }

@@ -13,7 +13,7 @@ defined('_JEXEC') or die();
 
 class ProductLabelsModel extends BaseadminModel{
     
-    protected $nameTable = 'productLabelTable';
+    protected $nameTable = 'productlabel';
 
     function getList($order = null, $orderDir = null){
         $db = \JFactory::getDBO();

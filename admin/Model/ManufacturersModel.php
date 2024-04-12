@@ -14,7 +14,7 @@ defined('_JEXEC') or die();
 
 class ManufacturersModel extends BaseadminModel{
     
-    protected $nameTable = 'manufacturerTable';
+    protected $nameTable = 'manufacturer';
     protected $tableFieldPublish = 'manufacturer_publish';
 
     function getAllManufacturers($publish=0, $order=null, $orderDir=null){

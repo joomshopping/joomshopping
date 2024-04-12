@@ -12,7 +12,7 @@ defined('_JEXEC') or die();
 
 class LanguagesModel extends BaseadminModel{
     
-    protected $nameTable = 'languageTable';
+    protected $nameTable = 'language';
 
     function getAllLanguages($publish = 1) {
         $jshopConfig = \JSFactory::getConfig();

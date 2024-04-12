@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.4 02.05.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,21 +13,15 @@ use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 <script type="text/javascript">
-
 function selectProductBehaviour(pid){
     jQuery("#product_id").val(pid);
     var url = 'index.php?option=com_jshopping&controller=products&task=loadproductinfo&product_id='+pid
     var html = '';
-
     jQuery.getJSON(url, function(json){
         html = json.product_name;
-        html += `<a class="btn btn-secondary clear_com" href="#" onclick="clear_product_commentar()">
-                    <?php print JText::_('JSHOP_CLEAR')?>
-                </a>`;
-
+        html += `<a class="btn btn-secondary clear_com" href="#" onclick="clear_product_commentar()"><?php print JText::_('JSHOP_CLEAR')?></a>`;
         jQuery(".review_product_name").html(html);
     });
-
     window.parent.jQuery('#aModal').modal('hide');
 }
 
@@ -35,7 +29,6 @@ function clear_product_commentar(){
     jQuery(".review_product_name").html('');
     jQuery(".clear_com").hide();
 }
-
 </script>
 <div class="jshop_edit">
     <form action="index.php?option=com_jshopping&controller=reviews" method="post" enctype="multipart/form-data" name="adminForm" id="adminForm">
@@ -121,7 +114,7 @@ function clear_product_commentar(){
         <div class="clr"></div>
         <input type="hidden" name="product_id" id="product_id" class="form-control" value="<?php print $this->review->product_id;?>" />
         <input type="hidden" name="review_id" value="<?php echo (int)$this->review->review_id?>">
-        <input type="hidden" name="task" value="<?php echo \JFactory::getApplication()->input->getVar('task', 0)?>" />
+        <input type="hidden" name="task" value="<?php echo \JFactory::getApplication()->input->getVar('task', '')?>" />
         <?php print $this->tmp_html_end?>
     </form>
 

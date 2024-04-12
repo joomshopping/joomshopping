@@ -22,9 +22,9 @@ $lists=$this->lists;
 <input type="hidden" name="task" value="">
 <input type="hidden" name="tab" value="7">
 
-<div class="col100">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_CHECKOUT')?></legend>
+<div class="card">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_CHECKOUT')?></h3>
+<div class="card-body">
 <table class="admintable table-striped">
 
 <tr>
@@ -476,9 +476,8 @@ $lists=$this->lists;
 <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
 
 </table>
-</fieldset>
 </div>
-<div class="clr"></div>
+</div>
 <?php print $this->tmp_html_end?>
 </form>
 </div>

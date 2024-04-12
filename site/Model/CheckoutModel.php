@@ -33,9 +33,12 @@ class CheckoutModel extends BaseModel{
 		return $model->send();
     }
     
-    function changeStatusOrder($order_id, $status, $sendmessage = 1){
+    function changeStatusOrder($order_id, $status, $sendmessage = 1, $prev_order_status = null, $notify = 1){
 		$model = \JSFactory::getModel('orderChangeStatus', 'Site');
-		$model->setData($order_id, $status, $sendmessage);
+		$model->setData($order_id, $status, $sendmessage, $status, $notify);
+        if (isset($prev_order_status)) {
+            $model->setPrevStatus($prev_order_status);
+        }
 		return $model->store();
     }
     
@@ -59,7 +62,7 @@ class CheckoutModel extends BaseModel{
 			$sendmessage = 1; 
 		else 
 			$sendmessage = 0;
-        $this->changeStatusOrder($order_id, $status, $sendmessage);
+        $this->changeStatusOrder($order_id, $status, $sendmessage, null, $sendmessage);
         \JFactory::getApplication()->triggerEvent('onAfterCancelPayOrderJshopCheckout', array(&$order_id, $status, $sendmessage));
     }
     
@@ -273,16 +276,17 @@ class CheckoutModel extends BaseModel{
 		$dispatcher = \JFactory::getApplication();
         $dispatcher->triggerEvent('onBeforeLoadWishlistRemoveToCart', array(&$number_id));
         
-        $cart = \JSFactory::getModel('cart', 'Site');
-        $cart->load("wishlist");
-        $prod = $cart->products[$number_id];
+        $wishlist = \JSFactory::getModel('cart', 'Site');
+        $wishlist->load("wishlist");
+        $prod = $wishlist->products[$number_id];
         $attr = unserialize($prod['attributes']);
         $freeattribut = unserialize($prod['freeattributes']);
-        $cart->delete($number_id);
-                        
+
         $cart = \JSFactory::getModel('cart', 'Site');
         $cart->load("cart");        
-        $cart->add($prod['product_id'], $prod['quantity'], $attr, $freeattribut);
+        if ($cart->add($prod['product_id'], $prod['quantity'], $attr, $freeattribut)) {
+            $wishlist->delete($number_id);
+        }
         $dispatcher->triggerEvent('onAfterWishlistRemoveToCart', array(&$cart));
 		return $cart;
 	}
@@ -406,7 +410,7 @@ class CheckoutModel extends BaseModel{
         if ($jshopConfig->show_delivery_time_checkout){
             $deliverytimes = \JSFactory::getAllDeliveryTime();
             $deliverytimes[0] = '';
-            $delivery_time = $deliverytimes[$sh_mt_pr->delivery_times_id];
+            $delivery_time = $deliverytimes[$sh_mt_pr->delivery_times_id] ?? '';
             if (!$delivery_time && $jshopConfig->delivery_order_depends_delivery_product){
                 $delivery_time = $cart->getDelivery();
             }

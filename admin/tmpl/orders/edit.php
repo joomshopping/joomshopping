@@ -55,7 +55,7 @@ jshopAdmin.userinfo_link = "<?php print "index.php?option=com_jshopping&controll
     <div class="row mb-2">
       <div class="col d-flex">
         <div class="mr-2"><b><?php print JText::_('JSHOP_FINISHED')?>:</b></div>
-        <div><input class="va-middle" type="checkbox" name="order_created" value="1"></div>
+        <div><input class="va-middle" type="checkbox" name="order_created" value="1" <?php if (!$order->order_id){?>checked<?php }?>></div>
       </div>
     </div>
 <?php }?>

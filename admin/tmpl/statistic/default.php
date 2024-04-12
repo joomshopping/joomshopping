@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.3 18.02.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -230,7 +230,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
 <fieldset class="adminform">
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <table style="width:100%;">
         <tr>
             <th colspan="2" >
@@ -302,7 +302,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
         </table>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div><b><?php echo JText::_('JSHOP_CATEGORY_INVENTORY')?>:</b></div>
         <div>
             <?php echo JText::_('JSHOP_TOTAL')?>:
@@ -322,7 +322,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
         </div>
         
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div><b><?php echo JText::_('JSHOP_MANUFACTURE_INVENTORY')?>:</b></div>
         <div>
         <?php echo JText::_('JSHOP_TOTAL')?>:
@@ -342,6 +342,26 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
             <?php echo $active_m;?>
         </div>
     </div>
+	<div class="col-md-3">
+		<div>
+			<b><?php echo JText::_('JSHOP_PRODUCT_INVENTORY');?></b>
+		</div>
+		<div>
+			<?php echo JText::_('JSHOP_TOTAL');?>:
+			<?php $active_p=$nonactive_p=0; foreach($this->product as $res)
+			{
+			if ($res['product_publish']=='1') $active_p=$res['amount'];
+			if ($res['product_publish']=='0') $nonactive_p=$res['amount'];
+
+			}
+			?>
+			<?php echo $active_p+$nonactive_p;?>
+		</div>
+		<div>
+			<?php echo JText::_('JSHOP_ACTIVE')?>:
+			<?php echo $active_p;?>
+		</div>
+	</div>
 </div>
 
 </fieldset> 

@@ -42,7 +42,12 @@ class UserMailActivationModel  extends MailModel{
         $data = $this->getData();
         $mode = \JSFactory::getConfig()->activation_mail_html_format;
 		$dispatcher->triggerEvent('onBeforeActivationSend', array(&$data, &$emailSubject, &$emailBody, &$mode));
-        $return = \JFactory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $data['email'], $emailSubject, $emailBody, $mode);
+        try{
+            $return = \JFactory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $data['email'], $emailSubject, $emailBody, $mode);
+        } catch (\Exception $e) {
+            $return = false;
+            \JSHelper::saveToLog('error.log', 'Usermailactivation mail send error: '.$e->getMessage());			
+        }
 		if ($return !== true){
 			$this->setError(\JText::_('COM_USERS_REGISTRATION_ACTIVATION_NOTIFY_SEND_MAIL_FAILED'));
 			return false;
@@ -91,7 +96,12 @@ class UserMailActivationModel  extends MailModel{
         $mode = \JSFactory::getConfig()->activation_mail_admin_html_format;
         foreach($rows as $row){
 			$dispatcher->triggerEvent('onBeforeActivationSendMailAdmin', array(&$data, &$emailSubject, &$emailBody, &$row, &$mode));
-			$return = \JFactory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $row->email, $emailSubject, $emailBody, $mode);
+            try { 
+                $return = \JFactory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $row->email, $emailSubject, $emailBody, $mode);
+            } catch (\Exception $e) {
+                $return = false;
+                \JSHelper::saveToLog('error.log', 'Usermailactivation mail send error: '.$e->getMessage());			
+            }
 			if ($return !== true){
 				$this->setError(\JText::_('COM_USERS_REGISTRATION_ACTIVATION_NOTIFY_SEND_MAIL_FAILED'));
 				return false;

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 14.09.2022
+* @version      5.1.3 14.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -187,11 +187,13 @@ class ProductTable extends MultilangTable{
             if ($onlyExistProduct) $where.=" and PA.count>0 ";
             $sorting = $JshopConfig->attribut_dep_sorting_in_product;
             if ($sorting=="") $sorting = "V.value_ordering";
+			if ($sorting=="PA.product_attr_id") $sorting = "min(PA.product_attr_id)";
             $field = "attr_".(int)$attr_id;
-            $query = "SELECT distinct PA.$field as val_id, V.`".$lang->get("name")."` as value_name, V.image
+            $query = "SELECT PA.$field as val_id, V.`".$lang->get("name")."` as value_name, V.image
                       FROM `#__jshopping_products_attr` as PA
 					  INNER JOIN #__jshopping_attr_values as V ON PA.$field=V.value_id
                       WHERE PA.product_id=".(int)$this->product_id." ".$where."
+					  GROUP BY PA.$field
                       ORDER BY ".$sorting;
         }else{
             $sorting = $JshopConfig->attribut_nodep_sorting_in_product;
@@ -703,7 +705,7 @@ class ProductTable extends MultilangTable{
         $dispatcher->triggerEvent('onCalculatePriceProduct', array($quantity, $enableCurrency, $enableUserDiscount, $enableParamsTax, &$obj, &$cartProduct) );
         $this->product_price_calculate0 = $this->product_price_calculate;
         if ($JshopConfig->price_product_round){
-            $this->product_price_calculate = round($this->product_price_calculate, $JshopConfig->decimal_count);
+            $this->product_price_calculate = round($this->product_price_calculate, intval($JshopConfig->decimal_count));
         }
         return $this->product_price_calculate;
     }
@@ -735,6 +737,21 @@ class ProductTable extends MultilangTable{
         $this->product_basic_price_calculate = $prod_price / $this->product_basic_price_weight;
         $this->product_basic_price_unit_name = $unit->name;
         $this->product_basic_price_unit_qty = $unit->qty;
+        
+        if (isset($this->product_add_prices)) {
+            foreach($this->product_add_prices as $k => $v) {
+                if ($JshopConfig->calc_basic_price_from_product_price) {
+                    $bp = $v->price_wp;
+                } else {
+                    $bp = $v->price;
+                }
+                if ($JshopConfig->price_product_round) {
+                    $bp = round($bp, $JshopConfig->decimal_count);
+                }
+                $this->product_add_prices[$k]->basic_price = $bp / $this->product_basic_price_weight;
+            }
+        }
+
         $obj = $this;
         \JFactory::getApplication()->triggerEvent('onAfterGetBasicPriceInfoProduct', array(&$obj));
         return 1;
@@ -815,7 +832,7 @@ class ProductTable extends MultilangTable{
         $dispatcher->triggerEvent('onUpdateOtherPricesIncludeAllFactors', array(&$obj) );
     }
 
-    function getExtraFields($type = 1){
+	function getExtraFields($type = 1){
         $_cats = $this->getCategories();
         $cats = array();
         foreach($_cats as $v){
@@ -858,11 +875,11 @@ class ProductTable extends MultilangTable{
                         $tmp[] = $fieldvalues[$extrafiledvalueid];
                     }
                     $extra_field_value = implode($JshopConfig->multi_charactiristic_separator, $tmp);
-                    $rows[] = array("id"=>$field_id, "name"=>$listfield[$field_id]->name, "description"=>$listfield[$field_id]->description, "value"=>$extra_field_value, "groupname"=>$listfield[$field_id]->groupname, 'field_value_ids'=>$listid);
+                    $rows[] = array("id"=>$field_id, "name"=>$listfield[$field_id]->name, "description"=>$listfield[$field_id]->description, "value"=>$extra_field_value, "groupname"=>$listfield[$field_id]->groupname, 'field_value_ids'=>$listid, 'group_id' => $field->group);
                 }
             }else{
                 if (isset($productExtraField[$field_name]) && $productExtraField[$field_name]!=""){
-                    $rows[] = array("id"=>$field_id, "name"=>$listfield[$field_id]->name, "description"=>$listfield[$field_id]->description, "value"=>$productExtraField[$field_name], "groupname"=>$listfield[$field_id]->groupname);
+                    $rows[] = array("id"=>$field_id, "name"=>$listfield[$field_id]->name, "description"=>$listfield[$field_id]->description, "value"=>$productExtraField[$field_name], "groupname"=>$listfield[$field_id]->groupname, 'group_id' => $field->group);
                 }
             }
         }
@@ -949,7 +966,8 @@ class ProductTable extends MultilangTable{
 		$userShop = \JSFactory::getUserShop();
         $productShop = \JSFactory::getModel('productshop', 'Site');
         $selects = array();
-        $dispatcher->triggerEvent('onBeforeBuildSelectAttribute', array(&$attributeValues, &$attributeActive, &$selects, &$attrib));
+		$obj = $this;
+        $dispatcher->triggerEvent('onBeforeBuildSelectAttribute', array(&$attributeValues, &$attributeActive, &$selects, &$attrib, &$obj));
 
         foreach($attrib as $k=>$v){
             $attr_id = $v->attr_id;

@@ -40,14 +40,20 @@ class ReviewMailModel  extends MailModel{
 		$mailfrom = $mainframe->getCfg('mailfrom');
         $fromname = $mainframe->getCfg('fromname');
 		
-        $mailer = \JFactory::getMailer();
-        $mailer->setSender(array($mailfrom, $fromname));
-        $mailer->addRecipient($jshopConfig->getAdminContactEmails());
-        $mailer->setSubject($this->getSubjectMail());
-        $mailer->setBody($this->getMessageMail());
-        $mailer->isHTML(true);
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "before"));
-        return $mailer->Send();
+        try {
+            $mailer = \JFactory::getMailer();
+            $mailer->setSender(array($mailfrom, $fromname));
+            $mailer->addRecipient($jshopConfig->getAdminContactEmails());
+            $mailer->setSubject($this->getSubjectMail());
+            $mailer->setBody($this->getMessageMail());
+            $mailer->isHTML(true);
+            extract(\JSHelper::Js_add_trigger(get_defined_vars(), "before"));
+            $res = $mailer->Send();
+        } catch (\Exception $e) {
+            $res = 0;
+            \JSHelper::saveToLog('error.log', 'Reviewmail mail send error: '.$e->getMessage());			
+        }
+        return $res;
     }
 	
 	protected function getReview(){

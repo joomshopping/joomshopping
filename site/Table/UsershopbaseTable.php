@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.7 15.09.2018
+* @version      5.2.0 05.06.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -54,10 +54,15 @@ abstract class UsershopbaseTable extends ShopbaseTable{
                     }
                 }
 				
-                if ($typecheck && !$checkfield->$typecheck($this->$field)) {
-                    $this->_error = \JText::_($fields_client_check[$field][1]);
-                    return false;
-                }
+				try {
+					if ($typecheck && !$checkfield->$typecheck($this->$field)) {
+						$this->_error = \JText::_($fields_client_check[$field][1]);
+						return false;
+					}
+				} catch (\Exception $e) {
+					$this->_error = $e->getMessage();
+					return false;
+				}
             }
         }        
 		

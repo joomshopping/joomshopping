@@ -71,7 +71,7 @@ class ShippingMethodPriceTable extends ShopbaseTable{
         }else{
             $total = $cart->getSum();
         }        
-        return ($total >= ($JshopConfig->summ_null_shipping * $JshopConfig->currency_value) && $JshopConfig->summ_null_shipping > 0);
+        return ($total >= (floatval($JshopConfig->summ_null_shipping) * floatval($JshopConfig->currency_value)) && floatval($JshopConfig->summ_null_shipping) > 0);
     }
 
     function calculateSum(&$cart){

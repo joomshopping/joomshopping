@@ -193,11 +193,14 @@ include(dirname(__FILE__)."/load.js.php");
                                     </td>
                                 <?php } ?>
 
-                                <td class="qty_price">
-                                    <span id="pricelist_from_<?php print $add_price->product_quantity_start?>">
+                                <td class="qty_price" id="pricelist_f_<?php print $add_price->product_quantity_start?>">
+                                    <span class="price" id="pricelist_from_<?php print $add_price->product_quantity_start?>">
                                         <?php print \JSHelper::formatprice($add_price->price)?><?php print $add_price->ext_price?>
                                     </span>
                                     <span class="per_piece">/ <?php print $this->product->product_add_price_unit?></span>
+                                    <?php if ($this->product->product_basic_price_show){?>
+                                        <span class="base">(<span class="price"><?php print \JSHelper::formatprice($add_price->basic_price)?></span> / <span class="bp_name"><?php print $this->product->product_basic_price_unit_name;?></span>)</span>
+                                    <?php }?>
                                 </td>
                                 <?php print $add_price->_tmp_var?>
                             </tr>

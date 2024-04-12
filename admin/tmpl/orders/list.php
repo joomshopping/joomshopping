@@ -70,7 +70,7 @@ $status_id = $input->getVar('status_id', '');
     </div>
 </div>
  
- <table class="table table-striped" width="100%">
+ <table class="table table-striped shop-list-order">
  <thead>
    <tr>
      <th width="20">
@@ -120,10 +120,7 @@ $status_id = $input->getVar('status_id', '');
      <th>
        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_STATUS'), 'order_status', $this->filter_order_Dir, $this->filter_order)?>
      </th>
-	 <?php print $this->_tmp_cols_6?>
-     <th>
-       <?php echo JText::_('JSHOP_ORDER_UPDATE')?>
-     </th>
+	 <?php print $this->_tmp_cols_6?>     
 	 <?php print $this->_tmp_cols_7?>
      <th>
        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ORDER_TOTAL'), 'order_total', $this->filter_order_Dir, $this->filter_order)?>
@@ -144,7 +141,7 @@ $status_id = $input->getVar('status_id', '');
    foreach($rows as $row){
        $display_info_order=$row->display_info_order;
    ?>
-   <tr class="row<?php echo ($i  %2);?>" <?php if (!$row->order_created) print "style='font-style:italic; color: #b00;'"?>>
+   <tr class="row<?php echo ($i  %2);?> <?php if (!$row->order_created) print 'order_not_created'?>">
      <td>
        <?php echo $pageNav->getRowOffset($i);?>
      </td>
@@ -218,25 +215,29 @@ $status_id = $input->getVar('status_id', '');
      <?php }?>
      <td>
         <?php if ($display_info_order && $row->order_created){
-            echo \JHTML::_('select.genericlist', $lists['status_orders'], 'select_status_id['.$row->order_id.']', 'class="inputbox form-control" style = "width: 100px" id="status_id_'.$row->order_id.'"', 'status_id', 'name', $row->order_status );
+            echo \JHTML::_('select.genericlist', $lists['status_orders'], 'select_status_id['.$row->order_id.']', 'class="inputbox form-control" style="width: 100px" id="status_id_'.$row->order_id.'"', 'status_id', 'name', $row->order_status );
         }else{
             print $this->list_order_status[$row->order_status];
         }
         ?>
 		<?php print $row->_tmp_ext_info_status?>
+		
+		<?php if ($row->order_created && $display_info_order){?>
+			<div class="d-none update_status_panel">
+				<div>
+					<input class="inputbox va-middle" type="checkbox" name="order_check_id[<?php echo $row->order_id?>]" id="order_check_id_<?php echo $row->order_id?>" />
+					<label class="fs-14" for="order_check_id_<?php echo $row->order_id?>"><?php echo JText::_('JSHOP_NOTIFY_CUSTOMER')?></label>
+				</div>
+				<input class="button btn btn-primary" type="button" name="" value="<?php echo JText::_('JSHOP_UPDATE_STATUS')?>" onclick="jshopAdmin.verifyStatus(<?php echo $row->order_status; ?>, <?php echo $row->order_id; ?>, '<?php echo addslashes(JText::_('JSHOP_CHANGE_ORDER_STATUS'))?>', 0);" />
+			</div>
+		 <?php }?>
+		 <?php if ($display_info_order && !$row->order_created && !$row->blocked){?>
+			<div><a href="index.php?option=com_jshopping&controller=orders&task=finish&order_id=<?php print $row->order_id?>&js_nolang=1"><?php print JText::_('JSHOP_FINISH_ORDER')?></a></div>
+		 <?php }?>
+		 <?php print $row->_tmp_ext_info_update?>
+		
      </td>
-	 <?php print $row->_tmp_cols_6?>
-     <td>
-     <?php if ($row->order_created && $display_info_order){?>
-        <input class="inputbox va-middle" type="checkbox" name="order_check_id[<?php echo $row->order_id?>]" id="order_check_id_<?php echo $row->order_id?>" />
-        <label class="fs-14" for="order_check_id_<?php echo $row->order_id?>"><?php echo JText::_('JSHOP_NOTIFY_CUSTOMER')?></label>
-        <input class="button btn btn-primary" type="button" name="" value="<?php echo JText::_('JSHOP_UPDATE_STATUS')?>" onclick="jshopAdmin.verifyStatus(<?php echo $row->order_status; ?>, <?php echo $row->order_id; ?>, '<?php echo addslashes(JText::_('JSHOP_CHANGE_ORDER_STATUS'))?>', 0);" />
-     <?php }?>
-     <?php if ($display_info_order && !$row->order_created && !$row->blocked){?>
-        <a href="index.php?option=com_jshopping&controller=orders&task=finish&order_id=<?php print $row->order_id?>&js_nolang=1"><?php print JText::_('JSHOP_FINISH_ORDER')?></a>
-     <?php }?>
-	 <?php print $row->_tmp_ext_info_update?>
-     </td>
+	 <?php print $row->_tmp_cols_6?>     
 	 <?php print $row->_tmp_cols_7?>
      <td>
        <?php if ($display_info_order) echo \JSHelper::formatprice( $row->order_total,$row->currency_code)?>
@@ -264,7 +265,7 @@ $status_id = $input->getVar('status_id', '');
    ?>
 <tr>
 	<?php
-    $cols = 10;
+    $cols = 9;
     if (!$jshopConfig->without_payment) $cols++;
     if (!$jshopConfig->without_shipping) $cols++;
     if ($this->show_vendor) $cols++;
@@ -280,7 +281,7 @@ $status_id = $input->getVar('status_id', '');
 <tfoot>
 <tr>
 	<?php 
-    $cols = 20;
+    $cols = 19;
     if (!$jshopConfig->without_payment) $cols++;
     if (!$jshopConfig->without_shipping) $cols++;
     if ($this->show_vendor) $cols++;

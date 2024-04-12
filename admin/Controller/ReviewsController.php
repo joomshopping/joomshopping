@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.4 02.05.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -92,15 +92,19 @@ class ReviewsController extends BaseadminController{
         $jshopConfig = \JSFactory::getConfig();
         $reviews_model = \JSFactory::getModel("reviews");
         $cid = $this->input->getVar('cid');
-        $review = $reviews_model->getReview($cid[0]);
-        $mark = \JHTML::_('select.genericlist', SelectOptions::getReviewMarks(), 'mark', 'class = "inputbox form-control"', 'value', 'text', $review->mark);
+		$id = $cid[0] ?? 0;
+		$edit = $this->getTask()=='edit';
+		if ($id) {
+			$review = $reviews_model->getReview($id);
+		} else {
+			$review = \JSFactory::getTable('review');        
+		}
+        $mark = \JHTML::_('select.genericlist', SelectOptions::getReviewMarks(), 'mark', 'class = "inputbox form-control form-select"', 'value', 'text', $review->mark ?? 0);
         \JFilterOutput::objectHTMLSafe($review, ENT_QUOTES);
 
         $view = $this->getView("comments", 'html');
-        $view->setLayout("edit");
-        if ($this->getTask()=='edit'){
-            $view->set('edit', 1);
-        }
+        $view->setLayout("edit");        
+		$view->set('edit', $edit);
         $view->set('review', $review);
         $view->set('mark', $mark);
         $view->set('config', $jshopConfig);

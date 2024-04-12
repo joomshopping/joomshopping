@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.4 02.05.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 class ReviewsModel extends BaseadminModel{
     
-    protected $nameTable = 'reviewTable';
+    protected $nameTable = 'review';
 
      function getAllReviews($category_id = null, $product_id = null, $limitstart = null, $limit = null, $text_search = null, $result = "list", $vendor_id = 0, $order = null, $orderDir = null) {
 
@@ -21,7 +21,7 @@ class ReviewsModel extends BaseadminModel{
         if ($product_id) $where .= " AND pr_rew.product_id='".$db->escape($product_id)."' ";
         if ($vendor_id) $where .= " AND pr.vendor_id='".$db->escape($vendor_id)."' ";
 
-        if($limit > 0) {
+        if ($limit > 0) {
             $limit = " LIMIT " . $limitstart . " , " . $limit;
         }
         $where .= ($text_search) ? ( " AND CONCAT_WS('|',pr.`".$lang->get('name')."`,pr.`".$lang->get('short_description')."`,pr.`".$lang->get('description')."`,pr_rew.review, pr_rew.user_name, pr_rew.user_email ) LIKE '%".$db->escape($text_search)."%' " ) : ('');
@@ -31,7 +31,7 @@ class ReviewsModel extends BaseadminModel{
             $ordering = $order." ".$orderDir;
         }
 
-        if($category_id) {
+        if ($category_id) {
             $query = "select pr.`".$lang->get('name')."` as name,pr_rew.* , DATE_FORMAT(pr_rew.`time`,'%d.%m.%Y %T') as dateadd
             from  #__jshopping_products_reviews as pr_rew
             LEFT JOIN #__jshopping_products  as pr USING (product_id)
@@ -56,7 +56,7 @@ class ReviewsModel extends BaseadminModel{
     function getReview($id){
         $db = \JFactory::getDBO();
         $lang = \JSFactory::getLang();
-        $query = "select pr_rew.*, pr.`".$lang->get('name')."` as name from #__jshopping_products_reviews as pr_rew LEFT JOIN #__jshopping_products  as pr USING (product_id)  where pr_rew.review_id = '$id'";
+        $query = "select pr_rew.*, pr.`".$lang->get('name')."` as name from #__jshopping_products_reviews as pr_rew LEFT JOIN #__jshopping_products  as pr USING (product_id)  where pr_rew.review_id = ".intval($id);
         $db->setQuery($query);
         return $db->loadObject();
     }
@@ -64,21 +64,21 @@ class ReviewsModel extends BaseadminModel{
     function getProdNameById($id){
         $db = \JFactory::getDBO();
         $lang = \JSFactory::getLang();
-        $query = "select pr.`".$lang->get('name')."` as name from #__jshopping_products  as pr where pr.product_id = '$id' LIMIT 1";
+        $query = "select pr.`".$lang->get('name')."` as name from #__jshopping_products  as pr where pr.product_id =".intval($id);
         $db->setQuery($query);
         return $db->loadResult();
     }
 
     function deleteReview($id){
         $db = \JFactory::getDBO();
-        $query = "delete from #__jshopping_products_reviews where review_id = '$id'";
+        $query = "delete from #__jshopping_products_reviews where review_id =".intval($id);
         $db->setQuery($query);
         return $db->execute();
     }
 
     public function save(array $post){
         $review = \JSFactory::getTable('review');
-        if( intval($post['review_id']) == 0 ) {
+        if (intval($post['review_id']) == 0) {
             $post['time'] = \JSHelper::getJsDate();
         }
         $dispatcher = \JFactory::getApplication();
@@ -94,7 +94,7 @@ class ReviewsModel extends BaseadminModel{
         }
 
         $review->bind($post);
-        if( !$review->store() ) {
+        if (!$review->store()){
             $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
         }

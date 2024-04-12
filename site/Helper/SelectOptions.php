@@ -85,7 +85,7 @@ class SelectOptions{
         if ($type===1){
             $first_name = $value1;
         }elseif ($type===2){
-            $first_name = \JText::_('JSHOP_NONE');
+            $first_name = ' - '.\JText::_('JSHOP_NONE').' - ';
         }elseif ($type===3){
             $first_name = \JText::_('JSHOP_SELECT');
         }elseif ($type===4){

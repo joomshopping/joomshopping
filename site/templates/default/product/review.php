@@ -45,7 +45,7 @@ defined('_JEXEC') or die();
             <div id="jshop_review_write" >
                 <div class = "row">
                     <div class = "col-lg-3">
-                        <label for="review_user_name"><?php print JText::_('JSHOP_REVIEW_USER_NAME')?><label>
+                        <label for="review_user_name"><?php print JText::_('JSHOP_REVIEW_USER_NAME')?></label>
                     </div>
                     <div class = "col-lg-9">
                         <input type="text" name="user_name" id="review_user_name" class="inputbox required" value="<?php print $this->user->name?>"/>

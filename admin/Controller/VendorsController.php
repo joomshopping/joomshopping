@@ -54,7 +54,7 @@ class VendorsController extends BaseadminController{
         if (!$id){
             $vendor->publish = 1;
         }
-        $lists['country'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'country','class = "inputbox form-control"','country_id','name', $vendor->country);
+        $lists['country'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'country','class = "inputbox form-control form-select"','country_id','name', $vendor->country);
 
         $nofilter = array();
         \JFilterOutput::objectHTMLSafe( $vendor, ENT_QUOTES, $nofilter);

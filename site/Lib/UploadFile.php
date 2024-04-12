@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 15.09.2022
+* @version      5.1.3 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -238,6 +238,23 @@ class UploadFile{
             return 0;
         }
     }
+	
+	static function generateArrayFilesFromMultipleUpload($files) {
+		if (!isset($files['tmp_name']) || !is_array($files['tmp_name'])) {
+			return [];
+		}
+		$res = [];
+		foreach($files['tmp_name'] as $k => $v) {
+			$res[$k] = [
+				'name' => $files['name'][$k],
+				'type' => $files['type'][$k],
+				'tmp_name' => $files['tmp_name'][$k],
+				'error' => $files['error'][$k],
+				'size' => $files['size'][$k]
+			];
+		}
+		return $res;
+	}
 
 }
 

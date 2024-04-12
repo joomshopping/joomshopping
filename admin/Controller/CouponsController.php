@@ -83,7 +83,7 @@ class CouponsController extends BaseadminController{
         }
         $currency_code = \JSHelper::getMainCurrencyCode();
         $lists['coupon_type'] = \JHTML::_('select.radiolist', SelectOptions::getCouponType(), 'coupon_type', 'onchange="jshopAdmin.changeCouponType()"', 'id', 'name', $coupon->coupon_type);
-        $lists['tax'] = \JHTML::_('select.genericlist', SelectOptions::getTaxs(), 'tax_id', 'class = "inputbox"', 'tax_id', 'tax_name', $coupon->tax_id);        
+        $lists['tax'] = \JHTML::_('select.genericlist', SelectOptions::getTaxs(), 'tax_id', 'class = "inputbox form-select"', 'tax_id', 'tax_name', $coupon->tax_id);        
         
         $view = $this->getView("coupons", 'html');
         $view->setLayout("edit");        

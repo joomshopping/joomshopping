@@ -15,11 +15,11 @@ defined('_JEXEC') or die();
 
 class CategoriesModel extends BaseadminModel{
     
-    protected $nameTable = 'CategoryTable';
+    protected $nameTable = 'category';
     protected $tableFieldPublish = 'category_publish';
     
     function getAllList($display=0){
-        $db = \JFactory::getDBO();        
+        $db = \JFactory::getDBO();
         $lang = \JSFactory::getLang();
         if (isset($order) && $order=="id") $orderby = "`category_id`";
         if (isset($order) && $order=="name") $orderby = "`".$lang->get('name')."`";
@@ -327,7 +327,7 @@ class CategoriesModel extends BaseadminModel{
         $first[] = \JHTML::_('select.option', '0',\JText::_('JSHOP_ORDERING_FIRST'),'ordering','name');
         $rows = array_merge($first, $rows);
         $currentOrdering = (!$currentOrdering) ? ($rows[count($rows) - 1]->ordering) : ($currentOrdering);
-        return (\JHTML::_('select.genericlist', $rows,'ordering','class="inputbox form-control"','ordering','name', $currentOrdering));
+        return (\JHTML::_('select.genericlist', $rows,'ordering','class="inputbox form-control form-select"','ordering','name', $currentOrdering));
     }
     
     public function deleteList(array $cid, $msg = 1){

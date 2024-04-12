@@ -22,9 +22,9 @@ $lists=$this->lists;
 <input type="hidden" name="task" value="">
 <input type="hidden" name="tab" value="2">
 
-<div class="col100">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_CURRENCY_PARAMETERS')?></legend>
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_CURRENCY_PARAMETERS')?></h3>
+<div class="card-body">
 <table class="admintable table-striped">
   <tr>
     <td class="key" >
@@ -79,9 +79,8 @@ $lists=$this->lists;
   </tr>
   <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
 </table>
-</fieldset>
 </div>
-<div class="clr"></div>
+</div>
 <?php print $this->tmp_html_end?>
 </form>
 </div>

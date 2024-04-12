@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.3 14.01.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,6 +16,7 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultAttribs();
 		}
+		\JFactory::getApplication()->triggerEvent('onSelectsGetCountry', array(&$options, &$name, &$attribs, &$selected));
     return \JHTML::_('select.genericlist', $options, $name, $attribs, 'country_id', 'name', $selected);
 	}
 	
@@ -24,6 +25,7 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultAttribs();
 		}
+		\JFactory::getApplication()->triggerEvent('onSelectsGetTitle', array(&$options, &$name, &$attribs, &$selected));
     return \JHTML::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
 	}
 	
@@ -32,6 +34,7 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultClientTypeAttribs();
 		}
+		\JFactory::getApplication()->triggerEvent('onSelectsGetClientType', array(&$options, &$name, &$attribs, &$selected));
     return \JHTML::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
 	}
 	
@@ -40,6 +43,7 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultProductsOrderingAttribs();
 		}
+		\JFactory::getApplication()->triggerEvent('onSelectsGetProductsOrdering', array(&$options, &$name, &$attribs, &$selected));
     return \JHTML::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
 	}
 	
@@ -48,6 +52,7 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultProductsCountAttribs();
 		}
+		\JFactory::getApplication()->triggerEvent('onSelectsGetProductsCount', array(&$options, &$name, &$attribs, &$selected));
     return \JHTML::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
 	}
 	
@@ -59,6 +64,7 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultAttribs('');
 		}
+		\JFactory::getApplication()->triggerEvent('onSelectsGetManufacturer', array(&$options, &$name, &$attribs, &$selected));
         return \JHTML::_('select.genericlist', $options, $name, $attribs, 'manufacturer_id', 'name', $selected);
 	}
 	
@@ -70,6 +76,7 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultAttribs('');
 		}
+		\JFactory::getApplication()->triggerEvent('onSelectsGetCategory', array(&$options, &$name, &$attribs, &$selected));
         return \JHTML::_('select.genericlist', $options, $name, $attribs, 'category_id', 'name', $selected);
 	}
 	
@@ -96,6 +103,7 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultFilterManufacturerAttribs();
 		}
+		\JFactory::getApplication()->triggerEvent('onSelectsGetFilterManufacturer', array(&$options, &$name, &$attribs, &$selected, &$key));
         return \JHTML::_('select.genericlist', $options, $name, $attribs, $key, 'name', $selected);
 	}
 	
@@ -110,6 +118,7 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultFilterCategoryAttribs();
 		}
+		\JFactory::getApplication()->triggerEvent('onSelectsGetFilterCategory', array(&$options, &$name, &$attribs, &$selected, &$key));
         return \JHTML::_('select.genericlist', $options, $name, $attribs, $key, 'name', $selected);
 	}
 	

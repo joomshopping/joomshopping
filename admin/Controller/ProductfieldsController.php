@@ -85,9 +85,9 @@ class ProductFieldsController extends BaseadminController{
         if (!isset($productfield->allcats)) $productfield->allcats = 1;
         
         $lists['allcats'] = \JHTML::_('select.radiolist', SelectOptions::getProductFieldShowCategory(), 'allcats', 'class="form-control" onclick="jshopAdmin.PFShowHideSelectCats()"', 'id', 'value', $productfield->allcats);
-        $lists['categories'] = \JHTML::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-control" size="10" multiple = "multiple"', 'category_id', 'name', $categories_selected);
-        $lists['type'] = \JHTML::_('select.radiolist', SelectOptions::getProductFieldTypes(), 'type', 'class="form-control"', 'id', 'value', $productfield->type);
-        $lists['group'] = \JHTML::_('select.genericlist', SelectOptions::getProductFieldGroups('- - -'), 'group', 'class="inputbox form-control"', 'id', 'name', $productfield->group);
+        $lists['categories'] = \JHTML::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-control form-select" size="10" multiple = "multiple"', 'category_id', 'name', $categories_selected);
+        $lists['type'] = \JHTML::_('select.radiolist', SelectOptions::getProductFieldTypes(), 'type', 'class="form-control form-select"', 'id', 'value', $productfield->type);
+        $lists['group'] = \JHTML::_('select.genericlist', SelectOptions::getProductFieldGroups('- - -'), 'group', 'class="inputbox form-control form-select"', 'id', 'name', $productfield->group);
         
         \JFilterOutput::objectHTMLSafe($productfield, ENT_QUOTES);
         

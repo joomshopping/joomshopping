@@ -721,13 +721,14 @@ class OrderTable extends ShopbaseTable{
         }
 	}
     
-    function saveOrderHistory($notify, $comments){
+    function saveOrderHistory($notify, $comments, $include_comment = 0){
         $history = \JSFactory::getTable('orderHistory');
         $history->order_id = $this->order_id;
         $history->order_status_id = $this->order_status;
         $history->status_date_added = \JSHelper::getJsDate();
         $history->customer_notify = $notify;
         $history->comments = $comments;	
+		$history->include_comment = $include_comment;
         $obj = $this;	
         \JFactory::getApplication()->triggerEvent('onBeforeJshopOrderSaveOrderHistory', array(&$history, &$notify, &$comments, &$obj));
         return $history->store();
@@ -846,11 +847,32 @@ class OrderTable extends ShopbaseTable{
         }
     }
 
+    public function saveTransaction($transaction){
+        $db = \JFactory::getDBO();
+        $query = "UPDATE `#__jshopping_orders` SET `transaction`=".$db->q($transaction)." WHERE order_id=".$db->q($this->order_id);
+        $db->setQuery($query);
+        $db->execute();
+    }
+
 	public function getCurrentOrderStatus() {
 		$db = \JFactory::getDBO();
         $query = "SELECT order_status, order_created FROM `#__jshopping_orders` WHERE order_id=".$db->q($this->order_id);
         $db->setQuery($query);
         return $db->loadObject();
 	}
+
+    public function orderCreateAndSetStatus($status, $need_create_order) {
+        $db = \JFactory::getDBO();
+		$db->lockTable('#__jshopping_orders');
+        $prev_order_status_data = $this->getCurrentOrderStatus();
+		$adv_query = $need_create_order ? ", order_created=1" : '';
+        $query = "UPDATE `#__jshopping_orders` SET order_status=".$db->q($status)." ".$adv_query." WHERE order_id=".$db->q($this->order_id);
+        $db->setQuery($query);
+        $db->execute();
+        $db->unlockTables();
+        $app = \JFactory::getApplication();
+        $app->triggerEvent('onOrderCreateAndSetStatus', array(&$this->order_id, &$status, &$prev_order_status_data));
+        return $prev_order_status_data;
+    }
 
 }

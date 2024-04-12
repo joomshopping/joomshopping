@@ -30,7 +30,7 @@ defined('_JEXEC') or die;
                     <input type="hidden" name="extra_fields[<?php print $ch_id?>][]" value="0" />
                     <?php if (is_array($characteristic_fieldvalues[$ch_id])){?>
                         <?php foreach($characteristic_fieldvalues[$ch_id] as $val_id=>$val_name){?>
-                            <div class="characteristic_val"><input type="checkbox" name="extra_fields[<?php print $ch_id?>][]" value="<?php print $val_id;?>" <?php if (is_array($extra_fields_active[$ch_id]) && in_array($val_id, $extra_fields_active[$ch_id])) print "checked";?> /> <?php print $val_name;?></div>
+                            <div class="characteristic_val"><input type="checkbox" name="extra_fields[<?php print $ch_id?>][]" value="<?php print $val_id;?>" <?php if (isset($extra_fields_active[$ch_id]) && in_array($val_id, $extra_fields_active[$ch_id])) print "checked";?> /> <?php print $val_name;?></div>
                         <?php }?>
                     <?php }?>
                 <?php }else{?>

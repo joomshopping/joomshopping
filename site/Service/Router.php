@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 13.09.2022
+* @version      5.1.3 19.01.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -48,6 +48,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 
 		if (isset($query['Itemid']) && $query['Itemid']) {
             $clearQuery = 1;
+			$app->triggerEvent('onBeforeBuildRouteClearQuery', array(&$query, &$segments, &$clearQuery));
             $menuItem = $menu->getItem($query['Itemid']);
 			$miquery = $menuItem->query ?? [];
 			if (isset($menuItem->type) && $menuItem->type == 'url') {
@@ -164,6 +165,13 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 			}
 		}
 
+		if ($controller=="vendor"){
+			if (isset($query['vendor_id'])) {
+				$segments[] = $query['vendor_id'];
+				unset($query['vendor_id']);
+			}
+		}
+
 		$app->triggerEvent('onAfterBuildRoute', array(&$query, &$segments));
 		return $segments;
 	}
@@ -184,6 +192,9 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		$app->triggerEvent('onBeforeParseRoute', array(&$vars, &$segments));
 		foreach($segments as $k=>$v){
 			$segments[$k] = \JSHelper::getSeoSegment($v);
+		}
+		if (empty($segments) && count($vars)) {
+			return $vars;
 		}
 		if (!isset($segments[1])){
 			$segments[1] = '';
@@ -232,6 +243,9 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 			if ($miquery['controller']=="vendor" && $miquery['task']==""){
 				$vars['controller'] = "vendor";
 				$vars['task'] = $segments[0];
+				if (isset($segments[1]) && $segments[1]) {
+					$vars['vendor_id'] = $segments[1];
+				}
 				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
 				return $vars;
@@ -339,6 +353,9 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 				$vars['page'] = $segments[2];
 			}
 
+			if ($vars['controller']=="vendor" && isset($segments[2])){
+				$vars['vendor_id'] = $segments[2];
+			}
 		}
 
 	$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));

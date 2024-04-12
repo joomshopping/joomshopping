@@ -129,9 +129,7 @@
 			// Prepare division control
 			if(typeof control.split=='number' && control.split>0){
 				var stw = ($.fn.width ? star.width() : 0) || control.starWidth;
-                stw = 16;//width star
 				var spi = (control.count % control.split), spw = Math.floor(stw/control.split);
-                
 				star
 				// restrict star's width and hide overflow (already in CSS)
 				.width(spw)

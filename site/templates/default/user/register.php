@@ -30,9 +30,9 @@ JHtml::_('behavior.formvalidator');
             <div class="controls">
                 <?php
 				if ($config_fields['title']['require']){
-					$attribs='class="inputbox form-control required"';
+					$attribs='class="inputbox form-control form-select required"';
 				}else{
-					$attribs='class="inputbox form-control"';
+					$attribs='class="inputbox form-control form-select"';
 				}
 				?>
 				<?php print Selects::getTitle($this->user->title, $attribs)?>
@@ -102,9 +102,9 @@ JHtml::_('behavior.formvalidator');
           <div class="controls">
 			<?php
 			if ($config_fields['client_type']['require']){
-				$attribs='class="inputbox form-control required"';
+				$attribs='class="inputbox form-control form-select required"';
 			}else{
-				$attribs='class="inputbox form-control"';
+				$attribs='class="inputbox form-control form-select"';
 			}
 			?>
 			<?php print Selects::getClientType($this->user->client_type, $attribs)?>
@@ -267,6 +267,7 @@ JHtml::_('behavior.formvalidator');
           <div class="control-label name">
             <label for="city">
             <?php print JText::_('JSHOP_CITY')?> <?php if ($config_fields['city']['require']) : ?><span>*</span><?php endif; ?>
+			</label>
           </div>
           <div class="controls">
             <input type="text" name="city" id="city" value="<?php print $this->user->city?>" class="input form-control <?php if ($config_fields['city']['require']):?>required<?php endif?>">
@@ -297,9 +298,9 @@ JHtml::_('behavior.formvalidator');
           <div class="controls">
 			<?php
 			if ($config_fields['country']['require']){
-				$attribs='class="inputbox form-control required"';
+				$attribs='class="inputbox form-control form-select required"';
 			}else{
-				$attribs='class="inputbox form-control"';
+				$attribs='class="inputbox form-control form-select"';
 			}
 			?>
 			<?php print Selects::getCountry($this->user->country, $attribs)?>

@@ -1,0 +1,1 @@
+ALTER TABLE `#__jshopping_order_history` ADD `include_comment` TINYINT NOT NULL AFTER `comments`;

@@ -219,6 +219,9 @@ var jshopClass = function(){
                     if (key.substr(0,3)=="pq_"){
                         jQuery("#pricelist_from_"+key.substr(3)).html(json[key]);
                     }
+                    if (key.substr(0,4)=="pqb_"){
+                        jQuery("#pricelist_f_"+key.substr(4)+' .base .price').html(json[key]);
+                    }
                 }
 
                 if (json.available=="0"){
@@ -233,10 +236,10 @@ var jshopClass = function(){
                     jQuery(".productfull .prod_buttons").show();
                 }
 
-                if (json.ean){
+                if (typeof json.ean !== 'undefined'){
                     jQuery("#product_code").html(json.ean);
                 }
-                if (json.manufacturer_code){
+                if (typeof json.manufacturer_code !== 'undefined'){
                     jQuery("#manufacturer_code").html(json.manufacturer_code);
                 }
 
@@ -257,9 +260,13 @@ var jshopClass = function(){
                 }
 
                 if (json.block_image_thumb || json.block_image_middle){
+					jQuery('.video_full').hide();
+					jQuery("#videoshophtml5").remove();
                     jQuery("#list_product_image_thumb").html(json.block_image_thumb);
                     jQuery("#list_product_image_middle").html(json.block_image_middle);
-                    jshop.initJSlightBox();
+					if (jshopParams.initJSlightBox) {
+						jshop.initJSlightBox();
+					}
                 }
 
                 if (typeof(json.demofiles)!='undefined'){

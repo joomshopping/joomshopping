@@ -12,7 +12,7 @@ defined('_JEXEC') or die();
 
 class ProductFieldsModel extends BaseadminModel{
     
-    protected $nameTable = 'productFieldTable';
+    protected $nameTable = 'productfield';
 	
 	function getList($groupordering = 0, $order = null, $orderDir = null, $filter=array(), $printCatName = 0){
         $db = \JFactory::getDBO();
@@ -68,6 +68,16 @@ class ProductFieldsModel extends BaseadminModel{
             }
         }
         return $rows;
+    }
+	
+	public function getPrepareDataSave($input){
+        $_lang = \JSFactory::getModel("languages");
+        $languages = $_lang->getAllLanguages(1);
+        $post = $input->post->getArray();
+        foreach($languages as $lang){
+            $post['description_'.$lang->language] = $input->get('description_'.$lang->language, '', 'RAW');
+        }
+        return $post;
     }
     
     function save(array $post){

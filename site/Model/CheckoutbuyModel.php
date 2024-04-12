@@ -235,33 +235,41 @@ class CheckoutBuyModel  extends CheckoutModel{
         $transactiondata = $res[3] ?? null;
 
         $status = $payment_system->getStatusFromResCode($rescode, $pmconfigs);
-
-        $order->transaction = $transaction;
-        $order->store();
+		if (isset($transaction)) {
+			$order->saveTransaction($transaction);
+		}
         $order->saveTransactionData($rescode, $status, $transactiondata);
 
         if ($restext!=''){
             \JSHelper::saveToLog("payment.log", $restext);
         }
 
-		$curOrderStatus = $order->getCurrentOrderStatus();
-        if ($status && !$curOrderStatus->order_created){
-            $order->order_created = 1;
-            $order->order_status = $status;
-            \JSFactory::getModel('checkoutorder', 'Site')->couponFinished($order);
-			$obj = $this;
-            $dispatcher->triggerEvent('onStep7OrderCreated', array(&$order, &$res, &$obj, &$pmconfigs));
-            $order->store();
-			if ($jshopConfig->send_order_email){
-                $this->sendOrderEmail($order->order_id);
-            }
-            $this->changeStatusOrder($order_id, $status, 0);
-        } elseif ($status && $curOrderStatus->order_status != $status){
-           $this->changeStatusOrder($order_id, $status, 1);
-        }
+		if ($status) {
+			$need_create_order = (!in_array($status, $jshopConfig->payment_status_no_create_order));
+			$prev_order_status_data = $order->orderCreateAndSetStatus($status, $need_create_order);
+			if (!$prev_order_status_data->order_created && $need_create_order) {
+				$order = \JSFactory::getTable('order');
+        		$order->load($order_id);
+				\JSFactory::getModel('checkoutorder', 'Site')->couponFinished($order);
+				$obj = $this;
+				$dispatcher->triggerEvent('onStep7OrderCreated', array(&$order, &$res, &$obj, &$pmconfigs));
+				$order->store();
+				if ($jshopConfig->send_order_email){
+					$this->sendOrderEmail($order->order_id);
+				}
+				$this->changeStatusOrder($order_id, $status, 0, $prev_order_status_data->order_status, 1);
+			} elseif ($prev_order_status_data->order_status != $status) {
+				$email_send = $prev_order_status_data->order_created;
+				$this->changeStatusOrder($order_id, $status, $email_send, $prev_order_status_data->order_status, $email_send);
+			}
+		}
 
 		$this->setCheckTransactionResCode($rescode);
 		$this->setCheckTransactionResText($restext);
+
+		$order = \JSFactory::getTable('order');
+        $order->load($order_id);
+
 		$obj = $this;
         $dispatcher->triggerEvent('onStep7BefereNotify', array(&$order, &$obj, &$pmconfigs));
 

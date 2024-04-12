@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 15.09.2022
+* @version      5.1.2 18.11.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -44,6 +44,7 @@ class CartModel{
         if (isset($objcart) && $objcart!=''){
             $temp_cart = unserialize($objcart);
             $this->products = $temp_cart->products;
+			if (!isset($this->products)) $this->products = [];
             $this->rabatt_id = $temp_cart->rabatt_id;
             $this->rabatt_value = $temp_cart->rabatt_value;
             $this->rabatt_type = $temp_cart->rabatt_type;

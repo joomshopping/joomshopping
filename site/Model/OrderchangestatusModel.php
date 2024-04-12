@@ -20,6 +20,7 @@ class OrderChangeStatusModel  extends BaseModel{
 	protected $include_comment;
 	protected $view_order;	
 	protected $comments;
+	protected $prev_status;
 	private $order;
 	private $vendorinfo;
 	private $tbl_order_status;
@@ -34,7 +35,7 @@ class OrderChangeStatusModel  extends BaseModel{
 		$this->tbl_order_status = \JSFactory::getTable('orderStatus');
 	}
 	
-	public function setData($order_id, $status, $sendmessage = 1, $status_id = 0, $notify = 1, $comments = '', $include_comment = 0, $view_order = 0){
+	public function setData($order_id, $status, $sendmessage = 1, $status_id = 0, $notify = 1, $comments = '', $include_comment = 0, $view_order = 0) {
 		$this->order_id = $order_id;
 		$this->status = $status;
 		$this->sendmessage = $sendmessage;
@@ -43,6 +44,12 @@ class OrderChangeStatusModel  extends BaseModel{
 		$this->comments = $comments;
 		$this->include_comment = $include_comment;
 		$this->view_order = $view_order;
+		$this->order->load($this->order_id);
+		$this->prev_status = $this->order->order_status;
+	}
+
+	public function setPrevStatus($status) {
+		$this->prev_status = $status;
 	}
 	
 	public function setAppAdmin($val){
@@ -52,12 +59,12 @@ class OrderChangeStatusModel  extends BaseModel{
 	public function getAppAdmin(){
 		return $this->appadmin;
 	}
-	
-	
+
 	public function store(){
         $jshopConfig = \JSFactory::getConfig();
 		$dispatcher = \JFactory::getApplication();
 
+		$return = null;
 		if ($this->getAppAdmin()){
 			$dispatcher->triggerEvent(
 				'onBeforeChangeOrderStatusAdmin', 
@@ -68,7 +75,9 @@ class OrderChangeStatusModel  extends BaseModel{
 					&$this->notify, 
 					&$this->comments, 
 					&$this->include_comment, 
-					&$this->view_order
+					&$this->view_order,
+					&$this->prev_status,
+					&$return
 				)
 			);
 		}else{
@@ -78,12 +87,17 @@ class OrderChangeStatusModel  extends BaseModel{
 					&$this->order_id, 
 					&$this->status, 
 					&$this->sendmessage, 
-					&$this->comments
+					&$this->comments,
+					&$this->prev_status,
+					&$return
 				)
 			);
 		}
+		if (isset($return)) {
+			return $return;
+		}
 
-		$prev_order_status = $this->orderStatusStore();
+		$this->orderStatusStore();
 		
 		if ($this->getAppAdmin()){
 			\JSFactory::loadLanguageFile($this->order->getLang(), true);
@@ -96,7 +110,7 @@ class OrderChangeStatusModel  extends BaseModel{
         
 		$this->order->updateProductsInStock();
         
-		$this->order->saveOrderHistory($this->notify, $this->comments);
+		$this->order->saveOrderHistory($this->notify, $this->comments, $this->include_comment);
 		
 		$this->order_details_url = $this->getOrderDetailsUrl();
 		
@@ -146,7 +160,7 @@ class OrderChangeStatusModel  extends BaseModel{
 					&$this->comments, 
 					&$this->include_comment, 
 					&$this->view_order, 
-					&$prev_order_status
+					&$this->prev_status
 				)
 			);
 		}else{
@@ -156,7 +170,7 @@ class OrderChangeStatusModel  extends BaseModel{
 					&$this->order_id, 
 					&$this->status, 
 					&$this->sendmessage, 
-					&$prev_order_status
+					&$this->prev_status
 				)
 			);
 		}
@@ -212,22 +226,28 @@ class OrderChangeStatusModel  extends BaseModel{
 			)
 		);
 		
-		$mailer = \JFactory::getMailer();
-		$mailer->setSender(array($mailfrom, $fromname));
-		$mailer->addRecipient($recipient);
-		$mailer->setSubject($subject);
-		$mailer->setBody($message);
-		$mailer->isHTML($ishtml);
-		$dispatcher->triggerEvent(
-			$this->getSendMailTriggerTypeAfter($type), 
-			array(
-				&$mailer, 
-				&$this->order_id, 
-				&$this->status, 
-				&$this->sendmessage, 
-				&$order)
-		);
-		return $mailer->Send();
+		try {
+			$mailer = \JFactory::getMailer();
+			$mailer->setSender(array($mailfrom, $fromname));
+			$mailer->addRecipient($recipient);
+			$mailer->setSubject($subject);
+			$mailer->setBody($message);
+			$mailer->isHTML($ishtml);
+			$dispatcher->triggerEvent(
+				$this->getSendMailTriggerTypeAfter($type), 
+				array(
+					&$mailer, 
+					&$this->order_id, 
+					&$this->status, 
+					&$this->sendmessage, 
+					&$order)
+			);
+			$res = $mailer->Send();
+		} catch (\Exception $e) {
+			$res = 0;
+			\JSHelper::saveToLog('error.log', 'Orderchangestatus mail send error: '.$e->getMessage());			
+		}
+		return $res;
 	}
 	
 	private function getOrderDetailsUrl(){
@@ -240,12 +260,9 @@ class OrderChangeStatusModel  extends BaseModel{
 	}
 	
 	private function orderStatusStore(){
-		$this->order->load($this->order_id);		
-		$prev_status = $this->order->order_status;
         $this->order->order_status = $this->status;
         $this->order->order_m_date = \JSHelper::getJsDate();
         $this->order->store();
-		return $prev_status;
 	}
 	
 	private function getSendMsg($type){

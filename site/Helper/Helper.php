@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 14.09.2022
+* @version      5.1.3 19.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -179,9 +179,9 @@ class Helper{
             $currency_code = $jshopConfig->currency_code;
         }
         if ($jshopConfig->decimal_count<0){
-            $price = round($price, $jshopConfig->decimal_count);
+            $price = round($price, intval($jshopConfig->decimal_count));
         }
-        $price = number_format($price, $jshopConfig->decimal_count, $jshopConfig->decimal_symbol, $jshopConfig->thousand_separator);
+        $price = number_format($price, intval($jshopConfig->decimal_count), $jshopConfig->decimal_symbol, $jshopConfig->thousand_separator);
         if ($style_currency==1) $currency_code = '<span class="currencycode">'.$currency_code.'</span>';
         $return = str_replace("Symb", $currency_code, str_replace("00", $price, $jshopConfig->format_currency[$jshopConfig->currency_format]));
         extract(self::js_add_trigger(get_defined_vars(), "after"));
@@ -190,7 +190,7 @@ class Helper{
 
     public static function formatEPrice($price){
         $jshopConfig = \JSFactory::getConfig();
-        return number_format($price, $jshopConfig->product_price_precision, '.', '');
+        return number_format($price, intval($jshopConfig->product_price_precision), '.', '');
     }
 
     public static function formatdate($date, $showtime = 0){
@@ -229,14 +229,14 @@ class Helper{
     public static function getRoundPriceProduct($price){
         $jshopConfig = \JSFactory::getConfig();
         if ($jshopConfig->price_product_round){
-            $price = round($price, $jshopConfig->decimal_count);
+            $price = round($price, intval($jshopConfig->decimal_count));
         }
         return $price;
     }
 
     public static function sprintCurrency($id, $field = 'currency_code'){
         $all_currency = \JSFactory::getAllCurrency();
-    return $all_currency[$id]->$field;
+	return $all_currency[$id]->$field ?? null;
     }
 
     public static function sprintUnitWeight(){
@@ -658,7 +658,7 @@ class Helper{
         $jshopConfig = \JSFactory::getConfig();
         if ($currency_id){
             $all_currency = \JSFactory::getAllCurrency();
-            $value = $all_currency[$currency_id]->currency_value;
+            $value = $all_currency[$currency_id]->currency_value ?? 1;
             if ($value == 0){
                 $value = 1;
             }
@@ -705,6 +705,7 @@ class Helper{
             $products[$key]->_tmp_var_bottom_buttons = "";
             $products[$key]->_tmp_var_end = "";
             $use_userdiscount = 1;
+            $products[$key]->user_discount = 0;
             if ($jshopConfig->user_discount_not_apply_prod_old_price && $products[$key]->product_old_price>0){
                 $use_userdiscount = 0;
             }else{
@@ -838,16 +839,20 @@ class Helper{
     }
 
     public static function checkCategoryAccess($cat_id) {
-        $app = \JFactory::getApplication();
-        $db = \JFactory::getDBO();
-        $user = \JFactory::getUser();
-        $groups = implode(',', $user->getAuthorisedViewLevels());
-        $adv_query =' AND cat.access IN ('.$groups.')';
-        $query = "SELECT cat.category_id FROM `#__jshopping_categories` AS cat
-            WHERE cat.category_publish=1 AND cat.category_id=".(int)$cat_id." ".$adv_query;
-        $app->triggerEvent('onListProductUpdateDatacheckCategoryAccess', array(&$cat_id, &$query));
-        $db->setQuery($query);
-        return ($db->loadResult() > 0);
+		static $res = [];
+		if (!isset($res[$cat_id])) {
+			$app = \JFactory::getApplication();
+			$db = \JFactory::getDBO();
+			$user = \JFactory::getUser();
+			$groups = implode(',', $user->getAuthorisedViewLevels());
+			$adv_query =' AND cat.access IN ('.$groups.')';
+			$query = "SELECT cat.category_id FROM `#__jshopping_categories` AS cat
+				WHERE cat.category_publish=1 AND cat.category_id=".(int)$cat_id." ".$adv_query;
+			$app->triggerEvent('onListProductUpdateDatacheckCategoryAccess', array(&$cat_id, &$query));
+			$db->setQuery($query);
+			$res[$cat_id] = ($db->loadResult() > 0);
+		}
+		return $res[$cat_id];
     }
 
     public static function getProductBasicPriceInfo($obj, $price){
@@ -873,7 +878,7 @@ class Helper{
         foreach($displayfields as $field_id){
             $field_name = "extra_field_".$field_id;
             if ($fields[$field_id]->type==0){
-                if ($product->$field_name!=0){
+                if ($product->$field_name!=0 && $product->$field_name!=''){
                     $listid = explode(',', $product->$field_name);
                     $tmp = [];
                     foreach($listid as $extrafiledvalueid){

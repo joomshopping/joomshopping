@@ -20,9 +20,10 @@ $jshopConfig=$this->config;
 <?php print $this->tmp_html_start?>
 <input type="hidden" name="task" value="">
 <input type="hidden" name="tab" value="10">
-<div class="col100">
-<fieldset class="adminform">
-<legend><?php echo JText::_('JSHOP_OC')?></legend>
+
+<div class="card">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_OC')?></h3>
+<div class="card-body">
 <table class="admintable table-striped">
 <tr>
     <td class="key" style="width:220px">
@@ -63,7 +64,7 @@ $jshopConfig=$this->config;
                 }
                 $option[] = \JHTML::_('select.option', $k2, $option_name, 'id', 'name');
             }
-            print \JHTML::_('select.genericlist', $option, $k, 'class = "inputbox form-control"', 'id', 'name', $jshopConfig->$k);
+            print \JHTML::_('select.genericlist', $option, $k, 'class = "inputbox form-control form-select"', 'id', 'name', $jshopConfig->$k);
             ?>
         <?php }else{?>
 		    <input type="text" name="<?php print $k?>" class = "form-control" value="<?php echo $jshopConfig->$k?>">
@@ -75,9 +76,8 @@ $jshopConfig=$this->config;
 <?php } ?>
 <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
 </table>
-</fieldset>
 </div>
-<div class="clr"></div>
+</div>
 <?php print $this->tmp_html_end?>
 </form>
 </div>

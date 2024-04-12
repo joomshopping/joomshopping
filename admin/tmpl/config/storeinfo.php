@@ -24,9 +24,9 @@ $lists=$this->lists;
 <input type="hidden" name="tab" value="5">
 <input type="hidden" name="vendor_id" value="<?php print $vendor->id;?>">
 
-<div class="col100" id="storeinfo">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_STORE_INFO')?></legend>
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_STORE_INFO')?></h3>
+  <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td class="key">
@@ -101,13 +101,13 @@ $lists=$this->lists;
      </td>
     </tr>    
     </table>
-</fieldset>
+  </div>
 </div>
-<div class="clr"></div>
 
-<div class="col100" id="contactinfo">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_CONTACT_INFO')?></legend>
+
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_CONTACT_INFO')?></h3>
+  <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td  class="key">
@@ -158,13 +158,13 @@ $lists=$this->lists;
      </td>
     </tr>
     </table>
-</fieldset>
 </div>
-<div class="clr"></div>
+</div>
 
-<div class="col100" id="bankinfo">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_BANK')?></legend>
+
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_BANK')?></h3>
+  <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td  class="key">
@@ -224,13 +224,12 @@ $lists=$this->lists;
      </td>
     </tr>
     </table>
-</fieldset>
+  </div>
 </div>
-<div class="clr"></div>
 
-<div class="col100" id="bank2info">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_INTERM_BANK')?></legend>
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_INTERM_BANK')?></h3>
+  <div class="card-body">    
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td  class="key">
@@ -249,12 +248,12 @@ $lists=$this->lists;
      </td>
     </tr>
     </table>
-</fieldset>
 </div>
-<div class="clr"></div>
+</div>
 
-<div class="col100" id="taxinfo">
-<fieldset class="adminform">
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_STORE_INFO')?></h3>
+  <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td  class="key">
@@ -281,13 +280,13 @@ $lists=$this->lists;
      </td>
     </tr>
     </table>
-</fieldset>
+  </div>
 </div>
-<div class="clr"></div>
 
-<div class="col100" id="pdfinfo">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_PDF_CONFIG')?></legend>
+
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_PDF_CONFIG')?></h3>
+  <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
     <td  class="key">
@@ -356,9 +355,8 @@ $lists=$this->lists;
     </tr>
     </table>
 
-</fieldset>
+  </div>
 </div>
-<div class="clr"></div>
 
 <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
 <?php print $this->tmp_html_end?>

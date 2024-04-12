@@ -21,9 +21,9 @@ $lists = $this->lists;
 <input type="hidden" name="task" value="">
 <input type="hidden" name="tab" value="1">
 
-<div class="col100 jshop_edit">
-<fieldset class="adminform">
-    <legend><?php echo JText::_('JSHOP_GENERAL_PARAMETERS')?></legend>
+<div class="card jshop_edit">
+<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_GENERAL_PARAMETERS')?></h3>
+<div class="card-body">
 <table class="admintable table-striped">
 <tr>
     <td class="key" style="width:220px">
@@ -126,9 +126,8 @@ $lists = $this->lists;
 <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
 	
 </table>
-</fieldset>
 </div>
-<div class="clr"></div>
+</div>
 <?php print $this->tmp_html_end?>
 </form>
 </div>

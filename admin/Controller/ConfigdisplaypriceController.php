@@ -49,9 +49,9 @@ class ConfigDisplayPriceController extends BaseadminController{
         }
         
         $display_price_list = SelectOptions::getPriceType();        
-        $lists['display_price'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price', '', 'id', 'name', $configdisplayprice->display_price);
-        $lists['display_price_firma'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price_firma', '', 'id', 'name', $configdisplayprice->display_price_firma);
-        $lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'countries_id[]', 'size = "10", multiple = "multiple"', 'country_id', 'name', $zone_countries);
+        $lists['display_price'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price', 'class = "inputbox form-control form-select"', 'id', 'name', $configdisplayprice->display_price);
+        $lists['display_price_firma'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price_firma', 'class = "inputbox form-control form-select"', 'id', 'name', $configdisplayprice->display_price_firma);
+        $lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'countries_id[]', 'class = "inputbox form-control form-select" size = "10" multiple = "multiple"', 'country_id', 'name', $zone_countries);
         
         \JFilterOutput::objectHTMLSafe($configdisplayprice, ENT_QUOTES);
 

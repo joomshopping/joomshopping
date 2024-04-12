@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.1.2 24.12.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -19,6 +19,7 @@ class StaticTextTable extends ShopbaseTable{
         $lang = \JSFactory::getLang();
         $db = \JFactory::getDBO();         
         $query = "SELECT id, alias, `".$lang->get('text')."` as text FROM `#__jshopping_config_statictext` where alias='".$db->escape($alias)."'";
+		\JFactory::getApplication()->triggerEvent('onBeforeLoadDataStaticTextTable', array(&$query, &$alias));
         $db->setQuery($query);
         return $db->loadObJect();
     }

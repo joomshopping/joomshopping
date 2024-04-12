@@ -77,17 +77,17 @@ class PaymentsController extends BaseadminController{
         }
         
         if ($jshopConfig->tax){
-            $lists['tax'] = \JHTML::_('select.genericlist', SelectOptions::getTaxs(0, 0, array('product_tax_rate'=>1)), 'tax_id', 'class = "inputbox form-control"','tax_id','tax_name', $payment->tax_id);
+            $lists['tax'] = \JHTML::_('select.genericlist', SelectOptions::getTaxs(0, 0, array('product_tax_rate'=>1)), 'tax_id', 'class = "inputbox form-control form-select"','tax_id','tax_name', $payment->tax_id);
         }
 
-        $lists['price_type'] = \JHTML::_('select.genericlist', SelectOptions::getPaymentPriceTypes(), 'price_type', 'class = "inputbox form-control"', 'id', 'name', $payment->price_type);
+        $lists['price_type'] = \JHTML::_('select.genericlist', SelectOptions::getPaymentPriceTypes(), 'price_type', 'class = "inputbox form-control form-select"', 'id', 'name', $payment->price_type);
 
         if ($jshopConfig->shop_mode==0 && $payment_id){
             $disabled = 'disabled';
         }else{
             $disabled = '';
         }
-        $lists['type_payment'] = \JHTML::_('select.genericlist', SelectOptions::getPaymentType(), 'payment_type','class = "inputbox form-control" '.$disabled, 'id','name', $payment->payment_type);
+        $lists['type_payment'] = \JHTML::_('select.genericlist', SelectOptions::getPaymentType(), 'payment_type','class = "inputbox form-control form-select" '.$disabled, 'id','name', $payment->payment_type);
         
         $nofilter = array();
         \JFilterOutput::objectHTMLSafe($payment, ENT_QUOTES, $nofilter);

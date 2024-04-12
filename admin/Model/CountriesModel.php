@@ -11,7 +11,7 @@ defined('_JEXEC') or die();
 
 class CountriesModel extends BaseadminModel{
     
-    protected $nameTable = 'countryTable';
+    protected $nameTable = 'country';
     protected $tableFieldPublish = 'country_publish';
     
     /**

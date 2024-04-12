@@ -11,7 +11,11 @@ defined('_JEXEC') or die();
 <div id="product_related" class="tab-pane">
    <div class="col100">
     <fieldset class="adminform">
-        <legend><?php echo JText::_('JSHOP_PRODUCT_RELATED')?></legend>
+        <?php if ($this->getLayout() == 'editlist') {?>
+        <div class="mb-2 mt-2">
+            <?php print $this->lists['add_new_related']?>
+        </div>
+        <?php } ?>
         <div id="list_related">
         <?php
             foreach($this->related_products as $row_related){
@@ -42,7 +46,7 @@ defined('_JEXEC') or die();
     </fieldset>
     </div>
     <div class="clr"></div>
-    <?php $pkey='plugin_template_related'; if ($this->$pkey){ print $this->$pkey;}?>
+    <?php $pkey='plugin_template_related'; print $this->$pkey ?? '';?>
    <br/>
    <div class="col100">
     <fieldset class="adminform">

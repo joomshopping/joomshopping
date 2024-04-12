@@ -227,13 +227,13 @@ class UserController extends BaseController{
 
         if ($return === false){
             $this->setMessage(\JText::sprintf('COM_USERS_REGISTRATION_SAVE_FAILED', $model->getError()), 'warning');
-            $this->setRedirect('index.php');
+            $this->setRedirect(\JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=login",1,1,$jshopConfig->use_ssl));
             return false;
         }
 		
 		$msg = $model->getMessageUserActivation($return);
         $this->setMessage($msg);
-        $this->setRedirect(\JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=login",0,1,$jshopConfig->use_ssl));
+        $this->setRedirect(\JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=login",1,1,$jshopConfig->use_ssl));
         return true;
     }
     

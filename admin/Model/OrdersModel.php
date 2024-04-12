@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.2.0 05.06.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -115,6 +115,8 @@ class OrdersModel extends BaseadminModel{
     
     function saveOrderItem($order_id, $post, $old_items){
         $db = \JFactory::getDBO();
+		$jshopConfig = \JSFactory::getConfig();
+		$dispatcher = \JFactory::getApplication();
         if (!isset($post['product_name'])) $post['product_name'] = array();
 
         $edit_order_items = array();
@@ -132,8 +134,8 @@ class OrdersModel extends BaseadminModel{
             $order_item->manufacturer_code = $post['manufacturer_code'][$k] ?? '';
             $order_item->product_name = $post['product_name'][$k];
             $order_item->product_quantity = \JSHelper::saveAsPrice($post['product_quantity'][$k]);
-            $order_item->product_item_price = $post['product_item_price'][$k];
-            $order_item->product_tax = $post['product_tax'][$k] ?? 0;
+            $order_item->product_item_price = \JSHelper::saveAsPrice($post['product_item_price'][$k]);
+            $order_item->product_tax = \JSHelper::saveAsPrice($post['product_tax'][$k] ?? 0);
             $order_item->product_attributes = $post['product_attributes'][$k] ?? '';
             if (json_decode($post['attributes'][$k])){
                 $attribute = (array)json_decode($post['attributes'][$k]);
@@ -153,6 +155,14 @@ class OrdersModel extends BaseadminModel{
             if (!$order_item_id){
                 $order_item->files = serialize($product->getSaleFiles());
             }
+			if ($jshopConfig->admin_show_product_extra_field && count($jshopConfig->getCartDisplayExtraFields())>0){
+                $extra_fields = $product->getExtraFields(2);
+				$order_item->extra_fields = '';
+				foreach($extra_fields as $extra_field){
+                    $order_item->extra_fields .= $extra_field['name'].': '.$extra_field['value']."\n";
+                }
+            }
+			$dispatcher->triggerEvent('onBeforeSaveOrderItemAdmin', array(&$order_item, &$post, &$k, &$v));
             $order_item->store();
             unset($order_item);
         }
@@ -160,7 +170,7 @@ class OrdersModel extends BaseadminModel{
         foreach($old_items as $k=>$v){
             if (!in_array($v->order_item_id, $edit_order_items)){
                 $order_item = \JSFactory::getTable('orderItem');
-                $order_item->delete($v->order_item_id);                
+                $order_item->delete($v->order_item_id);
             }
         }
         extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
@@ -224,7 +234,7 @@ class OrdersModel extends BaseadminModel{
             $paym_method = \JSFactory::getTable('paymentmethod');
             $paym_method->load($payment_method_id);
             $paym_method->setCart($cart);
-            $payment_taxes = $paym_method->calculateTaxList($price);            
+            $payment_taxes = $paym_method->calculateTaxList($price);
             foreach($payment_taxes as $k=>$v){
                 $k = (string)floatval($k);
                 $SumTax = (isset($taxes[$k]))?$taxes[$k]:0;
@@ -242,7 +252,7 @@ class OrdersModel extends BaseadminModel{
         
         // tax shipping
         if ($data_order['order_shipping']>0){
-            $price = $data_order['order_shipping'];            
+            $price = $data_order['order_shipping'];
             $shipping_taxes = $shipping_method_price->calculateShippingTaxList($price, $cart);
             foreach($shipping_taxes as $k=>$v){
                 $k = (string)floatval($k);
@@ -311,7 +321,7 @@ class OrdersModel extends BaseadminModel{
         $cart->loadProductsFromArray($cproducts);
         $cart->loadPriceAndCountProducts();
         
-        $shipping_method_price->load($shipping_price_method_id);            
+        $shipping_method_price->load($shipping_price_method_id);
         $prices = $shipping_method_price->calculateSum($cart);
         extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
         foreach($prices as $k=>$v){
@@ -363,8 +373,8 @@ class OrdersModel extends BaseadminModel{
             if ($data_order['display_price']){
                 $shipping_taxes = $shipping_method_price->calculateShippingTaxList($shipping_price, $cart);                
                 foreach($shipping_taxes as $k=>$v){
-                    $shipping_price = $shipping_price + $v;    
-                }                
+                    $shipping_price = $shipping_price + $v;
+                }
             }
             $total += $shipping_price;
             
@@ -374,7 +384,7 @@ class OrdersModel extends BaseadminModel{
                 $shipping_taxes = $shipping_method_price->calculatePackageTaxList($package_price, $cart);
                 foreach($shipping_taxes as $k=>$v){
                     $package_price = $package_price + $v;    
-                }                
+                }
             }
             $total += $package_price;
 
@@ -481,6 +491,7 @@ class OrdersModel extends BaseadminModel{
         $file_generete_pdf_order = $jshopConfig->file_generete_pdf_order;
         $dispatcher = \JFactory::getApplication();
         $order_id = intval($post['order_id']);
+		$new_order = !$order_id;
         $order = \JSFactory::getTable('order');
         $order->load($order_id);
         if (!$order_id){
@@ -512,7 +523,7 @@ class OrdersModel extends BaseadminModel{
             if (isset($post['tax_percent'])){
                 foreach($post['tax_percent'] as $k=>$v){
                     if ($post['tax_percent'][$k]!="" || $post['tax_value'][$k]!=""){
-                        $order_tax_ext[number_format($post['tax_percent'][$k],2)] = $post['tax_value'][$k];
+                        $order_tax_ext[number_format($post['tax_percent'][$k],2)] = \JSHelper::saveAsPrice($post['tax_value'][$k]);
                     }
                 }
             }
@@ -529,6 +540,14 @@ class OrdersModel extends BaseadminModel{
         $dispatcher->triggerEvent('onBeforeSaveOrder', array(&$post, &$file_generete_pdf_order, &$order));
 
         $applyCoupon = $order->applyCoupon($post['coupon_code'] ?? '');
+		
+		$fields_float = ['order_subtotal', 'order_discount', 'order_shipping', 'order_package', 'order_payment', 'order_total'];
+		foreach($fields_float as $v) {
+			if (isset($post[$v])) {
+				$post[$v] = \JSHelper::saveAsPrice($post[$v]);
+			}
+		}
+		
 
         $order->bind($post);
 		$order->delivery_times_id = $post['order_delivery_times_id'] ?? 0;
@@ -549,6 +568,10 @@ class OrdersModel extends BaseadminModel{
         if ($update_product_stock){
             $order->changeProductQTYinStock('-');
         }
+		
+		if ($new_order) {
+			$order->saveOrderHistory($order->order_created, '');
+		}
 
         if ($order->order_created==1 && $order_created_prev==0){
 			$order->updateProductsInStock(1);
@@ -556,6 +579,9 @@ class OrdersModel extends BaseadminModel{
             $checkout = \JSFactory::getModel('checkout', 'Site');
             if ($jshopConfig->send_order_email){
                 $checkout->sendOrderEmail($order_id, 1);
+            }
+			if (!$new_order) {
+                $order->saveOrderHistory(1, '');
             }
         }elseif($order->order_created==1 && $jshopConfig->generate_pdf){
 			$order->load($order_id);

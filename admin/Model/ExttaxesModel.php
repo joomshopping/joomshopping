@@ -12,7 +12,7 @@ defined('_JEXEC') or die();
 
 class ExtTaxesModel extends BaseadminModel{
     
-    protected $nameTable = 'taxExt';
+    protected $nameTable = 'taxext';
     
     public function getPrepareDataSave($input){
         $post = $input->post->getArray();

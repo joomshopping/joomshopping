@@ -184,7 +184,7 @@ if ($saveOrder){
    </td>
    <td>
      <b><a href="index.php?option=com_jshopping&controller=products&task=edit&product_id=<?php print $row->product_id?>"><?php echo $row->name;?></a></b>
-     <div><?php echo $row->short_description;?></div>
+     <div class="small"><?php echo $row->short_description;?></div>
    </td>
    <?php print $row->tmp_html_col_after_title?>
    <?php if (!$category_id){?>

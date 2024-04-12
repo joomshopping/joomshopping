@@ -12,7 +12,7 @@ defined('_JEXEC') or die();
 
 class CurrenciesModel extends BaseadminModel{
     
-    protected $nameTable = 'currencyTable';
+    protected $nameTable = 'currency';
     protected $tableFieldOrdering = 'currency_ordering';
     protected $tableFieldPublish = 'currency_publish';
 

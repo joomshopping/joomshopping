@@ -61,12 +61,12 @@ class AttributesController extends BaseadminController{
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
 
-        $type_attribut = \JHTML::_('select.genericlist', SelectOptions::getAttributeType(), 'attr_type','class = "inputbox form-control"','attr_type_id','attr_type',$attribut->attr_type);
+        $type_attribut = \JHTML::_('select.genericlist', SelectOptions::getAttributeType(), 'attr_type','class = "inputbox form-control form-select"','attr_type_id','attr_type',$attribut->attr_type);
         $dependent_attribut = \JHTML::_('select.radiolist', SelectOptions::getAttributeDependent(), 'independent','class = "inputbox form-control"','id','name', $attribut->independent);
         $lists['allcats'] = \JHTML::_('select.radiolist', SelectOptions::getAttributeShowCategory(), 'allcats','onclick="jshopAdmin.PFShowHideSelectCats()"','id','value', $attribut->allcats);
         $categories_selected = $attribut->getCategorys();
-        $lists['categories'] = \JHTML::_('select.genericlist', SelectOptions::getCategories(0), 'category_id[]','class="inputbox form-control" size="10" multiple = "multiple"','category_id','name', $categories_selected);
-        $lists['group'] = \JHTML::_('select.genericlist', SelectOptions::getAttributeGroups(),'group','class="inputbox form-control"','id','name', $attribut->group);
+        $lists['categories'] = \JHTML::_('select.genericlist', SelectOptions::getCategories(0), 'category_id[]','class="inputbox form-control form-select" size="10" multiple = "multiple"','category_id','name', $categories_selected);
+        $lists['group'] = \JHTML::_('select.genericlist', SelectOptions::getAttributeGroups(),'group','class="inputbox form-control form-select"','id','name', $attribut->group);
         
         \JFilterOutput::objectHTMLSafe($attribut, ENT_QUOTES);
 	    

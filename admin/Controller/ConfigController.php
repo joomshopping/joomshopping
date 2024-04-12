@@ -40,10 +40,10 @@ class ConfigController extends BaseadminController{
     function general(){
 	    $jshopConfig = \JSFactory::getConfig();
 
-        $lists['languages'] = \JHTML::_('select.genericlist', \JSHelper::getAllLanguages(), 'defaultLanguage', 'class = "form-control"', 'language', 'name', $jshopConfig->defaultLanguage);
+        $lists['languages'] = \JHTML::_('select.genericlist', \JSHelper::getAllLanguages(), 'defaultLanguage', 'class = "form-control form-select"', 'language', 'name', $jshopConfig->defaultLanguage);
         $display_price_list = SelectOptions::getPriceType();
-        $lists['display_price_admin'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price_admin', 'class = "form-control"', 'id', 'name', $jshopConfig->display_price_admin);
-        $lists['display_price_front'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price_front', 'class = "form-control"', 'id', 'name', $jshopConfig->display_price_front);
+        $lists['display_price_admin'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price_admin', 'class = "form-control form-select"', 'id', 'name', $jshopConfig->display_price_admin);
+        $lists['display_price_front'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price_front', 'class = "form-control form-select"', 'id', 'name', $jshopConfig->display_price_front);
         $lists['template'] = \JSHelperAdmin::getShopTemplatesSelect($jshopConfig->template);
 
     	$view = $this->getView("config", 'html');
@@ -65,18 +65,18 @@ class ConfigController extends BaseadminController{
         $displayprice[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_YES'), 'id', 'value');
         $displayprice[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_NO'), 'id', 'value');
         $displayprice[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_ONLY_REGISTER_USER'), 'id', 'value');
-        $lists['displayprice'] = \JHTML::_('select.genericlist', $displayprice, 'displayprice','class = "form-control"','id','value', $jshopConfig->displayprice);
+        $lists['displayprice'] = \JHTML::_('select.genericlist', $displayprice, 'displayprice','class = "form-control form-select"','id','value', $jshopConfig->displayprice);
         
         $catsort = array();
         $catsort[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_SORT_MANUAL'), 'id','value');
         $catsort[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_SORT_ALPH'), 'id','value');
-        $lists['category_sorting'] = \JHTML::_('select.genericlist', $catsort, 'category_sorting','class = "form-control"','id','value', $jshopConfig->category_sorting);
-        $lists['manufacturer_sorting'] = \JHTML::_('select.genericlist', $catsort, 'manufacturer_sorting','class = "form-control"','id','value', $jshopConfig->manufacturer_sorting);
+        $lists['category_sorting'] = \JHTML::_('select.genericlist', $catsort, 'category_sorting','class = "form-control form-select"','id','value', $jshopConfig->category_sorting);
+        $lists['manufacturer_sorting'] = \JHTML::_('select.genericlist', $catsort, 'manufacturer_sorting','class = "form-control form-select"','id','value', $jshopConfig->manufacturer_sorting);
         
         $sortd = array();
         $sortd[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_A_Z'), 'id','value');
         $sortd[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_Z_A'), 'id','value');
-        $lists['product_sorting_direction'] = \JHTML::_('select.genericlist', $sortd, 'product_sorting_direction','class = "form-control"','id','value', $jshopConfig->product_sorting_direction);
+        $lists['product_sorting_direction'] = \JHTML::_('select.genericlist', $sortd, 'product_sorting_direction','class = "form-control form-select"','id','value', $jshopConfig->product_sorting_direction);
         
         $opt = array();
         $opt[] = \JHTML::_('select.option', 'V.value_ordering', \JText::_('JSHOP_SORT_MANUAL'), 'id','value');
@@ -85,31 +85,31 @@ class ConfigController extends BaseadminController{
         $opt[] = \JHTML::_('select.option', 'PA.ean', \JText::_('JSHOP_EAN_PRODUCT'), 'id','value');
         $opt[] = \JHTML::_('select.option', 'PA.count', \JText::_('JSHOP_QUANTITY_PRODUCT'), 'id','value');
         $opt[] = \JHTML::_('select.option', 'PA.product_attr_id', \JText::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
-        $lists['attribut_dep_sorting_in_product'] = \JHTML::_('select.genericlist', $opt, 'attribut_dep_sorting_in_product','class = "form-control"','id','value', $jshopConfig->attribut_dep_sorting_in_product);
+        $lists['attribut_dep_sorting_in_product'] = \JHTML::_('select.genericlist', $opt, 'attribut_dep_sorting_in_product','class = "form-control form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product);
         
         $opt = array();
         $opt[] = \JHTML::_('select.option', 'V.value_ordering', \JText::_('JSHOP_SORT_MANUAL'), 'id','value');
         $opt[] = \JHTML::_('select.option', 'value_name', \JText::_('JSHOP_SORT_ALPH'), 'id','value');
         $opt[] = \JHTML::_('select.option', 'addprice', \JText::_('JSHOP_SORT_PRICE'), 'id','value');
         $opt[] = \JHTML::_('select.option', 'PA.id', \JText::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
-        $lists['attribut_nodep_sorting_in_product'] = \JHTML::_('select.genericlist', $opt, 'attribut_nodep_sorting_in_product','class = "form-control"','id','value', $jshopConfig->attribut_nodep_sorting_in_product);        
+        $lists['attribut_nodep_sorting_in_product'] = \JHTML::_('select.genericlist', $opt, 'attribut_nodep_sorting_in_product','class = "form-control form-select"','id','value', $jshopConfig->attribut_nodep_sorting_in_product);        
         
         $select = array();        
         foreach($jshopConfig->sorting_products_name_select as $key => $value){
             $select[] = \JHTML::_('select.option', $key, \JText::_($value), 'id', 'value');
         }
-        $lists['product_sorting'] = \JHTML::_('select.genericlist',$select, "product_sorting", 'class = "form-control"', 'id','value', $jshopConfig->product_sorting);
+        $lists['product_sorting'] = \JHTML::_('select.genericlist',$select, "product_sorting", 'class = "form-control form-select"', 'id','value', $jshopConfig->product_sorting);
         
         if ($jshopConfig->admin_show_product_extra_field){
             $_productfields = \JSFactory::getModel("productfields");
             $rows = $_productfields->getList();
-            $lists['product_list_display_extra_fields'] = \JHTML::_('select.genericlist', $rows, "product_list_display_extra_fields[]", ' class = "form-control" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getProductListDisplayExtraFields() );
-            $lists['filter_display_extra_fields'] = \JHTML::_('select.genericlist', $rows, "filter_display_extra_fields[]", ' class = "form-control" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getFilterDisplayExtraFields() );
-            $lists['product_hide_extra_fields'] = \JHTML::_('select.genericlist', $rows, "product_hide_extra_fields[]", ' class = "form-control" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getProductHideExtraFields() );
-            $lists['cart_display_extra_fields'] = \JHTML::_('select.genericlist', $rows, "cart_display_extra_fields[]", ' class = "form-control" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getCartDisplayExtraFields() );
+            $lists['product_list_display_extra_fields'] = \JHTML::_('select.genericlist', $rows, "product_list_display_extra_fields[]", ' class = "form-control form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getProductListDisplayExtraFields() );
+            $lists['filter_display_extra_fields'] = \JHTML::_('select.genericlist', $rows, "filter_display_extra_fields[]", ' class = "form-control form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getFilterDisplayExtraFields() );
+            $lists['product_hide_extra_fields'] = \JHTML::_('select.genericlist', $rows, "product_hide_extra_fields[]", ' class = "form-control form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getProductHideExtraFields() );
+            $lists['cart_display_extra_fields'] = \JHTML::_('select.genericlist', $rows, "cart_display_extra_fields[]", ' class = "form-control form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getCartDisplayExtraFields() );
         }
 
-        $lists['units'] = \JHTML::_('select.genericlist', SelectOptions::getUnits(), "main_unit_weight", 'class = "form-control"', 'id','name', $jshopConfig->main_unit_weight);        
+        $lists['units'] = \JHTML::_('select.genericlist', SelectOptions::getUnits(), "main_unit_weight", 'class = "form-control form-select"', 'id','name', $jshopConfig->main_unit_weight);        
             
         $view = $this->getView("config", 'html');
         $view->setLayout("categoryproduct");
@@ -126,21 +126,21 @@ class ConfigController extends BaseadminController{
     function checkout(){
         $jshopConfig = \JSFactory::getConfig();
 
-        $lists['status'] = \JHTML::_('select.genericlist', SelectOptions::getOrderStatus(), 'default_status_order', 'class = "inputbox form-control"', 'status_id', 'name', $jshopConfig->default_status_order);
+        $lists['status'] = \JHTML::_('select.genericlist', SelectOptions::getOrderStatus(), 'default_status_order', 'class = "inputbox form-control form-select"', 'status_id', 'name', $jshopConfig->default_status_order);
         $currency_code = \JSHelper::getMainCurrencyCode();        
-        $lists['default_country'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(3), 'default_country','class = "inputbox form-control"','country_id','name', $jshopConfig->default_country);
+        $lists['default_country'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(3), 'default_country','class = "inputbox form-control form-select"','country_id','name', $jshopConfig->default_country);
         
         $vendor_order_message_type = array();
         $vendor_order_message_type[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_NOT_SEND_MESSAGE'), 'id', 'name' );
         $vendor_order_message_type[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_WE_SEND_MESSAGE'), 'id', 'name' );
         $vendor_order_message_type[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_WE_SEND_ORDER'), 'id', 'name' );
         $vendor_order_message_type[] = \JHTML::_('select.option', 3, \JText::_('JSHOP_WE_ALWAYS_SEND_ORDER'), 'id', 'name' );
-        $lists['vendor_order_message_type'] = \JHTML::_('select.genericlist', $vendor_order_message_type, 'vendor_order_message_type','class = "inputbox form-control" size = "1"','id','name', $jshopConfig->vendor_order_message_type);
+        $lists['vendor_order_message_type'] = \JHTML::_('select.genericlist', $vendor_order_message_type, 'vendor_order_message_type','class = "inputbox form-control form-select" size = "1"','id','name', $jshopConfig->vendor_order_message_type);
         
 		$option = array();
         $option[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_STEP_3_4'), 'id', 'name');
         $option[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_STEP_4_3'), 'id', 'name');
-        $lists['step_4_3'] = \JHTML::_('select.genericlist', $option, 'step_4_3','class = "inputbox form-control"','id','name', $jshopConfig->step_4_3);
+        $lists['step_4_3'] = \JHTML::_('select.genericlist', $option, 'step_4_3','class = "inputbox form-control form-select"','id','name', $jshopConfig->step_4_3);
 
         $view = $this->getView("config", 'html');
         $view->setLayout("checkout");
@@ -181,12 +181,12 @@ class ConfigController extends BaseadminController{
         $shop_register_type[] = \JHTML::_('select.option', 0, "-", 'id', 'name' );
         $shop_register_type[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_MEYBY_SKIP_REGISTRATION'), 'id', 'name' );
         $shop_register_type[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_WITHOUT_REGISTRATION'), 'id', 'name' );
-        $lists['shop_register_type'] = \JHTML::_('select.genericlist', $shop_register_type, 'shop_user_guest','class = "inputbox form-control" size = "1"','id','name', $jshopConfig->shop_user_guest);
+        $lists['shop_register_type'] = \JHTML::_('select.genericlist', $shop_register_type, 'shop_user_guest','class = "inputbox form-control form-select" size = "1"','id','name', $jshopConfig->shop_user_guest);
         
         $opt = array();
         $opt[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_NORMAL'), 'id', 'name');
         $opt[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_DEVELOPER'), 'id', 'name');
-        $lists['shop_mode'] = \JHTML::_('select.genericlist', $opt, 'shop_mode','class = "inputbox form-control"','id','name', $jshopConfig->shop_mode);
+        $lists['shop_mode'] = \JHTML::_('select.genericlist', $opt, 'shop_mode','class = "inputbox form-control form-select"','id','name', $jshopConfig->shop_mode);
 
         $view = $this->getView("config", 'html');
         $view->setLayout("adminfunction");
@@ -203,7 +203,7 @@ class ConfigController extends BaseadminController{
     function currency(){
     	$jshopConfig = \JSFactory::getConfig();
 		
-		$lists['currencies'] = \JHTML::_('select.genericlist', SelectOptions::getCurrencies(), 'mainCurrency','class = "inputbox form-control"','currency_id','currency_code',$jshopConfig->mainCurrency);
+		$lists['currencies'] = \JHTML::_('select.genericlist', SelectOptions::getCurrencies(), 'mainCurrency','class = "inputbox form-control form-select"','currency_id','currency_code',$jshopConfig->mainCurrency);
 		
 		$i = 0;
 		foreach($jshopConfig->format_currency as $key => $value){
@@ -212,7 +212,7 @@ class ConfigController extends BaseadminController{
 			$currenc[$i]->format = $value;
 			$i++;
 		}
-		$lists['format_currency'] = \JHTML::_('select.genericlist', $currenc, 'currency_format','class = "inputbox form-control"', 'id_cur', 'format', $jshopConfig->currency_format);
+		$lists['format_currency'] = \JHTML::_('select.genericlist', $currenc, 'currency_format','class = "inputbox form-control form-select"', 'id_cur', 'format', $jshopConfig->currency_format);
 				
         $view = $this->getView("config", 'html');
         $view->setLayout("currency");
@@ -233,7 +233,7 @@ class ConfigController extends BaseadminController{
         $resize_type[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_CUT'), 'id', 'name' );
         $resize_type[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_FILL'), 'id', 'name' );
         $resize_type[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_STRETCH'), 'id', 'name' );
-        $select_resize_type = \JHTML::_('select.genericlist', $resize_type, 'image_resize_type','class = "inputbox form-control"','id','name', $jshopConfig->image_resize_type);
+        $select_resize_type = \JHTML::_('select.genericlist', $resize_type, 'image_resize_type','class = "inputbox form-control form-select"','id','name', $jshopConfig->image_resize_type);
     	
     	$view = $this->getView("config", 'html');
         $view->setLayout("image");
@@ -250,7 +250,7 @@ class ConfigController extends BaseadminController{
     function storeinfo(){
         $vendor = \JSFactory::getTable('vendor');
         $vendor->loadMain();
-		$lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(3), 'country', 'class = "inputbox form-control"', 'country_id', 'name', $vendor->country);
+		$lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(3), 'country', 'class = "inputbox form-control form-select"', 'country_id', 'name', $vendor->country);
         
         \JFilterOutput::objectHTMLSafe($vendor, ENT_QUOTES);
         
@@ -568,7 +568,7 @@ class ConfigController extends BaseadminController{
         $tax_rule_for = array();
         $tax_rule_for[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_FIRMA_CLIENT'), 'id', 'name' );
         $tax_rule_for[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_VAT_NUMBER'), 'id', 'name' );
-        $lists['tax_rule_for'] = \JHTML::_('select.genericlist', $tax_rule_for, 'ext_tax_rule_for','class = "inputbox form-control"','id','name', $jshopConfig->ext_tax_rule_for);
+        $lists['tax_rule_for'] = \JHTML::_('select.genericlist', $tax_rule_for, 'ext_tax_rule_for','class = "inputbox form-control form-select"','id','name', $jshopConfig->ext_tax_rule_for);
 
 		$view = $this->getView("config", 'html');
 		$view->setLayout("otherconfig");

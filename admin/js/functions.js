@@ -13,6 +13,12 @@ var jshopAdminClass = function(){
         var ret = parseFloat(Math.round(value * Math.pow(10, numCount)) / Math.pow(10, numCount)).toString();
         return (isNaN(ret)) ? (0) : (ret);
     };
+	
+	this.floatVal = function(val) {
+		let res = parseFloat(val.replace(',', '.'));
+		if (isNaN(res)) res = 0;
+		return res;
+	}
 
     this.changeCategory = function(){
         var catid = jQuery("#category_parent_id").val();
@@ -54,7 +60,7 @@ var jshopAdminClass = function(){
         var pattern = /(\d*\.?\d*)%\)$/
         pattern.test(percent);
         percent = RegExp.$1;
-        var price2 = $('#product_price2').val();
+        var price2 = this.floatVal($('#product_price2').val());
         if (display_price_admin==0){
             $('#product_price').val(this.Round(price2 * (1 + percent / 100), this.product_price_precision));
         }else{
@@ -69,7 +75,7 @@ var jshopAdminClass = function(){
         var pattern = /(\d*\.?\d*)%\)$/
         pattern.test(percent);
         percent = RegExp.$1;
-        var price = $('#product_price').val();
+        var price = this.floatVal($('#product_price').val());
         if (display_price_admin==0){
             $('#product_price2').val(this.Round(price / (1 + percent / 100), this.product_price_precision));
         }else{
@@ -97,9 +103,9 @@ var jshopAdminClass = function(){
 
     this.productAddPriceupdateValue = function(num){
         var price;
-        var origin = jQuery("#product_price").val();
+        var origin = this.floatVal(jQuery("#product_price").val());
         if (origin=="") return 0;
-        var discount = jQuery("#product_add_discount_"+num).val();
+        var discount = this.floatVal(jQuery("#product_add_discount_"+num).val());
         if (discount=="") return 0;
         if (this.config_product_price_qty_discount==1)
             price = origin - discount;
@@ -110,9 +116,9 @@ var jshopAdminClass = function(){
 
     this.productAddPriceupdateDiscount = function(num){
         var price;
-        var origin = jQuery("#product_price").val();
+        var origin = this.floatVal(jQuery("#product_price").val());
         if (origin=="") return 0;
-        var price = jQuery("#product_add_price_"+num).val();
+        var price = this.floatVal(jQuery("#product_add_price_"+num).val());
         if (price=="") return 0;
         if (this.config_product_price_qty_discount==1)
             discount = origin - price;
@@ -123,7 +129,7 @@ var jshopAdminClass = function(){
 
     this.reloadAddPriceValue = function(){
         var discount;
-        var origin = jQuery("#product_price").val();
+        var origin = this.floatVal(jQuery("#product_price").val());
         jQuery("#attr_price").val(origin);
 
         if (origin=="") return 0;
@@ -527,8 +533,9 @@ var jshopAdminClass = function(){
         jQuery("#related_product_"+id).remove();
     };
 
-    this.reloadProductExtraField = function(product_id){
+    this.reloadProductExtraField = function(product_id, edittype){
         var catsurl = "";
+		if (!edittype) edittype = '';
         jQuery("#category_id :selected").each(function(j, selected){
           value = jQuery(selected).val();
           text = jQuery(selected).text();
@@ -537,7 +544,7 @@ var jshopAdminClass = function(){
           }
         });
 
-        var url = 'index.php?option=com_jshopping&controller=products&task=product_extra_fields&product_id='+product_id+catsurl+"&ajax=1";
+        var url = 'index.php?option=com_jshopping&controller=products&task=product_extra_fields&product_id='+product_id+catsurl+"&ajax=1&edittype="+edittype;
         jQuery.ajaxSetup({ cache: false });
         jQuery.get(url, function(data){
             jQuery("#extra_fields_space").html(data);
@@ -682,10 +689,8 @@ var jshopAdminClass = function(){
         jQuery("input[name^=product_item_price]").each(function(){
             var myArray = regExp.exec(jQuery(this).attr("name"));
             var value = myArray[1];
-            var price = parseFloat(jQuery(this).val());
-            if (isNaN(price)) price = 0;
-            var quantity = parseFloat(jQuery("input[name=product_quantity\\["+value+"\\]]").val().replace(',', '.'));
-            if (isNaN(quantity)) quantity = 0;
+            var price = that.floatVal(jQuery(this).val());            
+            var quantity = that.floatVal(jQuery("input[name=product_quantity\\["+value+"\\]]").val());            
             result += price * quantity;
         });
 
@@ -695,22 +700,16 @@ var jshopAdminClass = function(){
 
     this.updateOrderTotalValue = function() {
         var result = 0;
-        var subtotal = parseFloat(jQuery("input[name=order_subtotal]").val());
-        if (isNaN(subtotal)) subtotal = 0;
-        var discount = parseFloat(jQuery("input[name=order_discount]").val());
-        if (isNaN(discount)) discount = 0;
-        var shipping = parseFloat(jQuery("input[name=order_shipping]").val());
-        if (isNaN(shipping)) shipping = 0;
-        var opackage = parseFloat(jQuery("input[name=order_package]").val());
-        if (isNaN(opackage)) opackage = 0;
-        var payment = parseFloat(jQuery("input[name=order_payment]").val());
-        if (isNaN(payment)) payment = 0;
+        var subtotal = that.floatVal(jQuery("input[name=order_subtotal]").val());
+        var discount = that.floatVal(jQuery("input[name=order_discount]").val());
+        var shipping = that.floatVal(jQuery("input[name=order_shipping]").val());
+        var opackage = that.floatVal(jQuery("input[name=order_package]").val());
+        var payment = that.floatVal(jQuery("input[name=order_payment]").val());
         result = subtotal - discount + shipping+opackage + payment;
 
         if (jQuery("#display_price option:selected").val() == 1) {
             jQuery("input[name^=tax_value]").each(function(){
-                var tax_value = parseFloat(jQuery(this).val());
-                if (isNaN(tax_value)) tax_value = 0;
+                var tax_value = that.floatVal(jQuery(this).val());
                 result += tax_value;
             });
         }
@@ -1029,7 +1028,10 @@ jQuery(document).ready(function(){
 
         allLink.siblings(".tab-content").find(".tab-pane").removeClass("active");
         allLink.siblings(".tab-content").find(jQuery(this).attr("href")).addClass("active");
-
     });
+	
+	jQuery(document).on('change', '.shop-list-order select[name^=select_status_id]', function(){
+		jQuery(this).closest('td').find('.update_status_panel').removeClass('d-none');
+	});
 
 });

@@ -9,13 +9,11 @@
 
 namespace Joomla\Component\Jshopping\Administrator\Model;
 
-
-
 defined('_JEXEC') or die();
 
 class PaymentsModel extends BaseadminModel{
     
-    protected $nameTable = 'paymentMethod';
+    protected $nameTable = 'paymentmethod';
     protected $tableFieldOrdering = 'payment_ordering';
     
     function getAllPaymentMethods($publish = 1, $order = null, $orderDir = null) {

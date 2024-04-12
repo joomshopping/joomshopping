@@ -11,6 +11,7 @@ defined('_JEXEC') or die();
 class pm_paypal extends PaymentRoot {
 
     private $curlopt_sslversion = 6;
+	private $cancel_url_step5 = 1;
 
     //function call in admin
     function showAdminFormParams($params){
@@ -123,7 +124,11 @@ class pm_paypal extends PaymentRoot {
             $notify_url = \JURI::root() . "index.php?option=com_jshopping&controller=checkout&task=step7&act=notify&js_paymentclass=" . $pm_method->payment_class . "&no_lang=1";
         }
         $return = $liveurlhost . \JSHelper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step7&act=return&js_paymentclass=" . $pm_method->payment_class);
-        $cancel_return = $liveurlhost . \JSHelper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step7&act=cancel&js_paymentclass=" . $pm_method->payment_class);
+		if ($this->cancel_url_step5) {
+			$cancel_return = $liveurlhost . \JSHelper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step5");
+		} else {
+			$cancel_return = $liveurlhost . \JSHelper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step7&act=cancel&js_paymentclass=" . $pm_method->payment_class);
+		}		
 
         $_country = \JSFactory::getTable('country');
         $_country->load($order->d_country);

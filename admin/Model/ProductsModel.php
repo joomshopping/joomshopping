@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 13.09.2022
+* @version      5.1.3 01.04.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,7 +14,7 @@ defined('_JEXEC') or die();
 
 class ProductsModel extends BaseadminModel{
     
-    protected $nameTable = 'ProductTable';
+    protected $nameTable = 'product';
 
     function _getAllProductsQueryForFilter($filter){
         $lang = \JSFactory::getLang();
@@ -420,6 +420,7 @@ class ProductsModel extends BaseadminModel{
 	
 	function saveExtraFields($product_id, $post){
 		$table = \JSFactory::getTable('producttofield');
+        $table->load($product_id);
 		$table->bind($post);
 		$table->set('product_id', $product_id);
 		return $table->store();
@@ -467,7 +468,9 @@ class ProductsModel extends BaseadminModel{
                         }
                     }
                 }
-                $startprice = min($tmpprice);
+				if (count($tmpprice)) {
+					$startprice = min($tmpprice);
+				}
             }
             $minprice = $startprice;
         }
@@ -955,12 +958,20 @@ class ProductsModel extends BaseadminModel{
 
         $post['related_products'] = array_unique($post['related_products']);
         foreach($post['related_products'] as $key => $value){
-            if ($value!=0){
+            if ($value!=0 && $product_id != $value && !$this->getExistRelationProduct($product_id, $value)) {
                 $query = "INSERT INTO `#__jshopping_products_relations` SET `product_id` = '" . $db->escape($product_id) . "', `product_related_id` = '" . $db->escape($value) . "'";
                 $db->setQuery($query);
                 $db->execute();
             }
         }
+    }
+
+    function getExistRelationProduct($product_id, $product_related_id) {
+        $db = \JFactory::getDBO();
+        $query = "SELECT id FROM `#__jshopping_products_relations` 
+        WHERE `product_id`=".$db->q($product_id)." AND `product_related_id`=".$db->q($product_related_id);
+        $db->setQuery($query);
+        return $db->loadResult();
     }
 
     function getModPrice($price, $newprice, $mod){
@@ -1091,21 +1102,30 @@ class ProductsModel extends BaseadminModel{
 			$_productfields = \JSFactory::getModel("productfields");
 			$list_productfields = $_productfields->getList(1);
 			$product_ef = [];
-			foreach($list_productfields as $v){
+			foreach($list_productfields as $v) {
 				$_nef = 'extra_field_'.$v->id;
-				switch($v->type){
-					case 0:
-						if (isset($post['productfields'][$_nef]) and is_array($post['productfields'][$_nef]) and count($post['productfields'][$_nef]) > 0){
-							if ($v->multilist == 1 || ($v->multilist == 0 and !in_array(0,$post['productfields'][$_nef]))){
-								$product_ef[$_nef] = implode(',', $post['productfields'][$_nef]);
+				if ($v->type == 0){
+					$_data = $post['productfields'][$_nef] ?? [];
+					$_data = array_diff($_data, [-1]);
+					if (count($_data)) {
+						$product_ef[$_nef] = implode(',', $_data);
+					}
+					/*if (isset($post['productfields'][$_nef]) && is_array($post['productfields'][$_nef]) && count($post['productfields'][$_nef]) > 0){
+						if ($v->multilist == 0 && !in_array(-1, $post['productfields'][$_nef])) {
+							$product_ef[$_nef] = implode(',', $post['productfields'][$_nef]);
+						}
+						if ($v->multilist == 1){
+							$_data = array_diff($post['productfields'][$_nef], [-1]);
+							if (count($_data)) {
+								$product_ef[$_nef] = implode(',', $_data);
 							}
 						}
-					break;
-					case 1:
-						if (isset($post[$_nef]) and $post[$_nef] != ''){
-							$product_ef[$_nef] = $post[$_nef];
-						}
-					break;
+					}*/
+				}
+				if ($v->type == 1){
+					if (isset($post[$_nef]) && $post[$_nef] != ''){
+						$product_ef[$_nef] = $post[$_nef];
+					}
 				}
 			}
 			if (count($product_ef)){
@@ -1114,6 +1134,11 @@ class ProductsModel extends BaseadminModel{
 		}
 		$this->updatePriceAndQtyDependAttr($id, $post);
 		$product->store();
+        if ((isset($post['related_products']) && count($post['related_products'])) || $post['add_new_related'] == 2 ) {
+			$post['related_products'] = $post['related_products'] ?? [];
+            $_data = ['related_products' => $post['related_products'], 'edit' => $post['add_new_related']];
+            $this->saveRelationProducts($product, $id, $_data);
+        }
 
 		if ($post['product_price']!=""){
 			$mprice = $product->getMinimumPrice();

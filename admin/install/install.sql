@@ -346,6 +346,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_order_history` (
 `status_date_added` datetime NOT NULL default '0000-00-00 00:00:00',
 `customer_notify` int(1) NOT NULL default 0,
 `comments` text,
+`include_comment` TINYINT NOT NULL,
 PRIMARY KEY  (`order_history_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 

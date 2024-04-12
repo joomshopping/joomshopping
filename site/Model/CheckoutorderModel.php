@@ -31,7 +31,7 @@ class CheckoutOrderModel  extends CheckoutModel{
 
 		$this->setEndOrderId($order->order_id);
 
-        $order->saveOrderHistory(1, '');
+        $order->saveOrderHistory($order->order_created, '');
 
         $order->updateProductsInStock(1);
 

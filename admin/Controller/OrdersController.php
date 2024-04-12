@@ -290,6 +290,7 @@ class OrdersController extends BaseadminController{
         $dispatcher->triggerEvent('onBeforeAdminFinishOrder', array(&$order));
         $order->store();
 		$order->updateProductsInStock(1);
+		$order->saveOrderHistory(1, '');
         
         \JSFactory::loadLanguageFile($order->getLang(), true);
 		$lang = \JSFactory::getLang($order->getLang());
@@ -331,7 +332,7 @@ class OrdersController extends BaseadminController{
 
         $order_items = $order->getAllItems();
         
-        $select_language = \JHTML::_('select.genericlist', SelectOptions::getLanguages(), 'lang', 'class = "inputbox form-control" style="float:none"','language', 'name', $order->lang);
+        $select_language = \JHTML::_('select.genericlist', SelectOptions::getLanguages(), 'lang', 'class = "inputbox form-control form-select" style="float:none"','language', 'name', $order->lang);
         
 		$select_countries = Selects::getCountry($order->country, 'class = "form-control"');
 		$select_d_countries = Selects::getCountry($order->d_country, 'class = "inputbox ende form-control"', 'd_country');
@@ -360,20 +361,18 @@ class OrdersController extends BaseadminController{
         foreach($currency_list as $k=>$v){
             if ($v->currency_code_iso==$order->currency_code_iso) $order_currency = $v->currency_id;
         }
-        $select_currency = \JHTML::_('select.genericlist', $currency_list, 'currency_id','class = "inputbox form-control"','currency_id','currency_code', $order_currency);
-        $display_price_select = \JHTML::_('select.genericlist', SelectOptions::getPriceType(), 'display_price', 'class="form-control" onchange="jshopAdmin.updateOrderTotalValue();"', 'id', 'name', $order->display_price);
-        $shippings_select = \JHTML::_('select.genericlist', SelectOptions::getShippings(), 'shipping_method_id', 'class="form-control" onchange="jshopAdmin.order_shipping_calculate()"', 'shipping_id', 'name', $order->shipping_method_id);
-        $payments_select = \JHTML::_('select.genericlist', SelectOptions::getPayments(), 'payment_method_id', 'class="form-control" onchange="jshopAdmin.order_payment_calculate()"', 'payment_id', 'name', $order->payment_method_id);
-        $delivery_time_select = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes('- - -'), 'order_delivery_times_id','class = "form-control"', 'id', 'name', $order->delivery_times_id);
-        $users_list_select = \JHTML::_('select.genericlist', SelectOptions::getUsers(0, 1), 'user_id', 'class="form-control" onchange="jshopAdmin.updateBillingShippingForUser(this.value);"', 'user_id', 'name', $order->user_id);        
+        $select_currency = \JHTML::_('select.genericlist', $currency_list, 'currency_id','class = "inputbox form-control form-select"','currency_id','currency_code', $order_currency);
+        $display_price_select = \JHTML::_('select.genericlist', SelectOptions::getPriceType(), 'display_price', 'class="form-control form-select" onchange="jshopAdmin.updateOrderTotalValue();"', 'id', 'name', $order->display_price);
+        $shippings_select = \JHTML::_('select.genericlist', SelectOptions::getShippings(), 'shipping_method_id', 'class="form-control form-select" onchange="jshopAdmin.order_shipping_calculate()"', 'shipping_id', 'name', $order->shipping_method_id);
+        $payments_select = \JHTML::_('select.genericlist', SelectOptions::getPayments(), 'payment_method_id', 'class="form-control form-select" onchange="jshopAdmin.order_payment_calculate()"', 'payment_id', 'name', $order->payment_method_id);
+        $delivery_time_select = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes('- - -'), 'order_delivery_times_id','class = "form-control form-select"', 'id', 'name', $order->delivery_times_id);
+        $users_list_select = \JHTML::_('select.genericlist', SelectOptions::getUsers(0, 1), 'user_id', 'class="form-control form-select" onchange="jshopAdmin.updateBillingShippingForUser(this.value);"', 'user_id', 'name', $order->user_id);        
         
         \JSHelper::filterHTMLSafe($order);
         foreach($order_items as $k=>$v){
             \JFilterOutput::objectHTMLSafe($order_items[$k]);
             $v->_ext_attribute_html = "";
         }
-
-		//\JHTML::_('behavior.calendar');
 		
         $view = $this->getView("orders", 'html');
         $view->setLayout("edit");

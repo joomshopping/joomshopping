@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 class ProductFieldGroupsModel extends BaseadminModel{
     
-    protected $nameTable = 'productFieldGroupTable';
+    protected $nameTable = 'productfieldgroup';
 
     function getList() {
         $db = \JFactory::getDBO();

@@ -93,7 +93,7 @@ class UsersController extends BaseadminController{
 		$lists['select_titles'] = Selects::getTitle($user->title, 'class = "form-control"');
 		$lists['select_d_titles'] = Selects::getTitle($user->d_title, 'class = "inputbox endes form-control"', 'd_title');
 		$lists['select_client_types'] = Selects::getClientType($user->client_type, 'class = "form-control"');
-        $lists['usergroups'] = \JHTML::_('select.genericlist', SelectOptions::getUserGroups(), 'usergroup_id', 'class = "inputbox form-control"', 'usergroup_id', 'usergroup_name', $user->usergroup_id);
+        $lists['usergroups'] = \JHTML::_('select.genericlist', SelectOptions::getUserGroups(), 'usergroup_id', 'class = "inputbox form-control form-select"', 'usergroup_id', 'usergroup_name', $user->usergroup_id);
         $lists['block'] = \JHTML::_('select.booleanlist',  'block', 'class="inputbox"', $user_site->get('block') );  
         
         \JSHelper::filterHTMLSafe($user, ENT_QUOTES);

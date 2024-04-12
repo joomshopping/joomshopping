@@ -207,11 +207,16 @@ class ListModel{
         }
         if (isset($filters['search']) && $filters['search']){
             $where_search = "";
+			$filters['search_type'] = $filters['search_type'] ?? '';
             if ($filters['search_type']=="exact"){
                 $word = addcslashes($db->escape($filters['search']), "_%");
                 $tmp = array();
                 foreach($jshopConfig->product_search_fields as $field){
-                    $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
+					if (isset($jshopConfig->product_search_fields_exact) && in_array($field, $jshopConfig->product_search_fields_exact)) {
+                        $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '".$word."'";
+                    } else {
+                        $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
+                    }
                 }
                 $where_search = implode(' OR ', $tmp);
             }else{
@@ -221,7 +226,11 @@ class ListModel{
                     $word = addcslashes($db->escape($word), "_%");
                     $tmp = array();
                     foreach($jshopConfig->product_search_fields as $field){
-                        $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
+                        if (isset($jshopConfig->product_search_fields_exact) && in_array($field, $jshopConfig->product_search_fields_exact)) {
+							$tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '".$word."'";
+						} else {
+							$tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
+						}
                     }
                     $where_search_block = implode(' OR ', $tmp);
                     $search_word[] = "(".$where_search_block.")";

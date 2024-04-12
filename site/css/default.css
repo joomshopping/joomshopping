@@ -336,6 +336,10 @@ td.reviews{
 .jshop .price_prod_qty_list .qty_price span.per_piece{
     font-weight: normal;
 }
+.jshop .price_prod_qty_list .qty_price span.base{
+    font-weight: normal;
+    color: #666;
+}
 .jshop span.old_price{
     text-decoration: line-through;
     font-style: normal;
@@ -394,7 +398,7 @@ td.reviews{
     margin-bottom: 5px;
 }
 .jshop_list_product .product .review_mark{
-    width: 80px;
+    width: 100px;
     margin-left:auto;
     margin-right: auto;
 }
@@ -570,16 +574,16 @@ span.prod_attr_img img{
     width:220px;
 }
 .stars_no_active{
-    height:16px;
-    background-image:url(../images/star.gif);
+    height:19px;
+    background-image:url(../images/star.png);
     background-repeat: repeat-x;
     background-position: 0px 0px;
 }
 .stars_active{
-    height:16px;
-    background-image:url(../images/star.gif);
+    height:19px;
+    background-image:url(../images/star.png);
     background-repeat: repeat-x;
-    background-position: 0px -16px;
+    background-position: 0px -19px;
 }
 .jshop .downlod_order_invoice{
     float:right;

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.0.2 10.12.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,7 +18,11 @@ class Request{
             $quantity = floatval(str_replace(",", ".", $app->input->getVar($key, 1)));
             $quantity = round($quantity, $jshopConfig->cart_decimal_qty_precision);
         }else{
-            $quantity = (int)$app->input->getInt($key, 1);
+			$def_qty = $jshopConfig->min_count_order_one_product;
+			if (!$def_qty) {
+				$def_qty = 1;
+			}
+            $quantity = (int)$app->input->getInt($key, $def_qty);
         }
 		if ($fix && $quantity < 0){
 			$quantity = 0;
