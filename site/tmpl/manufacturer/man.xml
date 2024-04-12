@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="MAN"></layout>
+	
+	<fields name="request">        
+		<fieldset name="request">
+            <field name="task" type="hidden" default="view"/>
+			<field name="manufacturer_id" type="text" default="" label="Manufacturer_ID" description="Manufacturer_ID" required="true" />
+			<field name="category_id" type="text" default="" label="Category_ID" description="Category_ID" />
+            <field name="label_id" type="text" default="" label="Label_ID" description="Label_ID" />
+            <field name="vendor_id" type="text" default="" label="Vendor_ID" description="Vendor_ID" />
+            <field name="price_from" type="text" default="" label="Price_from" description="Price_from" />
+            <field name="price_to" type="text" default="" label="Price_to" description="Price_to" />
+		</fieldset>
+	</fields>
+</metadata>

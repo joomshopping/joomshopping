@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.0.0" method="upgrade">
+   <name>jshopping</name>
+   <creationDate>04.09.2021</creationDate>
+   <author>MAXXmarketing GmbH</author>
+   <authorEmail>marketing@maxx-marketing.net</authorEmail>
+   <authorUrl>http://www.webdesigner-profi.de</authorUrl>
+   <copyright></copyright>
+   <license>Open Source License, GNU/GPL</license>
+   <version>5.0.0</version>
+   <description>Joomshopping - shop component. Note: JoomShopping code files are named as jshopping</description>
+   <namespace>Joomla\Component\Jshopping</namespace>
+
+   <scriptfile>install/install.php</scriptfile>
+
+   <files folder="site">
+        <folder>addons</folder>
+		<folder>Controller</folder>
+        <folder>config</folder>
+		<folder>images</folder>
+		<folder>js</folder>
+        <folder>css</folder>
+        <folder>Dispatcher</folder>
+        <folder>files</folder>
+        <folder>Helper</folder>
+        <folder>helpers</folder>
+		<folder>language</folder>
+		<folder>Lib</folder>
+		<folder>log</folder>
+		<folder>Model</folder>
+        <folder>payments</folder>
+        <folder>Pdf</folder>
+        <folder>Service</folder>
+		<folder>shippings</folder>
+        <folder>shippingform</folder>
+		<folder>Table</folder>		
+        <folder>View</folder>
+		<folder>templates</folder>
+        <folder>tmpl</folder>
+        <filename>bootstrap.php</filename>
+        <filename>classmap.php</filename>
+		<filename>loadparams.php</filename>
+    </files>
+
+   <install>
+      <sql>
+         <file charset="utf8" driver="mysql">install/install.sql</file>
+         <file driver="mysql">install/install.sql</file>
+      </sql>
+   </install>
+
+   <uninstall>
+      <sql>
+         <file charset="utf8" driver="mysql">install/uninstall.sql</file>
+         <file driver="mysql">install/uninstall.sql</file>
+      </sql>
+   </uninstall>
+   <update>
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+		</schemas>
+   </update>
+
+   <administration>
+
+		<menu>JoomShopping</menu>
+	    <submenu>
+	      <menu link="option=com_jshopping&amp;controller=categories&amp;catid=0">categories</menu>
+	      <menu link="option=com_jshopping&amp;controller=products&amp;category_id=0">products</menu>
+	      <menu link="option=com_jshopping&amp;controller=orders">orders</menu>
+	      <menu link="option=com_jshopping&amp;controller=users">clients</menu>
+	      <menu link="option=com_jshopping&amp;controller=other">options</menu>
+	      <menu link="option=com_jshopping&amp;controller=config">configuration</menu>
+          <menu link="option=com_jshopping&amp;controller=update">install-and-update</menu>
+	      <menu link="option=com_jshopping&amp;controller=info">about-as</menu>
+	    </submenu>
+
+      <files folder="admin">
+      	<folder>Controller</folder>
+      	<folder>css</folder>
+		<folder>Dispatcher</folder>
+		<folder>Extension</folder>
+        <folder>Helper</folder>
+      	<folder>images</folder>
+      	<folder>js</folder>
+      	<folder>language</folder>
+      	<folder>Model</folder>
+      	<folder>Service</folder>
+      	<folder>services</folder>
+      	<folder>View</folder>
+		<folder>tmpl</folder>
+        <folder>importexport</folder>
+      	<folder>install</folder>
+      	<folder>sql</folder>
+        <filename>config.xml</filename>
+      </files>
+
+    <languages folder="admin">
+        <language tag="de-DE">language/de-DE.com_jshopping.sys.ini</language>
+        <language tag="en-GB">language/en-GB.com_jshopping.sys.ini</language>
+        <language tag="ru-RU">language/ru-RU.com_jshopping.sys.ini</language>
+    </languages>
+
+   </administration>
+   
+    <updateservers>
+        <server type="extension" priority="1" name="JoomShopping">https://www.webdesigner-profi.de/joomla-webdesign/update/shop.xml</server>
+    </updateservers>
+	
+</extension>

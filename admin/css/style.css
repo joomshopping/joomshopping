@@ -1,0 +1,492 @@
+div.width-45 {
+    width: 45%;
+}
+div.width-55 {
+    width: 55%;
+}
+#installer-install table.adminform{
+	width:100%;
+}
+#cpanel div.icon {
+    float: left;
+    margin-bottom: 15px;
+    margin-right: 15px;
+    text-align: center;
+}
+#cpanel div.icon a {
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    color: #565656;
+    display: block;
+    float: left;
+    height: 108px;
+    text-decoration: none;
+    vertical-align: middle;
+    width: 108px;
+}
+#cpanel div.icon a:hover{
+    color: #000;
+}
+#cpanel img {
+    margin: 0 auto;
+    padding: 10px 0;
+}
+#cpanel span {
+    display: block;
+    text-align: center;
+    font-size:90%;
+    line-height: 110%;
+}
+span.jshop_red{
+	font-size: 12px;
+	color: Red;
+	font-weight: bold;
+}
+span.jshop_green{
+	font-size: 12px;
+	color: Green;
+	font-weight: bold;
+}
+.clr{
+    clear: both;
+    height: 0;
+    overflow: hidden;
+}
+.adminlist{
+    width: 100%;
+}
+.jshop_edit .form-control{
+    width:240px;
+}
+.w100, td .form-control.w100{
+    width: 100%;
+    max-width: 100%;
+}
+div.jshop_quote {
+    text-align: left;
+    margin-left: 20px;
+    background-color: #E9ECEF;
+    border: 1px solid #CCCCCC;
+    color: #254D78;
+    font-size: 12px;
+    margin: 4px;
+    padding: 10px;
+}
+.jshop_border {
+	border: 1px solid #4A5F9A;
+}
+
+table {
+	text-align: left;
+}
+input{
+	padding: 0;
+	margin: 0;
+}
+input.small, select.small, td .form-control.small, .jshop_edit .form-control.small, .inputbox.small {
+    width:50px;
+}
+input.small2, select.small2, td .form-control.small2, .jshop_edit .form-control.small2, .inputbox.small2{
+    width:80px;
+}
+input.small3, select.small3, td .form-control.small3, .jshop_edit .form-control.small3, .inputbox.small3{
+    width:90px;
+}
+input.middle, select.middle, td .form-control.middle, .jshop_edit .form-control.middle .inputbox.middle {
+    width:100px;
+}
+input.middle2, select.middle2, td .form-control.middle2, .jshop_edit .form-control.middle2, .inputbox.middle2 {
+    width:130px;
+}
+input.middle3, select.middle3, td .form-control.middle3, .jshop_edit .form-control.middle3, .inputbox.middle3 {
+    max-width:240px;
+}
+input.wide, select.wide, textarea.wide, td .form-control.wide, .inputbox.wide {
+    width:300px;
+	max-width: 100%;
+}
+input.wide2, select.wide2, textarea.wide2, td .form-control.wide2, .inputbox.wide2 {
+    width:400px;
+	max-width: 100%;
+}
+.input-inline input, .input-inline select{
+    margin:0px !important;
+}
+.jshop_edit div.current select, .jshop_edit div.current input{
+    margin: 0px;
+    float: none;
+}
+.jshop_edit label{
+    clear: none;
+    float: none;
+    display: inline;
+    width: auto;
+    margin-top: 0px;
+    padding-right: 5px;
+}
+.jshop_edit .controls{
+    display: inline;
+}
+.jshop_edit .controls label{
+    padding:0px;
+}
+.jshop_edit fieldset.adminform .controls label input{
+    margin-right: 5px;
+}
+.jshop_edit fieldset.adminform label{
+    width:auto;
+    display: inline;
+}
+.jshop_edit fieldset.adminform img{
+    float: none;
+}
+.jshop_edit .admintable td, .jshop_edit .admintable th{
+    min-height: 28px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    vertical-align: middle;
+}
+.jshop_edit div.clear{
+    clear: both;
+}
+.jshop_edit div.key1{
+    margin-top:4px;
+}
+.jshop_edit div.value1 input{
+    float:none;
+}
+a.jshop_order_status{
+	padding-left:10px;
+	padding-right:10px;
+	font-size: 14px;
+	font-weight: bold;
+}
+tr.bold td, tr.bold th, td.bold, th.bold{
+	font-weight:bold;
+}
+td.center, th.center, tr.center td, tr.center th{
+	text-align: center;
+}
+td.right, th.right, tr.right td, tr.right th, .table td.right, .table th.right{
+	text-align: right;
+}
+table.table_attr{
+	padding-bottom:15px;
+}
+#contacts table {
+	background: #EBF0F3;
+}
+#contacts td {
+	height: 80px;
+	font-size: 11px;
+	font-weight: bold;
+	color: #3B4449;
+}
+#contacts img {
+	margin: 0px 40px 0px 10px;
+}
+#contacts a:link,#contacts a:visited,#contacts a:active {
+	color: #515152;
+}
+img.tab_image{
+	vertical-align: middle;
+}
+table.adminlist{
+	text-align: center;
+}
+
+span.icon-32-jshop_panel{
+	background-image: url("../images/jshop_panel.png");
+}
+
+table.admintable td.key{
+    width: 180px;
+}
+.helpbox{
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+    background: #f6f6f6;    
+}
+.helpbox .head{
+    color: #888;
+    background-image: url(../images/jshop_info_s.png);
+    background-position: 5px 8px;
+    background-repeat: no-repeat;
+    font-weight:bold;
+    padding-left:28px;
+    padding-top:5px;
+    padding-bottom:3px;
+}
+.helpbox .text{
+    color: #999;
+    padding-left:25px;
+    padding-bottom: 3px;
+}
+.link_delete_foto{
+    padding-top:2px;
+}
+.link_delete_foto img{
+    border:0px;
+}
+.link_delete_foto a:hover{
+    text-decoration: none;
+}
+
+.tmiddle td{
+    vertical-align: middle;
+}
+.va-middle {
+    vertical-align: middle;
+}
+.jssubmenu{
+   background: #f6f6f6;
+   margin-bottom: 10px;
+   border-radius:10px;
+   padding:5px 10px;
+}
+.jssubmenu #submenu{
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+}
+div#element-box .jssubmenu div.m {
+  border:1px solid #ccc;
+  padding-bottom: 1px;  
+}
+.jssubmenu #submenu li a{    
+    padding-left:10px;
+    padding-right:10px;    
+}
+.jssubmenu #submenu li a.active{
+    background-color: #0088CC;
+    color: #fff;
+}
+.jssubmenu #submenu li{
+    float: left;
+    margin: 0;
+    padding: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.block_related{
+    width: 140px;
+    height: 245px;
+    float: left;    
+}
+.block_related_inner{
+    margin:5px;
+    height: 235px;
+    border:1px solid #ccc;
+    text-align: center;
+}
+.block_related_inner .image{
+    height: 140px;
+    overflow: hidden;
+}
+.block_related_inner .name{
+    font-size: 14px;
+    height: 40px;
+    overflow: hidden;
+}
+.table .product_label{
+    position: absolute;
+}
+#list_attr_value input{
+    width:85px;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem; 
+}
+#list_attr_value input[type="checkbox"]{
+    width: auto;
+}
+.table .inputordering{
+    width: 40px;
+}
+.jshop_block_filter{
+}
+.jshop_box_filter{
+    white-space: nowrap;
+    padding-right: 5px;
+}
+.product_folder_image {
+	display: none;
+}
+.images_list{
+    display: flex;
+    flex-wrap:wrap;
+    
+}
+.images_list .one_image {	
+	flex-grow:1;
+    width:200px;
+	min-height: 200px;
+	padding: 2px;
+}
+.images_list .one_image table{
+	width: 100%;
+	height: 200px;
+	vertical-align: middle;
+	border: 1px solid #ccc;
+}
+.images_list .one_image table div{
+	 overflow: hidden;
+	 width: 190px;
+}
+.order_stat_file_download_clear{
+    text-align: right;
+    padding-top:3px;
+}
+.images_list_search{
+    text-align: right;
+    padding-bottom:5px;
+    padding-right:5px;
+}
+#list_order_items .tax{
+    padding-top: 5px;
+}
+.jshop_list_footer{
+    float: left;
+}
+.jshop_limit_box{
+    float: right;
+}
+.jshop_log_info{
+    font-size:12px;
+}
+.jshopfieldregister .col100{
+}
+.jshopfieldregister .col100 fieldset{
+    min-height:1360px;
+}
+.js-stools .js-stools-field-list, .js-stools .js-stools-field-filter {
+    display: inline-block;
+    margin-right: 5px;
+	margin-bottom: 5px;
+}
+.js-stools .js-stools-field-filter label{
+    margin-top: 10px;
+    margin-right: 5px;
+    float:left;
+}
+.js-stools .js-stools-field-filter .control{
+    display: flex;
+}
+.js-stools .js-stools-field-filter .chzn-container.chzn-container-single .chzn-single{
+    height: calc(calc(2.7rem + 4px) - 2px);
+    padding-top: 0.575rem;
+}
+.product_attribute_select .prod_attr_img{
+	vertical-align: top;
+	margin-left:5px;
+}
+.product_attribute_select .prod_attr_img img{
+    width:20px;
+}
+.pagination.related{
+    font-size: 16px;
+}
+.pagination.related a{
+    display: inline-block;
+    border:1px solid #ccc;
+    line-height: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+.pagination.related a.active{
+    background-color: #E9ECEF;
+}
+.pagination.related .page > span{
+    display: inline-block;
+    line-height: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+fieldset.adminform{
+    padding:5px 10px;
+}
+.form-control-inline, .form-control .form-control-inline{
+    display: inline-block !important;
+}
+.product_image_list{
+    display: flex;
+    flex-wrap: wrap;
+}
+.product_image_list .form-control{
+    display: inline-block;
+}
+.product_image_list_item{
+    text-align: center;
+    padding: 5px 10px;
+}
+.product_image_list .image_block{
+    min-height: 130px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.product_image_list .image_block img{
+    max-width: 100px;
+    max-height: 130px;
+}
+a.saveorder{
+    background-color: transparent;
+    padding: 0px 5px;
+}
+.uploadform{
+    margin-bottom: 40px;
+}
+.review_product_name a.clear_com {
+    margin-left: 15px;
+    margin-right: 10px;
+}
+
+
+/*** Changes styles for joomla 4 ***/
+.mr-2 {
+    margin-right: 0.5rem;
+}
+.nav-tabs .nav-link {
+    position: relative;
+    color: #132f53;
+}
+.nav-tabs .nav-link.active {
+    font-weight: bold;
+}
+
+.nav-tabs .nav-link.active::after {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 3px;
+    content: "";
+    background-color: #5285c5;
+    opacity: .8;
+}
+.nav-tabs .nav-item:hover .nav-link::after {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 3px;
+    content: "";
+    background-color: #5285c5;
+    opacity: .8;
+}
+
+.btn-nopad {
+    padding: 0;
+}
+img.productlabels{
+    max-width: 120px;
+}
+.small-title {
+    width: 50px;
+}
+.fs-14 {
+    font-size: 14px;
+}

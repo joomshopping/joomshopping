@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="CONTENT"></layout>    
+    <fields name="request">
+		<fieldset name="request">
+            <field name="task" type="hidden" default="view"/>
+			<field name="page" type="list" label="StaticPage" description="StaticPage">                
+                <option value="agb">Terms_of_Service</option>
+                <option value="return_policy">Return_policy</option>
+                <option value="shipping">Shipping</option>
+                <option value="privacy_statement">Privacy_statement</option>
+            </field>
+		</fieldset>
+	</fields>
+</metadata>

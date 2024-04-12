@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="VENDORINFO"></layout>
+	<fields name="request">
+		<fieldset name="request">
+            <field name="task" type="hidden" default="info"/>
+            <field name="vendor_id" type="text" default="" label="Vendor_ID" description="Vendor_ID" required="true" />
+		</fieldset>
+	</fields>
+</metadata>

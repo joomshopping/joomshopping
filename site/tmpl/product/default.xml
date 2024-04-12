@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="PRODUCT"></layout>
+    <fields name="request">
+		<fieldset name="request">
+            <field name="category_id" type="text" default="" label="Category_ID" description="Category_ID" required="true" />
+			<field name="product_id" type="text" default="" label="Product_ID" description="Product_ID" required="true" />
+		</fieldset>
+	</fields>
+</metadata>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="PRODUCTS_LIST"></layout>
+    <fields name="request">
+		<fieldset name="request">		
+			<field name="task" type="list" label="List" description="List">
+				<option value="">All</option>
+				<option value="tophits">Top_Hits</option>
+                <option value="toprating">Top_Rating</option>
+                <option value="label">Label_Products</option>
+                <option value="bestseller">Bestseller</option>
+                <option value="random">Random</option>
+                <option value="last">Last_Products</option>
+			</field>
+			<field name="category_id" type="text" default="" label="Category_ID" description="Category_ID" />
+            <field name="manufacturer_id" type="text" default="" label="Manufacturer_ID" description="Manufacturer_ID" />
+            <field name="label_id" type="text" default="" label="Label_ID" description="Label_ID" />
+            <field name="vendor_id" type="text" default="" label="Vendor_ID" description="Vendor_ID" />
+            <field name="price_from" type="text" default="" label="Price_from" description="Price_from" />
+            <field name="price_to" type="text" default="" label="Price_to" description="Price_to" />
+		</fieldset>
+	</fields>
+</metadata>

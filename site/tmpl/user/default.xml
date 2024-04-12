@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="USER">
+        <message>
+            <![CDATA[USER_DESCR]]>
+        </message>
+    </layout>    
+    <fields name="request">
+		<fieldset name="request">		
+			<field name="task" type="list" label="Page" description="Page">
+				<option value="">My_Account</option>
+                <option value="register">Registration</option>
+                <option value="login">Login</option>
+                <option value="logout">Logout</option>
+                <option value="editaccount">Edit_account</option>
+                <option value="orders">My_Orders</option>
+			</field>			
+		</fieldset>
+	</fields>
+</metadata>
