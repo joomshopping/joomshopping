@@ -1,17 +1,18 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.5 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 
-namespace Joomla\Component\Jshopping\Administrator\Model; defined('_JEXEC') or die();
+namespace Joomla\Component\Jshopping\Administrator\Model; 
+defined('_JEXEC') or die();
 
 class LogsModel extends BaseadminModel{
 
-    function getList(){        
+    public function getList(){        
         $jshopConfig = \JSFactory::getConfig();
         $list = array();
         $dir = $jshopConfig->log_path;
@@ -27,7 +28,7 @@ class LogsModel extends BaseadminModel{
         return $list;
     }
     
-    function read($file){
+    public function read($file){
         $jshopConfig = \JSFactory::getConfig();        
         $dir = $jshopConfig->log_path;
         if (file_exists($dir.$file)) {
@@ -36,5 +37,32 @@ class LogsModel extends BaseadminModel{
 			return '';
 		}
     }
+
+    public function download($file){
+        $jshopConfig = \JSFactory::getConfig();        
+        $dir = $jshopConfig->log_path;
+        $file_name = $dir.$file;
+		if (!file_exists($file_name)){
+            throw new Exception('Error. File not exist');
+        }
+		
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
+        header("Content-Type: application/octet-stream");
+        header("Content-Length: " . (string)(filesize($file_name)));
+        header('Content-Disposition: attachment; filename="' . basename($file_name) . '"');
+        header("Content-Transfer-Encoding: binary");
+
+        if ($jshopConfig->productDownloadFilePart8kb) {
+            $fp = fopen($file_name, "rb");
+            while( (!feof($fp)) && (connection_status()==0) ){
+                print(fread($fp, 1024*8));
+                flush();
+            }
+            fclose($fp);
+        } else {
+            print readfile($file_name);
+        }
+	}
             
 }

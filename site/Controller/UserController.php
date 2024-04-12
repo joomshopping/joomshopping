@@ -45,6 +45,7 @@ class UserController extends BaseController{
         $adv_user = $modelUserRegister->getRegistrationDefaultData();
                 
 		$config_fields = $jshopConfig->getListFieldsRegisterType('register');
+        $cssreq_fields = $jshopConfig->getListFieldsRegisterTypeClassRequired('register', $config_fields);
 		$allowUserRegistration = $modelUserRegister->getUserParams()->get('allowUserRegistration');
 
         $dispatcher->triggerEvent('onBeforeDisplayLogin', array() );
@@ -61,8 +62,9 @@ class UserController extends BaseController{
         $view->set('return', $return);
         $view->set('Itemid', $this->input->getVar('Itemid'));
         $view->set('config', $jshopConfig);
-        $view->set('show_pay_without_reg', $show_pay_without_reg);        
+        $view->set('show_pay_without_reg', $show_pay_without_reg);
         $view->set('config_fields', $config_fields);
+        $view->set('cssreq_fields', $cssreq_fields);
         $view->set('live_path', \JURI::base());
         $view->set('urlcheckdata', \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_exist_ajax&ajax=1", 1, 1, $jshopConfig->use_ssl));
         $view->set('urlcheckpassword', \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_password&ajax=1",1,1, $jshopConfig->use_ssl));
@@ -140,6 +142,7 @@ class UserController extends BaseController{
         }
         
 		$config_fields = $jshopConfig->getListFieldsRegisterType('register');
+        $cssreq_fields = $jshopConfig->getListFieldsRegisterTypeClassRequired('register', $config_fields);
 
         $dispatcher->triggerEvent('onBeforeDisplayRegister', array(&$adv_user));
         
@@ -151,6 +154,7 @@ class UserController extends BaseController{
         $view->setLayout("register"); 
         $view->set('config', $jshopConfig);        
         $view->set('config_fields', $config_fields);
+        $view->set('cssreq_fields', $cssreq_fields);
         $view->set('user', $adv_user);
         $view->set('live_path', \JURI::base());        
         $view->set('urlcheckdata', \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_exist_ajax&ajax=1",1,1));
@@ -251,6 +255,7 @@ class UserController extends BaseController{
 		$select_client_types = Selects::getClientType($adv_user->client_type);
         
 		$config_fields = $jshopConfig->getListFieldsRegisterType('editaccount');
+        $cssreq_fields = $jshopConfig->getListFieldsRegisterTypeClassRequired('editaccount', $config_fields);
         $count_filed_delivery = $jshopConfig->getEnableDeliveryFiledRegistration('editaccount');
 
         $dispatcher = \JFactory::getApplication();
@@ -271,6 +276,7 @@ class UserController extends BaseController{
         $view->set('delivery_adress', $adv_user->delivery_adress);
         $view->set('action', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=accountsave',1,0,$jshopConfig->use_ssl));
         $view->set('config_fields', $config_fields);
+        $view->set('cssreq_fields', $cssreq_fields);
         $view->set('count_filed_delivery', $count_filed_delivery);
         $view->_tmpl_editaccount_html_1 = "";
         $view->_tmpl_editaccount_html_2 = "";

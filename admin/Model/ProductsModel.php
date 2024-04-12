@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.2 01.02.2023
+* @version      5.3.5 13.03.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -915,14 +915,30 @@ class ProductsModel extends BaseadminModel{
                     $productAttribut->set("ext_attribute_product_id", 0);
                 }
                 $productAttribut->set("price", $a_price);
-                $productAttribut->set("old_price", $a_old_price);
-                $productAttribut->set("buy_price", $a_buy_price);
-                $productAttribut->set("count", $a_count);
-                $productAttribut->set("ean", $a_ean);
-                $productAttribut->set("manufacturer_code", $a_manufacturer_code);
-                $productAttribut->set("real_ean", $a_real_ean);
-                $productAttribut->set("weight_volume_units", $a_weight_volume_units);
-                $productAttribut->set("weight", $a_weight);
+                if (isset($post['attrib_old_price'][$k])) {
+                    $productAttribut->set("old_price", $a_old_price);
+                }
+                if (isset($post['attrib_buy_price'][$k])) {
+                    $productAttribut->set("buy_price", $a_buy_price);
+                }
+                if (isset($post['attr_count'][$k])) {
+                    $productAttribut->set("count", $a_count);
+                }
+                if (isset($post['attr_ean'][$k])) {
+                    $productAttribut->set("ean", $a_ean);
+                }
+                if (isset($post['attr_manufacturer_code'][$k])) {
+                    $productAttribut->set("manufacturer_code", $a_manufacturer_code);
+                }
+                if (isset($post['attr_real_ean'][$k])) {
+                    $productAttribut->set("real_ean", $a_real_ean);
+                }
+                if (isset($post['attr_weight_volume_units'][$k])) {
+                    $productAttribut->set("weight_volume_units", $a_weight_volume_units);
+                }
+                if (isset($post['attr_weight'][$k])) {
+                    $productAttribut->set("weight", $a_weight);
+                }
                 foreach($post['attrib_id'] as $field_id=>$val){
                     $productAttribut->set("attr_".intval($field_id), $val[$k]);
                 }

@@ -377,6 +377,9 @@ td.reviews{
 .productfull .block_available.available::before{
     background-color: #60aa2a;
 }
+.productfull .jshop_list_product .block_available::before{
+    display: none;
+}
 
 .jshop_list_product .block_product{
     padding-bottom:15px;

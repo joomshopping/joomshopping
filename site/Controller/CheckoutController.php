@@ -43,6 +43,7 @@ class CheckoutController extends BaseController{
         $adv_user = \JSFactory::getUser()->loadDataFromEdit();
 
         $config_fields = $jshopConfig->getListFieldsRegisterType('address');
+        $cssreq_fields = $jshopConfig->getListFieldsRegisterTypeClassRequired('address', $config_fields);
         $count_filed_delivery = $jshopConfig->getEnableDeliveryFiledRegistration('address');
 
         $checkout_navigator = $checkout->showCheckoutNavigation(2);
@@ -67,6 +68,7 @@ class CheckoutController extends BaseController{
         $view->set('select_client_types', $select_client_types);
         $view->set('live_path', \JURI::base());
         $view->set('config_fields', $config_fields);
+        $view->set('cssreq_fields', $cssreq_fields);
         $view->set('count_filed_delivery', $count_filed_delivery);
         $view->set('user', $adv_user);
         $view->set('delivery_adress', $adv_user->delivery_adress);

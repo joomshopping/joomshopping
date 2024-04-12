@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.2 18.11.2023
+* @version      5.3.5 07.03.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -31,7 +31,7 @@ class AddonCore{
         if (!$this->addon_params){
             $addon = \JSFactory::getTable('addon');
             $addon->loadAlias($this->addon_alias);
-            $this->addon_params = $addon->getParams();        
+            $this->addon_params = $addon->getParams();
         }
         return $this->addon_params;
     }
@@ -65,17 +65,21 @@ class AddonCore{
     }
     
     public function loadCss($extname = ''){
-        $document = \JFactory::getDocument();        
+        $document = \JFactory::getDocument();
         $document->addStyleSheet(\JURI::root().'components/com_jshopping/css/addons/'.$this->addon_alias.$extname.'.css');
     }
     
     public function loadJs($extname = ''){
-        $document = \JFactory::getDocument();        
+        $document = \JFactory::getDocument();
         $document->addScript(\JURI::root().'components/com_jshopping/js/addons/'.$this->addon_alias.$extname.'.js');
     }
     
     public function getPathImages(){
         return \JURI::root().'components/com_jshopping/images/'.$this->addon_alias;
     }
+    
+    public function checkLicKey(){
+		return \JSHelper::compareX64(\JSHelper::replaceWWW(\JSHelper::getJHost().$this->addon_alias), \JSHelper::getLicenseKeyAddon($this->addon_alias));
+	}
 
 }

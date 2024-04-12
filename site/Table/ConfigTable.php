@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 07.12.2023
+* @version      5.3.5 09.03.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -193,7 +193,7 @@ class ConfigTable{
         foreach($fields_client as $type=>$_v){
             foreach($fields_client[$type] as $k=>$v){
                 if (!isset($data[$type][$v])){
-                    $data[$type][$v] = array('display'=>0,'require'=>0);                    
+                    $data[$type][$v] = array('display'=>0,'require'=>0); 
                 }
                 if (!isset($data[$type][$v]['display'])) $data[$type][$v]['display'] = 0;
                 if (!isset($data[$type][$v]['require'])) $data[$type][$v]['require'] = 0;
@@ -209,6 +209,23 @@ class ConfigTable{
 		$tmp_fields = $this->getListFieldsRegister();
         return $tmp_fields[$type];
 	}
+
+    function getListFieldsRegisterTypeClassRequired($type, $fields) {
+        $list = [];
+        foreach($fields as $k => $v) {
+            $list[$k] = '';
+            if (isset($v['require']) && $v['require'] == 1) {
+                $list[$k] = 'required';
+                if (substr($k, 0, 2) == 'd_') {
+                    $list[$k] = 'required-d';
+                }
+                if (in_array($k, ['firma_code', 'tax_number']) && $fields['client_type']['display']) {
+                    $list[$k] = 'required-company';
+                }
+            }
+        }
+        return $list;
+    }
     
     function getEnableDeliveryFiledRegistration($type='address'){
         $tmp_fields = $this->getListFieldsRegister();

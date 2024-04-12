@@ -347,24 +347,24 @@ var jshopClass = function(){
             jQuery("#tr_field_firma_code").show();
             jQuery('#tr_field_tax_number').show();
             jQuery('.required-company').addClass('required');
-            jQuery('.required-company').attr('required', 'required');
+            jQuery('.required-company').prop('required', true);
         }else{
             jQuery("#tr_field_firma_code").hide();
             jQuery('#tr_field_tax_number').hide();
             jQuery('.required-company').removeClass('required');
-            jQuery('.required-company').removeAttr('required');
+            jQuery('.required-company').prop('required', false);
         }
     };
     
     this.showHideAddressDelivery = function(val){
         if (val==1){
-            jQuery('#div_delivery').show();            
+            jQuery('#div_delivery').show();
             jQuery('#div_delivery .required-d').addClass('required');
-            jQuery('#div_delivery .required-d').attr('required', 'required');
+            jQuery('#div_delivery .required-d').prop('required', true);
         }else{
             jQuery('#div_delivery').hide();
             jQuery('#div_delivery .required-d').removeClass('required');
-            jQuery('#div_delivery .required-d').removeAttr('required');
+            jQuery('#div_delivery .required-d').prop('required', false);
         }
     }
 
@@ -420,10 +420,13 @@ jQuery(document).ready(function(){
         jshop.registrationTestPassword(this.value);
     });
 	
-	jQuery('.jshop input[name="delivery_adress"]').on('click',function(){        
+	jQuery('.jshop input[name="delivery_adress"]').on('click',function(){
         jshop.showHideAddressDelivery(this.value);
     });
-	
+    if (jQuery('.jshop input[name="delivery_adress"]:checked').val() == '1') {
+        jshop.showHideAddressDelivery(1);
+    };
+
 	jQuery('#previewfinish_btn').on('click', function(){
 		return jshop.checkAGBAndNoReturn(jQuery(this).attr('data-agb'), jQuery(this).attr('data-noreturn'));
 	});

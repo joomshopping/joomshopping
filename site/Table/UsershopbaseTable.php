@@ -67,7 +67,7 @@ abstract class UsershopbaseTable extends ShopbaseTable{
         }        
 		
 		if ($this->u_name!=''){
-			if (preg_match("#[<>\"'%;()&]#i", $this->u_name) || strlen(utf8_decode($this->u_name )) < 2) {
+			if (preg_match("#[<>\"'%;()&]#i", $this->u_name) || strlen($this->u_name) < 2) {
 				$this->_error = sprintf((\JText::_('JSHOP_VALID_AZ09')),(\JText::_('JSHOP_USERNAME')),2);
 				return false;
 			}

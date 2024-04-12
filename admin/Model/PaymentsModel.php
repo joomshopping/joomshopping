@@ -17,8 +17,8 @@ class PaymentsModel extends BaseadminModel{
     protected $tableFieldOrdering = 'payment_ordering';
     
     function getAllPaymentMethods($publish = 1, $order = null, $orderDir = null) {
-        $database = \JFactory::getDBO(); 
-        $query_where = ($publish)?("WHERE payment_publish = '1'"):("");
+        $db = \JFactory::getDBO(); 
+        $query_where = $publish ? "WHERE payment_publish = 1" : "";
         $lang = \JSFactory::getLang();
         $ordering = 'payment_ordering';
         if ($order && $orderDir){
@@ -28,8 +28,8 @@ class PaymentsModel extends BaseadminModel{
                   $query_where
                   ORDER BY ".$ordering;
         extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
-        $database->setQuery($query);
-        return $database->loadObjectList();
+        $db->setQuery($query);
+        return $db->loadObjectList();
     }
     
     function getTypes(){

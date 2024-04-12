@@ -1,16 +1,17 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.3.5 21.03.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 defined('_JEXEC') or die();
 
-class BaseadminModel extends \JModelLegacy{
+class BaseadminModel extends BaseDatabaseModel{
     
     protected $nameTable = '';
     protected $tableFieldPublish = 'publish';
@@ -39,6 +40,9 @@ class BaseadminModel extends \JModelLegacy{
         if (!$table->check()){
             $this->setError($table->getError());
             return 0;
+        }
+        if (!$table->hasPrimaryKey() && $table->hasField('ordering')){
+            $table->ordering = $table->getNextOrder();
         }
         if (!$table->store()){
             print $table->getError();
@@ -91,6 +95,39 @@ class BaseadminModel extends \JModelLegacy{
         $table = $this->getDefaultTable();
         $table->$field = null;
         $table->reorder($where, $field);
+    }
+
+    public function getRawList($fields = '*', $order = null, $orderDir = 'asc', $limit = 0, $limitstart = 0) {
+        $table = $this->getDefaultTable();
+        if ($table) {
+            $tablename = $table->getTableName();
+        } else {
+            throw new \Exception('Error get table for '.static::class);
+        }
+        $db = \JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select($fields);
+        $query->from($db->qn($tablename));
+        if (isset($order)) {
+            $query->order($db->qn($order)." ".$orderDir);
+        }
+        $db->setQuery($query, $limitstart, $limit);
+        return $db->loadObjectList(); 
+    }
+
+    public function getRawListCount() {
+        $table = $this->getDefaultTable();
+        if ($table) {
+            $tablename = $table->getTableName();
+        } else {
+            throw new \Exception('Error get Table for '.static::class);
+        }
+        $db = \JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select('count(*)');
+        $query->from($db->qn($tablename));
+        $db->setQuery($query);
+        return $db->loadResult();
     }
     
 }
