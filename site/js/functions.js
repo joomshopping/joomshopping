@@ -271,9 +271,6 @@ var jshopClass = function(){
 					jQuery("#videoshophtml5").remove();
                     jQuery("#list_product_image_thumb").html(json.block_image_thumb);
                     jQuery("#list_product_image_middle").html(json.block_image_middle);
-					if (jshopParams.initJSlightBox) {
-						jshop.initJSlightBox();
-					}
                 }
 
                 if (typeof(json.demofiles)!='undefined'){
@@ -373,19 +370,7 @@ var jshopClass = function(){
         jQuery.get(url, data, function(data){
             jQuery("#list_characteristics").html(data);
         });
-    };
-    
-    this.initJSlightBox = function(){
-        jQuery("a.lightbox").lightBox({
-            imageLoading: jshopParams.liveurl+'components/com_jshopping/images/loading.gif',
-            imageBtnClose: jshopParams.liveurl+'components/com_jshopping/images/close.gif',
-            imageBtnPrev: jshopParams.liveurl+'components/com_jshopping/images/prev.gif',
-            imageBtnNext: jshopParams.liveurl+'components/com_jshopping/images/next.gif',
-            imageBlank: jshopParams.liveurl+'components/com_jshopping/images/blank.gif',
-            txtImage: jshopParams.JSHOP_IMAGE,
-            txtOf: jshopParams.JSHOP_OF
-        });
-    }
+    };  
 
     this.registrationTestPassword = function(pass){
         jQuery.ajax({
@@ -454,10 +439,6 @@ jQuery(document).ready(function(){
 			jQuery('.jshop_list_product .filters').addClass('active');
 		}
 	});
-	
-    if (typeof(jshopParams)!=='undefined' && jshopParams.initJSlightBox){
-        jshop.initJSlightBox();
-    }
 
 	jQuery(document).on('click', '.jshop .cart .cart_reload', function(){
        jQuery('.jshop form#updateCart').submit(); 

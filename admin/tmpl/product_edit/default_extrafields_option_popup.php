@@ -1,3 +1,13 @@
+<?php
+/**
+* @version      5.4.0 10.04.2014
+* @author       MAXXmarketing GmbH
+* @package      Jshopping
+* @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
+* @license      GNU/GPL
+*/
+defined('_JEXEC') or die();
+?>
 <table class="w-100">
     <?php foreach($this->languages as $lang) { ?>
         <tr>

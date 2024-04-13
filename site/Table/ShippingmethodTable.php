@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.4.0 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -8,7 +8,6 @@
 */
 namespace Joomla\Component\Jshopping\Site\Table;
 defined('_JEXEC') or die();
-Jimport('Joomla.filesystem.folder');
 
 class ShippingMethodTable extends MultilangTable{
 
@@ -26,8 +25,13 @@ class ShippingMethodTable extends MultilangTable{
     }
     
     function getAllShippingMethods($publish = 1) {
-        $db = \JFactory::getDBO(); 
-        $query_where = ($publish)?("WHERE published = '1'"):("");
+        $db = \JFactory::getDBO();
+        $user = \JFactory::getUser();
+        $groups = implode(',', $user->getAuthorisedViewLevels());
+        $query_where = 'WHERE `access` IN ('.$groups.')';
+        if ($publish) {
+            $query_where .= " AND published=1 ";
+        }
         $lang = \JSFactory::getLang();
         $query = "SELECT shipping_id, `".$lang->get('name')."` as name, `".$lang->get("description")."` as description, published, ordering
                   FROM `#__jshopping_shipping_method` 
@@ -41,9 +45,14 @@ class ShippingMethodTable extends MultilangTable{
     function getAllShippingMethodsCountry($country_id, $payment_id, $publish = 1){
         $db = \JFactory::getDBO(); 
         $lang = \JSFactory::getLang();
-		$JshopConfig = \JSFactory::getConfig();
-        $query_where = ($publish) ? ("AND sh_method.published = '1'") : ("");
-		if ($payment_id && $JshopConfig->step_4_3==0){
+		$JshopConfig = \JSFactory::getConfig();        
+        $user = \JFactory::getUser();
+        $groups = implode(',', $user->getAuthorisedViewLevels());
+        $query_where = 'AND sh_method.`access` IN ('.$groups.')';
+        if ($publish) {
+            $query_where .= " AND sh_method.published=1 ";
+        }
+		if ($payment_id && $JshopConfig->step_4_3 == 0) {
 			$query_where.= " AND (sh_method.payments='' OR FIND_IN_SET(".$payment_id.", sh_method.payments) ) ";
 		}
         $query = "SELECT *, sh_method.`".$lang->get("name")."` as name, `".$lang->get("description")."` as description FROM `#__jshopping_shipping_method` AS sh_method

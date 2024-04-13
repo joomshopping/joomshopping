@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.4 26.02.2024
+* @version      5.3.6 24.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,6 +17,7 @@ $config->live_path = \JURI::root().'components/com_jshopping/';
 $config->live_admin_path = \JURI::root().'administrator/components/com_jshopping/';
 
 $config->log_path = JPATH_ROOT."/components/com_jshopping/log/";
+$config->cache_path = JPATH_ROOT."/components/com_jshopping/files/cache/";
 
 $config->importexport_live_path = $config->live_path."files/importexport/";
 $config->importexport_path = $config->path."files/importexport/";
@@ -136,6 +137,7 @@ $config->payment_status_return_product_in_stock = [3, 4];
 $config->payment_status_for_cancel_client = 3;
 $config->payment_status_disable_cancel_client = [7];
 $config->payment_status_no_create_order = [3];
+$config->payment_status_no_send_mail_status = [];
 $config->payment_status_paid = 6;
 $config->order_stock_removed_only_paid_status = 0;
 $config->cart_back_to_shop = "list"; //product, list, shop
@@ -299,13 +301,14 @@ $config->load_javascript_bootstrap = 1;
 $config->load_javascript_jquery = 1;
 $config->file_jquery_media_js = $config->live_path.'js/jquery/jquery.media.js';
 $config->file_functions_js = $config->live_path.'js/functions.js';
-$config->file_lightbox_js = $config->live_path.'js/jquery/jquery.lightbox.js';
-$config->file_lightbox_css = $config->live_path.'css/jquery.lightbox.css';
-$config->script_lightbox_init = 'var jshopParams = jshopParams || {};
-    jshopParams.initJSlightBox=1;
-    jshopParams.liveurl="'.\JURI::root().'";
-    jshopParams.txtImage="'.JText::_('JSHOP_IMAGE').'";
-    jshopParams.txtOf="'.JText::_('JSHOP_OF').'";';
+$config->script_js_init = 'var jshopParams = jshopParams || {};jshopParams.liveurl="'.\JURI::root().'";';
+$config->file_lightbox_js = $config->live_path.'js/jquery/lightbox2.js';
+$config->file_lightbox_css = $config->live_path.'css/lightbox2.css';
+$config->script_lightbox_init = 'lightbox.option({
+    "disableScrolling": true,
+    "AlwaysShowNavOnTouchDevices": true,
+    "albumLabel": "'.\JText::_('JSHOP_IMAGE').' %1 '.\JText::_('JSHOP_OF') .' %2"
+  });';
 $config->file_metadata_js = $config->live_path.'js/jquery/jquery.MetaData.js';
 $config->file_rating_js = $config->live_path.'js/jquery/jquery.rating.pack.js';
 $config->file_rating_css = $config->live_path.'css/jquery.rating.css';

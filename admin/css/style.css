@@ -591,6 +591,37 @@ a.saveorder{
     background-color: #5285c5;
     opacity: .8;
 }
+.tbody-icon .icon-flash{
+    color: #ffb514;
+    border-color: #ffb514;
+}
+
+.tbody-icon .icon-basket{
+    color: #ffb514;
+    border-color: #ffb514;
+}
+a[class^="tbody-icon"][target="_blank"]::before{
+    display: none;
+}
+div.latest{
+    background: var(--success);
+    display: inline-block;
+    border-radius: 5px;
+    padding: 3px;
+    color: #fff;
+}
+div.latest a, div.latest a{
+    color: #fff;
+}
+div.latest a[target="_blank"]::before{
+    display: none;
+}
+div.avialable_version_update{
+    background: var(--warning);
+    display: inline-block;
+    border-radius: 5px;
+    padding: 3px;
+}
 
 .btn-nopad {
     padding: 0;

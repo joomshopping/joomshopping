@@ -172,28 +172,45 @@ class ProductsModel extends BaseadminModel{
     }
 
     function setCategoryToProduct($product_id, $categories = []){
-        $db = \JFactory::getDBO();
         foreach($categories as $cat_id){
             if (!$this->productInCategory($product_id, $cat_id)){
-                $ordering = $this->getMaxOrderingInCategory($cat_id)+1;
-                $query = "INSERT INTO `#__jshopping_products_to_categories` SET `product_id` = '".$db->escape($product_id)."', `category_id` = '".$db->escape($cat_id)."', `product_ordering` = '".$db->escape($ordering)."'";
-                $db->setQuery($query);
-                $db->execute();
+                $this->addNewCategoryToProduct($product_id, $cat_id);
             }
         }
-
         //delete other cat for product
-        $query = "select `category_id` from `#__jshopping_products_to_categories` where `product_id` = '".$db->escape($product_id)."'";
-        $db->setQuery($query);
-        $listcat = $db->loadObjectList();
-        foreach($listcat as $val){
-            if (!in_array($val->category_id, $categories)){
-                $query = "delete from `#__jshopping_products_to_categories` where `product_id` = '".$db->escape($product_id)."' and `category_id` = '".$db->escape($val->category_id)."'";
-                $db->setQuery($query);
-                $db->execute();
+        $listcat = $this->getCategorysIdInProduct($product_id);
+        foreach($listcat as $catid){
+            if (!in_array($catid, $categories)){
+                $this->deleteCategoryIdFromProduct($product_id, $catid);
             }
         }
+    }
 
+    function addNewCategoryToProduct($product_id, $cat_id) {
+        $db = \JFactory::getDBO();
+        $ordering = $this->getMaxOrderingInCategory($cat_id)+1;
+        $data = (object)['product_id' => $product_id, 'category_id' => $cat_id, 'product_ordering' => $ordering];
+        $db->insertObject('#__jshopping_products_to_categories', $data);        
+    }
+
+    function getCategorysIdInProduct($product_id) {
+        $db = \JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $query->select($db->qn('category_id'))
+            ->from($db->qn('#__jshopping_products_to_categories'))
+            ->where($db->qn('product_id') . '=' . $db->q($product_id));
+        $db->setQuery($query);
+        return $db->loadColumn();
+    }
+
+    function deleteCategoryIdFromProduct($product_id, $cat_id) {
+        $db = \JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $query->delete($db->qn('#__jshopping_products_to_categories'))
+            ->where($db->qn('product_id') . '=' . $db->q($product_id))
+            ->where($db->qn('category_id') . '=' . $db->q($cat_id));
+        $db->setQuery($query);
+        $db->execute();
     }
 
     function getRelatedProducts($product_id){

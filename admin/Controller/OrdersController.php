@@ -100,12 +100,7 @@ class OrdersController extends BaseadminController{
 				$row->currency_exchange = 1;
 			}
             $total += $row->order_total / $row->currency_exchange;
-        }
-
-        $dispatcher = \JFactory::getApplication();
-        $dispatcher->triggerEvent('onBeforeDisplayListOrderAdmin', array(&$rows));
-
-        foreach ($rows as $row) {
+			
             $row->_tmp_ext_info_order_number = "";
             $row->_tmp_cols_1 = "";
             $row->_tmp_cols_after_user = "";
@@ -117,8 +112,11 @@ class OrdersController extends BaseadminController{
             $row->_tmp_cols_8 = "";
             $row->_tmp_ext_info_status = "";
             $row->_tmp_ext_info_update = "";
-            $row->_tmp_ext_info_order_total = "";
+            $row->_tmp_ext_info_order_total = "";			
         }
+
+        $dispatcher = \JFactory::getApplication();
+        $dispatcher->triggerEvent('onBeforeDisplayListOrderAdmin', array(&$rows));
 		
 		$view=$this->getView("orders", 'html');
         $view->setLayout("list");

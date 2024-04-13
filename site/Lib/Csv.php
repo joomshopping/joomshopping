@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.1 21.09.2023
+* @version      5.4.0 08.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,6 +17,7 @@ class Csv{
 	public $file = '';
 	public $write_row_nr = 0;
 	public $only_file_append = 0;
+	public $file_read_resource = null;
     
     public function setDelimit($val){
         $this->delimit = $val;    

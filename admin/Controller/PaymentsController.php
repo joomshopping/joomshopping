@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.4.0 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -88,6 +88,7 @@ class PaymentsController extends BaseadminController{
             $disabled = '';
         }
         $lists['type_payment'] = \JHTML::_('select.genericlist', SelectOptions::getPaymentType(), 'payment_type','class = "inputbox form-select" '.$disabled, 'id','name', $payment->payment_type);
+        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $payment->access);
         
         $nofilter = array();
         \JFilterOutput::objectHTMLSafe($payment, ENT_QUOTES, $nofilter);

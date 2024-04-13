@@ -259,7 +259,7 @@ class CheckoutBuyModel  extends CheckoutModel{
 				}
 				$this->changeStatusOrder($order_id, $status, 0, $prev_order_status_data->order_status, 1);
 			} elseif ($prev_order_status_data->order_status != $status) {
-				$email_send = $prev_order_status_data->order_created;
+				$email_send = $prev_order_status_data->order_created && (!in_array($status, $jshopConfig->payment_status_no_send_mail_status));
 				$this->changeStatusOrder($order_id, $status, $email_send, $prev_order_status_data->order_status, $email_send);
 			}
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.4 23.02.2024
+* @version      5.4.0 23.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,6 +12,15 @@ defined('_JEXEC') or die();
 
 class SelectOptions{
 	
+    public static function getItems($first = 1, $list = []){
+		$option = array();
+        $first_name = self::getFirstNameOption($first, \JText::_('JSHOP_REG_SELECT'));
+		if ($first!==0){
+			$option[] = \JHTML::_('select.option', '', $first_name, 'id', 'name');
+		}
+	return array_merge($option, $list);
+	}
+
 	public static function getCountrys($first = 1){
 		$app = \JFactory::getApplication();
 		$option = array();

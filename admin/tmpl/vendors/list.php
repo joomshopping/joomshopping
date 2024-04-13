@@ -113,15 +113,11 @@ foreach($rows as $row){?>
 <?php 
 $i++;
 }?>
-<tfoot>
- <tr>   
-    <td colspan="11">
-		<div class = "jshop_list_footer"><?php echo $pageNav->getListFooter(); ?></div>
-        <div class = "jshop_limit_box"><?php echo $pageNav->getLimitBox(); ?></div>
-	</td>
- </tr>
-</tfoot>
 </table>
+<div class="d-flex justify-content-between align-items-center">
+    <div class="jshop_list_footer"><?php echo $pageNav->getListFooter(); ?></div>
+    <div class="jshop_limit_box"><?php echo $pageNav->getLimitBox(); ?></div>
+</div>
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="boxchecked" value="0" />
 <?php print $this->tmp_html_end?>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.4.0 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -20,7 +20,7 @@ class CartController extends BaseController{
         \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerCart', array(&$obj));
     }
 
-    function display($cachable = false, $urlparams = false){        
+    function display($cachable = false, $urlparams = false){
         $this->view();
     }
 
@@ -97,6 +97,11 @@ class CartController extends BaseController{
 		$cartpreview = \JSFactory::getModel('cartPreview', 'Site');
         $cartpreview->setCart($cart);
 		$cartpreview->setCheckoutStep(0);
+
+        if ($ajax == 2){
+            print \JSHelper::getOkMessageJson($cart);
+            die();
+        }
 
         $shopurl = $cartpreview->getBackUrlShop();
         $cartdescr = $cartpreview->getCartStaticText();
@@ -217,9 +222,14 @@ class CartController extends BaseController{
     }
 
     function clear(){
+        $ajax = $this->input->getInt('ajax');
         $cart = \JSFactory::getModel('cart', 'Site');
         $cart->load();
         $cart->deleteAll();
-        $this->setRedirect( \JSHelper::SEFLink($cart->getUrlList(),0,1) );
+        if ($ajax){
+            print \JSHelper::getOkMessageJson($cart);
+            die();
+        }
+        $this->setRedirect(\JSHelper::SEFLink($cart->getUrlList(), 0, 1));
     }
 }

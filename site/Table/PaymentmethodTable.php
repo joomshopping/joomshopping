@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.6 08.07.2022
+* @version      5.4.0 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -32,7 +32,12 @@ class PaymentMethodTable extends MultilangTable{
     function getAllPaymentMethods($publish = 1, $shipping_id = 0){
         $db = \JFactory::getDBO();
         $JshopConfig = \JSFactory::getConfig();
-        $query_where = ($publish)?("WHERE payment_publish = '1'"):("");
+        $user = \JFactory::getUser();        
+        $groups = implode(',', $user->getAuthorisedViewLevels());
+        $query_where = 'WHERE `access` IN ('.$groups.')';
+        if ($publish) {
+            $query_where .= " AND payment_publish=1 ";
+        }
         $lang = \JSFactory::getLang();
         $query = "SELECT payment_id, `".$lang->get("name")."` as name, `".$lang->get("description")."` as description , payment_code, payment_class, scriptname, payment_publish, payment_ordering, payment_params, payment_type, price, price_type, tax_id, image FROM `#__jshopping_payment_method` $query_where ORDER BY payment_ordering";
         extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
@@ -158,14 +163,14 @@ class PaymentMethodTable extends MultilangTable{
         extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $params_str = $db->loadResult();
-        return (array)json_decode($params_str, true);        
+        return (array)json_decode($params_str, true);
     }
     
     /**
     * get config    
     */
-    function getConfigs(){        
-        return (array)json_decode($this->payment_params, true);
+    function getConfigs(){
+        return (array)json_decode($this->payment_params ?? '', true);
     }
     
     function setConfigs($data){

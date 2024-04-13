@@ -144,15 +144,11 @@ $i = 0;
 $i++;
 }
 ?>
- <tfoot>
- <tr>
-    <td colspan="13">
-		<div class = "jshop_list_footer"><?php echo $this->pagination->getListFooter(); ?></div>
-        <div class = "jshop_limit_box"><?php echo $this->pagination->getLimitBox(); ?></div>
-	</td>
- </tr>
- </tfoot>   
- </table>
+</table>
+<div class="d-flex justify-content-between align-items-center">
+    <div class="jshop_list_footer"><?php echo $this->pagination->getListFooter(); ?></div>
+    <div class="jshop_limit_box"><?php echo $this->pagination->getLimitBox(); ?></div>
+</div>
 
 <input type="hidden" name="filter_order" value="<?php echo $this->filter_order?>" />
 <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter_order_Dir?>" />      

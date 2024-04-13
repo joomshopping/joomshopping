@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.6 26.07.2022
+* @version      5.4.0 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -83,6 +83,7 @@ class ShippingsController extends BaseadminController{
         }
 
         $lists['payments'] = \JHTML::_('select.genericlist', SelectOptions::getPayments(\JText::_('JSHOP_ALL')), 'listpayments[]', 'class="inputbox form-select" size="10" multiple = "multiple"', 'payment_id', 'name', $active_payments);
+        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $shipping->access);
 
         $nofilter = array();
         \JFilterOutput::objectHTMLSafe($shipping, ENT_QUOTES, $nofilter);

@@ -13,8 +13,8 @@ $pageNav = $this->pageNav;
 $i = 0;
 $saveOrder = $this->filter_order_Dir=="asc" && $this->filter_order=="ordering";
 if ($saveOrder){
-    $saveOrderingUrl = 'index.php?option=com_jshopping&controller=countries&task=saveorder&tmpl=component&ajax=1';
-	Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
+  $saveOrderingUrl = 'index.php?option=com_jshopping&controller=countries&task=saveorder&tmpl=component&ajax=1';
+  Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
 }
 ?>
 
@@ -26,12 +26,10 @@ if ($saveOrder){
 
     <div class="js-filters">
         <?php print $this->tmp_html_filter?>
-
-                <div>
-                    <label><?php print JText::_('JSHOP_SHOW')?>:</label>
-                    <?php print $this->filter;?>
-                </div>
-
+        <div>
+            <label><?php print JText::_('JSHOP_SHOW')?>:</label>
+            <?php print $this->filter;?>
+        </div>
         <?php print $this->tmp_html_filter_end?>      
     </div>
 
@@ -104,15 +102,12 @@ if ($saveOrder){
     }
     ?>
     </tbody>
-    <tfoot>
-    <tr>
-        <td colspan="11">
-            <div class = "jshop_list_footer"><?php echo $pageNav->getListFooter(); ?></div>
-            <div class = "jshop_limit_box"><?php echo $pageNav->getLimitBox(); ?></div>
-        </td>
-    </tr>
-    </tfoot>
     </table>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="jshop_list_footer"><?php echo $pageNav->getListFooter(); ?></div>
+        <div class="jshop_limit_box"><?php echo $pageNav->getLimitBox(); ?></div>
+    </div>
 
     <input type="hidden" name="filter_order" value="<?php echo $this->filter_order?>" />
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter_order_Dir?>" />

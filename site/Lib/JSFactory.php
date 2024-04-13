@@ -106,6 +106,7 @@ class JSFactory{
 					HTMLHelper::_('jquery.framework');
 				}
                 $document->addScript($jshopConfig->file_functions_js);
+                $document->addScriptDeclaration($jshopConfig->script_js_init);
             }
             $load = 1;
         }

@@ -132,17 +132,13 @@ if ($saveOrder){
                 </tr>
                 <?php $i++; } ?>
             </tbody>
-            <tfoot>
-                <tr>
-                    <?php print $this->tmp_html_col_before_td_foot?>
-                    <td colspan="12">
-                        <div class="jshop_list_footer"><?php echo $pageNav->getListFooter(); ?></div>
-                        <div class="jshop_limit_box"><?php echo $pageNav->getLimitBox(); ?></div>
-                    </td>
-                    <?php print $this->tmp_html_col_after_td_foot?>
-                </tr>
-            </tfoot>
         </table>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="jshop_list_footer"><?php echo $pageNav->getListFooter(); ?></div>
+            <div class="jshop_limit_box"><?php echo $pageNav->getLimitBox(); ?></div>
+        </div>
+
         <input type="hidden" name="filter_order" value="<?php echo $this->filter_order?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter_order_Dir?>" />
         <input type="hidden" name="task" value="" />
