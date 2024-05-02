@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Lib;
+use Joomla\CMS\HTML\HTMLHelper;
 
 defined('_JEXEC') or die();
 
@@ -44,7 +45,7 @@ class TreeObjectList{
 	private function recurseTreeAdd($value, $level){
 		if ($this->is_select){
 			$value->{$this->name} = ($this->getSep($level).$value->{$this->name});
-			$this->cats[] = \JHTML::_('select.option', $value->{$this->id}, $value->{$this->name}, $this->id, $this->name);
+			$this->cats[] = HTMLHelper::_('select.option', $value->{$this->id}, $value->{$this->name}, $this->id, $this->name);
 		} else {
 			$value->level = $level;
 			$this->cats[] = $value;

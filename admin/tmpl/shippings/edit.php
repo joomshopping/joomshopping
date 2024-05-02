@@ -1,4 +1,8 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Editor\Editor;
+
 
 /**
  * @version      5.4.0 09.04.2024
@@ -20,7 +24,7 @@ $edit = $this->edit;
                 <table class="admintable" width="100%">
                     <tr>
                         <td class="key" width="30%">
-                            <?php echo JText::_('JSHOP_PUBLISH') ?>
+                            <?php echo Text::_('JSHOP_PUBLISH') ?>
                         </td>
                         <td>
                             <input type="checkbox" name="published" value="1" <?php if ($row->published) echo 'checked="checked"' ?> />
@@ -28,7 +32,7 @@ $edit = $this->edit;
                     </tr>
                     <tr>
                         <td class="key">
-                            <?php echo JText::_('JSHOP_ACCESS') ?>*
+                            <?php echo Text::_('JSHOP_ACCESS') ?>*
                         </td>
                         <td>
                             <?php print $this->lists['access']; ?>
@@ -40,7 +44,7 @@ $edit = $this->edit;
                     ?>
                         <tr>
                             <td class="key">
-                                <?php echo JText::_('JSHOP_TITLE') ?> <?php if ($this->multilang) print "(" . $lang->lang . ")"; ?>*
+                                <?php echo Text::_('JSHOP_TITLE') ?> <?php if ($this->multilang) print "(" . $lang->lang . ")"; ?>*
                             </td>
                             <td>
                                 <input type="text" class="inputbox form-control" id="<?php print $field ?>" name="<?php print $field ?>" value="<?php echo $row->$field; ?>" />
@@ -49,7 +53,7 @@ $edit = $this->edit;
                     <?php } ?>
                     <tr>
                         <td class="key">
-                            <?php echo JText::_('JSHOP_ALIAS') ?>
+                            <?php echo Text::_('JSHOP_ALIAS') ?>
                         </td>
                         <td>
                             <input type="text" class="inputbox form-control" name="alias" value="<?php echo $row->alias ?>" <?php if ($this->config->shop_mode == 0 && $row->shipping_id) { ?>readonly <?php } ?> />
@@ -57,7 +61,7 @@ $edit = $this->edit;
                     </tr>
                     <tr>
                         <td class="key">
-                            <?php echo JText::_('JSHOP_PAYMENTS') ?>
+                            <?php echo Text::_('JSHOP_PAYMENTS') ?>
                         </td>
                         <td>
                             <?php print $this->lists['payments'] ?>
@@ -65,7 +69,7 @@ $edit = $this->edit;
                     </tr>
                     <tr>
                         <td class="key">
-                            <?php echo JText::_('JSHOP_IMAGE_URL') ?>
+                            <?php echo Text::_('JSHOP_IMAGE_URL') ?>
                         </td>
                         <td>
                             <input type="text" class="inputbox form-control" name="image" value="<?php echo $row->image; ?>" />
@@ -78,11 +82,11 @@ $edit = $this->edit;
                     ?>
                         <tr>
                             <td class="key">
-                                <?php echo JText::_('JSHOP_DESCRIPTION') ?> <?php if ($this->multilang) print "(" . $lang->lang . ")"; ?>
+                                <?php echo Text::_('JSHOP_DESCRIPTION') ?> <?php if ($this->multilang) print "(" . $lang->lang . ")"; ?>
                             </td>
                             <td>
                                 <?php
-                                $editor = \JEditor::getInstance(\JFactory::getConfig()->get('editor'));
+                                $editor = Editor::getInstance(Factory::getConfig()->get('editor'));
                                 print $editor->display('description' . $lang->id,  $row->$field, '100%', '350', '75', '20');
                                 ?>
                             </td>
@@ -97,7 +101,7 @@ $edit = $this->edit;
         </div>
         <div class="clr"></div>
 
-        <input type="hidden" name="task" value="<?php echo \JFactory::getApplication()->input->getVar('task') ?>" />
+        <input type="hidden" name="task" value="<?php echo Factory::getApplication()->input->getVar('task') ?>" />
         <input type="hidden" name="edit" value="<?php echo $edit; ?>" />
         <?php if ($edit) { ?>
             <input type="hidden" name="shipping_id" value="<?php echo (int)$row->shipping_id ?>" />

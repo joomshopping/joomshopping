@@ -7,23 +7,28 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 defined('_JEXEC') or die();
 
 class ManufacturerController extends BaseController{
     
     public function init(){
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerManufacturer', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerManufacturer', array(&$obj));
     }
 	
 	function display($cachable = false, $urlparams = false){        
-        $params = \JFactory::getApplication()->getParams();        
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+        $params = Factory::getApplication()->getParams();        
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
         
-		$manufacturer = \JSFactory::getTable('manufacturer');
+		$manufacturer = JSFactory::getTable('manufacturer');
         $manufacturer->getDescription();
 		$rows = $manufacturer->getAllManufacturers(1, $manufacturer->getFieldListOrdering(), $manufacturer->getSortingDirection());
 
@@ -44,26 +49,26 @@ class ManufacturerController extends BaseController{
 	}	
 	
 	function view(){
-	    $dispatcher = \JFactory::getApplication();
-		$jshopConfig = \JSFactory::getConfig();        
+	    $dispatcher = Factory::getApplication();
+		$jshopConfig = JSFactory::getConfig();        
         $manufacturer_id = $this->input->getInt('manufacturer_id');
 
-		\JSFactory::getModel('productShop', 'Site')->storeEndPages();
+		JSFactory::getModel('productShop', 'Site')->storeEndPages();
 		
-		$manufacturer = \JSFactory::getTable('manufacturer');		
+		$manufacturer = JSFactory::getTable('manufacturer');		
 		$manufacturer->load($manufacturer_id);
 		$manufacturer->getDescription();
 
         $dispatcher->triggerEvent('onBeforeDisplayManufacturer', array(&$manufacturer));
         
         if (!$manufacturer->checkView()){
-            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+            throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
 
         Metadata::manufacturer($manufacturer);
         
-        $productlist = \JSFactory::getModel('manufacturer', 'Site\\Productlist');
+        $productlist = JSFactory::getModel('manufacturer', 'Site\\Productlist');
         $productlist->setTable($manufacturer);
         $productlist->load();
         
@@ -107,7 +112,7 @@ class ManufacturerController extends BaseController{
         $view->set('filters', $filters);
         $view->set('willBeUseFilter', $willBeUseFilter);
         $view->set('display_list_products', $display_list_products);
-        $view->set('shippinginfo', \JSHelper::SEFLink($jshopConfig->shippinginfourl,1));
+        $view->set('shippinginfo', Helper::SEFLink($jshopConfig->shippinginfourl,1));
         $view->set('total', $productlist->getTotal());
         $view->_tmp_ext_filter_box = "";
         $view->_tmp_ext_filter = "";

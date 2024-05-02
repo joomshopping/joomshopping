@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class ProductFieldTable extends MultilangTable{
@@ -38,8 +40,8 @@ class ProductFieldTable extends MultilangTable{
     }
     
     function getList($groupordering = 1){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $ordering = "F.ordering";
         if ($groupordering){
             $ordering = "G.ordering, F.ordering";
@@ -61,8 +63,8 @@ class ProductFieldTable extends MultilangTable{
     }
     
     function addNewFieldProducts(){
-        $jshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         $field = 'extra_field_'.(int)$this->id;
         $fl_type = $jshopConfig->new_extra_field_type_list;
         if ($this->type == 1) {
@@ -77,8 +79,8 @@ class ProductFieldTable extends MultilangTable{
     }
 
     function updateFieldProducts() {
-        $jshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         $field = 'extra_field_'.(int)$this->id;
         $fl_type = $jshopConfig->new_extra_field_type_list;
         if ($this->type == 1) {
@@ -93,7 +95,7 @@ class ProductFieldTable extends MultilangTable{
     }
 
     function deleteFieldProducts(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $field = 'extra_field_'.(int)$this->id;
         $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` DROP `".$field."`";
         $db->setQuery($query);
@@ -101,7 +103,7 @@ class ProductFieldTable extends MultilangTable{
     }
 
     function clearValueFromFieldProduct($field_id, $value_id) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $field = "extra_field_".(int)$field_id;
         $query = "UPDATE `#__jshopping_products_to_extra_fields` SET ".$db->qn($field)."=0 WHERE ".$db->qn($field)."=".$db->q($value_id);
         $db->setQuery($query);

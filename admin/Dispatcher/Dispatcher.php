@@ -8,6 +8,12 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Dispatcher;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Plugin\PluginHelper;
 
 defined('_JEXEC') or die;
 
@@ -18,7 +24,7 @@ use Joomla\CMS\MVC\Controller\BaseController;
 class Dispatcher extends ComponentDispatcher{
 	
 	public function getController(string $name, string $client = '', array $config = array()): BaseController{
-        \JFactory::getApplication()->triggerEvent('onAfterGetJsAdminRequestController', array(&$name));
+        Factory::getApplication()->triggerEvent('onAfterGetJsAdminRequestController', array(&$name));
 		return parent::getController($name, $client, $config);
 	}
 	
@@ -28,21 +34,21 @@ class Dispatcher extends ComponentDispatcher{
 	}
 
     private function initShop(){
-        if (!\JFactory::getUser()->authorise('core.manage', 'com_jshopping')) {
-            return \JSError::raiseWarning(404, \JText::_('JERROR_ALERTNOAUTHOR'));
+        if (!Factory::getUser()->authorise('core.manage', 'com_jshopping')) {
+            return JSError::raiseWarning(404, Text::_('JERROR_ALERTNOAUTHOR'));
         }		
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $ajax = $app->input->getInt('ajax');
         $admin_load_user_id = $app->input->getInt('admin_load_user_id');
         if ($admin_load_user_id){
-            \JSFactory::setLoadUserId($admin_load_user_id);
+            JSFactory::setLoadUserId($admin_load_user_id);
         }
         if (!$app->input->getVar("js_nolang")){
-            \JSFactory::loadAdminLanguageFile();
+            JSFactory::loadAdminLanguageFile();
         }
-        $jshopConfig = \JSFactory::getConfig();
-        $currLang = \JFactory::getLanguage()->getTag();
-        $lang_tags = \JSFactory::getModel("languages")->getAllTags(1);
+        $jshopConfig = JSFactory::getConfig();
+        $currLang = Factory::getLanguage()->getTag();
+        $lang_tags = JSFactory::getModel("languages")->getAllTags(1);
         if (in_array($currLang, $lang_tags) && $jshopConfig->admin_shop_lang_as_admin_lang) {
             $jshopConfig->setLang($currLang);
         } else {
@@ -50,19 +56,19 @@ class Dispatcher extends ComponentDispatcher{
         }
 		
         if (!$ajax){
-            \JSHelper::installNewLanguages();
+            Helper::installNewLanguages();
         }else{
             header('Content-Type: text/html;charset=UTF-8');
         }
 
-        \JPluginHelper::importPlugin('jshopping');
-        \JPluginHelper::importPlugin('jshoppingadmin');
-        \JPluginHelper::importPlugin('jshoppingmenu');
+        PluginHelper::importPlugin('jshopping');
+        PluginHelper::importPlugin('jshoppingadmin');
+        PluginHelper::importPlugin('jshoppingmenu');
         $app->triggerEvent('onAfterLoadShopParamsAdmin', array());
 
         HTMLHelper::_('bootstrap.framework');
 		HTMLHelper::_('jquery.framework');
-        $doc = \JFactory::getDocument();
+        $doc = Factory::getDocument();
         $doc->addScript($jshopConfig->live_path.'js/functions.js');
         $doc->addScript($jshopConfig->live_admin_path.'js/functions.js?5.3.3');
         $doc->addStyleSheet($jshopConfig->live_admin_path.'css/style.css');

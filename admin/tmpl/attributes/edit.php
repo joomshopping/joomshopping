@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+
 /**
 * @version      5.2.1 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -20,7 +23,7 @@ defined('_JEXEC') or die();
     ?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>* 
+         <?php echo Text::_('JSHOP_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>* 
        </td>
        <td>
          <input type="text" class="inputbox form-control" name="<?php print $name?>" value="<?php echo $this->attribut->$name?>" />
@@ -33,7 +36,7 @@ defined('_JEXEC') or die();
     ?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
+         <?php echo Text::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
        </td>
        <td>
 		 <textarea class="inputbox form-control" name="<?php print $description?>"><?php echo $this->attribut->$description?></textarea>
@@ -43,26 +46,26 @@ defined('_JEXEC') or die();
     
     <tr>
         <td class="key">
-            <?php echo JText::_('JSHOP_TYPE_ATTRIBUT')?>*
+            <?php echo Text::_('JSHOP_TYPE_ATTRIBUT')?>*
         </td>
         <td>
             <?php echo $this->type_attribut;?>
-            <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_INFO_TYPE_ATTRIBUT'))?>
+            <?php echo HelperAdmin::tooltip(Text::_('JSHOP_INFO_TYPE_ATTRIBUT'))?>
         </td>
     </tr>
     
     <tr>
         <td class="key">
-            <?php echo JText::_('JSHOP_DEPENDENT')?>*
+            <?php echo Text::_('JSHOP_DEPENDENT')?>*
         </td>
         <td>
              <?php echo $this->dependent_attribut;?>
-             <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_INFO_DEPENDENT_ATTRIBUT'))?>
+             <?php echo HelperAdmin::tooltip(Text::_('JSHOP_INFO_DEPENDENT_ATTRIBUT'))?>
         </td>
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_GROUP')?>
+       <?php echo Text::_('JSHOP_GROUP')?>
      </td>
      <td>
        <?php echo $this->lists['group'];?>
@@ -70,7 +73,7 @@ defined('_JEXEC') or die();
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_SHOW_FOR_CATEGORY')?>*
+       <?php echo Text::_('JSHOP_SHOW_FOR_CATEGORY')?>*
      </td>
      <td>
        <?php echo $this->lists['allcats'];?>
@@ -78,7 +81,7 @@ defined('_JEXEC') or die();
    </tr>
    <tr id="tr_categorys" <?php if ($this->attribut->allcats=="1") print "style='display:none;'";?>>
      <td  class="key">
-       <?php echo JText::_('JSHOP_CATEGORIES')?>*
+       <?php echo Text::_('JSHOP_CATEGORIES')?>*
      </td>
      <td>
        <?php echo $this->lists['categories'];?>

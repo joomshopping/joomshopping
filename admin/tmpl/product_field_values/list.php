@@ -1,4 +1,8 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -17,7 +21,7 @@ if ($saveOrder){
 ?>
 
 <div id="j-main-container" class="j-main-container">
-    <?php JSHelperAdmin::displaySubmenuOptions("productfields");;?>
+    <?php HelperAdmin::displaySubmenuOptions("productfields");;?>
     <form action="index.php?option=com_jshopping&controller=productfieldvalues&field_id=<?php print $this->field_id?>" method="post" name="adminForm" id="adminForm">
 
     <?php print $this->tmp_html_start?>
@@ -27,14 +31,14 @@ if ($saveOrder){
         <?php print $this->tmp_html_filter?>
 
         <div>
-            <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+            <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
         </div>
         <div>
             <span class="input-group-btn">
-                <button type="submit" class="btn btn-secondary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+                <button type="submit" class="btn btn-secondary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                     <span class="icon-search" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-secondary hasTooltip js-stools-btn-clear" onclick="jQuery('#text_search').val('');this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                <button type="button" class="btn btn-secondary hasTooltip js-stools-btn-clear" onclick="jQuery('#text_search').val('');this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
             </span>
         </div>
 
@@ -46,19 +50,19 @@ if ($saveOrder){
     <thead>
     <tr>
         <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
-            <?php echo \JHTML::_('grid.sort', $this->filter_order!='ordering' ? '#' : '', 'ordering', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', $this->filter_order!='ordering' ? '#' : '', 'ordering', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="20">
-          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </th>
         <th align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="50" class="center">
-            <?php echo JText::_('JSHOP_EDIT')?>
+            <?php echo Text::_('JSHOP_EDIT')?>
         </th>
         <th width="40" class="center">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'id', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'id', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
       </tr>
     </thead>
@@ -74,7 +78,7 @@ if ($saveOrder){
             <?php } ?>
         </td>
        <td>
-         <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+         <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
        </td>
        <td>
          <a href="index.php?option=com_jshopping&controller=productfieldvalues&task=edit&field_id=<?php print $this->field_id?>&id=<?php echo $row->id; ?>"><?php echo $row->name;?></a>

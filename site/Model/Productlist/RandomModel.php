@@ -7,19 +7,22 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class RandomModel extends ListModel{
 
     function getLoadProducts($filters = [], $order = null, $orderby = null, $limitstart = 0, $limit = 0, $listProductUpdateData = 1){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $adv_query = $this->default_adv_query;
         $adv_from = $this->default_adv_from;
         $adv_result = $this->getBuildQueryListProductDefaultResult();
         $this->getBuildQueryListProduct($this->getProductListName(), "list", $filters, $adv_query, $adv_from, $adv_result);
         $order_query = $this->getBuildQueryOrderListProduct($order, $orderby, $adv_from);
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeQueryGetProductList', array($this->getProductListName(), &$adv_result, &$adv_from, &$adv_query, &$order_query, &$filters) );
 
         $query = "SELECT count(distinct prod.product_id) FROM `#__jshopping_products` AS prod
@@ -51,24 +54,24 @@ class RandomModel extends ListModel{
         $db->setQuery($query);
         $products = $db->loadObJectList();
         if ($listProductUpdateData){
-            $products = \JSHelper::listProductUpdateData($products, 1);
+            $products = Helper::listProductUpdateData($products, 1);
         }
         return $products;
     }
         
     function getCountProductsPerPage(){       
-        return \JSFactory::getConfig()->count_products_to_page_random;
+        return JSFactory::getConfig()->count_products_to_page_random;
     }
     
     function getCountProductsToRow(){
-        return \JSFactory::getConfig()->count_products_to_row_random;
+        return JSFactory::getConfig()->count_products_to_row_random;
     }
     
     function getProductFieldSorting($order){
         if ($order==4){
             $order = 1;
         }
-        return \JSFactory::getConfig()->sorting_products_field_s_select[$order];
+        return JSFactory::getConfig()->sorting_products_field_s_select[$order];
     }
     
     public function getContext(){

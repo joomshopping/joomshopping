@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 include_once(JPATH_COMPONENT_SITE."/payments/payment.php");
@@ -16,14 +21,14 @@ class PaymentsController extends BaseadminController{
     protected $urlEditParamId = 'payment_id';
 
     function init(){
-        \JSHelperAdmin::checkAccessController("payments");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("payments");
+        HelperAdmin::addSubmenu("other");
     }
 	
     function display($cachable = false, $urlparams = false) {
-        $jshopConfig = \JSFactory::getConfig();
-        $payments = \JSFactory::getModel("payments");
-        $app = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        $payments = JSFactory::getModel("payments");
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.payments";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "payment_ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
@@ -44,21 +49,21 @@ class PaymentsController extends BaseadminController{
         $view->tmp_extra_column_headers = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayPayments', array(&$view));
         $view->displayList();
     }
 	
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
-        $jshopConfig = \JSFactory::getConfig();
+        Factory::getApplication()->input->set('hidemainmenu', true);
+        $jshopConfig = JSFactory::getConfig();
         $payment_id = $this->input->getInt("payment_id");
-        $payment = \JSFactory::getTable('paymentmethod');
+        $payment = JSFactory::getTable('paymentmethod');
         $payment->load($payment_id);        
         $params = $payment->getConfigs();        
         $edit = ($payment_id)?($edit = 1):($edit = 0);
                 
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
 		
@@ -77,21 +82,21 @@ class PaymentsController extends BaseadminController{
         }
         
         if ($jshopConfig->tax){
-            $lists['tax'] = \JHTML::_('select.genericlist', SelectOptions::getTaxs(0, 0, array('product_tax_rate'=>1)), 'tax_id', 'class = "inputbox form-select"','tax_id','tax_name', $payment->tax_id);
+            $lists['tax'] = HTMLHelper::_('select.genericlist', SelectOptions::getTaxs(0, 0, array('product_tax_rate'=>1)), 'tax_id', 'class = "inputbox form-select"','tax_id','tax_name', $payment->tax_id);
         }
 
-        $lists['price_type'] = \JHTML::_('select.genericlist', SelectOptions::getPaymentPriceTypes(), 'price_type', 'class = "inputbox form-select"', 'id', 'name', $payment->price_type);
+        $lists['price_type'] = HTMLHelper::_('select.genericlist', SelectOptions::getPaymentPriceTypes(), 'price_type', 'class = "inputbox form-select"', 'id', 'name', $payment->price_type);
 
         if ($jshopConfig->shop_mode==0 && $payment_id){
             $disabled = 'disabled';
         }else{
             $disabled = '';
         }
-        $lists['type_payment'] = \JHTML::_('select.genericlist', SelectOptions::getPaymentType(), 'payment_type','class = "inputbox form-select" '.$disabled, 'id','name', $payment->payment_type);
-        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $payment->access);
+        $lists['type_payment'] = HTMLHelper::_('select.genericlist', SelectOptions::getPaymentType(), 'payment_type','class = "inputbox form-select" '.$disabled, 'id','name', $payment->payment_type);
+        $lists['access'] = HTMLHelper::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $payment->access);
         
         $nofilter = array();
-        \JFilterOutput::objectHTMLSafe($payment, ENT_QUOTES, $nofilter);
+        OutputFilter::objectHTMLSafe($payment, ENT_QUOTES, $nofilter);
         
         $view = $this->getView("payments", 'html');
         $view->setLayout("edit");
@@ -105,7 +110,7 @@ class PaymentsController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditPayments', array(&$view));
         $view->displayEdit();
     }

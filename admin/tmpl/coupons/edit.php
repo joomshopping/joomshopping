@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -29,7 +32,7 @@ function selectUserBehaviour(uid){
 <table class="admintable">
    <tr>
      <td class="key" width="30%">
-       <?php echo JText::_('JSHOP_PUBLISH')?>
+       <?php echo Text::_('JSHOP_PUBLISH')?>
      </td>
      <td>
        <input type="checkbox" name="coupon_publish" value="1" <?php if ($row->coupon_publish) echo 'checked="checked"'?> />
@@ -37,7 +40,7 @@ function selectUserBehaviour(uid){
    </tr>
    <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_CODE')?>*
+       <?php echo Text::_('JSHOP_CODE')?>*
      </td>
      <td>
        <input type="text" class="inputbox form-control" id="coupon_code" name="coupon_code" value="<?php echo $row->coupon_code;?>" />
@@ -45,16 +48,16 @@ function selectUserBehaviour(uid){
    </tr>
    <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_TYPE_COUPON')?>*
+       <?php echo Text::_('JSHOP_TYPE_COUPON')?>*
      </td>
      <td>
-       <?php echo $lists['coupon_type']; echo \JSHelperAdmin::tooltip( JText::_('JSHOP_COUPON_VALUE_DESCRIPTION'));
+       <?php echo $lists['coupon_type']; echo HelperAdmin::tooltip( Text::_('JSHOP_COUPON_VALUE_DESCRIPTION'));
        ?>
      </td>
    </tr>
    <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_VALUE')?>*
+       <?php echo Text::_('JSHOP_VALUE')?>*
      </td>
      <td>
        <input type="text" class="inputbox form-control" id="coupon_value" name="coupon_value" value="<?php echo $row->coupon_value;?>" />
@@ -64,34 +67,34 @@ function selectUserBehaviour(uid){
    </tr>
    <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_START_DATE_COUPON')?>
+       <?php echo Text::_('JSHOP_START_DATE_COUPON')?>
      </td>
      <td>
-       <div class="calblock"><?php echo \JHTML::_('calendar', $row->coupon_start_date, 'coupon_start_date', 'coupon_start_date', '%Y-%m-%d', array('class'=>'inputbox form-control', 'size'=>'25', 'maxlength'=>'19')); ?></div>
+       <div class="calblock"><?php echo HTMLHelper::_('calendar', $row->coupon_start_date, 'coupon_start_date', 'coupon_start_date', '%Y-%m-%d', array('class'=>'inputbox form-control', 'size'=>'25', 'maxlength'=>'19')); ?></div>
      </td>
    </tr>
    <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_EXPIRE_DATE_COUPON')?>
+       <?php echo Text::_('JSHOP_EXPIRE_DATE_COUPON')?>
      </td>
      <td>
-       <div class="calblock"><?php echo \JHTML::_('calendar', $row->coupon_expire_date, 'coupon_expire_date', 'coupon_expire_date', '%Y-%m-%d', array('class'=>'inputbox form-control', 'size'=>'25', 'maxlength'=>'19')); ?></div>
+       <div class="calblock"><?php echo HTMLHelper::_('calendar', $row->coupon_expire_date, 'coupon_expire_date', 'coupon_expire_date', '%Y-%m-%d', array('class'=>'inputbox form-control', 'size'=>'25', 'maxlength'=>'19')); ?></div>
      </td>
    </tr>
    <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_FOR_USER_ID')?>
+       <?php echo Text::_('JSHOP_FOR_USER_ID')?>
      </td>
      <td>
        <input type="text" class="inputbox form-control" name="for_user_id" value="<?php echo $row->for_user_id;?>" />   
        <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#userModal">
-            <?php echo JText::_('JSHOP_LOAD')?>
+            <?php echo Text::_('JSHOP_LOAD')?>
         </a>
      </td>
    </tr>
    <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_FINISHED_AFTER_USED')?>
+       <?php echo Text::_('JSHOP_FINISHED_AFTER_USED')?>
      </td>
      <td>
        <input type="checkbox" name="finished_after_used" value="1" <?php if ($row->finished_after_used) echo 'checked="true"'?> />
@@ -115,7 +118,7 @@ function selectUserBehaviour(uid){
     'bootstrap.renderModal',
     'userModal',
     array(
-        'title'       => \JText::_('Users'),
+        'title'       => Text::_('Users'),
         'backdrop'    => 'static',
         'url'         => 'index.php?option=com_jshopping&controller=users&tmpl=component&select_user=1',
         'height'      => '400px',

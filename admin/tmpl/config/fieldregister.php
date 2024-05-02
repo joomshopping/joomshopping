@@ -1,6 +1,11 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.4.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -8,14 +13,14 @@
 */
 defined('_JEXEC') or die();
 
-$jshopConfig=\JSFactory::getConfig();
-\JHTML::_('bootstrap.tooltip');
+$jshopConfig=JSFactory::getConfig();
+HTMLHelper::_('bootstrap.tooltip');
 $fields=$this->fields;
 $current_fields=$this->current_fields;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php \JSHelperAdmin::displaySubmenuConfigs('fieldregister');?>
+<?php HelperAdmin::displaySubmenuConfigs('fieldregister');?>
 <div class="jshop_edit">
 <form class="jshopfieldregister" action="index.php?option=com_jshopping&controller=config" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 <?php print $this->tmp_html_start?>
@@ -25,7 +30,7 @@ $current_fields=$this->current_fields;
 <div class="row">
     <div class="col col-12 col-lg-4">        
         <div class="card">
-        <h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_REGISTER')?></h3>
+        <h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_REGISTER')?></h3>
         <div class="card-body">
         <table class="admintable table-striped">
         <tr>
@@ -33,17 +38,17 @@ $current_fields=$this->current_fields;
                 &nbsp;
             </th>
             <th style="padding-right: 5px">
-                <?php echo JText::_('JSHOP_DISPLAY')?>
+                <?php echo Text::_('JSHOP_DISPLAY')?>
             </th>
             <th>
-                <?php echo JText::_('JSHOP_REQUIRE')?>
+                <?php echo Text::_('JSHOP_REQUIRE')?>
             </th>
         </tr>
         <?php foreach($fields['register'] as $field){?>
         <tr>
             <td class="key">
                 <?php 
-                print \JText::_("JSHOP_FIELD_".strtoupper($field));
+                print Text::_("JSHOP_FIELD_".strtoupper($field));
                 
                 ?>
             </td>
@@ -59,7 +64,7 @@ $current_fields=$this->current_fields;
 
     <div class="col col-12 col-lg-4">        
         <div class="card">
-        <h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_CHECKOUT_ADDRESS')?></h3>
+        <h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_CHECKOUT_ADDRESS')?></h3>
         <div class="card-body">
         <table class="admintable table-striped">
         <tr>
@@ -67,10 +72,10 @@ $current_fields=$this->current_fields;
                 &nbsp;
             </th>
             <th style="padding-right: 5px">
-                <?php echo JText::_('JSHOP_DISPLAY')?>
+                <?php echo Text::_('JSHOP_DISPLAY')?>
             </th>
             <th>
-                <?php echo JText::_('JSHOP_REQUIRE')?>
+                <?php echo Text::_('JSHOP_REQUIRE')?>
             </th>
         </tr>
         <?php 
@@ -79,7 +84,7 @@ $current_fields=$this->current_fields;
         <?php if (!$display_delivery && substr($field,0,2)=="d_"){?>
         <tr>
             <td class="key">
-                <br><b><?php print JText::_('JSHOP_FIELD_DELIVERY_ADRESS')?></b>
+                <br><b><?php print Text::_('JSHOP_FIELD_DELIVERY_ADRESS')?></b>
             </td>
         </tr>    
         <?php $display_delivery=1; } ?>
@@ -88,7 +93,7 @@ $current_fields=$this->current_fields;
                 <?php
                 $field_c=$field; 
                 if (substr($field_c,0,2)=="d_") $field_c=substr($field_c,2,strlen($field_c)-2);
-                print \JText::_("JSHOP_FIELD_".strtoupper($field_c));        
+                print Text::_("JSHOP_FIELD_".strtoupper($field_c));        
                 ?>
             </td>
             <td align="center"><input type="checkbox" name="field[address][<?php print $field?>][display]" class="inputbox" value="1" <?php if (isset($current_fields['address'][$field]['display']) && $current_fields['address'][$field]['display']) echo 'checked="checked"';?> <?php if (in_array($field, $this->fields_sys['address'])){?>disabled="disabled"<?php }?> /></td>
@@ -103,7 +108,7 @@ $current_fields=$this->current_fields;
 
     <div class="col col-12 col-lg-4">        
         <div class="card">
-        <h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_EDIT_ACCOUNT')?></h3>
+        <h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_EDIT_ACCOUNT')?></h3>
         <div class="card-body">
         <table class="admintable table-striped">
         <tr>
@@ -111,10 +116,10 @@ $current_fields=$this->current_fields;
                 &nbsp;
             </th>
             <th style="padding-right: 5px">
-                <?php echo JText::_('JSHOP_DISPLAY')?>
+                <?php echo Text::_('JSHOP_DISPLAY')?>
             </th>
             <th>
-                <?php echo JText::_('JSHOP_REQUIRE')?>
+                <?php echo Text::_('JSHOP_REQUIRE')?>
             </th>
         </tr>
         <?php 
@@ -123,7 +128,7 @@ $current_fields=$this->current_fields;
         <?php if (!$display_delivery && substr($field,0,2)=="d_"){?>
         <tr>
             <td class="key">
-                <br><b><?php print JText::_('JSHOP_FIELD_DELIVERY_ADRESS')?></b>
+                <br><b><?php print Text::_('JSHOP_FIELD_DELIVERY_ADRESS')?></b>
             </td>
         </tr>    
         <?php $display_delivery=1; } ?>
@@ -132,7 +137,7 @@ $current_fields=$this->current_fields;
                 <?php
                 $field_c=$field; 
                 if (substr($field_c,0,2)=="d_") $field_c=substr($field_c,2,strlen($field_c)-2);
-                print  \JText::_("JSHOP_FIELD_".strtoupper($field_c));        
+                print  Text::_("JSHOP_FIELD_".strtoupper($field_c));        
                 ?>
             </td>
             <td align="center"><input type="checkbox" name="field[editaccount][<?php print $field?>][display]" class="inputbox" value="1" <?php if (isset($current_fields['editaccount'][$field]['display']) && $current_fields['editaccount'][$field]['display']) echo 'checked="checked"';?> <?php if (in_array($field, $this->fields_sys['editaccount'])){?>disabled="disabled"<?php }?> /></td>
@@ -142,7 +147,8 @@ $current_fields=$this->current_fields;
         <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
 
         </table>
-        </fieldset>
+        </div>
+        </div>
     </div>
 
 </div>

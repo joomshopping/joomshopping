@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 abstract class MailModel  extends BaseModel{
@@ -31,7 +32,7 @@ abstract class MailModel  extends BaseModel{
     }
 	
 	public function getListAdminUserSendEmail(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = 'SELECT name, email, sendEmail FROM #__users WHERE sendEmail=1';
         $db->setQuery( $query );
         return $db->loadObjectList();

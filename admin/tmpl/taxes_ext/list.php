@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -13,7 +18,7 @@ $i=0;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions("taxes");?>
+<?php HelperAdmin::displaySubmenuOptions("taxes");?>
 <form action="index.php?option=com_jshopping&controller=exttaxes&back_tax_id=<?php print $this->back_tax_id;?>" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <table class="table table-striped">
@@ -23,30 +28,30 @@ $i=0;
       #
     </th>
     <th width="20">
-      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     </th>
     <th align="left">
-        <?php echo JText::_('JSHOP_TITLE')?>
+        <?php echo Text::_('JSHOP_TITLE')?>
     </th>
     <th>
-        <?php echo JText::_('JSHOP_COUNTRY')?>
+        <?php echo Text::_('JSHOP_COUNTRY')?>
     </th>
     <th width="100">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TAX'), 'ET.tax', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TAX'), 'ET.tax', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th width="100">
         <?php 
         if ($this->config->ext_tax_rule_for==1) 
-            echo \JHTML::_('grid.sort', JText::_('JSHOP_USER_WITH_TAX_ID_TAX'), 'ET.firma_tax', $this->filter_order_Dir, $this->filter_order);
+            echo HTMLHelper::_('grid.sort', Text::_('JSHOP_USER_WITH_TAX_ID_TAX'), 'ET.firma_tax', $this->filter_order_Dir, $this->filter_order);
         else
-            echo \JHTML::_('grid.sort', JText::_('JSHOP_FIRMA_TAX'), 'ET.firma_tax', $this->filter_order_Dir, $this->filter_order);
+            echo HTMLHelper::_('grid.sort', Text::_('JSHOP_FIRMA_TAX'), 'ET.firma_tax', $this->filter_order_Dir, $this->filter_order);
         ?>
     </th>
     <th width="50" class="center">
-        <?php echo JText::_('JSHOP_EDIT')?>
+        <?php echo Text::_('JSHOP_EDIT')?>
     </th>
     <th width="40" class="center">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'ET.id', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'ET.id', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
   </tr>
 </thead>  
@@ -56,7 +61,7 @@ $i=0;
      <?php echo $i+1;?>
    </td>
    <td>     
-     <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+     <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
    </td>
    <td>
      <?php echo $row->tax_name;?>
@@ -95,6 +100,6 @@ $i++;
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

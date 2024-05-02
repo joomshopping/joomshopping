@@ -7,12 +7,14 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class CheckoutStepModel  extends BaseModel{
     
     public function getNextStep($step){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		
 		if ($step==2){
 			if ($jshopConfig->without_shipping && $jshopConfig->without_payment){
@@ -64,13 +66,13 @@ class CheckoutStepModel  extends BaseModel{
 	}
 	
 	public function getCheckoutUrl($step, $defaultItemId = 0, $redirect = 1){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if (preg_match('/^(\d)+$/', $step)){			
 			$task = 'step'.$step;
 		}else{
 			$task = $step;
 		}
-		$url = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=checkout&task='.$task, $defaultItemId, $redirect, $jshopConfig->use_ssl);
+		$url = Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task='.$task, $defaultItemId, $redirect, $jshopConfig->use_ssl);
 		return $url;
 	}
         

@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Mail\MailHelper;
 defined('_JEXEC') or die();
 
 jimport('Joomla.mail.helper');
@@ -28,7 +31,7 @@ class UsercheckfieldModel {
     }
 
     public function email($val) {
-		$domains = \JComponentHelper::getParams('com_users')->get('domains');
+		$domains = ComponentHelper::getParams('com_users')->get('domains');
 		if ($domains) {
 			$emailDomain = explode('@', $val);
 			$emailDomain = $emailDomain[1];
@@ -63,15 +66,15 @@ class UsercheckfieldModel {
 
 			// If domain is not allowed, fail validation. Otherwise continue.
 			if (!$allowed) {
-				throw new \UnexpectedValueException(\JText::sprintf('JGLOBAL_EMAIL_DOMAIN_NOT_ALLOWED', $emailDomain));
+				throw new \UnexpectedValueException(Text::sprintf('JGLOBAL_EMAIL_DOMAIN_NOT_ALLOWED', $emailDomain));
 			}
 		}
 		
-        return trim($val) != '' && \JMailHelper::isEmailAddress($val);
+        return trim($val) != '' && MailHelper::isEmailAddress($val);
     }
 
     public function password($value){
-		$params = \JComponentHelper::getParams('com_users');
+		$params = ComponentHelper::getParams('com_users');
 
 		if (!empty($params)){
 			$minimumLength = $params->get('minimum_length');
@@ -85,19 +88,19 @@ class UsercheckfieldModel {
 		$validPassword = true;
 
 		if ($valueLength > 4096){
-			$this->_error = \JText::_('JFIELD_PASSWORD_TOO_LONG');
+			$this->_error = Text::_('JFIELD_PASSWORD_TOO_LONG');
 			$validPassword = false;
 		}
 
 		if (strlen($valueTrim) != $valueLength){
-			$this->_error = \JText::_('JFIELD_PASSWORD_SPACES_IN_PASSWORD');
+			$this->_error = Text::_('JFIELD_PASSWORD_SPACES_IN_PASSWORD');
 			$validPassword = false;
 		}
 
 		if (!empty($minimumIntegers)){
 			$nInts = preg_match_all('/[0-9]/', $value, $imatch);
 			if ($nInts < $minimumIntegers){
-				$this->_error = \JText::plural('JFIELD_PASSWORD_NOT_ENOUGH_INTEGERS_N', $minimumIntegers);
+				$this->_error = Text::plural('JFIELD_PASSWORD_NOT_ENOUGH_INTEGERS_N', $minimumIntegers);
 				$validPassword = false;
 			}
 		}
@@ -105,7 +108,7 @@ class UsercheckfieldModel {
 		if (!empty($minimumSymbols)){
 			$nsymbols = preg_match_all('[\W]', $value, $smatch);
 			if ($nsymbols < $minimumSymbols){
-				$this->_error = \JText::plural('JFIELD_PASSWORD_NOT_ENOUGH_SYMBOLS_N', $minimumSymbols);
+				$this->_error = Text::plural('JFIELD_PASSWORD_NOT_ENOUGH_SYMBOLS_N', $minimumSymbols);
 				$validPassword = false;
 			}
 		}
@@ -113,20 +116,20 @@ class UsercheckfieldModel {
 		if (!empty($minimumUppercase)){
 			$nUppercase = preg_match_all('/[A-Z]/', $value, $umatch);
 			if ($nUppercase < $minimumUppercase){
-				$this->_error = \JText::plural('JFIELD_PASSWORD_NOT_ENOUGH_UPPERCASE_LETTERS_N', $minimumUppercase);
+				$this->_error = Text::plural('JFIELD_PASSWORD_NOT_ENOUGH_UPPERCASE_LETTERS_N', $minimumUppercase);
 				$validPassword = false;
 			}
 		}
 
 		if (!empty($minimumLength)){
 			if (strlen((string) $value) < $minimumLength){
-				$this->_error = \JText::plural('JFIELD_PASSWORD_TOO_SHORT_N', $minimumLength);
+				$this->_error = Text::plural('JFIELD_PASSWORD_TOO_SHORT_N', $minimumLength);
 				$validPassword = false;
 			}
 		}
 
 		if (empty($valueTrim)){
-			$this->_error = \JText::_('JSHOP_REGWARN_PASSWORD');
+			$this->_error = Text::_('JSHOP_REGWARN_PASSWORD');
 			$validPassword = false;
 		}
 

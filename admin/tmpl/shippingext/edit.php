@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -18,7 +20,7 @@ $row=$this->row;
     <table class="admintable" width="100%" >
    	<tr>
      	<td class="key" width="30%">
-       		<?php echo JText::_('JSHOP_PUBLISH')?>
+       		<?php echo Text::_('JSHOP_PUBLISH')?>
      	</td>
      	<td>
             <input type="hidden" name="published" value="0" />
@@ -27,7 +29,7 @@ $row=$this->row;
    	</tr>    
    	<tr>
      	<td class="key">
-       		<?php echo JText::_('JSHOP_TITLE')?>*
+       		<?php echo Text::_('JSHOP_TITLE')?>*
      	</td>
      	<td>
        		<input type="text" class="inputbox form-control" name="name" value="<?php echo $row->name?>" />
@@ -35,7 +37,7 @@ $row=$this->row;
    	</tr>
     <tr>
          <td class="key">
-               <?php echo JText::_('JSHOP_DESCRIPTION')?>
+               <?php echo Text::_('JSHOP_DESCRIPTION')?>
          </td>
          <td>
             <textarea class="form-control" name="description" cols="40" rows="5"><?php echo $row->description?></textarea>               
@@ -43,7 +45,7 @@ $row=$this->row;
        </tr>
     <tr>
          <td class="key">
-            <?php echo JText::_('JSHOP_SHIPPINGS')?>
+            <?php echo Text::_('JSHOP_SHIPPINGS')?>
          </td>
          <td>
             <?php foreach($this->list_shippings as $shipping){?>

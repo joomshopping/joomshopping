@@ -7,22 +7,26 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Filter\OutputFilter;
 defined('_JEXEC') or die();
 
 class DeliveryTimesController extends BaseadminController{
     
     function init(){
-        \JSHelperAdmin::checkAccessController("deliverytimes");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("deliverytimes");
+        HelperAdmin::addSubmenu("other");
     }
 
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.deliverytimes";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "name", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         
-        $_deliveryTimes = \JSFactory::getModel("deliverytimes");
+        $_deliveryTimes = JSFactory::getModel("deliverytimes");
         $rows = $_deliveryTimes->getDeliveryTimes($filter_order, $filter_order_Dir);
         $view=$this->getView("deliverytimes", 'html');
         $view->setLayout("list");
@@ -32,21 +36,21 @@ class DeliveryTimesController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayDeliveryTimes', array(&$view));
         $view->displayList();
     }
 	
 	function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
 		$id = $this->input->getInt("id");
-		$deliveryTimes = \JSFactory::getTable('deliverytimes');
+		$deliveryTimes = JSFactory::getTable('deliverytimes');
 		$deliveryTimes->load($id);
 		$edit = ($id)?(1):(0);
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
-        \JFilterOutput::objectHTMLSafe($deliveryTimes, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($deliveryTimes, ENT_QUOTES);
 
 		$view = $this->getView("deliverytimes", 'html');
         $view->setLayout("edit");
@@ -57,7 +61,7 @@ class DeliveryTimesController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditDeliverytimes', array(&$view));
 		$view->displayEdit();
 	}

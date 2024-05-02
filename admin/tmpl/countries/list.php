@@ -1,4 +1,9 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -19,7 +24,7 @@ if ($saveOrder){
 ?>
 
 <div id="j-main-container" class="j-main-container">
-    <?php JSHelperAdmin::displaySubmenuOptions();?>
+    <?php HelperAdmin::displaySubmenuOptions();?>
     <form action="index.php?option=com_jshopping&controller=countries" method="post" name="adminForm" id="adminForm">
 
     <?php print $this->tmp_html_start?>
@@ -27,7 +32,7 @@ if ($saveOrder){
     <div class="js-filters">
         <?php print $this->tmp_html_filter?>
         <div>
-            <label><?php print JText::_('JSHOP_SHOW')?>:</label>
+            <label><?php print Text::_('JSHOP_SHOW')?>:</label>
             <?php print $this->filter;?>
         </div>
         <?php print $this->tmp_html_filter_end?>      
@@ -37,28 +42,28 @@ if ($saveOrder){
     <thead>
     <tr>
         <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
-            <?php echo \JHTML::_('grid.sort', $this->filter_order!='ordering' ? '#' : '', 'ordering', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', $this->filter_order!='ordering' ? '#' : '', 'ordering', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="20">
-          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </th>
         <th align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_COUNTRY'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_COUNTRY'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="90">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_CODE'), 'country_code', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_CODE'), 'country_code', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="90">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_CODE'). '2', 'country_code_2', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_CODE'). '2', 'country_code_2', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="50" class="center">
-          <?php echo JText::_('JSHOP_PUBLISH')?>
+          <?php echo Text::_('JSHOP_PUBLISH')?>
         </th>
         <th width="50" class="center">
-            <?php print JText::_('JSHOP_EDIT')?>
+            <?php print Text::_('JSHOP_EDIT')?>
         </th>
         <th width="50" class="center">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'country_id', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'country_id', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
     </tr>
     </thead>
@@ -74,7 +79,7 @@ if ($saveOrder){
             <?php } ?>
         </td>
        <td>
-         <?php echo \JHTML::_('grid.id', $i, $row->country_id);?>
+         <?php echo HTMLHelper::_('grid.id', $i, $row->country_id);?>
        </td>
        <td>
          <a href="index.php?option=com_jshopping&controller=countries&task=edit&country_id=<?php echo $row->country_id; ?>"><?php echo $row->name;?></a>
@@ -86,7 +91,7 @@ if ($saveOrder){
          <?php echo $row->country_code_2;?>
        </td>
        <td class="center">
-         <?php echo \JHTML::_('jgrid.published', $row->country_publish, $i);?>
+         <?php echo HTMLHelper::_('jgrid.published', $row->country_publish, $i);?>
        </td>
         <td class="center">
             <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=countries&task=edit&country_id=<?php print $row->country_id;?>'>
@@ -119,6 +124,6 @@ if ($saveOrder){
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

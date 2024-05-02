@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+
 /**
 * @version      5.1.0 14.09.2022
 * @author       MAXXmarketing GmbH
@@ -18,7 +21,7 @@ class jshoppingUpdate500{
     }
 	
 	function updateProductCharactiristics(){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "select * from #__jshopping_products_extra_fields";
 		$db->setQuery($query);
 		$list = $db->loadObjectList();
@@ -34,7 +37,7 @@ class jshoppingUpdate500{
 			$db->setQuery($query);
 			$products = $db->loadObjectList();
 			foreach($products as $prod){
-				$table = \JSFactory::getTable('producttofield');
+				$table = JSFactory::getTable('producttofield');
 				$table->bind((array)$prod);
 				$table->store();
 			}
@@ -45,22 +48,22 @@ class jshoppingUpdate500{
 	}
 	
 	function _addNewFieldProductCharactiristic($id) {
-		$jshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO();
+		$jshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         $query = "ALTER TABLE `#__jshopping_products_to_extra_fields` ADD `extra_field_".(int)$id."` ".$jshopConfig->new_extra_field_type." NOT NULL";
         $db->setQuery($query);
         $db->execute();
 	}
 	
 	function _delOldFieldProductCharactiristic($id) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "ALTER TABLE `#__jshopping_products` DROP `extra_field_".(int)$id."`";
         $db->setQuery($query);
         $db->execute();
 	}
     
     function updatePayment(){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "select * from #__jshopping_payment_method";
 		$db->setQuery($query);
 		$list = $db->loadObjectList();
@@ -75,12 +78,12 @@ class jshoppingUpdate500{
 	}
 	
 	function updateConfig(){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "select * from #__jshopping_config";
 		$db->setQuery($query);
 		$list = $db->loadObjectList();
 		foreach ($list as $v) {
-			$config = \JSFactory::getTable('config');
+			$config = JSFactory::getTable('config');
 			$config->bind((array)$v);
 			$config->store();
 		}

@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.4.0 10.04.2014
 * @author       MAXXmarketing GmbH
@@ -10,9 +12,9 @@ defined('_JEXEC') or die();
 ?>
 <button class='btn btn-small btn-primary extrafields_btn_edit' title="<?php print htmlspecialchars($this->title)?>">
 	<span class='icon-edit icon-white'></span> 
-    <?php print JText::_("JSHOP_EDIT")?>
+    <?php print Text::_("JSHOP_EDIT")?>
 </button>
 
 <button class='btn btn-small btn-primary extrafields_btn_clear'>
-    <?php print JText::_("JSHOP_CLEAR")?>
+    <?php print Text::_("JSHOP_CLEAR")?>
 </button>

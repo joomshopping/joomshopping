@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Shippingsprices;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,23 +17,23 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_SHIPPING_PRICES_LIST'), 'generic.png' ); 
-        \JToolBarHelper::custom("back", 'arrow-left', 'arrow-left', \JText::_('JSHOP_LIST_SHIPPINGS'), false);
-        \JToolBarHelper::addNew();
-        \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE')."?");
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_SHIPPING_PRICES_LIST'), 'generic.png' ); 
+        ToolbarHelper::custom("back", 'arrow-left', 'arrow-left', Text::_('JSHOP_LIST_SHIPPINGS'), false);
+        ToolbarHelper::addNew();
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE')."?");
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
     
     function displayEdit($tpl=null){
-        \JToolBarHelper::title($this->sh_method_price->sh_pr_method_id ? (\JText::_('JSHOP_EDIT_SHIPPING_PRICES')) : (\JText::_('JSHOP_NEW_SHIPPING_PRICES')), 'generic.png' ); 
-        \JToolBarHelper::save();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::apply();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::save2new();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::cancel();        
+        ToolbarHelper::title($this->sh_method_price->sh_pr_method_id ? (Text::_('JSHOP_EDIT_SHIPPING_PRICES')) : (Text::_('JSHOP_NEW_SHIPPING_PRICES')), 'generic.png' ); 
+        ToolbarHelper::save();
+        ToolbarHelper::spacer();
+        ToolbarHelper::apply();
+        ToolbarHelper::spacer();
+        ToolbarHelper::save2new();
+        ToolbarHelper::spacer();
+        ToolbarHelper::cancel();        
         parent::display($tpl);
     }
 }

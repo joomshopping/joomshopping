@@ -7,6 +7,14 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 use Joomla\Component\Jshopping\Site\Helper\Selects;
 defined('_JEXEC') or die();
@@ -14,10 +22,10 @@ defined('_JEXEC') or die();
 class UserController extends BaseController{
 
     public function init(){
-        \JPluginHelper::importPlugin('jshoppingcheckout');
-        \JPluginHelper::importPlugin('jshoppingorder');
+        PluginHelper::importPlugin('jshoppingcheckout');
+        PluginHelper::importPlugin('jshoppingorder');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerUser', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerUser', array(&$obj));
     }
     
     function display($cachable = false, $urlparams = false){
@@ -25,23 +33,23 @@ class UserController extends BaseController{
     }
     
     function login(){
-        $jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
-		$model = \JSFactory::getModel('userlogin', 'Site');		
+        $jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
+		$model = JSFactory::getModel('userlogin', 'Site');		
 		
-        if (\JFactory::getUser()->id){   
+        if (Factory::getUser()->id){   
             $this->logoutpage();
             return 0;
         }
 		
-        $checkout_navigator = \JSFactory::getModel('checkout', 'Site')->showCheckoutNavigation('1');
+        $checkout_navigator = JSFactory::getModel('checkout', 'Site')->showCheckoutNavigation('1');
    
 		$return = $model->getUrlHash();
         $show_pay_without_reg = $model->getPayWithoutReg();
         
         Metadata::userLogin();
 
-		$modelUserRegister = \JSFactory::getModel('userregister', 'Site');
+		$modelUserRegister = JSFactory::getModel('userregister', 'Site');
         $adv_user = $modelUserRegister->getRegistrationDefaultData();
                 
 		$config_fields = $jshopConfig->getListFieldsRegisterType('register');
@@ -50,24 +58,24 @@ class UserController extends BaseController{
 
         $dispatcher->triggerEvent('onBeforeDisplayLogin', array() );
 		if ($jshopConfig->show_registerform_in_logintemplate){
-            $model_register = \JSFactory::getModel('userregister', 'jshop');
+            $model_register = JSFactory::getModel('userregister', 'jshop');
             $adv_user = $model_register->getRegistrationDefaultData();
             $dispatcher->triggerEvent('onBeforeDisplayRegister', array(&$adv_user));
         }
 
         $view = $this->getView('user');
         $view->setLayout("login");
-        $view->set('href_register', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=register',1,0, $jshopConfig->use_ssl));
-        $view->set('href_lost_pass', \JSHelper::SEFLink('index.php?option=com_users&view=reset',0,0, $jshopConfig->use_ssl));
+        $view->set('href_register', Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=register',1,0, $jshopConfig->use_ssl));
+        $view->set('href_lost_pass', Helper::SEFLink('index.php?option=com_users&view=reset',0,0, $jshopConfig->use_ssl));
         $view->set('return', $return);
         $view->set('Itemid', $this->input->getVar('Itemid'));
         $view->set('config', $jshopConfig);
         $view->set('show_pay_without_reg', $show_pay_without_reg);
         $view->set('config_fields', $config_fields);
         $view->set('cssreq_fields', $cssreq_fields);
-        $view->set('live_path', \JURI::base());
-        $view->set('urlcheckdata', \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_exist_ajax&ajax=1", 1, 1, $jshopConfig->use_ssl));
-        $view->set('urlcheckpassword', \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_password&ajax=1",1,1, $jshopConfig->use_ssl));
+        $view->set('live_path', Uri::base());
+        $view->set('urlcheckdata', Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_exist_ajax&ajax=1", 1, 1, $jshopConfig->use_ssl));
+        $view->set('urlcheckpassword', Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_password&ajax=1",1,1, $jshopConfig->use_ssl));
         $view->set('checkout_navigator', $checkout_navigator);
         $view->set('allowUserRegistration', $allowUserRegistration);
         if (isset($adv_user)) {
@@ -94,18 +102,18 @@ class UserController extends BaseController{
     }
     
     function loginsave(){        
-        $app = \JFactory::getApplication();        
-		\JFactory::getApplication()->triggerEvent('onBeforeLoginSave', array());
-        \JSession::checkToken() or jexit(\JText::_('JINVALID_TOKEN'));
+        $app = Factory::getApplication();        
+		Factory::getApplication()->triggerEvent('onBeforeLoginSave', array());
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
         
         $method = $this->input->getMethod();        
         $remember = $this->input->getBool('remember', false);
         $username = $this->input->$method->get('username', '', 'USERNAME');
         $password = (string)$this->input->$method->get('passwd', '', 'RAW');        
 
-        $model = \JSFactory::getModel('userlogin', 'Site');
+        $model = JSFactory::getModel('userlogin', 'Site');
         if ($model->login($username, $password, array('remember'=>$remember))){
-			\JSHelper::setNextUpdatePrices();
+			Helper::setNextUpdatePrices();
             $app->redirect($model->getReturnUrl());
         }else{            
             $app->redirect($model->getUrlBackToLogin());
@@ -115,29 +123,29 @@ class UserController extends BaseController{
     function check_user_exist_ajax(){
         $username = $this->input->getVar("username");
         $email = $this->input->getVar("email");
-		print \JSFactory::getTable('userShop')->checkUserExistAjax($username, $email);
+		print JSFactory::getTable('userShop')->checkUserExistAjax($username, $email);
         die();
     }
     
     function check_user_password(){
         $pass = $this->input->getVar("pass");
-        \JFactory::getLanguage()->load('com_users');
-        $checkfield = \JSFactory::getModel('usercheckfield', 'Site');
+        Factory::getLanguage()->load('com_users');
+        $checkfield = JSFactory::getModel('usercheckfield', 'Site');
         $res = (int)$checkfield->password($pass);
         print json_encode(array('res'=>$res, 'msg'=>$checkfield->getLastErrorMsg()));
         die();
     }
     
     function register(){
-        $jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
-        $model = \JSFactory::getModel('userregister', 'Site');
+        $jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
+        $model = JSFactory::getModel('userregister', 'Site');
         $adv_user = $model->getRegistrationDefaultData();
 
         Metadata::userRegister();
         
         if ($model->getUserParams()->get('allowUserRegistration') == '0'){
-            \JSError::raiseError(403, \JText::_('Access Forbidden - Allowing user registration in Joomla configuration'));
+            JSError::raiseError(403, Text::_('Access Forbidden - Allowing user registration in Joomla configuration'));
             return;
         }
         
@@ -146,9 +154,9 @@ class UserController extends BaseController{
 
         $dispatcher->triggerEvent('onBeforeDisplayRegister', array(&$adv_user));
         
-        \JSHelper::filterHTMLSafe($adv_user, ENT_QUOTES);
+        Helper::filterHTMLSafe($adv_user, ENT_QUOTES);
         
-        $checkout_navigator = \JSFactory::getModel('checkout', 'Site')->showCheckoutNavigation('1');
+        $checkout_navigator = JSFactory::getModel('checkout', 'Site')->showCheckoutNavigation('1');
         
         $view = $this->getView('user');
         $view->setLayout("register"); 
@@ -156,9 +164,9 @@ class UserController extends BaseController{
         $view->set('config_fields', $config_fields);
         $view->set('cssreq_fields', $cssreq_fields);
         $view->set('user', $adv_user);
-        $view->set('live_path', \JURI::base());        
-        $view->set('urlcheckdata', \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_exist_ajax&ajax=1",1,1));
-        $view->set('urlcheckpassword', \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_password&ajax=1",1,1));
+        $view->set('live_path', Uri::base());        
+        $view->set('urlcheckdata', Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_exist_ajax&ajax=1",1,1));
+        $view->set('urlcheckpassword', Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=check_user_password&ajax=1",1,1));
         $view->set('checkout_navigator', $checkout_navigator);
         $view->_tmpl_register_html_1 = "";
         $view->_tmpl_register_html_2 = "";
@@ -172,31 +180,31 @@ class UserController extends BaseController{
     }
     
     function registersave(){
-        \JSession::checkToken() or jexit(\JText::_('JINVALID_TOKEN'));        
-        $jshopConfig = \JSFactory::getConfig();
-        $dispatcher = \JFactory::getApplication();
-        \JFactory::getLanguage()->load('com_users');
-        $model = \JSFactory::getModel('userregister', 'Site');
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));        
+        $jshopConfig = JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
+        Factory::getLanguage()->load('com_users');
+        $model = JSFactory::getModel('userregister', 'Site');
         $params = $model->getUserParams();
         $useractivation = $params->get('useractivation');
         $post = $this->input->post->getArray();
 
         if ($params->get('allowUserRegistration')==0){
-            \JSError::raiseError(403, \JText::_('Access Forbidden'));
+            JSError::raiseError(403, Text::_('Access Forbidden'));
             return;
         }
 		
-		$back_url = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=register&lrd=1",1,1, $jshopConfig->use_ssl);
+		$back_url = Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=register&lrd=1",1,1, $jshopConfig->use_ssl);
 
         $model->setData($post);
         
         if (!$model->check()){
-            \JSError::raiseWarning('', $model->getError());
+            JSError::raiseWarning('', $model->getError());
             $this->setRedirect($back_url);
             return 0;
         }
 		if (!$model->save()){
-            \JSError::raiseWarning('', $model->getError());            
+            JSError::raiseWarning('', $model->getError());            
             $this->setRedirect($back_url);
             return 0;
         }
@@ -208,43 +216,43 @@ class UserController extends BaseController{
         $dispatcher->triggerEvent('onAfterRegister', array(&$user, &$usershop, &$post, &$useractivation));
 
         $message = $model->getMessageUserRegistration($useractivation);
-        $return = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=login",1,1,$jshopConfig->use_ssl);
+        $return = Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=login",1,1,$jshopConfig->use_ssl);
 
         $this->setRedirect($return, $message);
     }
     
     function activate(){
-        $jshopConfig = \JSFactory::getConfig();
-		$model = \JSFactory::getModel('useractivate', 'Site');
-        \JFactory::getLanguage()->load('com_users');		
+        $jshopConfig = JSFactory::getConfig();
+		$model = JSFactory::getModel('useractivate', 'Site');
+        Factory::getLanguage()->load('com_users');		
 		$token = $this->input->getVar('token');
-        if (\JFactory::getUser()->get('id')){
+        if (Factory::getUser()->get('id')){
             $this->setRedirect('index.php');
             return true;
         }
 		if (!$model->check($token)){
-			\JSError::raiseError(403, $model->getError());
+			JSError::raiseError(403, $model->getError());
             return false;
 		}
 
         $return = $model->activate($token);
 
         if ($return === false){
-            $this->setMessage(\JText::sprintf('COM_USERS_REGISTRATION_SAVE_FAILED', $model->getError()), 'warning');
-            $this->setRedirect(\JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=login",1,1,$jshopConfig->use_ssl));
+            $this->setMessage(Text::sprintf('COM_USERS_REGISTRATION_SAVE_FAILED', $model->getError()), 'warning');
+            $this->setRedirect(Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=login",1,1,$jshopConfig->use_ssl));
             return false;
         }
 		
 		$msg = $model->getMessageUserActivation($return);
         $this->setMessage($msg);
-        $this->setRedirect(\JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=login",1,1,$jshopConfig->use_ssl));
+        $this->setRedirect(Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=login",1,1,$jshopConfig->use_ssl));
         return true;
     }
     
     function editaccount(){
-        \JSHelper::checkUserLogin();        
-        $adv_user = \JSFactory::getUserShop()->loadDataFromEdit();
-        $jshopConfig = \JSFactory::getConfig();
+        Helper::checkUserLogin();        
+        $adv_user = JSFactory::getUserShop()->loadDataFromEdit();
+        $jshopConfig = JSFactory::getConfig();
             
         Metadata::userEditaccount();
 		
@@ -258,10 +266,10 @@ class UserController extends BaseController{
         $cssreq_fields = $jshopConfig->getListFieldsRegisterTypeClassRequired('editaccount', $config_fields);
         $count_filed_delivery = $jshopConfig->getEnableDeliveryFiledRegistration('editaccount');
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayEditUser', array(&$adv_user));
         
-        \JSHelper::filterHTMLSafe( $adv_user, ENT_QUOTES);      
+        Helper::filterHTMLSafe( $adv_user, ENT_QUOTES);      
 
         $view = $this->getView('user');
         $view->setLayout("editaccount");        
@@ -271,10 +279,10 @@ class UserController extends BaseController{
         $view->set('select_titles',$select_titles);
         $view->set('select_d_titles',$select_d_titles);
         $view->set('select_client_types', $select_client_types);
-        $view->set('live_path', \JURI::base());
+        $view->set('live_path', Uri::base());
         $view->set('user', $adv_user);
         $view->set('delivery_adress', $adv_user->delivery_adress);
-        $view->set('action', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=accountsave',1,0,$jshopConfig->use_ssl));
+        $view->set('action', Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=accountsave',1,0,$jshopConfig->use_ssl));
         $view->set('config_fields', $config_fields);
         $view->set('cssreq_fields', $cssreq_fields);
         $view->set('count_filed_delivery', $count_filed_delivery);
@@ -294,45 +302,45 @@ class UserController extends BaseController{
     }
     
     function accountsave(){
-        \JSHelper::checkUserLogin();
+        Helper::checkUserLogin();
 		$post = $this->input->post->getArray();
-        $jshopConfig = \JSFactory::getConfig();
-		\JFactory::getLanguage()->load('com_users');
-		$model = \JSFactory::getModel('useredit', 'Site');
+        $jshopConfig = JSFactory::getConfig();
+		Factory::getLanguage()->load('com_users');
+		$model = JSFactory::getModel('useredit', 'Site');
 		
-		$error_back_url = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=editaccount",1,1, $jshopConfig->use_ssl);
+		$error_back_url = Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=editaccount",1,1, $jshopConfig->use_ssl);
 		
-		\JFactory::getApplication()->triggerEvent('onBeforeAccountSave', array(&$post));
+		Factory::getApplication()->triggerEvent('onBeforeAccountSave', array(&$post));
 		
-		$model->setUserId(\JFactory::getUser()->id);
+		$model->setUserId(Factory::getUser()->id);
 		$model->setData($post);
 		if (!$model->check("editaccount")){
-            \JSError::raiseWarning('', $model->getError());
+            JSError::raiseWarning('', $model->getError());
             $this->setRedirect($error_back_url);
             return 0;
         }
 		if (!$model->save()){
-            \JSError::raiseWarning('500', \JText::_('JSHOP_REGWARN_ERROR_DATABASE'));
+            JSError::raiseWarning('500', Text::_('JSHOP_REGWARN_ERROR_DATABASE'));
             $this->setRedirect($error_back_url);
             return 0;
         }
 		$model->updateJoomlaUserCurrentProfile();
         
-        \JSHelper::setNextUpdatePrices();
-        \JFactory::getApplication()->triggerEvent('onAfterAccountSave', array(&$model));
+        Helper::setNextUpdatePrices();
+        Factory::getApplication()->triggerEvent('onAfterAccountSave', array(&$model));
         
-        $this->setRedirect(\JSHelper::SEFLink("index.php?option=com_jshopping&controller=user",1,1,$jshopConfig->use_ssl), \JText::_('JSHOP_ACCOUNT_UPDATE'));
+        $this->setRedirect(Helper::SEFLink("index.php?option=com_jshopping&controller=user",1,1,$jshopConfig->use_ssl), Text::_('JSHOP_ACCOUNT_UPDATE'));
     }
     
     function orders(){
-        $jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
-        \JSHelper::checkUserLogin();
-		$model = \JSFactory::getModel('userOrders', 'Site');
+        $jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
+        Helper::checkUserLogin();
+		$model = JSFactory::getModel('userOrders', 'Site');
         
         Metadata::userOrders();
 		
-		$model->setUserId(\JFactory::getUser()->id);
+		$model->setUserId(Factory::getUser()->id);
 		$orders = $model->getListOrders();
 		$total = $model->getTotal();
 
@@ -350,21 +358,21 @@ class UserController extends BaseController{
     }
     
     function order(){
-        $jshopConfig = \JSFactory::getConfig();
-        \JSHelper::checkUserLogin();
-        $user = \JFactory::getUser();
-        $dispatcher = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        Helper::checkUserLogin();
+        $user = Factory::getUser();
+        $dispatcher = Factory::getApplication();
         
         $order_id = $this->input->getInt('order_id');
 		
-        $order = \JSFactory::getTable('order');
+        $order = JSFactory::getTable('order');
         $order->load($order_id);
         $dispatcher->triggerEvent('onAfterLoadOrder', array(&$order, &$user));
 		
 		Metadata::userOrder($order);
         
         if ($user->id!=$order->user_id) {
-            \JSError::raiseError(500, "Error order number. You are not the owner of this order");
+            JSError::raiseError(500, "Error order number. You are not the owner of this order");
 			return 0;
         }
 		
@@ -418,35 +426,35 @@ class UserController extends BaseController{
     }
     
     function cancelorder(){
-        $jshopConfig = \JSFactory::getConfig();
-        \JSHelper::checkUserLogin();
+        $jshopConfig = JSFactory::getConfig();
+        Helper::checkUserLogin();
 		$order_id = $this->input->getInt('order_id');
-		$back_url = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=user&task=order&order_id=".$order_id,0,1,$jshopConfig->use_ssl);
+		$back_url = Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=order&order_id=".$order_id,0,1,$jshopConfig->use_ssl);
 		
-		$model = \JSFactory::getModel('userOrder', 'Site');
-		$model->setUserId(\JFactory::getUser()->id);
+		$model = JSFactory::getModel('userOrder', 'Site');
+		$model->setUserId(Factory::getUser()->id);
 		$model->setOrderId($order_id);
 		if (!$model->userOrderCancel()){
-			\JSError::raiseWarning('', $model->getError());
+			JSError::raiseWarning('', $model->getError());
 			$this->setRedirect($back_url);
 			return 0;
 		}
 		
-		$this->setRedirect($back_url, \JText::_('JSHOP_ORDER_CANCELED'));
+		$this->setRedirect($back_url, Text::_('JSHOP_ORDER_CANCELED'));
     }
 
     function myaccount(){
-        $jshopConfig = \JSFactory::getConfig();
-        \JSHelper::checkUserLogin();
+        $jshopConfig = JSFactory::getConfig();
+        Helper::checkUserLogin();
 
-        $adv_user = \JSFactory::getUserShop();
+        $adv_user = JSFactory::getUserShop();
 		$adv_user->prepareUserPrint();
 
         Metadata::userMyaccount();
         
 		$config_fields = $jshopConfig->getListFieldsRegisterType('editaccount');
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayMyAccount', array(&$adv_user, &$config_fields));
 		
         $view = $this->getView('user');
@@ -454,10 +462,10 @@ class UserController extends BaseController{
         $view->set('config', $jshopConfig);
         $view->set('user', $adv_user);
         $view->set('config_fields', $config_fields);
-        $view->set('href_user_group_info', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=groupsinfo'));
-        $view->set('href_edit_data', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=editaccount', 1,0,$jshopConfig->use_ssl));
-        $view->set('href_show_orders', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=orders', 1,0,$jshopConfig->use_ssl));
-        $view->set('href_logout', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=logout', 1));
+        $view->set('href_user_group_info', Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=groupsinfo'));
+        $view->set('href_edit_data', Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=editaccount', 1,0,$jshopConfig->use_ssl));
+        $view->set('href_show_orders', Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=orders', 1,0,$jshopConfig->use_ssl));
+        $view->set('href_logout', Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=logout', 1));
         $view->tmpl_my_account_html_start = "";
         $view->tmpl_my_account_html_content = "";
         $view->tmpl_my_account_html_end = "";
@@ -466,13 +474,13 @@ class UserController extends BaseController{
     }
     
     function groupsinfo(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         Metadata::userGroupsinfo();
         
-        $group = \JSFactory::getTable('userGroup');
+        $group = JSFactory::getTable('userGroup');
         $list = $group->getList();
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayGroupsInfo', array());
 
         $view = $this->getView('user');
@@ -485,14 +493,14 @@ class UserController extends BaseController{
     }
     
     function logout(){
-		$model = \JSFactory::getModel('userlogin', 'Site');
+		$model = JSFactory::getModel('userlogin', 'Site');
 		$model->logout();
-		\JSHelper::setNextUpdatePrices();
-		\JFactory::getApplication()->redirect($model->getReturnUrl());
+		Helper::setNextUpdatePrices();
+		Factory::getApplication()->redirect($model->getReturnUrl());
     }
 	
 	function logoutpage(){        
-        $checkout_navigator = \JSFactory::getModel('checkout', 'Site')->showCheckoutNavigation('1');
+        $checkout_navigator = JSFactory::getModel('checkout', 'Site')->showCheckoutNavigation('1');
 
 		$view = $this->getView('user');
 		$view->setLayout("logout");

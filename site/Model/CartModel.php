@@ -7,6 +7,12 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 defined('_JEXEC') or die();
 
 #[\AllowDynamicProperties]
@@ -26,9 +32,9 @@ class CartModel{
 	public $display_item_payment  = 0;
     
     function __construct(){
-        \JPluginHelper::importPlugin('jshoppingcheckout');
+        PluginHelper::importPlugin('jshoppingcheckout');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshopCart', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshopCart', array(&$obj));
     }
 	
 	function init($type_cart = "cart", $show_delete = 0){
@@ -39,7 +45,7 @@ class CartModel{
 	}
 	
 	function loadCartDataFromSession(){
-		$session = \JFactory::getSession();
+		$session = Factory::getSession();
         $objcart = $session->get($this->type_cart);
 
         if (isset($objcart) && $objcart != ''){
@@ -53,14 +59,14 @@ class CartModel{
 	}
 	
 	function loadProductsFromTempCart(){
-		$tempcart = \JSFactory::getModel($this->model_temp_cart, 'Site');
+		$tempcart = JSFactory::getModel($this->model_temp_cart, 'Site');
         if ($tempcart->checkAccessToTempCart($this->type_cart)) {
 			$this->products = $tempcart->getProducts($this->type_cart);
 		}
 	}
 
     function load($type_cart = "cart"){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $this->type_cart = $type_cart;
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeCartLoad', array(&$obj));
@@ -69,7 +75,7 @@ class CartModel{
         $this->loadProductsFromTempCart();
         $this->loadPriceAndCountProducts();
 
-        if (\JSFactory::getConfig()->use_extend_tax_rule){
+        if (JSFactory::getConfig()->use_extend_tax_rule){
             $this->updateTaxForProducts();
             $this->saveToSession();
         }
@@ -78,7 +84,7 @@ class CartModel{
     }
 
     function loadPriceAndCountProducts(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $this->price_product = 0;
         $this->price_product_brutto = 0;
         $this->count_product = 0;
@@ -94,7 +100,7 @@ class CartModel{
             }
         }
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterLoadPriceAndCountProducts', array(&$obj));
+        Factory::getApplication()->triggerEvent('onAfterLoadPriceAndCountProducts', array(&$obj));
     }
 
     function getPriceProducts(){
@@ -111,7 +117,7 @@ class CartModel{
 
     function updateTaxForProducts(){
         if (count($this->products)){
-            $taxes = \JSFactory::getAllTaxes();
+            $taxes = JSFactory::getAllTaxes();
             foreach ($this->products as $k=>$prod) {
                 $this->products[$k]['tax'] = isset($taxes[$prod['tax_id']]) ? $taxes[$prod['tax_id']] : 0;
             }
@@ -125,7 +131,7 @@ class CartModel{
     * @param mixed $incPayment - include price payment
     */
     function getSum( $incShiping = 0, $incRabatt = 0, $incPayment = 0 ) {
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         
         $this->summ = $this->price_product;
         
@@ -147,7 +153,7 @@ class CartModel{
             $this->summ = $this->summ - $this->getDiscountShow();
             if ($this->summ < 0) $this->summ = 0;
         }
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onAfterCartGetSum', array(&$obj, &$incShiping, &$incRabatt, &$incPayment));
         return $this->summ;
@@ -156,15 +162,15 @@ class CartModel{
     function getDiscountShow(){
         $summForCalculeDiscount = $this->getSummForCalculeDiscount();
         if ($this->rabatt_summ > $summForCalculeDiscount){
-            return \JSHelper::getRoundPriceProduct($summForCalculeDiscount);
+            return Helper::getRoundPriceProduct($summForCalculeDiscount);
         }else{
-            return \JSHelper::getRoundPriceProduct($this->rabatt_summ);
+            return Helper::getRoundPriceProduct($this->rabatt_summ);
         }
     }
 
     function getFreeDiscount($include_type = 0){
         if ($include_type){
-            $coupon = \JSFactory::getTable('coupon');
+            $coupon = JSFactory::getTable('coupon');
             $coupon->load($this->getCouponId());
             if (!$coupon->finished_after_used){
                 return 0;
@@ -181,16 +187,16 @@ class CartModel{
     function getTax($incShiping = 0, $incRabatt = 0, $incPayment = 0){
         $taxes = $this->getTaxExt($incShiping, $incRabatt, $incPayment);
         $tax_summ = array_sum($taxes);
-    return \JSHelper::getRoundPriceProduct($tax_summ);
+    return Helper::getRoundPriceProduct($tax_summ);
     }
 
     function getTaxExt($incShiping = 0, $incRabatt = 0, $incPayment = 0){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $tax_summ = array();
         foreach($this->products as $key=>$value){
             if ($value['tax']!=0){
                 if (!isset($tax_summ[$value['tax']])) $tax_summ[$value['tax']] = 0;
-                $tax_summ[$value['tax']] += $value['quantity'] * \JSHelper::getPriceTaxValue($value['price'], $value['tax'], $jshopConfig->display_price_front_current);                
+                $tax_summ[$value['tax']] += $value['quantity'] * Helper::getPriceTaxValue($value['price'], $value['tax'], $jshopConfig->display_price_front_current);                
             }
         }
 
@@ -230,17 +236,17 @@ class CartModel{
         }
         
         foreach ($tax_summ as $key => $value) {
-            $tax_summ[$key] = \JSHelper::getRoundPriceProduct($value);
+            $tax_summ[$key] = Helper::getRoundPriceProduct($value);
         }
         
-		$dispatcher = \JFactory::getApplication();
+		$dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onAfterCartGetTaxExt', array(&$obj, &$tax_summ, &$incShiping, &$incRabatt, $incPayment));
         return $tax_summ;
     }
 
     function getTaxExtCalcAfterDiscount($incShiping = 0, $incPayment = 0){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $summ = array();
         foreach($this->products as $key=>$value){
             if (!isset($summ[$value['tax']])) $summ[$value['tax']] = 0;
@@ -318,10 +324,10 @@ class CartModel{
     }
 
     function setDisplayFreeAttributes(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if (count($this->products)){
             if ($jshopConfig->admin_show_freeattributes){
-                $_freeattributes = \JSFactory::getTable('freeattribut');
+                $_freeattributes = JSFactory::getTable('freeattribut');
                 $namesfreeattributes = $_freeattributes->getAllNames();
             }
             foreach ($this->products as $k=>$prod){
@@ -360,60 +366,60 @@ class CartModel{
     }
 
     function setShippingId($val){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("shipping_method_id", $val);
     }
 
     function getShippingId() {
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return $session->get("shipping_method_id");
     }
     
     function setShippingPrId($val){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("sh_pr_method_id", $val);
     }
 
     function getShippingPrId() {
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return $session->get("sh_pr_method_id");
     }
 
     function setShippingPrice($price){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_shipping", $price);
     }
     function getShippingPrice() {
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $price = $session->get("jshop_price_shipping");
-        return \JSHelper::getRoundPriceProduct(floatval($price));
+        return Helper::getRoundPriceProduct(floatval($price));
     }
     
     function setPackagePrice($price){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_package", $price);
     }
     function getPackagePrice() {
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $price = $session->get("jshop_price_package");
-        return \JSHelper::getRoundPriceProduct(floatval($price));
+        return Helper::getRoundPriceProduct(floatval($price));
     }
 
     //deprecated
     function setShippingPriceTax($price){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_shipping_tax", $price);
     }
 
     function getShippingPriceTax() {
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $price = $session->get("jshop_price_shipping_tax");
         return floatval($price);
     }
 
     //deprecated
     function setShippingPriceTaxPercent($price){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_shipping_tax_percent", $price);
     }
 
@@ -428,61 +434,61 @@ class CartModel{
     }
     
     function setShippingTaxId($id){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_shipping_tax_id", $id);
     }
     function getShippingTaxId(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return $session->get("jshop_price_shipping_tax_id");
     }
     
     function setPackageTaxId($id){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_package_tax_id", $id);
     }
     function getPackageTaxId(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return $session->get("jshop_price_package_tax_id");
     }
     
     function setShippingTaxList($list){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_shipping_tax_list", $list);
     }
     function getShippingTaxList(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return (array)$session->get("jshop_price_shipping_tax_list");
     }
     
     function setPackageTaxList($list){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_package_tax_list", $list);
     }
     function getPackageTaxList(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return (array)$session->get("jshop_price_package_tax_list");
     }
     
     function setShippingPriceForTaxes($list){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_shipping_for_tax_list", $list);
     }
     function getShippingPriceForTaxes(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return $session->get("jshop_price_shipping_for_tax_list");
     }
     
     function setPackagePriceForTaxes($list){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_package_for_tax_list", $list);
     }
     function getPackagePriceForTaxes(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return $session->get("jshop_price_package_for_tax_list");
     }
 
     function getShippingNettoPrice(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if ($jshopConfig->display_price_front_current==1){
             return $this->getShippingPrice();
         }else{
@@ -496,7 +502,7 @@ class CartModel{
     }
 
     function getShippingBruttoPrice(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if ($jshopConfig->display_price_front_current==1){
             $price = $this->getShippingPrice();
             $lst = $this->getShippingTaxList();
@@ -510,7 +516,7 @@ class CartModel{
     }
     
     function getPackageBruttoPrice(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if ($jshopConfig->display_price_front_current==1){
             $price = $this->getPackagePrice();
             $lst = $this->getPackageTaxList();
@@ -524,35 +530,35 @@ class CartModel{
     }
     
     function setShippingParams($val){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("shipping_params", $val);
     }
 
     function getShippingParams(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $val = $session->get("shipping_params");
         return $val;
     }
 
     function setPaymentId($val){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("payment_method_id", $val);
     }
 
     function getPaymentId(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return intval($session->get("payment_method_id"));
     }
 
     function setPaymentPrice($val){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_payment_price", $val);
     }
 
     function getPaymentPrice(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $price = $session->get("jshop_payment_price");
-        return \JSHelper::getRoundPriceProduct(floatval($price));
+        return Helper::getRoundPriceProduct(floatval($price));
     }
     
     function setPaymentDatas($price, $payment){
@@ -562,7 +568,7 @@ class CartModel{
     }
 
     function getPaymentBruttoPrice(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if ($jshopConfig->display_price_front_current==1){
             $price = $this->getPaymentPrice();
             $lpt = $this->getPaymentTaxList();
@@ -577,38 +583,38 @@ class CartModel{
     }
     
     function setPaymentTaxList($list){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_payment_tax_list", $list);
     }
     function getPaymentTaxList(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return (array)$session->get("jshop_price_payment_tax_list");
     }
     
     function setPaymentPriceForTaxes($list){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_price_payment_for_tax_list", $list);
     }
     function getPaymentPriceForTaxes(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return $session->get("jshop_price_payment_for_tax_list");
     }
     
     //deprecated
     function setPaymentTax($val){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_payment_tax", $val);
     }
     
     function getPaymentTax(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $price = $session->get("jshop_payment_tax");
         return $price;
     }
     
     //deprecated
     function setPaymentTaxPercent($val){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_payment_tax_percent", $val);
     }
 
@@ -623,12 +629,12 @@ class CartModel{
     }
 
     function setPaymentParams($val){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("pm_params", $val);
     }
 
     function getPaymentParams(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $val = $session->get("pm_params");
         return $val;
     }    
@@ -638,18 +644,18 @@ class CartModel{
     }
     
     function setDeliveryDate($date){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set("jshop_delivery_date", $date);
     }
     function getDeliveryDate(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
     return $session->get("jshop_delivery_date");
     }
 
     function updateCartProductPrice() {
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
         foreach($this->products as $key=>$value) {
-            $product = \JSFactory::getTable('product');
+            $product = JSFactory::getTable('product');
             $product->load($this->products[$key]['product_id']);
             $attr_id = unserialize($value['attributes']);
             $freeattributes = unserialize($value['freeattributes']);
@@ -660,7 +666,7 @@ class CartModel{
                 $this->products[$key]['basicprice'] = $product->getBasicPrice();
             }
         }
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onAfterUpdateCartProductPrice', array(&$obj));
         $this->loadPriceAndCountProducts();
@@ -669,18 +675,18 @@ class CartModel{
     }
 
     function add($product_id, $quantity, $attr_id, $freeattributes, $additional_fields = array(), $usetriggers = 1, &$errors = array(), $displayErrorMessage = 1){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if ($quantity <= 0){
-            $errors['100'] = \JText::_('JSHOP_ERROR_QUANTITY');
+            $errors['100'] = Text::_('JSHOP_ERROR_QUANTITY');
 			if ($displayErrorMessage){
-                \JSError::raiseNotice(100, $errors['100']);
+                JSError::raiseNotice(100, $errors['100']);
             }
             return 0;
         }
         $updateqty = 1;
 
         if ($usetriggers){
-            $dispatcher = \JFactory::getApplication();
+            $dispatcher = Factory::getApplication();
             $obj = $this;
             $return = NULL;
 			$dispatcher->triggerEvent('onBeforeAddProductToCart', array(&$obj, &$product_id, &$quantity, &$attr_id, &$freeattributes, &$updateqty, &$errors, &$displayErrorMessage, &$additional_fields, &$usetriggers, &$return));
@@ -692,14 +698,14 @@ class CartModel{
         $attr_serialize = serialize($attr_id);
         $free_attr_serialize = serialize($freeattributes);
 
-        $product = \JSFactory::getTable('product');
+        $product = JSFactory::getTable('product');
         $product->load($product_id);
 
         //check attributes
         if ($this->type_cart != 'wishlist' && ((count($product->getRequireAttribute()) > count($attr_id)) || in_array(0, $attr_id))){
-            $errors['101'] = \JText::_('JSHOP_SELECT_PRODUCT_OPTIONS');
+            $errors['101'] = Text::_('JSHOP_SELECT_PRODUCT_OPTIONS');
             if ($displayErrorMessage){
-                \JSError::raiseNotice(101, $errors['101']);
+                JSError::raiseNotice(101, $errors['101']);
             }
             return 0;
         }
@@ -715,9 +721,9 @@ class CartModel{
             foreach($allfreeattributes as $k=>$v){
                 if ($v->required && trim($freeattributes[$v->id])==""){
                     $error = 1;
-                    $errors['102_'.$v->id] = sprintf(\JText::_('JSHOP_PLEASE_ENTER_X'), $v->name);
+                    $errors['102_'.$v->id] = sprintf(Text::_('JSHOP_PLEASE_ENTER_X'), $v->name);
                     if ($displayErrorMessage){
-                        \JSError::raiseNotice(102, $errors['102_'.$v->id]);
+                        JSError::raiseNotice(102, $errors['102_'.$v->id]);
                     }
                 }
             }
@@ -731,7 +737,7 @@ class CartModel{
         $qtyInStock = $product->getQtyInStock();
         $pidCheckQtyValue = $product->getPIDCheckQtyValue();
         
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "beforeCheckQty"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "beforeCheckQty"));
         
         $new_product = 1;
         if ($updateqty){
@@ -751,16 +757,16 @@ class CartModel{
 
                 if ($this->type_cart != 'wishlist') {
                     if ($jshopConfig->max_count_order_one_product && $sum_quantity > $jshopConfig->max_count_order_one_product){
-                        $errors['103'] = sprintf(\JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product);
+                        $errors['103'] = sprintf(Text::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product);
                         if ($displayErrorMessage){
-                            \JSError::raiseNotice(103, $errors['103']);
+                            JSError::raiseNotice(103, $errors['103']);
                         }
                         return 0;
                     }
                     if ($jshopConfig->min_count_order_one_product && $sum_quantity < $jshopConfig->min_count_order_one_product){
-                        $errors['104'] = sprintf(\JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product);
+                        $errors['104'] = sprintf(Text::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product);
                         if ($displayErrorMessage){
-                            \JSError::raiseNotice(104, $errors['104']);
+                            JSError::raiseNotice(104, $errors['104']);
                         }
                         return 0;
                     }
@@ -768,9 +774,9 @@ class CartModel{
                     if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($sum_quantity > $qtyInStock)){
                         $balans = $qtyInStock - $product_in_cart;
                         if ($balans < 0) $balans = 0;
-                        $errors['105'] = sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_IN_CART'), $this->products[$key]['quantity'], $balans);
+                        $errors['105'] = sprintf(Text::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_IN_CART'), $this->products[$key]['quantity'], $balans);
                         if ($displayErrorMessage){
-                            \JSError::raiseWarning(105, $errors['105']);
+                            JSError::raiseWarning(105, $errors['105']);
                         }
                         return 0;
                     }
@@ -804,16 +810,16 @@ class CartModel{
 
             if ($this->type_cart != 'wishlist') {
                 if ($jshopConfig->max_count_order_one_product && $sum_quantity > $jshopConfig->max_count_order_one_product){
-                    $errors['106'] = sprintf(\JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product);
+                    $errors['106'] = sprintf(Text::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product);
                     if ($displayErrorMessage){
-                        \JSError::raiseNotice(106, $errors['106']);
+                        JSError::raiseNotice(106, $errors['106']);
                     }
                     return 0;
                 }
                 if ($jshopConfig->min_count_order_one_product && $sum_quantity < $jshopConfig->min_count_order_one_product){
-                    $errors['107'] = sprintf(\JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product);
+                    $errors['107'] = sprintf(Text::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product);
                     if ($displayErrorMessage){
-                        \JSError::raiseNotice(107, $errors['107']);
+                        JSError::raiseNotice(107, $errors['107']);
                     }
                     return 0;
                 }
@@ -821,9 +827,9 @@ class CartModel{
                 if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($sum_quantity > $qtyInStock)){
                     $balans = $qtyInStock - $product_in_cart;
                     if ($balans < 0) $balans = 0;
-                    $errors['108'] = sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT'), $balans);
+                    $errors['108'] = sprintf(Text::_('JSHOP_ERROR_EXIST_QTY_PRODUCT'), $balans);
                     if ($displayErrorMessage){
-                        \JSError::raiseWarning(108, $errors['108']);
+                        JSError::raiseWarning(108, $errors['108']);
                     }
                     return 0;
                 }
@@ -836,7 +842,7 @@ class CartModel{
             $temp_product['tax'] = $product->getTax();
             $temp_product['tax_id'] = $product->product_tax_id;
             $temp_product['product_name'] = $product->name;
-            $temp_product['thumb_image'] = \JSHelper::getPatchProductImage($product->getData('image'), 'thumb');
+            $temp_product['thumb_image'] = Helper::getPatchProductImage($product->getData('image'), 'thumb');
             $temp_product['delivery_times_id'] = $product->getDeliveryTimeId();
             $temp_product['ean'] = $product->getEan();
             $temp_product['manufacturer_code'] = $product->getManufacturerCode();
@@ -845,7 +851,7 @@ class CartModel{
             $temp_product['attributes_value'] = array();
             $temp_product['extra_fields'] = array();
             $temp_product['weight'] = $product->getWeight();
-            $temp_product['vendor_id'] = \JSHelper::fixRealVendorId($product->vendor_id);
+            $temp_product['vendor_id'] = Helper::fixRealVendorId($product->vendor_id);
             $temp_product['files'] = serialize($product->getSaleFiles());
             $temp_product['freeattributes'] = $free_attr_serialize;
             if ($jshopConfig->show_manufacturer_in_cart){
@@ -858,8 +864,8 @@ class CartModel{
             $i = 0;
             if (is_array($attr_id) && count($attr_id)){
                 foreach($attr_id as $key=>$value){
-                    $attr = \JSFactory::getTable('attribut');
-                    $attr_v = \JSFactory::getTable('attributvalue');
+                    $attr = JSFactory::getTable('attribut');
+                    $attr_v = JSFactory::getTable('attributvalue');
                     $temp_product['attributes_value'][$i] = new \stdClass();
 					$temp_product['attributes_value'][$i]->attr_id = $key;
 					$temp_product['attributes_value'][$i]->value_id = $value;
@@ -915,14 +921,14 @@ class CartModel{
     }
 
     function refresh($quantity){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeRefreshProductInCart', array(&$quantity, &$obj));
                 
         if (is_array($quantity) && count($quantity)){
-            $lang = \JSFactory::getLang();
+            $lang = JSFactory::getLang();
             $name = $lang->get('name');
             foreach($quantity as $key=>$value){
                 if ($jshopConfig->use_decimal_qty){
@@ -932,7 +938,7 @@ class CartModel{
                     $value = intval($value);
                 }
                 if ($value < 0) $value = 0;
-                $product = \JSFactory::getTable('product');
+                $product = JSFactory::getTable('product');
                 $product->load($this->products[$key]['product_id']);
                 $attr = unserialize($this->products[$key]['attributes']);
                 $free_attr = unserialize($this->products[$key]['freeattributes']);
@@ -951,15 +957,15 @@ class CartModel{
                 
                 if ($this->type_cart != 'wishlist') {
                     if ($jshopConfig->max_count_order_one_product && ($checkqty > $jshopConfig->max_count_order_one_product)){
-                        \JSError::raiseNotice(111, sprintf(\JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product));
+                        JSError::raiseNotice(111, sprintf(Text::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->max_count_order_one_product));
                         return 0;
                     }
                     if ($jshopConfig->min_count_order_one_product && ($checkqty < $jshopConfig->min_count_order_one_product)){
-                        \JSError::raiseNotice(112, sprintf(\JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product));
+                        JSError::raiseNotice(112, sprintf(Text::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT'), $jshopConfig->min_count_order_one_product));
                         return 0;
                     }
                     if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($checkqty > $qtyInStock)){
-                        \JSError::raiseWarning(113, sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_BASKET'), $product->$name, $qtyInStock));
+                        JSError::raiseWarning(113, sprintf(Text::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_BASKET'), $product->$name, $qtyInStock));
                         continue;
                     }
                 }
@@ -984,17 +990,17 @@ class CartModel{
     }
     
     function checkListProductsQtyInStore(){
-        $jshopConfig = \JSFactory::getConfig();
-        $dispatcher = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
 		$dispatcher->triggerEvent('onBeforeCheckListProductsQtyInStore', array(&$obj));
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         $name = $lang->get('name');
         $check = 1;
         
         foreach($this->products as $key=>$value){
 			if ($value['pid_check_qty_value']=='nocheck') continue;
-            $product = \JSFactory::getTable('product');
+            $product = JSFactory::getTable('product');
             $product->load($this->products[$key]['product_id']);
             $attr = unserialize($this->products[$key]['attributes']);
             $product->setAttributeActive($attr);
@@ -1011,7 +1017,7 @@ class CartModel{
             
             if (!$product->unlimited && $jshopConfig->controler_buy_qty && ($checkqty > $qtyInStock)){
                 $check = 0;
-                \JSError::raiseWarning('', sprintf(\JText::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_BASKET'), $product->$name, $qtyInStock));
+                JSError::raiseWarning('', sprintf(Text::_('JSHOP_ERROR_EXIST_QTY_PRODUCT_BASKET'), $product->$name, $qtyInStock));
                 continue;
             }
         }
@@ -1024,9 +1030,9 @@ class CartModel{
         if (!$this->getCouponId()){
             return 1;
         }
-        $coupon = \JSFactory::getTable('coupon');
+        $coupon = JSFactory::getTable('coupon');
         $coupon->load($this->getCouponId());
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeCheckCouponStep5save', array(&$obj, &$coupon));
         if (!$coupon->coupon_publish || $coupon->used || ($coupon->coupon_type == 1 && $coupon->coupon_value < $this->rabatt_value)){
@@ -1041,7 +1047,7 @@ class CartModel{
         foreach ($this->products as $prod) {
             $weight_sum += $prod['weight'] * $prod['quantity'];
         }
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onGetWeightCartProducts', array(&$obj, &$weight_sum));
         return $weight_sum;
@@ -1056,7 +1062,7 @@ class CartModel{
     }
     
     function getSummForCalculePlusPayment(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $sum = $this->getPriceBruttoProducts();
         if ($this->display_item_shipping){
             $sum += $this->getShippingBruttoPrice();
@@ -1069,7 +1075,7 @@ class CartModel{
     }
     
     function getSummForCalculeDiscount(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $sum = $this->getPriceProducts();
         if ($jshopConfig->discount_use_full_sum && $jshopConfig->display_price_front_current==1){
             $sum = $this->getPriceBruttoProducts();
@@ -1081,12 +1087,12 @@ class CartModel{
             }
             if ($this->display_item_payment) $sum += $this->getPaymentBruttoPrice();
         }
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
         return $sum;
     }
     
     function reloadRabatValue(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if ($this->rabatt_type == 1){
             $this->rabatt_summ = $this->rabatt_value * $jshopConfig->currency_value; //value
         } else {
@@ -1101,14 +1107,14 @@ class CartModel{
     }
 
     function addLinkToProducts($show_delete = 0, $type="cart") {
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         foreach($this->products as $key=>$value){
-            $this->products[$key]['href'] = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=product&task=view&category_id='.$this->products[$key]['category_id'].'&product_id='.$value['product_id'], 1);
+            $this->products[$key]['href'] = Helper::SEFLink('index.php?option=com_jshopping&controller=product&task=view&category_id='.$this->products[$key]['category_id'].'&product_id='.$value['product_id'], 1);
             if ($show_delete){
-                $this->products[$key]['href_delete'] = \JSHelper::SEFLink('index.php?option=com_jshopping&controller='.$type.'&task=delete&number_id='.$key);
+                $this->products[$key]['href_delete'] = Helper::SEFLink('index.php?option=com_jshopping&controller='.$type.'&task=delete&number_id='.$key);
             }
             if ($type=="wishlist"){
-                $this->products[$key]['remove_to_cart'] = \JSHelper::SEFLink('index.php?option=com_jshopping&controller='.$type.'&task=remove_to_cart&number_id='.$key);
+                $this->products[$key]['remove_to_cart'] = Helper::SEFLink('index.php?option=com_jshopping&controller='.$type.'&task=remove_to_cart&number_id='.$key);
             }
         }
         $obj = $this;
@@ -1152,8 +1158,8 @@ class CartModel{
     }
     
     function getDelivery(){
-        $deliverytimes = \JSFactory::getAllDeliveryTime();
-        $deliverytimesdays = \JSFactory::getAllDeliveryTimeDays();
+        $deliverytimes = JSFactory::getAllDeliveryTime();
+        $deliverytimesdays = JSFactory::getAllDeliveryTimeDays();
         $min_id = 0;
         $max_id = 0;
         $min_days = 0;
@@ -1183,8 +1189,8 @@ class CartModel{
     }
     
     function getDeliveryDaysProducts(){
-        $deliverytimes = \JSFactory::getAllDeliveryTime();
-        $deliverytimesdays = \JSFactory::getAllDeliveryTimeDays();
+        $deliverytimes = JSFactory::getAllDeliveryTime();
+        $deliverytimesdays = JSFactory::getAllDeliveryTimeDays();
         $day = 0;
         foreach($this->products as $prod){
             if (isset($prod['delivery_times_id']) && $prod['delivery_times_id']){
@@ -1202,9 +1208,9 @@ class CartModel{
             $products[] = $v['product_id'];
         }
         $products = array_unique($products);
-        $statictext = \JSFactory::getTable("statictext");
+        $statictext = JSFactory::getTable("statictext");
         $rows = $statictext->getReturnPolicyForProducts($products);
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onAfterCartGetReturnPolicy', array(&$obj, &$rows));
     return $rows;
@@ -1217,10 +1223,10 @@ class CartModel{
     }
     
     function clear(){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeClearCart', array(&$obj));
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $this->products = array();
         $this->rabatt = 0;
         $this->rabatt_value = 0;
@@ -1243,7 +1249,7 @@ class CartModel{
     }
 
     function delete($number_id){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeDeleteProductInCart', array(&$number_id, &$obj) );
 
@@ -1256,7 +1262,7 @@ class CartModel{
     }
 	
 	function deleteAll(){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeDeleteAllProductInCart', array(&$obj));
 		foreach($this->products as $nid=>$prod){
@@ -1267,22 +1273,22 @@ class CartModel{
 	}
 
     function saveToSession(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set($this->type_cart, serialize($this));
 		
-        $tempcart = \JSFactory::getModel($this->model_temp_cart, 'Site');
+        $tempcart = JSFactory::getModel($this->model_temp_cart, 'Site');
         $tempcart->insertTempCart($this);
 		$obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterSaveToSessionCart', array(&$obj));        
+        Factory::getApplication()->triggerEvent('onAfterSaveToSessionCart', array(&$obj));        
     }
 	
 	function getMessageAddToCart(){
 		if ($this->type_cart=="wishlist"){
-			$message = \JText::_('JSHOP_ADDED_TO_WISHLIST');
+			$message = Text::_('JSHOP_ADDED_TO_WISHLIST');
 		}else{
-			$message = \JText::_('JSHOP_ADDED_TO_CART');
+			$message = Text::_('JSHOP_ADDED_TO_CART');
 		}
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "before"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "before"));
 		return $message;
 	}
 	
@@ -1292,7 +1298,7 @@ class CartModel{
 		}else{
 			$url = 'index.php?option=com_jshopping&controller=cart';
 		}
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "before"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "before"));
 		return $url;
 	}
 

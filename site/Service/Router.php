@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Service;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 include_once __DIR__.'/../bootstrap.php';
@@ -16,11 +21,11 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 
 	function build(&$query){
 		$segments = array();
-		\JSHelper::initLoadJoomshoppingLanguageFile();
+		Helper::initLoadJoomshoppingLanguageFile();
 		$lang = isset($query['lang']) ? $query['lang'] : '';
 		$shim = ShopItemMenu::getInstance($lang);
-		\JPluginHelper::importPlugin('jshoppingrouter');
-		$app = \JFactory::getApplication();
+		PluginHelper::importPlugin('jshoppingrouter');
+		$app = Factory::getApplication();
 		$app->triggerEvent('onBeforeBuildRoute', array(&$query, &$segments));
 		$categoryitemidlist = $shim->getListCategory();
 		$menu = \Joomla\CMS\Menu\SiteMenu::getInstance('site');
@@ -44,7 +49,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		if (in_array($controller, array('category', 'manufacturer', 'vendor', 'product'))){
 			unset($query['layout']);
 		}
-        $catalias = \JSFactory::getAliasCategory($lang);
+        $catalias = JSFactory::getAliasCategory($lang);
 
 		if (isset($query['Itemid']) && $query['Itemid']) {
             $clearQuery = 1;
@@ -101,8 +106,8 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		}
 
 		if ($controller=="product" && $query['task']=="view" && isset($query['category_id']) && isset($query['product_id'])){
-			$prodalias = \JSFactory::getAliasProduct($lang);
-			$catalias = \JSFactory::getAliasCategory($lang);
+			$prodalias = JSFactory::getAliasProduct($lang);
+			$catalias = JSFactory::getAliasCategory($lang);
 			if (isset($categoryitemidlist[$query['category_id']]) && isset($prodalias[$query['product_id']])){				
 				unset($query['controller']);
 				unset($query['category_id']);
@@ -120,7 +125,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		}
 
 		if ($controller=="manufacturer" && $query['task']=="view" && $query['manufacturer_id']){
-            $manalias = \JSFactory::getAliasManufacturer($lang);
+            $manalias = JSFactory::getAliasManufacturer($lang);
             if (isset($manalias[$query['manufacturer_id']])){
                 $segments[] = $manalias[$query['manufacturer_id']];
                 unset($query['controller']);
@@ -178,20 +183,20 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 
 	function parse(&$segments){
 		$vars = array();
-		\JSHelper::initLoadJoomshoppingLanguageFile();
-		$reservedFirstAlias = \JSFactory::getReservedFirstAlias();
-		$menu = \JFactory::getApplication()->getMenu();
+		Helper::initLoadJoomshoppingLanguageFile();
+		$reservedFirstAlias = JSFactory::getReservedFirstAlias();
+		$menu = Factory::getApplication()->getMenu();
 		$menuItem = $menu->getActive();
 		if (!isset($menuItem) || !isset($menuItem->query)) {
 			$miquery = [];
 		} else {
 			$miquery = $menuItem->query;
 		}
-		\JPluginHelper::importPlugin('jshoppingrouter');
-		$app = \JFactory::getApplication();
+		PluginHelper::importPlugin('jshoppingrouter');
+		$app = Factory::getApplication();
 		$app->triggerEvent('onBeforeParseRoute', array(&$vars, &$segments));
 		foreach($segments as $k=>$v){
-			$segments[$k] = \JSHelper::getSeoSegment($v);
+			$segments[$k] = Helper::getSeoSegment($v);
 		}
 		if (empty($segments) && count($vars)) {
 			return $vars;
@@ -263,10 +268,10 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 				return $vars;
 			}
 			if ($miquery['controller']=="category" && isset($miquery['category_id']) && $miquery['category_id'] && $segments[1]=="") {
-				$prodalias = \JSFactory::getAliasProduct();
+				$prodalias = JSFactory::getAliasProduct();
 				$product_id = array_search($segments[0], $prodalias, true);
 				if (!$product_id){
-					throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+					throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
 				}
 
 				$vars['controller'] = "product";
@@ -280,7 +285,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		}
 
 		if ($segments[0] && !in_array($segments[0], $reservedFirstAlias)){
-			$catalias = \JSFactory::getAliasCategory();
+			$catalias = JSFactory::getAliasCategory();
 			$category_id = array_search($segments[0], $catalias, true);
 			if ($category_id && $segments[1]==""){
 				$vars['controller'] = "category";
@@ -292,10 +297,10 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 			}
 
 			if ($category_id && $segments[1]!=""){
-				$prodalias = \JSFactory::getAliasProduct();
+				$prodalias = JSFactory::getAliasProduct();
 				$product_id = array_search($segments[1], $prodalias, true);
 				if (!$product_id){
-					throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+					throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
 				}
 				if ($category_id && $product_id){
 					$vars['controller'] = "product";
@@ -309,7 +314,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 			}
 
 			if (!$category_id && $segments[1]==""){
-				$manalias = \JSFactory::getAliasManufacturer();
+				$manalias = JSFactory::getAliasManufacturer();
 				$manufacturer_id = array_search($segments[0], $manalias, true);
 				if ($manufacturer_id){
 					$vars['controller'] = "manufacturer";
@@ -326,7 +331,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 				return $vars;
 			}
 
-			throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+			throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
 
 		}else{
 			$vars['controller'] = $segments[0];

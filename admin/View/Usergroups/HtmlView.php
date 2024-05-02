@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Usergroups;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,21 +17,21 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_USERGROUPS'), 'generic.png' ); 
-        \JToolBarHelper::addNew();
-        \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_USERGROUPS'), 'generic.png' ); 
+        ToolbarHelper::addNew();
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
     function displayEdit($tpl=null){
-        \JToolBarHelper::title($this->usergroup->usergroup_id ? (\JText::_('JSHOP_EDIT_USERGROUP').' / '.$this->usergroup->usergroup_name) : (\JText::_('JSHOP_EDIT_USERGROUP')), 'generic.png' );  
-        \JToolBarHelper::save();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::apply();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::save2new();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::cancel();        
+        ToolbarHelper::title($this->usergroup->usergroup_id ? (Text::_('JSHOP_EDIT_USERGROUP').' / '.$this->usergroup->usergroup_name) : (Text::_('JSHOP_EDIT_USERGROUP')), 'generic.png' );  
+        ToolbarHelper::save();
+        ToolbarHelper::spacer();
+        ToolbarHelper::apply();
+        ToolbarHelper::spacer();
+        ToolbarHelper::save2new();
+        ToolbarHelper::spacer();
+        ToolbarHelper::cancel();        
         parent::display($tpl);
     }
 }

@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -9,7 +11,7 @@
 defined('_JEXEC') or die;
 ?>
 <div class="jshop" id="comjshop">
-<h1><?php print JText::_('JSHOP_SEARCH_RESULT')?> <?php if ($this->search) print '"'.$this->search.'"';?></h1>
+<h1><?php print Text::_('JSHOP_SEARCH_RESULT')?> <?php if ($this->search) print '"'.$this->search.'"';?></h1>
 
 <?php if (count($this->rows)){ ?>
 <div class="jshop_list_product">

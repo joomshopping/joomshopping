@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -51,17 +54,17 @@ $i = 0;
         </div>
         <div class="js-stools-field-filter">
             <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($text_search);?>"
-                class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+                class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
         </div>
         <div class="js-stools-field-filter">
-            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                 <span class="icon-search" aria-hidden="true"></span>
             </button>
         </div>
 
         <div class="js-stools-field-filter">
             <button type="button"
-                class="btn btn-primary js-stools-btn-clear"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
         <?php print $this->tmp_html_filter_end?>
     </div>
@@ -73,38 +76,38 @@ $i = 0;
                     #
                 </th>
                 <th width="93">
-                    <?php print JText::_('JSHOP_IMAGE')?>
+                    <?php print Text::_('JSHOP_IMAGE')?>
                 </th>
                 <th>
-                    <?php echo JText::_('JSHOP_TITLE')?>
+                    <?php echo Text::_('JSHOP_TITLE')?>
                 </th>
                 <?php print $this->tmp_html_col_after_title?>
                 <?php if (!$category_id){?>
                 <th width="80">
-                    <?php echo JText::_('JSHOP_CATEGORY')?>
+                    <?php echo Text::_('JSHOP_CATEGORY')?>
                 </th>
                 <?php }?>
                 <?php if (!$manufacturer_id){?>
                 <th width="80">
-                    <?php echo JText::_('JSHOP_MANUFACTURER')?>
+                    <?php echo Text::_('JSHOP_MANUFACTURER')?>
                 </th>
                 <?php }?>
                 <?php if ($this->config->disable_admin['product_ean'] == 0){?>
                 <th width="80">
-                    <?php echo JText::_('JSHOP_EAN_PRODUCT')?>
+                    <?php echo Text::_('JSHOP_EAN_PRODUCT')?>
                 </th>
                 <?php }?>
                 <th width="60">
-                    <?php echo JText::_('JSHOP_PRICE')?>
+                    <?php echo Text::_('JSHOP_PRICE')?>
                 </th>
                 <th width="60">
-                    <?php echo JText::_('JSHOP_DATE')?>
+                    <?php echo Text::_('JSHOP_DATE')?>
                 </th>
                 <th width="40" class="center">
-                    <?php echo JText::_('JSHOP_PUBLISH')?>
+                    <?php echo Text::_('JSHOP_PUBLISH')?>
                 </th>
                 <th width="30" class="center">
-                    <?php echo JText::_('JSHOP_ID')?>
+                    <?php echo Text::_('JSHOP_ID')?>
                 </th>
             </tr>
         </thead>
@@ -116,7 +119,7 @@ $i = 0;
             <td>
                 <?php if ($row->image){?>
                 <a href="#" onclick="window.parent.<?php print $jsfname?>(<?php echo $row->product_id; ?>)">
-                    <img src="<?php print \JSHelper::getPatchProductImage($row->image, 'thumb', 1)?>" width="90"
+                    <img src="<?php print Helper::getPatchProductImage($row->image, 'thumb', 1)?>" width="90"
                         border="0" />
                 </a>
                 <?php }?>
@@ -143,10 +146,10 @@ $i = 0;
             </td>
             <?php }?>
             <td>
-                <?php echo \JSHelper::formatprice($row->product_price, JSHelper::sprintCurrency($row->currency_id));?>
+                <?php echo Helper::formatprice($row->product_price, Helper::sprintCurrency($row->currency_id));?>
             </td>
             <td>
-                <?php echo JSHelper::formatdate($row->product_date_added, 1);?>
+                <?php echo Helper::formatdate($row->product_date_added, 1);?>
             </td>
             <td class="center">
                 <a class="btn btn-micro">

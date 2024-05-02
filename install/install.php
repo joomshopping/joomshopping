@@ -1,4 +1,10 @@
 <?php
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Installer\Installer;
+
 /**
 * @version      5.0.0 20.05.2018
 * @author       MAXXmarketing GmbH
@@ -14,7 +20,7 @@ class com_jshoppingInstallerScript{
 		if ($type=='update'){
 			$version = $this->getPrevVersion();
 			if ($version && version_compare($version, '4.15.0', '<')) {
-				$app = \JFactory::getApplication();
+				$app = Factory::getApplication();
 				$app->enqueueMessage("100", 'Error update JoomShopping < 4.15.0. Use JoomShopping / Install & Update.', 'warning');
 				return false;
 			}
@@ -58,11 +64,11 @@ class com_jshoppingInstallerScript{
             $loader->setPsr4($namespace, $path);
         }
 		require_once(JPATH_SITE.'/components/com_jshopping/bootstrap.php');
-        $db = \JFactory::getDBO();
-        $adminlang = \JFactory::getLanguage();
-		\JSFactory::loadAdminLanguageFile();
+        $db = Factory::getDBO();
+        $adminlang = Factory::getLanguage();
+		JSFactory::loadAdminLanguageFile();
 
-        $params = \JComponentHelper::getParams('com_languages');
+        $params = ComponentHelper::getParams('com_languages');
         $frontend_lang = $params->get('site','en-GB');
 
         $query = 'SELECT email FROM #__users AS U LEFT JOIN #__user_usergroup_map AS UM ON UM.user_id = U.id WHERE UM.group_id = "8" ORDER BY U.id';
@@ -79,11 +85,11 @@ class com_jshoppingInstallerScript{
         $config->securitykey = md5($email_admin.time().JPATH_SITE);
         $config->store();
 
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $checkedlanguage = array();
         $session->set("jshop_checked_language", $checkedlanguage);
 
-        \JSHelper::installNewLanguages("en-GB", 0);
+        Helper::installNewLanguages("en-GB", 0);
 
         @chmod(JPATH_SITE.'/components/com_jshopping/files', 0755);
 
@@ -103,7 +109,7 @@ class com_jshoppingInstallerScript{
         @chmod(JPATH_SITE.'/components/com_jshopping/files/importexport/simpleimport', 0755);
 
         print "<br>";
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         print '<link rel="stylesheet" type="text/css" href="'.$jshopConfig->live_admin_path.'css/style.css" />';
         $view_config = array("base_path"=>JPATH_ADMINISTRATOR."/components/com_jshopping/","template_path"=>JPATH_ADMINISTRATOR."/components/com_jshopping/tmpl/panel/");
         $view = new \Joomla\Component\Jshopping\Administrator\View\Panel\HtmlView($view_config);
@@ -119,7 +125,7 @@ class com_jshoppingInstallerScript{
     }
 	
 	private function getPrevVersion(){
-		$data = \JInstaller::parseXMLInstallFile(JPATH_SITE.'/administrator/components/com_jshopping/jshopping.xml');
+		$data = Installer::parseXMLInstallFile(JPATH_SITE.'/administrator/components/com_jshopping/jshopping.xml');
 		return $data['version'];
 	}
 	

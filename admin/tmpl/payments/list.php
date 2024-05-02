@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -19,39 +24,39 @@ if ($saveOrder){
 ?>
 
 <div id="j-main-container" class="j-main-container">
-    <?php JSHelperAdmin::displaySubmenuOptions();?>
+    <?php HelperAdmin::displaySubmenuOptions();?>
     <form action="index.php?option=com_jshopping&controller=payments" method="post" name="adminForm" id="adminForm">
     <?php print $this->tmp_html_start?>
     <table class="table table-striped" width="70%">
     <thead>
       <tr>
         <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
-            <?php echo \JHTML::_('grid.sort', $this->filter_order!='payment_ordering' ? '#' : '', 'payment_ordering', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', $this->filter_order!='payment_ordering' ? '#' : '', 'payment_ordering', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="20">
-          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </th>
         <th align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="12%" align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_CODE'), 'payment_code', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_CODE'), 'payment_code', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="15%" align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ALIAS'), 'payment_class', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ALIAS'), 'payment_class', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <?php echo $this->tmp_extra_column_headers?>
         <th width = "15%" align = "left">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_SCRIPT_NAME'), 'scriptname', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_SCRIPT_NAME'), 'scriptname', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="50" class="center">
-          <?php echo JText::_('JSHOP_PUBLISH')?>
+          <?php echo Text::_('JSHOP_PUBLISH')?>
         </th>
         <th width="50" class="center">
-            <?php print JText::_('JSHOP_EDIT')?>
+            <?php print Text::_('JSHOP_EDIT')?>
         </th>
         <th width="40" class="center">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'payment_id', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'payment_id', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
       </tr>
     </thead>
@@ -67,10 +72,10 @@ if ($saveOrder){
             <?php } ?>
         </td>
        <td>
-         <?php echo \JHTML::_('grid.id', $i, $row->payment_id);?>
+         <?php echo HTMLHelper::_('grid.id', $i, $row->payment_id);?>
        </td>
        <td>
-         <a title="<?php echo JText::_('JSHOP_EDIT_PAYMENT')?>" href="index.php?option=com_jshopping&controller=payments&task=edit&payment_id=<?php echo $row->payment_id; ?>"><?php echo $row->name;?></a>
+         <a title="<?php echo Text::_('JSHOP_EDIT_PAYMENT')?>" href="index.php?option=com_jshopping&controller=payments&task=edit&payment_id=<?php echo $row->payment_id; ?>"><?php echo $row->name;?></a>
        </td>
        <td>
          <?php echo $row->payment_code;?>
@@ -83,7 +88,7 @@ if ($saveOrder){
          <?php echo $row->scriptname;?>
        </td>
        <td class="center">
-         <?php echo \JHTML::_('jgrid.published', $row->payment_publish, $i);?>
+         <?php echo HTMLHelper::_('jgrid.published', $row->payment_publish, $i);?>
        </td>
        <td class="center">
             <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=payments&task=edit&payment_id=<?php print $row->payment_id?>'>
@@ -111,6 +116,6 @@ if ($saveOrder){
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

@@ -1,4 +1,8 @@
-<?php 
+<?php
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.3.5 09.03.2024
 * @author       MAXXmarketing GmbH
@@ -11,15 +15,15 @@ defined('_JEXEC') or die();
 
 $config_fields = $this->config_fields;
 $cssreq = $this->cssreq_fields;
-JHtml::_('behavior.formvalidator');
+HTMLHelper::_('behavior.formvalidator');
 ?>
 <div class="jshop max-500" id="comjshop_register">
     <?php if (!isset($hideheaderh1)) : ?>
-    <h1><?php print JText::_('JSHOP_REGISTRATION')?></h1>
+    <h1><?php print Text::_('JSHOP_REGISTRATION')?></h1>
     <?php endif; ?>
 
     <form
-        action="<?php print \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=registersave',1,0, $this->config->use_ssl)?>"
+        action="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=registersave',1,0, $this->config->use_ssl)?>"
         class="form-validate form-horizontal" method="post" name="registration-form" autocomplete="off"
         enctype="multipart/form-data">
         <?php echo $this->_tmpl_register_html_1?>
@@ -28,7 +32,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="title">
-                        <?php print JText::_('JSHOP_REG_TITLE')?>
+                        <?php print Text::_('JSHOP_REG_TITLE')?>
                         <?php if ($config_fields['title']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -45,7 +49,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="f_name">
-                        <?php print JText::_('JSHOP_F_NAME')?>
+                        <?php print Text::_('JSHOP_F_NAME')?>
                         <?php if ($config_fields['f_name']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -60,7 +64,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="l_name">
-                        <?php print JText::_('JSHOP_L_NAME')?>
+                        <?php print Text::_('JSHOP_L_NAME')?>
                         <?php if ($config_fields['l_name']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -75,7 +79,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="m_name">
-                        <?php print JText::_('JSHOP_M_NAME')?>
+                        <?php print Text::_('JSHOP_M_NAME')?>
                         <?php if ($config_fields['m_name']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -90,7 +94,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="firma_name">
-                        <?php print JText::_('JSHOP_FIRMA_NAME')?>
+                        <?php print Text::_('JSHOP_FIRMA_NAME')?>
                         <?php if ($config_fields['firma_name']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -105,7 +109,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="client_type">
-                        <?php print JText::_('JSHOP_CLIENT_TYPE')?>
+                        <?php print Text::_('JSHOP_CLIENT_TYPE')?>
                         <?php if ($config_fields['client_type']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -123,7 +127,7 @@ JHtml::_('behavior.formvalidator');
                 <?php if ($config_fields['client_type']['display']) : ?>style="display:none;" <?php endif; ?>>
                 <div class="control-label name">
                     <label for="firma_code">
-                        <?php print JText::_('JSHOP_FIRMA_CODE')?>
+                        <?php print Text::_('JSHOP_FIRMA_CODE')?>
                         <?php if ($config_fields['firma_code']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -139,7 +143,7 @@ JHtml::_('behavior.formvalidator');
                 <?php if ($config_fields['client_type']['display']) : ?>style="display:none;" <?php endif; ?>>
                 <div class="control-label name">
                     <label for="tax_number">
-                        <?php print JText::_('JSHOP_VAT_NUMBER')?>
+                        <?php print Text::_('JSHOP_VAT_NUMBER')?>
                         <?php if ($config_fields['tax_number']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -154,7 +158,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="email">
-                        <?php print JText::_('JSHOP_EMAIL')?>
+                        <?php print Text::_('JSHOP_EMAIL')?>
                         <?php if ($config_fields['email']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -169,7 +173,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="email2">
-                        <?php print JText::_('JSHOP_EMAIL2')?>
+                        <?php print Text::_('JSHOP_EMAIL2')?>
                         <?php if ($config_fields['email2']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -184,7 +188,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="birthday">
-                        <?php print JText::_('JSHOP_BIRTHDAY')?>
+                        <?php print Text::_('JSHOP_BIRTHDAY')?>
                         <?php if ($config_fields['birthday']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -192,7 +196,7 @@ JHtml::_('behavior.formvalidator');
                     <?php 
                     $params = array('class'=>'input '.$cssreq['birthday'], 'size'=>'25', 'maxlength'=>'19');
                     ?>
-                    <?php echo \JHTML::_('calendar', $this->user->birthday, 'birthday', 'birthday', $this->config->field_birthday_format, $params);?>
+                    <?php echo HTMLHelper::_('calendar', $this->user->birthday, 'birthday', 'birthday', $this->config->field_birthday_format, $params);?>
                 </div>
             </div>
             <?php endif; ?>
@@ -203,7 +207,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="home">
-                        <?php print JText::_('JSHOP_HOME')?>
+                        <?php print Text::_('JSHOP_HOME')?>
                         <?php if ($config_fields['home']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -218,7 +222,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="apartment">
-                        <?php print JText::_('JSHOP_APARTMENT')?>
+                        <?php print Text::_('JSHOP_APARTMENT')?>
                         <?php if ($config_fields['apartment']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -233,7 +237,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="street">
-                        <?php print JText::_('JSHOP_STREET_NR')?>
+                        <?php print Text::_('JSHOP_STREET_NR')?>
                         <?php if ($config_fields['street']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -252,7 +256,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="zip">
-                        <?php print JText::_('JSHOP_ZIP')?>
+                        <?php print Text::_('JSHOP_ZIP')?>
                         <?php if ($config_fields['zip']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -267,7 +271,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="city">
-                        <?php print JText::_('JSHOP_CITY')?>
+                        <?php print Text::_('JSHOP_CITY')?>
                         <?php if ($config_fields['city']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -282,7 +286,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="state">
-                        <?php print JText::_('JSHOP_STATE')?>
+                        <?php print Text::_('JSHOP_STATE')?>
                         <?php if ($config_fields['state']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -297,7 +301,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="country">
-                        <?php print JText::_('JSHOP_COUNTRY')?>
+                        <?php print Text::_('JSHOP_COUNTRY')?>
                         <?php if ($config_fields['country']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -316,7 +320,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="phone">
-                        <?php print JText::_('JSHOP_TELEFON')?>
+                        <?php print Text::_('JSHOP_TELEFON')?>
                         <?php if ($config_fields['phone']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -331,7 +335,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="mobil_phone">
-                        <?php print JText::_('JSHOP_MOBIL_PHONE')?>
+                        <?php print Text::_('JSHOP_MOBIL_PHONE')?>
                         <?php if ($config_fields['mobil_phone']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -347,7 +351,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="fax">
-                        <?php print JText::_('JSHOP_FAX')?>
+                        <?php print Text::_('JSHOP_FAX')?>
                         <?php if ($config_fields['fax']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -362,7 +366,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="ext_field_1">
-                        <?php print JText::_('JSHOP_EXT_FIELD_1')?>
+                        <?php print Text::_('JSHOP_EXT_FIELD_1')?>
                         <?php if ($config_fields['ext_field_1']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -378,7 +382,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="ext_field_2">
-                        <?php print JText::_('JSHOP_EXT_FIELD_2')?>
+                        <?php print Text::_('JSHOP_EXT_FIELD_2')?>
                         <?php if ($config_fields['ext_field_2']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -394,7 +398,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="ext_field_3">
-                        <?php print JText::_('JSHOP_EXT_FIELD_3')?>
+                        <?php print Text::_('JSHOP_EXT_FIELD_3')?>
                         <?php if ($config_fields['ext_field_3']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -412,7 +416,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="u_name">
-                        <?php print JText::_('JSHOP_USERNAME')?>
+                        <?php print Text::_('JSHOP_USERNAME')?>
                         <?php if ($config_fields['u_name']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -427,7 +431,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="password">
-                        <?php print JText::_('JSHOP_PASSWORD')?>
+                        <?php print Text::_('JSHOP_PASSWORD')?>
                         <?php if ($config_fields['password']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -443,7 +447,7 @@ JHtml::_('behavior.formvalidator');
             <div class="control-group">
                 <div class="control-label name">
                     <label for="password_2">
-                        <?php print JText::_('JSHOP_PASSWORD_2')?>
+                        <?php print Text::_('JSHOP_PASSWORD_2')?>
                         <?php if ($config_fields['password_2']['require']) : ?><span>*</span><?php endif; ?>
                     </label>
                 </div>
@@ -459,8 +463,8 @@ JHtml::_('behavior.formvalidator');
                 <div class="control-label name">
                     <label for="privacy_statement">
                         <a class="privacy_statement" href="#"
-                            onclick="window.open('<?php print \JSHelper::SEFLink('index.php?option=com_jshopping&controller=content&task=view&page=privacy_statement&tmpl=component', 1);?>','window','width=800, height=600, scrollbars=yes, status=no, toolbar=no, menubar=no, resizable=yes, location=no');return false;">
-                            <?php print JText::_('JSHOP_PRIVACY_STATEMENT')?>
+                            onclick="window.open('<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=content&task=view&page=privacy_statement&tmpl=component', 1);?>','window','width=800, height=600, scrollbars=yes, status=no, toolbar=no, menubar=no, resizable=yes, location=no');return false;">
+                            <?php print Text::_('JSHOP_PRIVACY_STATEMENT')?>
                             <?php if ($config_fields['privacy_statement']['require']) : ?><span>*</span><?php endif; ?>
                         </a>
                     </label>
@@ -480,13 +484,13 @@ JHtml::_('behavior.formvalidator');
 
         <div class="control-group box_button">
             <div class="controls">
-                <div class="requiredtext">* <?php print JText::_('JSHOP_REQUIRED')?></div>
+                <div class="requiredtext">* <?php print Text::_('JSHOP_REQUIRED')?></div>
                 <?php echo $this->_tmpl_register_html_6?>
-                <input type="submit" value="<?php print JText::_('JSHOP_SEND_REGISTRATION')?>"
+                <input type="submit" value="<?php print Text::_('JSHOP_SEND_REGISTRATION')?>"
                     class="btn btn-primary button" />
             </div>
         </div>
-        <?php echo \JHTML::_('form.token');?>
+        <?php echo HTMLHelper::_('form.token');?>
     </form>
 </div>
 

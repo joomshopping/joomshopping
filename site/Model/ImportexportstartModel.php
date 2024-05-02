@@ -7,16 +7,19 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class ImportExportStartModel{
 	
 	public function checkKey($key){	
-		return \JSFactory::getConfig()->securitykey == $key;
+		return JSFactory::getConfig()->securitykey == $key;
 	}
 	
 	public function getListStart($time, $filterAlias = '', $id = 0){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
         $adv_query = '';
         if ($filterAlias){
             $adv_query .= " and `alias`='".$db->escape($filterAlias)."'";
@@ -38,7 +41,7 @@ class ImportExportStartModel{
         foreach($list as $ie){
             $alias = $ie->alias;
             if (!file_exists(JPATH_COMPONENT_ADMINISTRATOR."/importexport/".$alias."/".$alias.".php")){
-                print sprintf(\JText::_('JSHOP_ERROR_FILE_NOT_EXIST'), "/importexport/".$alias."/".$alias.".php");
+                print sprintf(Text::_('JSHOP_ERROR_FILE_NOT_EXIST'), "/importexport/".$alias."/".$alias.".php");
                 return 0;
             }            
 			$this->execute($alias, $ie->id);
@@ -49,7 +52,7 @@ class ImportExportStartModel{
 	}
 	
 	public function execute($alias, $id){
-		$_importexport = \JSFactory::getTable('ImportExport'); 
+		$_importexport = JSFactory::getTable('ImportExport'); 
         $_importexport->load($id);
 		
 		include_once(JPATH_COMPONENT_ADMINISTRATOR."/importexport/".$alias."/".$alias.".php");

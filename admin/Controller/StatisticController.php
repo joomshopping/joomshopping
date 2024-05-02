@@ -7,18 +7,21 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined( '_JEXEC' ) or die();
 
 class StatisticController extends BaseadminController{
 
     function init(){
-        \JSHelperAdmin::addSubmenu("other");
-        \JSHelperAdmin::checkAccessController("statistic");
+        HelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("statistic");
     }
     
     function display($cachable = false, $urlparams = false){        
-        $jshopConfig = \JSFactory::getConfig(); 
-        $_statisctic = \JSFactory::getModel("statistic");
+        $jshopConfig = JSFactory::getConfig(); 
+        $_statisctic = JSFactory::getModel("statistic");
         $rows = $_statisctic->getAllOrderStatus();
 
         $today = $_statisctic->getOrderStatistics('day');  
@@ -66,7 +69,7 @@ class StatisticController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayStatistic', array(&$view));
         $view->display();        
     }

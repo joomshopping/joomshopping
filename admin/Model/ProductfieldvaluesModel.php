@@ -8,14 +8,18 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Model; defined('_JEXEC') or die();
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 
 class ProductFieldValuesModel extends BaseadminModel{
     
     protected $nameTable = 'productfieldvalue';
 
 	public function getList($field_id, $order = null, $orderDir = null, $filter=array()){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $ordering = 'ordering';
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
@@ -27,16 +31,16 @@ class ProductFieldValuesModel extends BaseadminModel{
             $where =  " and (LOWER(`".$lang->get('name')."`) LIKE '%".$word."%' OR id LIKE '%".$word."%')";
         }
         $query = "SELECT id, `".$lang->get("name")."` as name, ordering FROM `#__jshopping_products_extra_field_values` where field_id='$field_id' ".$where." order by ".$ordering;
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
     }
 
     public function getAllList($display = 0){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $query = "SELECT id, `".$lang->get("name")."` as name, field_id FROM `#__jshopping_products_extra_field_values` order by ordering";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         if ($display==0){
             return $db->loadObjectList();
@@ -62,7 +66,7 @@ class ProductFieldValuesModel extends BaseadminModel{
     }
 
     public function getListRaw($field_id, $db_filed_select = '*') {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $query->select($db_filed_select)
             ->from($db->qn('#__jshopping_products_extra_field_values'))
@@ -73,11 +77,11 @@ class ProductFieldValuesModel extends BaseadminModel{
     }
 
     public function save(array $post){
-        $productfieldvalue = \JSFactory::getTable('productFieldValue');
-        $dispatcher = \JFactory::getApplication();
+        $productfieldvalue = JSFactory::getTable('productFieldValue');
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveProductFieldValue', array(&$post));
         if (!$post['id']) {
-            $productfield = \JSFactory::getTable('productfield');
+            $productfield = JSFactory::getTable('productfield');
             $productfield->load($post['field_id']);
             if ($productfield->type == 3 || (isset($post['_save_unique']) && $post['_save_unique'])) {
                 $post['id'] = $this->getIdByNames($post['field_id'], $post);
@@ -98,22 +102,22 @@ class ProductFieldValuesModel extends BaseadminModel{
     }
 
     public function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();        
-        $productfield = \JSFactory::getTable('productField');
+        $app = Factory::getApplication();        
+        $productfield = JSFactory::getTable('productField');
         foreach($cid as $id) {
-            $productfieldvalue = \JSFactory::getTable('productFieldValue');
+            $productfieldvalue = JSFactory::getTable('productFieldValue');
             $productfieldvalue->load($id);
             $productfield->clearValueFromFieldProduct($productfieldvalue->field_id, $id);
             $productfieldvalue->delete();
             if ($msg){
-                $app->enqueueMessage(\JText::_('JSHOP_ITEM_DELETED'), 'message');
+                $app->enqueueMessage(Text::_('JSHOP_ITEM_DELETED'), 'message');
             }
         }
-        \JFactory::getApplication()->triggerEvent('onAfterRemoveProductFieldValue', array(&$cid));
+        Factory::getApplication()->triggerEvent('onAfterRemoveProductFieldValue', array(&$cid));
     }
 
     public function getIdByNames($field_id, $names) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $query->select($db->qn('id'))
             ->from($db->qn('#__jshopping_products_extra_field_values'))
@@ -136,7 +140,7 @@ class ProductFieldValuesModel extends BaseadminModel{
 
     public function clearDoubleValues($field_id) {
         $list = $this->getListRaw($field_id);
-        $langs = \JSFactory::getModel('Languages')->getAllTags();
+        $langs = JSFactory::getModel('Languages')->getAllTags();
         $updated = 0;
         foreach($list as $item) {
             $names = [];
@@ -146,7 +150,7 @@ class ProductFieldValuesModel extends BaseadminModel{
             }
             $first_id = $this->getIdByNames($field_id, $names);
             if ($first_id && $first_id != $item->id) {
-                \JSHelper::saveToLog('extrafield_clear_double.log', 'efid: '.$field_id.' oldval: '.$item->id.' newid: '.$first_id);
+                Helper::saveToLog('extrafield_clear_double.log', 'efid: '.$field_id.' oldval: '.$item->id.' newid: '.$first_id);
                 $this->deleteById($item->id);
                 $this->updateAllProductsValue($field_id, $item->id, $first_id);
                 $updated++;
@@ -156,7 +160,7 @@ class ProductFieldValuesModel extends BaseadminModel{
     }
 
     public function deleteById($id) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $query->delete($db->qn('#__jshopping_products_extra_field_values'))
             ->where($db->qn('id') . '=' .$db->q($id));
@@ -165,7 +169,7 @@ class ProductFieldValuesModel extends BaseadminModel{
     }
 
     public function updateAllProductsValue($field_id, $old_val_id, $new_val_id) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $field = 'extra_field_'.(int)$field_id;
         $query->update($db->qn('#__jshopping_products_to_extra_fields'))
@@ -176,7 +180,7 @@ class ProductFieldValuesModel extends BaseadminModel{
     }
 
     public function updateProductValue($product_id, $field_id, $val_id) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $field = 'extra_field_'.(int)$field_id;
         $query->update($db->qn('#__jshopping_products_to_extra_fields'))

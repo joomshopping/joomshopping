@@ -7,6 +7,13 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Jshopping\Site\Lib\TreeObjectList;
 use Joomla\Component\Jshopping\Site\Lib\UploadFile;
 use Joomla\Component\Jshopping\Site\Lib\ImageLib;
@@ -19,14 +26,14 @@ class CategoriesModel extends BaseadminModel{
     protected $tableFieldPublish = 'category_publish';
     
     function getAllList($display=0){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         if (isset($order) && $order=="id") $orderby = "`category_id`";
         if (isset($order) && $order=="name") $orderby = "`".$lang->get('name')."`";
         if (isset($order) && $order=="ordering") $orderby = "ordering";
         if (isset($orderby) && !$orderby) $orderby = "ordering";
         $query = "SELECT `".$lang->get('name')."` as name, category_id FROM `#__jshopping_categories` ORDER BY ordering";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);        
         $list = $db->loadObjectList();
         if ($display==1){
@@ -41,8 +48,8 @@ class CategoriesModel extends BaseadminModel{
     }
     
     function getSubCategories($parentId, $order = 'id', $ordering = 'asc') {
-        $db = \JFactory::getDBO();        
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();        
+        $lang = JSFactory::getLang();
         if ($order=="id") $orderby = "`category_id`";
         if ($order=="name") $orderby = "`".$lang->get('name')."`";
         if ($order=="ordering") $orderby = "ordering";
@@ -50,17 +57,17 @@ class CategoriesModel extends BaseadminModel{
         $query = "SELECT `".$lang->get('name')."` as name,`".$lang->get('short_description')."` as short_description, category_id, category_publish, ordering, category_image FROM `#__jshopping_categories`
                    WHERE category_parent_id = '".$db->escape($parentId)."'
                    ORDER BY ".$orderby." ".$ordering;
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);        
         return $db->loadObjectList();
     }
     
     function getAllCatCountSubCat() {
-        $db = \JFactory::getDBO();        
+        $db = Factory::getDBO();        
         $query = "SELECT C.category_id, count(C.category_id) as k FROM `#__jshopping_categories` as C
                    inner join  `#__jshopping_categories` as SC on C.category_id=SC.category_parent_id
                    group by C.category_id";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $list = $db->loadObjectList();
         $rows = array();
@@ -71,9 +78,9 @@ class CategoriesModel extends BaseadminModel{
     }
     
     function getAllCatCountProducts(){
-        $db = \JFactory::getDBO();    
+        $db = Factory::getDBO();    
         $query = "SELECT category_id, count(product_id) as k FROM `#__jshopping_products_to_categories` group by category_id";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $list = $db->loadObjectList();
         $rows = array();
@@ -84,21 +91,21 @@ class CategoriesModel extends BaseadminModel{
     }
     
     function deleteCategory($category_id){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "DELETE FROM `#__jshopping_categories` WHERE `category_id` = '" . $db->escape($category_id) . "'";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $db->execute();
     }
     
     function getTreeAllCategories($filter = array(), $order = null, $orderDir = null) {
-        $db = \JFactory::getDBO();
-        $user = \JFactory::getUser();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $user = Factory::getUser();
+        $lang = JSFactory::getLang();
 
         $query = "SELECT ordering, category_id, category_parent_id, `".$lang->get('name')."` as name, `".$lang->get('short_description')."` as short_description, `".$lang->get('description')."` as description, category_publish, category_image FROM `#__jshopping_categories`
                   ORDER BY category_parent_id, ". $this->_allCategoriesOrder($order, $orderDir);
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
 		$list = $db->loadObjectList();
 
@@ -184,12 +191,12 @@ class CategoriesModel extends BaseadminModel{
     }
    
     function _allCategoriesOrder($order = null, $orderDir = null){
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         if ($order && $orderDir){
             $fields = array("name" => "`".$lang->get('name')."`", "id" => "`category_id`", "description" => "`".$lang->get('description')."`", "ordering" => "`ordering`");
             if (strtolower($orderDir) != "asc") $orderDir = "desc";
             if (!$fields[$order]) return "`ordering` ".$orderDir;
-            extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+            extract(Helper::js_add_trigger(get_defined_vars(), "before"));
             return $fields[$order]." ".$orderDir;
         }else{
             return "`ordering` asc";
@@ -197,7 +204,7 @@ class CategoriesModel extends BaseadminModel{
     }
 
     function uploadImage($post, $image = null){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if (is_null($image)){
             $image = $_FILES['category_image'];
         }
@@ -211,7 +218,7 @@ class CategoriesModel extends BaseadminModel{
         $upload->setFilterName(1);
         if ($upload->upload()){
             $name = $upload->getName();
-            \JFactory::getApplication()->triggerEvent('onAfterUploadCategoryImage', array(&$post, &$name));
+            Factory::getApplication()->triggerEvent('onAfterUploadCategoryImage', array(&$post, &$name));
             if ($post['old_image'] && $name!=$post['old_image']){
                 @unlink($jshopConfig->image_category_path."/".$post['old_image']);
             }
@@ -230,29 +237,29 @@ class CategoriesModel extends BaseadminModel{
                 $path_thumb = $jshopConfig->image_category_path."/".$name;
                 if ($category_width_image || $category_height_image){
                     if (!ImageLib::resizeImageMagic($path_full, $category_width_image, $category_height_image, $jshopConfig->image_cut, $jshopConfig->image_fill, $path_thumb, $jshopConfig->image_quality, $jshopConfig->image_fill_color, $jshopConfig->image_interlace)) {
-                        \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_CREATE_THUMBAIL'));
-                        \JSHelper::saveToLog("error.log", "SaveCategory - Error create thumbail");
+                        JSError::raiseWarning("",Text::_('JSHOP_ERROR_CREATE_THUMBAIL'));
+                        Helper::saveToLog("error.log", "SaveCategory - Error create thumbail");
                     }
                 }
                 @chmod($jshopConfig->image_category_path."/".$name, 0777);
             }
             $category_image = $name;
-            \JFactory::getApplication()->triggerEvent('onAfterSaveCategoryImage', array(&$post, &$category_image, &$path_full, &$path_thumb));
+            Factory::getApplication()->triggerEvent('onAfterSaveCategoryImage', array(&$post, &$category_image, &$path_full, &$path_thumb));
         }else{
             $category_image = '';
             if ($upload->getError() != 4){
-                \JFactory::getApplication()->enqueueMessage(\JText::_('JSHOP_ERROR_UPLOADING_IMAGE'), 'notice');
-                \JSHelper::saveToLog("error.log", "SaveCategory - Error upload image. code: ".$upload->getError());
+                Factory::getApplication()->enqueueMessage(Text::_('JSHOP_ERROR_UPLOADING_IMAGE'), 'notice');
+                Helper::saveToLog("error.log", "SaveCategory - Error upload image. code: ".$upload->getError());
             }
         }
         return $category_image;
     }
     
     public function getPrepareDataSave($input){
-        $jshopConfig = \JSFactory::getConfig();
-        $_lang = \JSFactory::getModel("languages");
+        $jshopConfig = JSFactory::getConfig();
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
-        $_alias = \JSFactory::getModel("alias");
+        $_alias = JSFactory::getModel("alias");
         $post = $input->post->getArray();
         foreach($languages as $lang){
             $post['name_'.$lang->language] = trim($post['name_'.$lang->language]);
@@ -260,10 +267,10 @@ class CategoriesModel extends BaseadminModel{
                 $post['alias_'.$lang->language] = $post['name_'.$lang->language];
             }
             //$post['alias_'.$lang->language] = \JApplication::stringURLSafe($post['alias_'.$lang->language]);
-            $post['alias_'.$lang->language] = \JApplicationHelper::stringURLSafe($post['alias_'.$lang->language]);
+            $post['alias_'.$lang->language] = ApplicationHelper::stringURLSafe($post['alias_'.$lang->language]);
             if ($post['alias_'.$lang->language]!="" && !$_alias->checkExistAlias1Group($post['alias_'.$lang->language], $lang->language, $post['category_id'], 0)){
                 $post['alias_'.$lang->language] = "";
-                \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_ALIAS_ALREADY_EXIST'));
+                JSError::raiseWarning("",Text::_('JSHOP_ERROR_ALIAS_ALREADY_EXIST'));
             }
             $post['description_'.$lang->language] = $input->get('description'.$lang->id, '', 'RAW');
             $post['short_description_'.$lang->language] = $input->get('short_description_'.$lang->language, '', 'RAW');
@@ -272,11 +279,11 @@ class CategoriesModel extends BaseadminModel{
     }
     
     public function save(array $post, $image = null){
-        $jshopConfig = \JSFactory::getConfig();
-        $category = \JSFactory::getTable("category");
+        $jshopConfig = JSFactory::getConfig();
+        $category = JSFactory::getTable("category");
         $category->load($post["category_id"]);
         if (!$post["category_id"]){
-            $post['category_add_date'] = \JSHelper::getJsDate();
+            $post['category_add_date'] = Helper::getJsDate();
         }
         if (!isset($post['category_publish'])){
             $post['category_publish'] = 0;
@@ -285,7 +292,7 @@ class CategoriesModel extends BaseadminModel{
             $post['category_parent_id'] = 0;
         }
         
-        \JFactory::getApplication()->triggerEvent('onBeforeSaveCategory', array(&$post));
+        Factory::getApplication()->triggerEvent('onBeforeSaveCategory', array(&$post));
 
         $category->bind($post);
         if ($image){
@@ -303,18 +310,18 @@ class CategoriesModel extends BaseadminModel{
         }
         $this->_reorderCategory($category);
  
-        \JFactory::getApplication()->triggerEvent('onBeforeStoreCategory', array(&$post, &$category));
+        Factory::getApplication()->triggerEvent('onBeforeStoreCategory', array(&$post, &$category));
         if (!$category->store()){
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
         }
         
-        \JFactory::getApplication()->triggerEvent('onAfterSaveCategory', array(&$category, &$post));
+        Factory::getApplication()->triggerEvent('onAfterSaveCategory', array(&$category, &$post));
         return $category;
     }
     
     function _reorderCategory(&$category) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "UPDATE `#__jshopping_categories` SET `ordering` = ordering + 1
                     WHERE `category_parent_id` = '" . $category->category_parent_id . "' AND `ordering` > '" . $category->ordering . "'";
         $db->setQuery($query);
@@ -324,54 +331,54 @@ class CategoriesModel extends BaseadminModel{
     
     function _getAllCategoriesLevel($parentId, $currentOrdering = 0){
         $rows = $this->getSubCategories($parentId, "ordering");
-        $first[] = \JHTML::_('select.option', '0',\JText::_('JSHOP_ORDERING_FIRST'),'ordering','name');
+        $first[] = HTMLHelper::_('select.option', '0',Text::_('JSHOP_ORDERING_FIRST'),'ordering','name');
         $rows = array_merge($first, $rows);
         $currentOrdering = (!$currentOrdering) ? ($rows[count($rows) - 1]->ordering) : ($currentOrdering);
-        return (\JHTML::_('select.genericlist', $rows,'ordering','class="inputbox form-select"','ordering','name', $currentOrdering));
+        return (HTMLHelper::_('select.genericlist', $rows,'ordering','class="inputbox form-select"','ordering','name', $currentOrdering));
     }
     
     public function deleteList(array $cid, $msg = 1){
-        $jshopConfig = \JSFactory::getConfig();
-        $app = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        $app = Factory::getApplication();
         
-        \JFactory::getApplication()->triggerEvent('onBeforeRemoveCategory', array(&$cid));
+        Factory::getApplication()->triggerEvent('onBeforeRemoveCategory', array(&$cid));
         $allCatCountProducts = $this->getAllCatCountProducts();
         foreach($cid as $value){
-            $category = \JSFactory::getTable("category");
+            $category = JSFactory::getTable("category");
             $category->load($value);
             $name_category = $category->getName();
             $childs = $category->getChildCategories();
             if ((isset($allCatCountProducts[$value]) && $allCatCountProducts[$value]) || count($childs)){
                 if ($msg){
-                    $app->enqueueMessage(sprintf(\JText::_('JSHOP_CATEGORY_NO_DELETED'), $name_category), 'error');
+                    $app->enqueueMessage(sprintf(Text::_('JSHOP_CATEGORY_NO_DELETED'), $name_category), 'error');
                 }
                 continue;
             }
             $this->deleteCategory($value);
             @unlink($jshopConfig->image_category_path.'/'.$category->category_image);            
             if ($msg){
-                $app->enqueueMessage(sprintf(\JText::_('JSHOP_CATEGORY_DELETED'), $name_category), 'message');
+                $app->enqueueMessage(sprintf(Text::_('JSHOP_CATEGORY_DELETED'), $name_category), 'message');
             }
         }
-        \JFactory::getApplication()->triggerEvent('onAfterRemoveCategory', array(&$cid));
+        Factory::getApplication()->triggerEvent('onAfterRemoveCategory', array(&$cid));
     }
     
     public function publish(array $cid, $flag){
         
-        \JFactory::getApplication()->triggerEvent('onBeforePublishCategory', array(&$cid, &$flag));
+        Factory::getApplication()->triggerEvent('onBeforePublishCategory', array(&$cid, &$flag));
         parent::publish($cid, $flag);
-        \JFactory::getApplication()->triggerEvent('onAfterPublishCategory', array(&$cid, &$flag));
+        Factory::getApplication()->triggerEvent('onAfterPublishCategory', array(&$cid, &$flag));
     }
     
     public function order($id, $move,  $where = ''){
-        $table = \JSFactory::getTable('category');
+        $table = JSFactory::getTable('category');
         $table->load($id);
         $table->move($move, 'category_parent_id="'.$table->category_parent_id.'"');
     }
 
     public function deleteFoto($id){
-        $jshopConfig = \JSFactory::getConfig();
-        $category = \JSFactory::getTable("category", "jshop");
+        $jshopConfig = JSFactory::getConfig();
+        $category = JSFactory::getTable("category", "jshop");
         $category->load($id);
         @unlink($jshopConfig->image_category_path.'/'.$category->category_image);
         $category->category_image = "";

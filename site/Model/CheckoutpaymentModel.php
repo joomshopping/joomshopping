@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class CheckoutPaymentModel  extends CheckoutModel{
@@ -14,9 +17,9 @@ class CheckoutPaymentModel  extends CheckoutModel{
 	private $active_paym_method;
     
 	public function getCheckoutListPayments(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$cart = $this->getCart();
-		$paymentmethod = \JSFactory::getTable('paymentmethod');
+		$paymentmethod = JSFactory::getTable('paymentmethod');
 		$shipping_id = $cart->getShippingId();
         $all_payment_methods = $paymentmethod->getAllPaymentMethods(1, $shipping_id);
 		$i = 0;
@@ -55,12 +58,12 @@ class CheckoutPaymentModel  extends CheckoutModel{
                     }
                 }
             }else{
-                $paym[$i]->calculeprice = \JSHelper::getPriceCalcParamsTax($pm->price * $jshopConfig->currency_value, $pm->tax_id, $cart->products);
+                $paym[$i]->calculeprice = Helper::getPriceCalcParamsTax($pm->price * $jshopConfig->currency_value, $pm->tax_id, $cart->products);
                 if ($paym[$i]->calculeprice!=0){
                     if ($paym[$i]->calculeprice>0){
-                        $paym[$i]->price_add_text = '+'.\JSHelper::formatprice($paym[$i]->calculeprice);
+                        $paym[$i]->price_add_text = '+'.Helper::formatprice($paym[$i]->calculeprice);
                     }else{
-                        $paym[$i]->price_add_text = \JSHelper::formatprice($paym[$i]->calculeprice);
+                        $paym[$i]->price_add_text = Helper::formatprice($paym[$i]->calculeprice);
                     }
                 }
             }
@@ -118,7 +121,7 @@ class CheckoutPaymentModel  extends CheckoutModel{
             $params_pm = '';
         }
 		$cart = $this->getCart();
-		$paym_method = \JSFactory::getTable('paymentmethod');
+		$paym_method = JSFactory::getTable('paymentmethod');
         $paym_method->class = $payment_method;
         $payment_method_id = $paym_method->getId();
         $paym_method->load($payment_method_id);
@@ -127,7 +130,7 @@ class CheckoutPaymentModel  extends CheckoutModel{
         $payment_system = $paymentsysdata->paymentSystem;
         if ($paym_method->payment_publish==0){
             $cart->setPaymentParams('');
-			$this->setError(\JText::_('JSHOP_ERROR_PAYMENT'));
+			$this->setError(Text::_('JSHOP_ERROR_PAYMENT'));
             return 0;
         }
         if ($payment_system){
@@ -140,7 +143,7 @@ class CheckoutPaymentModel  extends CheckoutModel{
 		
 		$paym_method->setCart($cart);
         $cart->setPaymentId($payment_method_id);
-        if (\JSFactory::getConfig()->step_4_3) {
+        if (JSFactory::getConfig()->step_4_3) {
             $cart->setDisplayItem(1, 1);
         }
         $price = $paym_method->getPrice();

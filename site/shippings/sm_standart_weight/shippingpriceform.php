@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -13,26 +16,26 @@ $row = $template->sh_method_price;
 <tr><td>&nbsp;</td></tr>
 <tr>
   <td class="key" style = "text-align:right; vertical-align:top">
-    <b><?php echo \JText::_('JSHOP_PRICE_DEPENCED_WEIGHT')?></b>
+    <b><?php echo Text::_('JSHOP_PRICE_DEPENCED_WEIGHT')?></b>
   </td>
   <td>
     <table class="adminlist" id="table_shipping_weight_price">
     <thead>
        <tr>
          <th>
-           <?php echo \JText::_('JSHOP_MINIMAL_WEIGHT')?> (<?php print \JSHelper::sprintUnitWeight();?>)
+           <?php echo Text::_('JSHOP_MINIMAL_WEIGHT')?> (<?php print Helper::sprintUnitWeight();?>)
          </th>
          <th>
-           <?php echo \JText::_('JSHOP_MAXIMAL_WEIGHT')?> (<?php print \JSHelper::sprintUnitWeight();?>)
+           <?php echo Text::_('JSHOP_MAXIMAL_WEIGHT')?> (<?php print Helper::sprintUnitWeight();?>)
          </th>
          <th>
-           <?php echo \JText::_('JSHOP_PRICE')?> (<?php echo $template->currency->currency_code; ?>)
+           <?php echo Text::_('JSHOP_PRICE')?> (<?php echo $template->currency->currency_code; ?>)
          </th>
          <th>
-           <?php echo \JText::_('JSHOP_PACKAGE_PRICE')?> (<?php echo $template->currency->currency_code; ?>)
+           <?php echo Text::_('JSHOP_PACKAGE_PRICE')?> (<?php echo $template->currency->currency_code; ?>)
          </th>         
          <th>
-           <?php echo \JText::_('JSHOP_DELETE')?>
+           <?php echo Text::_('JSHOP_DELETE')?>
          </th>
        </tr>                   
        </thead>
@@ -63,7 +66,7 @@ $row = $template->sh_method_price;
     <table class="adminlist"> 
     <tr>
         <td style="padding-top:5px;" align="right">
-            <input type="button" class="btn btn-primary" value="<?php echo \JText::_('JSHOP_ADD_VALUE')?>" onclick = "jshopAdmin.addFieldShPrice();">
+            <input type="button" class="btn btn-primary" value="<?php echo Text::_('JSHOP_ADD_VALUE')?>" onclick = "jshopAdmin.addFieldShPrice();">
         </td>
     </tr>
     </table>

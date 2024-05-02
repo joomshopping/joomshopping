@@ -1,4 +1,8 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -15,7 +19,7 @@ Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
 ?>
 
 <div id="j-main-container" class="j-main-container">
-    <?php JSHelperAdmin::displaySubmenuOptions("productfields");?>
+    <?php HelperAdmin::displaySubmenuOptions("productfields");?>
     <form action="index.php?option=com_jshopping&controller=productfieldgroups" method="post" name="adminForm" id="adminForm">
     <?php print $this->tmp_html_start?>
     <table class="table table-striped">
@@ -25,16 +29,16 @@ Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
             #
         </th>
         <th width="20">
-          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </th>
         <th align="left">
-          <?php echo JText::_('JSHOP_TITLE')?>
+          <?php echo Text::_('JSHOP_TITLE')?>
         </th>
         <th width="50" class="center">
-            <?php echo JText::_('JSHOP_EDIT')?>
+            <?php echo Text::_('JSHOP_EDIT')?>
         </th>
         <th width="40" class="center">
-            <?php echo JText::_('JSHOP_ID')?>
+            <?php echo Text::_('JSHOP_ID')?>
         </th>
     </tr>
     </thead>
@@ -48,7 +52,7 @@ Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
             <input type="text" class="hidden" name="order[]" value="<?php echo $row->ordering; ?>">
         </td>
        <td>
-         <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+         <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
        </td>
        <td>
          <a href="index.php?option=com_jshopping&controller=productfieldgroups&task=edit&id=<?php echo $row->id; ?>"><?php echo $row->name;?></a>

@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
@@ -16,20 +17,20 @@ abstract class MultilangTable extends ShopbaseTable{
 		if (!is_null($id)){
 			return $this->getNameForId($id);
 		}
-		$lang = \JSFactory::getLang();
+		$lang = JSFactory::getLang();
         $field = $lang->get("name");
     return $this->$field;
     }
 	
 	public function getDescription(){
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         $field = $lang->get("description");
     return $this->$field;
     }
 	
 	public function getNameForId($id){
-		$db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();		
+		$db = Factory::getDBO();
+        $lang = JSFactory::getLang();		
         $query = "SELECT `".$lang->get("name")."` as name FROM `".$this->_tbl."` WHERE `".$this->_tbl_key."` = '".$db->escape($id)."'";
         $db->setQuery($query);
         return $db->loadResult();

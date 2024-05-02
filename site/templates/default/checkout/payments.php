@@ -1,4 +1,6 @@
-<?php                       
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -39,7 +41,7 @@ defined('_JEXEC') or die();
             </div>
         
             <?php print $this->_tmp_ext_html_payment_end?>
-            <input type="submit" id="payment_submit" class="btn btn-success button" name="payment_submit" value="<?php print JText::_('JSHOP_NEXT')?>">
+            <input type="submit" id="payment_submit" class="btn btn-success button" name="payment_submit" value="<?php print Text::_('JSHOP_NEXT')?>">
         </form>
     </div>
 </div>

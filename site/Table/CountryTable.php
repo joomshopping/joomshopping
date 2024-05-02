@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class CountryTable extends MultilangTable{
@@ -18,9 +20,9 @@ class CountryTable extends MultilangTable{
     }
 
     function getAllCountries($publish = 1){
-        $db = \JFactory::getDBO(); 
-        $lang = \JSFactory::getLang();
-        $JshopConfig = \JSFactory::getConfig();
+        $db = Factory::getDBO(); 
+        $lang = JSFactory::getLang();
+        $JshopConfig = JSFactory::getConfig();
         $where = ($publish)?(" WHERE country_publish = '1' "):(" ");
         $ordering = "ordering";
         if ($JshopConfig->sorting_country_in_alphabet) $ordering = "name";
@@ -30,14 +32,14 @@ class CountryTable extends MultilangTable{
     }
 	
 	public function getCountryIdFromCode2($code2){
-		$db = \JFactory::getDbo();			
+		$db = Factory::getDbo();			
 		$query = "select country_id from `#__jshopping_countries` where country_code_2='".$db->escape($code2)."'";
 		$db->setQuery($query);
         return $db->loadResult();
 	}
 	
 	public function getCountryIdFromCode($code){
-		$db = \JFactory::getDbo();			
+		$db = Factory::getDbo();			
 		$query = "select country_id from `#__jshopping_countries` where country_code='".$db->escape($code)."'";
 		$db->setQuery($query);
         return $db->loadResult();

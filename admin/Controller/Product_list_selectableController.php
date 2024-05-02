@@ -7,16 +7,21 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
 class Product_List_SelectableController extends BaseadminController{
     
 	function display($cachable = false, $urlparams = false){
-        \JSHelperAdmin::checkAccessController("product_list_selectable");
-		$app = \JFactory::getApplication();
-		$jshopConfig = \JSFactory::getConfig();
-		$prodMdl = \JSFactory::getModel('Products');
+        HelperAdmin::checkAccessController("product_list_selectable");
+		$app = Factory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
+		$prodMdl = JSFactory::getModel('Products');
 
 		$context = "jshoping.list.admin.product";
 		$limit = $app->getUserStateFromRequest($context.'limit', 'limit', $app->getCfg('list_limit'), 'int');
@@ -42,15 +47,15 @@ class Product_List_SelectableController extends BaseadminController{
 		
 		$filter = array("category_id" => $category_id,"manufacturer_id" => $manufacturer_id, "label_id" => $label_id,"publish" => $publish,"text_search" => $text_search);
 		$total = $prodMdl->getCountAllProducts($filter);
-		$pagination = new \JPagination($total, $limitstart, $limit);
+		$pagination = new Pagination($total, $limitstart, $limit);
 		$rows = $prodMdl->getAllProducts($filter, $pagination->limitstart, $pagination->limit);
 
-		$lists['treecategories'] = \JHTML::_('select.genericlist', SelectOptions::getCategories(), 'category_id', 'class="form-select" style="width: 150px;" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id);
-		$lists['manufacturers'] = \JHTML::_('select.genericlist', SelectOptions::getManufacturers(), 'manufacturer_id', 'class="form-select" style="width: 220px;" onchange="document.adminForm.submit();"', 'manufacturer_id', 'name', $manufacturer_id);
+		$lists['treecategories'] = HTMLHelper::_('select.genericlist', SelectOptions::getCategories(), 'category_id', 'class="form-select" style="width: 150px;" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id);
+		$lists['manufacturers'] = HTMLHelper::_('select.genericlist', SelectOptions::getManufacturers(), 'manufacturer_id', 'class="form-select" style="width: 220px;" onchange="document.adminForm.submit();"', 'manufacturer_id', 'name', $manufacturer_id);
 		if ($jshopConfig->admin_show_product_labels){
-			$lists['labels'] = \JHTML::_('select.genericlist', SelectOptions::getLabels(), 'label_id', 'class="form-select" style="width: 120px;" onchange="document.adminForm.submit();"','id','name', $label_id);
+			$lists['labels'] = HTMLHelper::_('select.genericlist', SelectOptions::getLabels(), 'label_id', 'class="form-select" style="width: 120px;" onchange="document.adminForm.submit();"','id','name', $label_id);
 		}
-		$lists['publish'] = \JHTML::_('select.genericlist', SelectOptions::getPublish(), 'publish', 'class="form-select" style="width: 120px;" onchange="document.adminForm.submit();"', 'id', 'name', $publish);
+		$lists['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'publish', 'class="form-select" style="width: 120px;" onchange="document.adminForm.submit();"', 'id', 'name', $publish);
 
 		foreach ($rows as $row) {
 			$row->tmp_html_col_after_title = "";
@@ -75,7 +80,7 @@ class Product_List_SelectableController extends BaseadminController{
 		$view->tmp_html_col_before_td_foot = "";
 		$view->tmp_html_col_after_td_foot = "";
 		$view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayProductListSelectable', array(&$view));
 		$view->displaySelectable();
 	}

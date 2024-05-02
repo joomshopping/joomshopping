@@ -1,4 +1,9 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -13,7 +18,7 @@ $i=0;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions();?>
+<?php HelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping&controller=deliverytimes" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <table class="table table-striped">
@@ -23,16 +28,16 @@ $i=0;
       #
     </th>
     <th width="20">
-	  <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+	  <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     </th>
     <th align="left">
-      <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+      <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
     </th>    
     <th width="50" class="center">
-    	<?php print JText::_('JSHOP_EDIT')?>
+    	<?php print Text::_('JSHOP_EDIT')?>
     </th>
     <th width="40" class="center">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'id', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'id', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
   </tr>
 </thead>
@@ -42,7 +47,7 @@ $i=0;
      <?php echo $i+1;?>
    </td>
    <td>      
-      <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+      <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
    </td>
    <td>
      <a href="index.php?option=com_jshopping&controller=deliverytimes&task=edit&id=<?php echo $row->id; ?>"><?php echo $row->name;?></a>
@@ -71,6 +76,6 @@ $i++;
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Uri\Uri;
 defined('_JEXEC') or die();
 
 class TempCartModel{
@@ -15,9 +19,9 @@ class TempCartModel{
 	public $load_product_temp_cart_type = array('wishlist');
     
     function __construct(){
-        \JPluginHelper::importPlugin('jshoppingcheckout');
+        PluginHelper::importPlugin('jshoppingcheckout');
 		$obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshopTempCart', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshopTempCart', array(&$obj));
     }
 	
 	function checkAccessToTempCart($type_cart){	
@@ -46,12 +50,12 @@ class TempCartModel{
     }
 	
 	function save($id_cookie, $type, $products) {
-		$user_id = (int)\JFactory::getUser()->id;
+		$user_id = (int)Factory::getUser()->id;
 		$id = $this->getIdByCookieId($id_cookie, $type);
 		if (!$user_id) {
 			$user_id = $this->getUserIdByCookieId($id_cookie, $type);
 		}
-		$table = \JSFactory::getTable('tempcart');
+		$table = JSFactory::getTable('tempcart');
 		$table->id = $id;
 		if ($user_id) {
 			$table->user_id = $user_id;
@@ -61,11 +65,11 @@ class TempCartModel{
 		$table->type_cart = $type;
 		$table->store();
 		$id = $table->id;
-		\JFactory::getApplication()->triggerEvent('onAfterSaveTempCart', array(&$table));
+		Factory::getApplication()->triggerEvent('onAfterSaveTempCart', array(&$table));
 	}
 	
 	function delete($id_cookie, $type){
-		$user_id = (int)\JFactory::getUser()->id;
+		$user_id = (int)Factory::getUser()->id;
 		if (!$user_id) {
 			$user_id = $this->getUserIdByCookieId($id_cookie, $type);
 		}
@@ -76,14 +80,14 @@ class TempCartModel{
 	}
 
 	function deleteRow($id_cookie, $type) {
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "DELETE FROM `#__jshopping_cart_temp` WHERE `id_cookie`=".$db->q($id_cookie)." AND `type_cart`=".$db->q($type);
         $db->setQuery($query);
         return $db->execute();
 	}
 
 	function deleteRowByUserId($user_id, $type) {
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "DELETE FROM `#__jshopping_cart_temp` WHERE `user_id`=".$db->q($user_id)." AND `type_cart`=".$db->q($type);
 		$db->setQuery($query);
 		$db->execute();
@@ -95,8 +99,8 @@ class TempCartModel{
 	
 	function setIdTempCart($id_cookie, $type){
 		$patch = "/";
-        if (\JURI::base(true) != ""){
-			$patch = \JURI::base(true);
+        if (Uri::base(true) != ""){
+			$patch = Uri::base(true);
 		}
 		$time = time() + 3600 * 24 * $this->savedays;
 		$keyname = $this->getCookieKeyName($type);
@@ -123,7 +127,7 @@ class TempCartModel{
 	}
 
     function getTempCart($id_cookie, $type_cart = "wishlist"){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT `cart`, `user_id` FROM `#__jshopping_cart_temp`
                   WHERE `id_cookie` = ".$db->q($id_cookie)." AND `type_cart`=".$db->q($type_cart)." LIMIT 0,1";
         $db->setQuery($query);
@@ -133,7 +137,7 @@ class TempCartModel{
 		} else {
 			$products = [];
 		}
-		$user_id = (int)\JFactory::getUser()->id;
+		$user_id = (int)Factory::getUser()->id;
 		if (!$user_id && isset($row->user_id)) {
 			$user_id = $row->user_id;
 		}
@@ -165,7 +169,7 @@ class TempCartModel{
     }
 
 	function getListRowsByUserId($user_id, $type_cart = "wishlist") {
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_cart_temp`
                   WHERE `user_id`=".$db->q($user_id)." AND `type_cart`=".$db->q($type_cart);
         $db->setQuery($query);
@@ -173,7 +177,7 @@ class TempCartModel{
 	}
 
 	function getIdByCookieId($id_cookie, $type_cart = 'wishlist'){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
         $query = "SELECT id FROM `#__jshopping_cart_temp`
                   WHERE `id_cookie`=".$db->q($id_cookie)." AND `type_cart`=".$db->q($type_cart)." LIMIT 0,1";
         $db->setQuery($query);
@@ -181,7 +185,7 @@ class TempCartModel{
 	}
 
 	function getUserIdByCookieId($id_cookie, $type_cart = 'wishlist'){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
         $query = "SELECT user_id FROM `#__jshopping_cart_temp`
                   WHERE `id_cookie`=".$db->q($id_cookie)." AND `type_cart`=".$db->q($type_cart)." LIMIT 0,1";
         $db->setQuery($query);

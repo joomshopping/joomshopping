@@ -7,13 +7,17 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class UserMailActivationModel  extends MailModel{
     
     public function getSubjectMail(){
         $data = $this->getData();
-        $subject = \JText::_('COM_USERS_EMAIL_ACTIVATED_BY_ADMIN_ACTIVATION_SUBJECT');
+        $subject = Text::_('COM_USERS_EMAIL_ACTIVATED_BY_ADMIN_ACTIVATION_SUBJECT');
 		$search = ['{NAME}', '{SITENAME}'];
         $replace = [$data['name'], $data['sitename']];
         $subject = str_replace($search, $replace, $subject);
@@ -22,7 +26,7 @@ class UserMailActivationModel  extends MailModel{
     
     public function getMessageMail(){
         $data = $this->getData();
-        $emailBody = \JText::_('COM_USERS_EMAIL_ACTIVATED_BY_ADMIN_ACTIVATION_BODY');
+        $emailBody = Text::_('COM_USERS_EMAIL_ACTIVATED_BY_ADMIN_ACTIVATION_BODY');
 		$search = ['{NAME}', '{SITEURL}', '{USERNAME}'];
         $replace = [$data['name'], $data['siteurl'], $data['username']];
         $emailBody = str_replace($search, $replace, $emailBody);
@@ -31,25 +35,25 @@ class UserMailActivationModel  extends MailModel{
         $view->setLayout("activationmail");
         $view->set('data', $data);
         $view->set('emailBody', $emailBody);
-        \JFactory::getApplication()->triggerEvent('onBeforeActivationmailView', array(&$view));
+        Factory::getApplication()->triggerEvent('onBeforeActivationmailView', array(&$view));
         return $view->loadTemplate();
     }
     
     public function send(){
-        $dispatcher = \JFactory::getApplication();        
+        $dispatcher = Factory::getApplication();        
         $emailSubject = $this->getSubjectMail();
         $emailBody = $this->getMessageMail();
         $data = $this->getData();
-        $mode = \JSFactory::getConfig()->activation_mail_html_format;
+        $mode = JSFactory::getConfig()->activation_mail_html_format;
 		$dispatcher->triggerEvent('onBeforeActivationSend', array(&$data, &$emailSubject, &$emailBody, &$mode));
         try{
-            $return = \JFactory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $data['email'], $emailSubject, $emailBody, $mode);
+            $return = Factory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $data['email'], $emailSubject, $emailBody, $mode);
         } catch (\Exception $e) {
             $return = false;
-            \JSHelper::saveToLog('error.log', 'Usermailactivation mail send error: '.$e->getMessage());			
+            Helper::saveToLog('error.log', 'Usermailactivation mail send error: '.$e->getMessage());			
         }
 		if ($return !== true){
-			$this->setError(\JText::_('COM_USERS_REGISTRATION_ACTIVATION_NOTIFY_SEND_MAIL_FAILED'));
+			$this->setError(Text::_('COM_USERS_REGISTRATION_ACTIVATION_NOTIFY_SEND_MAIL_FAILED'));
 			return false;
 		}
 		return true;
@@ -57,7 +61,7 @@ class UserMailActivationModel  extends MailModel{
     
     public function getSubjectMailAdmin(){
         $data = $this->getData();
-		$subject = \JText::_('COM_USERS_EMAIL_ACTIVATE_WITH_ADMIN_ACTIVATION_SUBJECT');
+		$subject = Text::_('COM_USERS_EMAIL_ACTIVATE_WITH_ADMIN_ACTIVATION_SUBJECT');
 		$search = ['{NAME}', '{SITENAME}'];
         $replace = [$data['name'], $data['sitename']];
         $subject = str_replace($search, $replace, $subject);
@@ -67,7 +71,7 @@ class UserMailActivationModel  extends MailModel{
     public function getMessageMailAdmin(){
         $data = $this->getData();
 		$activateurl = $data['siteurl'].'index.php?option=com_jshopping&controller=user&task=activate&token='.$data['activation'];
-		$emailBody = \JText::_('COM_USERS_EMAIL_ACTIVATE_WITH_ADMIN_ACTIVATION_BODY');
+		$emailBody = Text::_('COM_USERS_EMAIL_ACTIVATE_WITH_ADMIN_ACTIVATION_BODY');
 		$search = ['{SITENAME}', '{NAME}', '{EMAIL}', '{USERNAME}', '{ACTIVATE}'];
         $replace = [$data['sitename'], $data['name'], $data['email'], $data['username'], $activateurl];
         $emailBody = str_replace($search, $replace, $emailBody);
@@ -76,34 +80,34 @@ class UserMailActivationModel  extends MailModel{
         $view->setLayout("activationmailadmin");
         $view->set('data', $data);
         $view->set('emailBody', $emailBody);
-        \JFactory::getApplication()->triggerEvent('onBeforeActivationmailAdminView', array(&$view));
+        Factory::getApplication()->triggerEvent('onBeforeActivationmailAdminView', array(&$view));
         return $view->loadTemplate();
     }
     
     public function getListAdminUserSendEmail(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = 'SELECT name, email, sendEmail FROM #__users WHERE sendEmail=1';
         $db->setQuery( $query );
         return $db->loadObjectList();
     }
     
     public function sendToAdmin(){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $data = $this->getData();
         $emailSubject = $this->getSubjectMailAdmin();
         $emailBody = $this->getMessageMailAdmin();
         $rows = $this->getListAdminUserSendEmail();        
-        $mode = \JSFactory::getConfig()->activation_mail_admin_html_format;
+        $mode = JSFactory::getConfig()->activation_mail_admin_html_format;
         foreach($rows as $row){
 			$dispatcher->triggerEvent('onBeforeActivationSendMailAdmin', array(&$data, &$emailSubject, &$emailBody, &$row, &$mode));
             try { 
-                $return = \JFactory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $row->email, $emailSubject, $emailBody, $mode);
+                $return = Factory::getMailer()->sendMail($data['mailfrom'], $data['fromname'], $row->email, $emailSubject, $emailBody, $mode);
             } catch (\Exception $e) {
                 $return = false;
-                \JSHelper::saveToLog('error.log', 'Usermailactivation mail send error: '.$e->getMessage());			
+                Helper::saveToLog('error.log', 'Usermailactivation mail send error: '.$e->getMessage());			
             }
 			if ($return !== true){
-				$this->setError(\JText::_('COM_USERS_REGISTRATION_ACTIVATION_NOTIFY_SEND_MAIL_FAILED'));
+				$this->setError(Text::_('COM_USERS_REGISTRATION_ACTIVATION_NOTIFY_SEND_MAIL_FAILED'));
 				return false;
 			}
         }

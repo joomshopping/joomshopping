@@ -1,4 +1,8 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.2.1 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -8,8 +12,8 @@
 */
 defined('_JEXEC') or die();
 
-$jshopConfig=\JSFactory::getConfig();
-\JSHelperAdmin::displaySubmenuConfigs('seo');
+$jshopConfig=JSFactory::getConfig();
+HelperAdmin::displaySubmenuConfigs('seo');
 ?>
 <div class="jshop_edit">
 <form action="index.php?option=com_jshopping&controller=config" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
@@ -19,12 +23,12 @@ $jshopConfig=\JSFactory::getConfig();
 
 <div class="col100">
 <fieldset class="adminform">
-    <legend><?php if (JText::_('JSHP_SEOPAGE_'.$this->row->alias) != 'JSHP_SEOPAGE_'.$this->row->alias) print JText::_('JSHP_SEOPAGE_'.$this->row->alias); else print $this->row->alias;?></legend>
+    <legend><?php if (Text::_('JSHP_SEOPAGE_'.$this->row->alias) != 'JSHP_SEOPAGE_'.$this->row->alias) print Text::_('JSHP_SEOPAGE_'.$this->row->alias); else print $this->row->alias;?></legend>
 <table class="admintable">
 <?php if (!$this->row->id){?>
 <tr>
    <td class="key" style="width:220px;">
-     <?php echo JText::_('JSHOP_ALIAS')?>
+     <?php echo Text::_('JSHOP_ALIAS')?>
    </td>
    <td>
      <input type="text" class="inputbox form-control" name="alias" size="40" value="<?php echo $this->row->alias?>" />
@@ -40,7 +44,7 @@ $field="title_".$lang->language;
 ?>
 <tr>
    <td class="key" >
-     <?php echo JText::_('JSHOP_META_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?> 
+     <?php echo Text::_('JSHOP_META_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?> 
    </td>
    <td>
      <input type="text" class="inputbox form-control" name="<?php print $field?>" size="80" value="<?php echo $this->row->$field?>" />
@@ -56,7 +60,7 @@ $field="keyword_".$lang->language;
 ?>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_META_KEYWORDS')?> <?php if ($this->multilang) print "(".$lang->lang.")";?> 
+     <?php echo Text::_('JSHOP_META_KEYWORDS')?> <?php if ($this->multilang) print "(".$lang->lang.")";?> 
    </td>
    <td>
     <textarea name="<?php print $field?>" class="form-control" cols="60" rows="3"><?php echo $this->row->$field?></textarea>
@@ -72,7 +76,7 @@ $field="description_".$lang->language;
 ?>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_META_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?> 
+     <?php echo Text::_('JSHOP_META_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?> 
    </td>
    <td>
      <textarea name="<?php print $field?>" class="form-control" cols="60" rows="3"><?php echo $this->row->$field?></textarea>

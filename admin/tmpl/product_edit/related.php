@@ -1,4 +1,7 @@
 <?php
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -29,13 +32,13 @@ defined('_JEXEC') or die();
                 <div class="block_related_inner">
                     <div class="name"><?php echo $row_related->name;?> (ID:&nbsp;<?php print $row_related->product_id?>)</div>
                     <div class="image">
-                        <a href="index.php?option=com_jshopping&controller=products&task=edit&product_id=<?php print $row_related->product_id;?>"><img src="<?php print \JSHelper::getPatchProductImage($row_related->image, 'thumb', 1)?>" width="90" border="0" /></a>
+                        <a href="index.php?option=com_jshopping&controller=products&task=edit&product_id=<?php print $row_related->product_id;?>"><img src="<?php print Helper::getPatchProductImage($row_related->image, 'thumb', 1)?>" width="90" border="0" /></a>
                         <?php if ($jshopConfig->admin_list_related_show_prod_code){?>
                             <div class="code"><?php print $row_related->ean?></div>
                         <?php }?>
                     </div>
                     
-                    <div style="padding-top:5px;"><input type="button" class="btn btn-danger btn-small" value="<?php print JText::_('JSHOP_DELETE')?>" onclick="jshopAdmin.delete_related(<?php print $row_related->product_id;?>)"></div>
+                    <div style="padding-top:5px;"><input type="button" class="btn btn-danger btn-small" value="<?php print Text::_('JSHOP_DELETE')?>" onclick="jshopAdmin.delete_related(<?php print $row_related->product_id;?>)"></div>
                     <input type="hidden" name="related_products[]" value="<?php print $row_related->product_id;?>"/>
                 </div>
             </div>
@@ -50,11 +53,11 @@ defined('_JEXEC') or die();
    <br/>
    <div class="col100">
     <fieldset class="adminform">
-        <legend><?php echo JText::_('JSHOP_SEARCH')?></legend>
+        <legend><?php echo Text::_('JSHOP_SEARCH')?></legend>
        <div class="input-group">
             <input type="text" class = "form-control" size="35" id="related_search" value="" />
             &nbsp;
-            <input type="button" class="btn btn-primary" value="<?php echo JText::_('JSHOP_SEARCH')?>" onclick="jshopAdmin.releted_product_search(0, '<?php echo $row->product_id ?? 0;?>', 1);" />
+            <input type="button" class="btn btn-primary" value="<?php echo Text::_('JSHOP_SEARCH')?>" onclick="jshopAdmin.releted_product_search(0, '<?php echo $row->product_id ?? 0;?>', 1);" />
         </div>
         <br/>
         <div id="list_for_select_related"></div>

@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class FreeAttributTable extends MultilangTable{
@@ -16,8 +18,8 @@ class FreeAttributTable extends MultilangTable{
     }
     
     function getAll() {
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO(); 
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO(); 
         $query = "SELECT id, `".$lang->get("name")."` as name, required, ordering FROM `#__jshopping_free_attr` ORDER BY `ordering`";
         $db->setQuery($query);
         return $db->loadObJectList();
@@ -25,8 +27,8 @@ class FreeAttributTable extends MultilangTable{
     
     function getAllNames(){
         $rows = array();
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO(); 
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO(); 
         $query = "SELECT id, `".$lang->get("name")."` as name FROM `#__jshopping_free_attr` ORDER BY `ordering`";
         $db->setQuery($query);
         $list = $db->loadObJectList();        

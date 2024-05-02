@@ -7,15 +7,19 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 defined('_JEXEC') or die();
 
 class WishlistController extends BaseController{
     
     public function init(){
-        \JPluginHelper::importPlugin('jshoppingcheckout');
+        PluginHelper::importPlugin('jshoppingcheckout');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerWishlist', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerWishlist', array(&$obj));
     }
 
     function display($cachable = false, $urlparams = false){
@@ -23,12 +27,12 @@ class WishlistController extends BaseController{
     }
 
     function view(){		
-	    $jshopConfig = \JSFactory::getConfig();        
+	    $jshopConfig = JSFactory::getConfig();        
         $ajax = $this->input->getInt('ajax');
-		$dispatcher = \JFactory::getApplication();
-		$cartpreview = \JSFactory::getModel('cartPreview', 'Site');
+		$dispatcher = Factory::getApplication();
+		$cartpreview = JSFactory::getModel('cartPreview', 'Site');
 
-		$cart = \JSFactory::getModel('cart', 'Site')->init("wishlist", 1);		
+		$cart = JSFactory::getModel('cart', 'Site')->init("wishlist", 1);		
 
 		Metadata::wishlist();
 		
@@ -47,7 +51,7 @@ class WishlistController extends BaseController{
 		$view->set('href_shop', $shopurl);
         $view->_tmp_html_before_buttons = "";
         $view->_tmp_html_after_buttons = "";
-		$view->set('href_checkout', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart',1));
+		$view->set('href_checkout', Helper::SEFLink('index.php?option=com_jshopping&controller=cart',1));
         $dispatcher->triggerEvent('onBeforeDisplayWishlistView', array(&$view));
 		$view->display();
         if ($ajax) die();
@@ -56,14 +60,14 @@ class WishlistController extends BaseController{
     function delete(){
         header("Cache-Control: no-cache, must-revalidate");
         $ajax = $this->input->getInt('ajax');
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->load('wishlist');    
         $cart->delete($this->input->getInt('number_id'));
         if ($ajax){
-            print \JSHelper::getOkMessageJson($cart);
+            print Helper::getOkMessageJson($cart);
             die();
         }
-        $this->setRedirect( \JSHelper::SEFLink($cart->getUrlList(),0,1) );
+        $this->setRedirect( Helper::SEFLink($cart->getUrlList(),0,1) );
     }
 
     function remove_to_cart(){
@@ -71,19 +75,19 @@ class WishlistController extends BaseController{
         $ajax = $this->input->getInt('ajax');
         $number_id = $this->input->getInt('number_id');
 		
-        $cart = \JSFactory::getModel('checkout', 'Site')->removeWishlistItemToCart($number_id);
+        $cart = JSFactory::getModel('checkout', 'Site')->removeWishlistItemToCart($number_id);
 		
         if ($ajax){
-            print \JSHelper::getOkMessageJson($cart);
+            print Helper::getOkMessageJson($cart);
             die();
         }
         if ($cart->remove_to_cart) {
-            $this->setRedirect(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart', 1, 1));
+            $this->setRedirect(Helper::SEFLink('index.php?option=com_jshopping&controller=cart', 1, 1));
         } else {
-            $wishlist = \JSFactory::getModel('cart', 'Site');
+            $wishlist = JSFactory::getModel('cart', 'Site');
             $wishlist->load("wishlist");
             $prod = $wishlist->products[$number_id];
-            $this->setRedirect(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=product&task=view&category_id='.$prod['category_id'].'&product_id='.$prod['product_id'], 1));
+            $this->setRedirect(Helper::SEFLink('index.php?option=com_jshopping&controller=product&task=view&category_id='.$prod['category_id'].'&product_id='.$prod['product_id'], 1));
         }
     }
 }

@@ -7,6 +7,15 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\User\User;
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\User\UserHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class UserregisterModel  extends UserbaseModel{
@@ -22,15 +31,15 @@ class UserregisterModel  extends UserbaseModel{
     
     public function __construct(){
         $this->loadUserParams();
-        $this->user = \JSFactory::getTable('userShop');
+        $this->user = JSFactory::getTable('userShop');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshopUserregister', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshopUserregister', array(&$obj));
     }
 
     public function prepateData(&$post){
-        $jshopConfig = \JSFactory::getConfig();
-        $usergroup = \JSFactory::getTable('usergroup');
-        $dispatcher = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        $usergroup = JSFactory::getTable('usergroup');
+        $dispatcher = Factory::getApplication();
         
         $this->default_usergroup = $usergroup->getDefaultUsergroup();   
         if (!isset($post['u_name'])) $post['u_name'] = '';
@@ -42,7 +51,7 @@ class UserregisterModel  extends UserbaseModel{
 		}
         if ($post['f_name']=="") $post['f_name'] = $post['email'];
         $post['name'] = $post['f_name'].' '.$post['l_name'];
-        if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = \JSHelper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
+        if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = Helper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
         $post['lang'] = $jshopConfig->getLang();
 		
         $dispatcher->triggerEvent('onBeforeRegister', array(&$post, &$this->default_usergroup, &$this->userparams));        
@@ -61,7 +70,7 @@ class UserregisterModel  extends UserbaseModel{
     }
     
     public function check($type = "register"){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		foreach($jshopConfig->fields_client_only_check as $_field) {
 			$this->user->$_field = isset($this->data[$_field]) ? $this->data[$_field] : null;
 		}        
@@ -79,17 +88,17 @@ class UserregisterModel  extends UserbaseModel{
     }
     
     private function savePostData(){
-        $session = \JFactory::getSession();            
+        $session = Factory::getSession();            
         $session->set('registrationdata', $this->post_data);		
     }
     
     public function getPostData(){
-        $session = \JFactory::getSession();            
+        $session = Factory::getSession();            
         return $session->get('registrationdata');
     }
     
     public function getRegistrationDefaultData(){
-        if (\JFactory::getApplication()->input->getInt('lrd')){
+        if (Factory::getApplication()->input->getInt('lrd')){
             $data = (object)$this->getPostData();
             if (!isset($data->country)) $data->country = 0;
             if (!isset($data->title)) $data->title = 0;
@@ -124,13 +133,13 @@ class UserregisterModel  extends UserbaseModel{
             $data->u_name = "";
         }
         if (!$data->country){
-            $data->country = \JSFactory::getConfig()->default_country;
+            $data->country = JSFactory::getConfig()->default_country;
         }
         return $data;
     }
 
     public function userJoomlaSave(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
         $post = $this->data;
         $params = $this->getUserParams();
 		$fieldRegister = $jshopConfig->getListFieldsRegisterType('register');
@@ -144,7 +153,7 @@ class UserregisterModel  extends UserbaseModel{
         if ($post["password"]==""){
             $post["password"] = substr(md5('up'.time()), 0, 8);
         }
-        $user = new \JUser;
+        $user = new User;
         $data = array();
         $data['groups'][] = $params->get('new_usertype', 2);
         $data['email'] = $post['email'];
@@ -159,17 +168,17 @@ class UserregisterModel  extends UserbaseModel{
 		}else{
 			if ($useractivation == 1 || $useractivation == 2){
 				jimport('joomla.user.helper');
-				$data['activation'] = \JApplicationHelper::getHash(\JUserHelper::genRandomPassword());
+				$data['activation'] = ApplicationHelper::getHash(UserHelper::genRandomPassword());
 				$data['block'] = 1;
 			}
 		}
         $this->userjoomla_data = $data;
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "beforeBind"));        
+		extract(Helper::Js_add_trigger(get_defined_vars(), "beforeBind"));        
         $user->bind($data);
         if (!$user->save()){
             $this->user_joomla_id = 0;
 			$this->savePostData();
-            \JSHelper::saveToLog('error.log', 'Error registration-'.$user->getError());
+            Helper::saveToLog('error.log', 'Error registration-'.$user->getError());
             $this->setError($user->getError());
             return 0;
         }else{
@@ -183,12 +192,12 @@ class UserregisterModel  extends UserbaseModel{
         if (!$this->user_joomla_id){
             throw new \Exception('Error jshopUserregister->user_joomla_id');
         }
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $this->user->user_id = $this->user_joomla_id;		
         $this->user->number =  $this->user->getNewUserNumber();        
         if (!$db->insertObject($this->user->getTableName(), $this->user, $this->user->getKeyName())){
 			$this->savePostData();
-            \JSHelper::saveToLog('error.log', $db->getErrorMsg());
+            Helper::saveToLog('error.log', $db->getErrorMsg());
             $this->setError("Error insert in table ".$this->user->getTableName());
             return 0;
         }else{
@@ -203,23 +212,23 @@ class UserregisterModel  extends UserbaseModel{
 		if (!$this->userSave()){
 			return 0;
 		}
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
 		return 1;
 	}
     
     public function mailSend($send_to_admin = 1){
-        $config = \JFactory::getConfig();
+        $config = Factory::getConfig();
         $data = $this->user_joomla->getProperties();
         $data['fromname'] = $config->get('fromname');
         $data['mailfrom'] = $config->get('mailfrom');
         $data['sitename'] = $config->get('sitename');
-        $data['siteurl'] = \JURI::base();
-        $uri = \JURI::getInstance();
+        $data['siteurl'] = Uri::base();
+        $uri = Uri::getInstance();
         $base = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port'));
-        $data['activate'] = $base.\JRoute::_('index.php?option=com_jshopping&controller=user&task=activate&token='.$data['activation'], false);
+        $data['activate'] = $base.Route::_('index.php?option=com_jshopping&controller=user&task=activate&token='.$data['activation'], false);
         $data['linkactivate'] = $data['siteurl'].'index.php?option=com_jshopping&controller=user&task=activate&token='.$data['activation'];
         
-        $usermail = \JSFactory::getModel('userMailRegister', 'Site');
+        $usermail = JSFactory::getModel('userMailRegister', 'Site');
         $usermail->setData($data);
         $usermail->setParams($this->userparams);
         $usermail->setRegistrationRequestData($this->data);
@@ -259,11 +268,11 @@ class UserregisterModel  extends UserbaseModel{
 	
 	public function getMessageUserRegistration($useractivation){
 		if ($useractivation == 2){
-            $message  = \JText::_('COM_USERS_REGISTRATION_COMPLETE_VERIFY');
+            $message  = Text::_('COM_USERS_REGISTRATION_COMPLETE_VERIFY');
         } elseif ($useractivation == 1){
-            $message  = \JText::_('COM_USERS_REGISTRATION_COMPLETE_ACTIVATE');
+            $message  = Text::_('COM_USERS_REGISTRATION_COMPLETE_ACTIVATE');
         } else {
-            $message = \JText::_('COM_USERS_REGISTRATION_SAVE_SUCCESS');
+            $message = Text::_('COM_USERS_REGISTRATION_SAVE_SUCCESS');
         }
 		return $message;
 	}

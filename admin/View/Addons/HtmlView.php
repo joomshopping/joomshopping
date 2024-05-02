@@ -18,7 +18,9 @@ class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){
         ToolbarHelper::title(Text::_('JSHOP_ADDONS'), 'generic.png');
-        ToolbarHelper::custom("listweb", 'folder', 'folder', Text::_('JSHOP_ADDONS_CATALOG'), false);
+        if ($this->config->disable_admin['addons_catalog'] == 0) {
+            ToolbarHelper::custom("listweb", 'folder', 'folder', Text::_('JSHOP_ADDONS_CATALOG'), false);
+        }
         HelperAdmin::btnHome();
         parent::display($tpl);
 	}

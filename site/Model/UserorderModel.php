@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class UserOrderModel  extends BaseModel{
@@ -31,12 +33,12 @@ class UserOrderModel  extends BaseModel{
 	}
 	
 	public function userOrderCancel(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if (!$jshopConfig->client_allow_cancel_order){
 			$this->setError('Cancel order disabled');
 			return 0;
 		}
-		$order = \JSFactory::getTable('order');
+		$order = JSFactory::getTable('order');
         $order->load($this->order_id);
         
         if ($this->user_id!=$order->user_id){
@@ -49,10 +51,10 @@ class UserOrderModel  extends BaseModel{
             return 0;
         }
 		
-		$checkout = \JSFactory::getModel('checkout', 'Site');
+		$checkout = JSFactory::getModel('checkout', 'Site');
         $checkout->changeStatusOrder($this->order_id, $status, 1);
 		$obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterUserCancelOrder', array(&$this->order_id, &$status, &$obj));
+        Factory::getApplication()->triggerEvent('onAfterUserCancelOrder', array(&$this->order_id, &$status, &$obj));
 		return 1;
 	}
 

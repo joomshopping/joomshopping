@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.3.4 24.02.2024
 * @author       MAXXmarketing GmbH
@@ -18,7 +23,7 @@ if ($saveOrder){
 ?>
 
 <div id="j-main-container" class="j-main-container">
-    <?php JSHelperAdmin::displaySubmenuOptions();?>
+    <?php HelperAdmin::displaySubmenuOptions();?>
     <form action="index.php?option=com_jshopping&controller=productfields" method="post" name="adminForm" id="adminForm">
 
     <?php print $this->tmp_html_start?>
@@ -36,18 +41,18 @@ if ($saveOrder){
         </div>  
 
         <div>
-            <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+            <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
         </div>
         <div>
             <span class="input-group-append">
-                <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+                <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                     <span class="icon-search" aria-hidden="true"></span>
                 </button>
             </span>
         </div>
    
         <div>
-            <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
         <?php print $this->tmp_html_filter_end?>
      
@@ -57,31 +62,31 @@ if ($saveOrder){
     <thead>
     <tr>
         <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
-            <?php echo \JHTML::_('grid.sort', $this->filter_order!='F.ordering' ? '#' : '', 'F.ordering', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', $this->filter_order!='F.ordering' ? '#' : '', 'F.ordering', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="20">
-          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </th>
         <th width="200" align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TYPE'), 'F.type', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TYPE'), 'F.type', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th align="left">
-          <?php echo JText::_('JSHOP_OPTIONS')?>
+          <?php echo Text::_('JSHOP_OPTIONS')?>
         </th>
         <th align="left">
-          <?php echo JText::_('JSHOP_CATEGORIES')?>
+          <?php echo Text::_('JSHOP_CATEGORIES')?>
         </th>
         <th align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_GROUP'), 'groupname', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_GROUP'), 'groupname', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="50" class="center">
-            <?php echo JText::_('JSHOP_EDIT')?>
+            <?php echo Text::_('JSHOP_EDIT')?>
         </th>
         <th width="40" class="center">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'id', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'id', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
       </tr>
     </thead>
@@ -97,7 +102,7 @@ if ($saveOrder){
             <?php } ?>
         </td>
         <td>
-            <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+            <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
         </td>
         <td>
             <?php if (!$row->count_option && $row->type==0) {?><img src="components/com_jshopping/images/icon-16-denyinactive.png" alt="" /><?php }?>
@@ -106,7 +111,7 @@ if ($saveOrder){
         <td>
             <?php 
             if ($row->type == 0 && $row->multilist == 1) {
-                echo JText::_('JSHOP_MULTI_LIST');
+                echo Text::_('JSHOP_MULTI_LIST');
             } else {
                 print $this->types[$row->type];
             }
@@ -118,7 +123,7 @@ if ($saveOrder){
                     <?php if (count($this->vals[$row->id]) > $this->config->admin_display_extra_field_values_in_list_max) {?>
                         <?php print count($this->vals[$row->id])?> x
                     <?php }?>        
-                    <?php echo JText::_('JSHOP_OPTIONS')?>
+                    <?php echo Text::_('JSHOP_OPTIONS')?>
                 </a>
                 <?php if (count($this->vals[$row->id]) <= $this->config->admin_display_extra_field_values_in_list_max) {?>
                     (<?php echo implode(", ", $this->vals[$row->id]);?>)
@@ -159,6 +164,6 @@ if ($saveOrder){
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

@@ -7,25 +7,30 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 defined('_JEXEC') or die();
 
 class CategoryController extends BaseController{
     
     public function init(){
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerCategory', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerCategory', array(&$obj));
     }
     
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
-		$dispatcher = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
+        $app = Factory::getApplication();
+		$dispatcher = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
         $params = $app->getParams();
         $category_id = 0;
         
-        $category = \JSFactory::getTable('category');
+        $category = JSFactory::getTable('category');
         $category->load($category_id);
         $category->getDescription();
         
@@ -50,20 +55,20 @@ class CategoryController extends BaseController{
     }
 
     function view(){
-        $user = \JFactory::getUser();
-        $jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();        
+        $user = Factory::getUser();
+        $jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();        
         $category_id = (int)$this->input->getInt('category_id');
 
-		\JSFactory::getModel('productShop', 'Site')->storeEndPages();
+		JSFactory::getModel('productShop', 'Site')->storeEndPages();
 
-        $category = \JSFactory::getTable('category');
+        $category = JSFactory::getTable('category');
         $category->load($category_id);
         $category->getDescription();
         $dispatcher->triggerEvent('onAfterLoadCategory', array(&$category, &$user));
 
 		if (!$category->checkView($user)){            
-			throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+			throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
         
@@ -72,7 +77,7 @@ class CategoryController extends BaseController{
 		
 		Metadata::category($category);
 
-        $productlist = \JSFactory::getModel('category', 'Site\\Productlist');
+        $productlist = JSFactory::getModel('category', 'Site\\Productlist');
         $productlist->setTable($category);
         $productlist->load();
         
@@ -120,7 +125,7 @@ class CategoryController extends BaseController{
         $view->set('filters', $filters);
         $view->set('willBeUseFilter', $willBeUseFilter);
         $view->set('display_list_products', $display_list_products);
-        $view->set('shippinginfo', \JSHelper::SEFLink($jshopConfig->shippinginfourl,1));
+        $view->set('shippinginfo', Helper::SEFLink($jshopConfig->shippinginfourl,1));
         $view->set('total', $productlist->getTotal());
         $view->_tmp_category_html_start = ""; 
         $view->_tmp_category_html_before_products = ""; 

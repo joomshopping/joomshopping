@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.3.5 07.03.2024
 * @author       MAXXmarketing GmbH
@@ -29,7 +34,7 @@ class AddonCore{
 
     public function getAddonParams(){
         if (!$this->addon_params){
-            $addon = \JSFactory::getTable('addon');
+            $addon = JSFactory::getTable('addon');
             $addon->loadAlias($this->addon_alias);
             $this->addon_params = $addon->getParams();
         }
@@ -38,7 +43,7 @@ class AddonCore{
     
     public function getAddonId(){
         if (!$this->addon_id){
-            $addon = \JSFactory::getTable('addon');
+            $addon = JSFactory::getTable('addon');
             $addon->loadAlias($this->addon_alias);
             $this->addon_id = $addon->id;
         }
@@ -48,7 +53,7 @@ class AddonCore{
 	public function getView($layout = ''){
         $path = JPATH_ROOT.'/components/com_jshopping';
         $addon_tmpl_path = $path."/templates/addons/".$this->addon_alias;
-		$template = \JFactory::getApplication()->getTemplate(true);
+		$template = Factory::getApplication()->getTemplate(true);
 		$joomla_tmpl_path = JPATH_ROOT.'/templates/'.$template->template.'/html/com_jshopping/addons/'.$this->addon_alias;
 		$view_config = array("template_path"=>$addon_tmpl_path);
         $view = new Joomla\Component\Jshopping\Site\View\Addons\HtmlView($view_config);
@@ -61,25 +66,25 @@ class AddonCore{
     }
 
     public function loadLanguage(){
-        \JSFactory::loadExtLanguageFile($this->addon_alias);
+        JSFactory::loadExtLanguageFile($this->addon_alias);
     }
     
     public function loadCss($extname = ''){
-        $document = \JFactory::getDocument();
-        $document->addStyleSheet(\JURI::root().'components/com_jshopping/css/addons/'.$this->addon_alias.$extname.'.css');
+        $document = Factory::getDocument();
+        $document->addStyleSheet(Uri::root().'components/com_jshopping/css/addons/'.$this->addon_alias.$extname.'.css');
     }
     
     public function loadJs($extname = ''){
-        $document = \JFactory::getDocument();
-        $document->addScript(\JURI::root().'components/com_jshopping/js/addons/'.$this->addon_alias.$extname.'.js');
+        $document = Factory::getDocument();
+        $document->addScript(Uri::root().'components/com_jshopping/js/addons/'.$this->addon_alias.$extname.'.js');
     }
     
     public function getPathImages(){
-        return \JURI::root().'components/com_jshopping/images/'.$this->addon_alias;
+        return Uri::root().'components/com_jshopping/images/'.$this->addon_alias;
     }
     
     public function checkLicKey(){
-		return \JSHelper::compareX64(\JSHelper::replaceWWW(\JSHelper::getJHost().$this->addon_alias), \JSHelper::getLicenseKeyAddon($this->addon_alias));
+		return Helper::compareX64(Helper::replaceWWW(Helper::getJHost().$this->addon_alias), Helper::getLicenseKeyAddon($this->addon_alias));
 	}
 
 }

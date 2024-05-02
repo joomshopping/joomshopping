@@ -7,18 +7,20 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class Cart{
 		
 	public static function checkAdd(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
         $to = Request::getCartTo();
-		return ((!$jshopConfig->user_as_catalog && \JSHelper::getDisplayPriceShop()) || $to=='wishlist');
+		return ((!$jshopConfig->user_as_catalog && Helper::getDisplayPriceShop()) || $to=='wishlist');
 	}
 	
 	public static function checkView(){
-		return !\JSFactory::getConfig()->user_as_catalog;
+		return !JSFactory::getConfig()->user_as_catalog;
 	}
 	
 }

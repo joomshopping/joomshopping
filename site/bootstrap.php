@@ -1,4 +1,6 @@
 <?php
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.2.2 18.11.2023
 * @author       MAXXmarketing GmbH
@@ -17,4 +19,4 @@ include_once(JPATH_JOOMSHOPPING."/payments/payment.php");
 include_once(JPATH_JOOMSHOPPING."/shippingform/shippingform.php");
 include_once(JPATH_JOOMSHOPPING."/addons/addon_core.php");
 
-\JSHelper::disableStrictMysql();
+Helper::disableStrictMysql();

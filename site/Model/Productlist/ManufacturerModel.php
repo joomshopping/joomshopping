@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class ManufacturerModel extends ListModel{
@@ -14,7 +15,7 @@ class ManufacturerModel extends ListModel{
     function getCountProductsPerPage(){
         $count = $this->table->products_page;
         if (!$count){
-		    $count = \JSFactory::getConfig()->count_products_to_page;
+		    $count = JSFactory::getConfig()->count_products_to_page;
         }
         return $count;
     }
@@ -22,7 +23,7 @@ class ManufacturerModel extends ListModel{
     function getCountProductsToRow(){
         $count = $this->table->products_row;
         if (!$count){
-		    $count = \JSFactory::getConfig()->count_products_to_row;
+		    $count = JSFactory::getConfig()->count_products_to_row;
         }
         return $count;
     }
@@ -31,7 +32,7 @@ class ManufacturerModel extends ListModel{
         if ($order==4){
             $order = 1;
         }
-        return \JSFactory::getConfig()->sorting_products_field_s_select[$order];
+        return JSFactory::getConfig()->sorting_products_field_s_select[$order];
     }
     public function getContext(){
         return "jshoping.manufacturlist.front.product";

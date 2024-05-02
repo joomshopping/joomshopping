@@ -7,6 +7,12 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
@@ -16,21 +22,21 @@ class AttributesController extends BaseadminController{
     protected $urlEditParamId = 'attr_id';
     
     function init(){
-        \JSHelperAdmin::checkAccessController("attributes");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("attributes");
+        HelperAdmin::addSubmenu("other");
     }
 
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.attributes";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "A.attr_ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         
-    	$attributes = \JSFactory::getModel("attribut");
-    	$attributesvalue = \JSFactory::getModel("attributvalue");
+    	$attributes = JSFactory::getModel("attribut");
+    	$attributesvalue = JSFactory::getModel("attributvalue");
         $rows = $attributes->getAllAttributes(0, null, $filter_order, $filter_order_Dir);
         foreach($rows as $key => $value){
-            $rows[$key]->values = \JSHelper::splitValuesArrayObject($attributesvalue->getAllValues($rows[$key]->attr_id), 'name');
+            $rows[$key]->values = Helper::splitValuesArrayObject($attributesvalue->getAllValues($rows[$key]->attr_id), 'name');
             $rows[$key]->count_values = count($attributesvalue->getAllValues($rows[$key]->attr_id));
         }        
         $view = $this->getView("attributes", 'html');
@@ -41,15 +47,15 @@ class AttributesController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayAttributes', array(&$view));
         $view->displayList();
     }
 
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $attr_id = $this->input->getInt("attr_id");
-        $attribut = \JSFactory::getTable('attribut');
+        $attribut = JSFactory::getTable('attribut');
         $attribut->load($attr_id);
         if (!$attribut->independent){
             $attribut->independent = 0;
@@ -57,18 +63,18 @@ class AttributesController extends BaseadminController{
         if (!isset($attribut->allcats)){
             $attribut->allcats = 1;
         }
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
 
-        $type_attribut = \JHTML::_('select.genericlist', SelectOptions::getAttributeType(), 'attr_type','class = "inputbox form-select"','attr_type_id','attr_type',$attribut->attr_type);
-        $dependent_attribut = \JHTML::_('select.radiolist', SelectOptions::getAttributeDependent(), 'independent','class = "inputbox form-control"','id','name', $attribut->independent);
-        $lists['allcats'] = \JHTML::_('select.radiolist', SelectOptions::getAttributeShowCategory(), 'allcats','onclick="jshopAdmin.PFShowHideSelectCats()"','id','value', $attribut->allcats);
+        $type_attribut = HTMLHelper::_('select.genericlist', SelectOptions::getAttributeType(), 'attr_type','class = "inputbox form-select"','attr_type_id','attr_type',$attribut->attr_type);
+        $dependent_attribut = HTMLHelper::_('select.radiolist', SelectOptions::getAttributeDependent(), 'independent','class = "inputbox form-control"','id','name', $attribut->independent);
+        $lists['allcats'] = HTMLHelper::_('select.radiolist', SelectOptions::getAttributeShowCategory(), 'allcats','onclick="jshopAdmin.PFShowHideSelectCats()"','id','value', $attribut->allcats);
         $categories_selected = $attribut->getCategorys();
-        $lists['categories'] = \JHTML::_('select.genericlist', SelectOptions::getCategories(0), 'category_id[]','class="inputbox form-select" size="10" multiple = "multiple"','category_id','name', $categories_selected);
-        $lists['group'] = \JHTML::_('select.genericlist', SelectOptions::getAttributeGroups(),'group','class="inputbox form-select"','id','name', $attribut->group);
+        $lists['categories'] = HTMLHelper::_('select.genericlist', SelectOptions::getCategories(0), 'category_id[]','class="inputbox form-select" size="10" multiple = "multiple"','category_id','name', $categories_selected);
+        $lists['group'] = HTMLHelper::_('select.genericlist', SelectOptions::getAttributeGroups(),'group','class="inputbox form-select"','id','name', $attribut->group);
         
-        \JFilterOutput::objectHTMLSafe($attribut, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($attribut, ENT_QUOTES);
 	    
         $view = $this->getView("attributes", 'html');
         $view->setLayout("edit");
@@ -81,7 +87,7 @@ class AttributesController extends BaseadminController{
         $view->set('lists', $lists);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditAtribut', array(&$view, &$attribut));
         $view->displayEdit();		
     }

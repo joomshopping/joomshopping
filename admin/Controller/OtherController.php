@@ -7,20 +7,22 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 defined( '_JEXEC' ) or die();
 
 class OtherController extends BaseController{
 
     function display($cachable = false, $urlparams = false){
-        \JSHelperAdmin::checkAccessController("other");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("other");
+        HelperAdmin::addSubmenu("other");
         $view=$this->getView("panel", 'html');
         $view->setLayout("options");
 
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayOptionsPanel', array(&$view));
         $view->displayOptions();
     }

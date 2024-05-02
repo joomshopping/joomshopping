@@ -1,4 +1,10 @@
 <?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Factory;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -16,7 +22,7 @@ class pm_sofortueberweisung extends PaymentRoot{
 	  foreach ($array_params as $key){
 	  	if (!isset($params[$key])) $params[$key] = '';
 	  }
-	  $orders = \JSFactory::getModel('orders'); //admin model
+	  $orders = JSFactory::getModel('orders'); //admin model
       include(dirname(__FILE__)."/adminparamsform.php");
 	}
 
@@ -81,7 +87,7 @@ class pm_sofortueberweisung extends PaymentRoot{
             if ($_POST['hash']==$hash){
                 $return = 1;
             }else{
-                \JSHelper::saveToLog("paymentdata.log", "Error hash. ".$hash);
+                Helper::saveToLog("paymentdata.log", "Error hash. ".$hash);
             }
         }
 
@@ -89,9 +95,9 @@ class pm_sofortueberweisung extends PaymentRoot{
 	}
 
 	function showEndForm($params, $order) {
-        $return_url = ltrim(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=return&js_paymentclass=pm_sofortueberweisung', 0, 1), '/');
-        $cancel_url = ltrim(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=cancel&js_paymentclass=pm_sofortueberweisung', 0, 1), '/');
-        $notify_url = ltrim(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=notify&js_paymentclass=pm_sofortueberweisung&no_lang=1', 0, 1), '/');
+        $return_url = ltrim(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=return&js_paymentclass=pm_sofortueberweisung', 0, 1), '/');
+        $cancel_url = ltrim(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=cancel&js_paymentclass=pm_sofortueberweisung', 0, 1), '/');
+        $notify_url = ltrim(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=notify&js_paymentclass=pm_sofortueberweisung&no_lang=1', 0, 1), '/');
         $inputs     = [
             'user_id'               => $params['user_id'],
             'project_id'            => $params['project_id'],
@@ -101,7 +107,7 @@ class pm_sofortueberweisung extends PaymentRoot{
             'sender_country_id'     => '',
             'amount'                => $this->fixOrderTotal($order),
             'currency_id'           => $order->currency_code_iso,
-            'reason_1'              => sprintf(\JText::_('JSHOP_PAYMENT_NUMBER'), $order->order_number),
+            'reason_1'              => sprintf(Text::_('JSHOP_PAYMENT_NUMBER'), $order->order_number),
             'reason_2'              => '',
             'user_variable_0'       => $order->order_id,
             'user_variable_1'       => $return_url,
@@ -117,8 +123,8 @@ class pm_sofortueberweisung extends PaymentRoot{
                 'hash'              => sha1(implode('|', $inputs)),
                 'interface_version' => (
                     'joomshopping_' .
-                    \JInstaller::parseXMLInstallFile(
-                        \JSFactory::getConfig()->admin_path . 'jshopping.xml'
+                    Installer::parseXMLInstallFile(
+                        JSFactory::getConfig()->admin_path . 'jshopping.xml'
                     )['version']
                 )
             ]
@@ -129,7 +135,7 @@ class pm_sofortueberweisung extends PaymentRoot{
                 <meta http-equiv="content-type" content="text/html; charset=utf-8" />            
             </head>
             <body>
-            <?php echo \JText::_('JSHOP_REDIRECT_TO_PAYMENT_PAGE')?>
+            <?php echo Text::_('JSHOP_REDIRECT_TO_PAYMENT_PAGE')?>
             <form id="paymentform" action="https://www.sofortueberweisung.de/payment/start" name="paymentform" method="post">
                 <?php
                     foreach ($inputs as $name => $value) {
@@ -150,7 +156,7 @@ class pm_sofortueberweisung extends PaymentRoot{
 
     function getUrlParams($pmconfigs){
         $params = array();
-        $params['order_id'] = \JFactory::getApplication()->input->getInt("user_variable_0");
+        $params['order_id'] = Factory::getApplication()->input->getInt("user_variable_0");
         $params['hash'] = "";
         $params['checkHash'] = 0;
         $params['checkReturnParams'] = 0;

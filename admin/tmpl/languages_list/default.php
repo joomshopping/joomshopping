@@ -1,4 +1,9 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -12,7 +17,7 @@ $i=0;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions();?>
+<?php HelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping&controller=languages" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <table class="table table-striped">
@@ -22,22 +27,22 @@ $i=0;
       #
     </th>
     <th width="20">
-      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     </th>
     <th align="left">
-      <?php echo JText::_('JSHOP_LANGUAGE_NAME')?>
+      <?php echo Text::_('JSHOP_LANGUAGE_NAME')?>
     </th>
     <th width="160" class="center">
-      <?php echo JText::_('JSHOP_DEFAULT_FRONT_LANG')?>
+      <?php echo Text::_('JSHOP_DEFAULT_FRONT_LANG')?>
     </th>
     <th width="190" class="center">
-      <?php echo JText::_('JSHOP_DEFAULT_LANG_FOR_COPY')?>
+      <?php echo Text::_('JSHOP_DEFAULT_LANG_FOR_COPY')?>
     </th>
     <th width="50" class="center">
-      <?php echo JText::_('JSHOP_PUBLISH')?>
+      <?php echo Text::_('JSHOP_PUBLISH')?>
     </th>
     <th width="40" class="center">
-        <?php echo JText::_('JSHOP_ID')?>
+        <?php echo Text::_('JSHOP_ID')?>
     </th>
   </tr>
 </thead>  
@@ -50,7 +55,7 @@ foreach($rows as $row){
      <?php echo $i+1;?>
    </td>
    <td align="center">
-     <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+     <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
    </td>
    <td>
      <?php echo $row->name; ?>
@@ -70,7 +75,7 @@ foreach($rows as $row){
      <?php }?>
    </td>
    <td class="center">     
-     <?php echo \JHTML::_('jgrid.published', $row->publish, $i);?>
+     <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
    </td>
    <td class="center">
     <?php print $row->id;?>
@@ -84,11 +89,11 @@ $i++;
 <br/>
 <br/>
 <div class="helpbox">
-    <div class="head"><?php echo JText::_('JSHOP_DEFAULT_FRONT_LANG')?></div>
-    <div class="text"><?php print JText::_('JSHOP_DEFAULT_FRONT_LANG_INFO')?></div>
+    <div class="head"><?php echo Text::_('JSHOP_DEFAULT_FRONT_LANG')?></div>
+    <div class="text"><?php print Text::_('JSHOP_DEFAULT_FRONT_LANG_INFO')?></div>
     <br/>
-    <div class="head"><?php echo JText::_('JSHOP_DEFAULT_LANG_FOR_COPY')?></div>
-    <div class="text"><?php print JText::_('JSHOP_DEFAULT_LANG_FOR_COPY_INFO')?></div>
+    <div class="head"><?php echo Text::_('JSHOP_DEFAULT_LANG_FOR_COPY')?></div>
+    <div class="text"><?php print Text::_('JSHOP_DEFAULT_LANG_FOR_COPY_INFO')?></div>
 </div>
 
 <input type="hidden" name="task" value="" />
@@ -99,6 +104,6 @@ $i++;
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

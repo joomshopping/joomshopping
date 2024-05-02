@@ -1,4 +1,10 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -7,15 +13,15 @@
 * @license      GNU/GPL
 */
 defined('_JEXEC') or die();
-$jshopConfig=\JSFactory::getConfig();
-\JFilterOutput::objectHTMLSafe($jshopConfig, ENT_QUOTES);
+$jshopConfig=JSFactory::getConfig();
+OutputFilter::objectHTMLSafe($jshopConfig, ENT_QUOTES);
 $vendor=$this->vendor;
 $lists=$this->lists;
-\JHTML::_('bootstrap.tooltip');
+HTMLHelper::_('bootstrap.tooltip');
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php \JSHelperAdmin::displaySubmenuConfigs('storeinfo');?>
+<?php HelperAdmin::displaySubmenuConfigs('storeinfo');?>
 <div class="jshop_edit">
 <form action="index.php?option=com_jshopping&controller=config" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 <?php print $this->tmp_html_start?>
@@ -24,12 +30,12 @@ $lists=$this->lists;
 <input type="hidden" name="vendor_id" value="<?php print $vendor->id;?>">
 
 <div class="card jshop_edit">
-<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_STORE_INFO')?></h3>
+<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_STORE_INFO')?></h3>
   <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_STORE_NAME')?>
+       <?php echo Text::_('JSHOP_STORE_NAME')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="shop_name" value="<?php echo $vendor->shop_name?>" />
@@ -37,7 +43,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_STORE_COMPANY')?>
+       <?php echo Text::_('JSHOP_STORE_COMPANY')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="company_name" value="<?php echo $vendor->company_name?>" />
@@ -45,7 +51,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_STORE_URL')?>
+       <?php echo Text::_('JSHOP_STORE_URL')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="url" value="<?php echo $vendor->url?>" />
@@ -53,7 +59,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_LOGO')?>
+       <?php echo Text::_('JSHOP_LOGO')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="logo" value="<?php echo $vendor->logo?>" />
@@ -61,7 +67,7 @@ $lists=$this->lists;
     </tr>    
     <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_STORE_ADRESS')?>
+       <?php echo Text::_('JSHOP_STORE_ADRESS')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="adress" value="<?php echo $vendor->adress?>" />
@@ -69,7 +75,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_STORE_CITY')?>
+       <?php echo Text::_('JSHOP_STORE_CITY')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="city" value="<?php echo $vendor->city?>" />
@@ -77,7 +83,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_STORE_ZIP')?>
+       <?php echo Text::_('JSHOP_STORE_ZIP')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="zip"  value="<?php echo $vendor->zip?>" />
@@ -85,7 +91,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_STORE_STATE')?>
+       <?php echo Text::_('JSHOP_STORE_STATE')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="state" value="<?php echo $vendor->state?>" />
@@ -93,7 +99,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_STORE_COUNTRY')?>
+       <?php echo Text::_('JSHOP_STORE_COUNTRY')?>
      </td>
      <td>
        <?php echo $lists['countries'];?>
@@ -105,12 +111,12 @@ $lists=$this->lists;
 
 
 <div class="card jshop_edit">
-<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_CONTACT_INFO')?></h3>
+<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_CONTACT_INFO')?></h3>
   <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_CONTACT_FIRSTNAME')?>
+       <?php echo Text::_('JSHOP_CONTACT_FIRSTNAME')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="f_name" value="<?php echo $vendor->f_name?>" />
@@ -118,7 +124,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_CONTACT_LASTNAME')?>
+       <?php echo Text::_('JSHOP_CONTACT_LASTNAME')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="l_name" value="<?php echo $vendor->l_name?>" />
@@ -126,7 +132,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_CONTACT_MIDDLENAME')?>
+       <?php echo Text::_('JSHOP_CONTACT_MIDDLENAME')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="middlename" value="<?php echo $vendor->middlename?>" />
@@ -134,7 +140,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_CONTACT_PHONE')?>
+       <?php echo Text::_('JSHOP_CONTACT_PHONE')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="phone" value="<?php echo $vendor->phone?>" />
@@ -142,7 +148,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_CONTACT_FAX')?>
+       <?php echo Text::_('JSHOP_CONTACT_FAX')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="fax" value="<?php echo $vendor->fax?>" />
@@ -150,7 +156,7 @@ $lists=$this->lists;
     </tr> 
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_EMAIL')?>
+       <?php echo Text::_('JSHOP_EMAIL')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="email" value="<?php echo $vendor->email?>" />
@@ -162,12 +168,12 @@ $lists=$this->lists;
 
 
 <div class="card jshop_edit">
-<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_BANK')?></h3>
+<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_BANK')?></h3>
   <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_BENEF_BANK_NAME')?>
+       <?php echo Text::_('JSHOP_BENEF_BANK_NAME')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="benef_bank_info" value="<?php echo $vendor->benef_bank_info?>" />
@@ -176,7 +182,7 @@ $lists=$this->lists;
 
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_BENEF_BIC')?>
+       <?php echo Text::_('JSHOP_BENEF_BIC')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="benef_bic" value="<?php echo $vendor->benef_bic?>" />
@@ -184,7 +190,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_BENEF_CONTO')?>
+       <?php echo Text::_('JSHOP_BENEF_CONTO')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="benef_conto" value="<?php echo $vendor->benef_conto?>" />
@@ -192,7 +198,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_BENEF_PAYEE')?>
+       <?php echo Text::_('JSHOP_BENEF_PAYEE')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="benef_payee" value="<?php echo $vendor->benef_payee?>" />
@@ -200,7 +206,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_BENEF_IBAN')?>
+       <?php echo Text::_('JSHOP_BENEF_IBAN')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="benef_iban" value="<?php echo $vendor->benef_iban?>" />
@@ -208,7 +214,7 @@ $lists=$this->lists;
     </tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_BIC_BIC')?>
+			<?php echo Text::_('JSHOP_BIC_BIC')?>
 		</td>
 		<td>
 			<input size="55" type = "text" class = "inputbox form-control" name = "benef_bic_bic" value = "<?php echo $vendor->benef_bic_bic?>" />
@@ -216,7 +222,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_BENEF_SWIFT')?>
+       <?php echo Text::_('JSHOP_BENEF_SWIFT')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="benef_swift" value="<?php echo $vendor->benef_swift?>" />
@@ -227,12 +233,12 @@ $lists=$this->lists;
 </div>
 
 <div class="card jshop_edit">
-<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_INTERM_BANK')?></h3>
+<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_INTERM_BANK')?></h3>
   <div class="card-body">    
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_INTERM_NAME')?>
+       <?php echo Text::_('JSHOP_INTERM_NAME')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="interm_name" value="<?php echo $vendor->interm_name?>" />
@@ -240,7 +246,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_INTERM_SWIFT')?>
+       <?php echo Text::_('JSHOP_INTERM_SWIFT')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="interm_swift" value="<?php echo $vendor->interm_swift?>" />
@@ -251,12 +257,12 @@ $lists=$this->lists;
 </div>
 
 <div class="card jshop_edit">
-<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_STORE_INFO')?></h3>
+<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_STORE_INFO')?></h3>
   <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_IDENTIFICATION_NUMBER')?>
+       <?php echo Text::_('JSHOP_IDENTIFICATION_NUMBER')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="identification_number" value="<?php echo $vendor->identification_number?>" />
@@ -264,7 +270,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_TAX_NUMBER')?>
+       <?php echo Text::_('JSHOP_TAX_NUMBER')?>
      </td>
      <td>
        <input size="55" type="text" class="inputbox form-control" name="tax_number" value="<?php echo $vendor->tax_number?>" />
@@ -272,7 +278,7 @@ $lists=$this->lists;
     </tr>
     <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_ADDITIONAL_INFORMATION')?>
+       <?php echo Text::_('JSHOP_ADDITIONAL_INFORMATION')?>
      </td>
      <td>
         <textarea rows="5" cols="55" name="additional_information" class = "form-control"><?php echo $vendor->additional_information?></textarea>
@@ -284,13 +290,13 @@ $lists=$this->lists;
 
 
 <div class="card jshop_edit">
-<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_PDF_CONFIG')?></h3>
+<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_PDF_CONFIG')?></h3>
   <div class="card-body">
     <table class="admintable table-striped" width="100%" >
     <tr>
     <td  class="key">
-       <?php echo JText::_('JSHOP_PDF_HEADER')?>
-       <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_PDF_ONLYJPG'))?>
+       <?php echo Text::_('JSHOP_PDF_HEADER')?>
+       <?php echo HelperAdmin::tooltip(Text::_('JSHOP_PDF_ONLYJPG'))?>
     </td>
     <td>
         <input size="55" type="file" name="header" value="" />
@@ -299,8 +305,8 @@ $lists=$this->lists;
 
     <tr>
     <td  class="key">
-       <?php echo JText::_('JSHOP_IMAGE_WIDTH')?>
-       <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_PDF_INMM'))?>
+       <?php echo Text::_('JSHOP_IMAGE_WIDTH')?>
+       <?php echo HelperAdmin::tooltip(Text::_('JSHOP_PDF_INMM'))?>
     </td>
     <td>
         <input size="55" type="text" class="inputbox form-control" name="pdf_parameters[pdf_header_width]" value="<?php echo $jshopConfig->pdf_header_width?>" />
@@ -308,8 +314,8 @@ $lists=$this->lists;
     </tr>
     <tr>
     <td  class="key">
-       <?php echo JText::_('JSHOP_IMAGE_HEIGHT')?>
-       <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_PDF_INMM'))?>
+       <?php echo Text::_('JSHOP_IMAGE_HEIGHT')?>
+       <?php echo HelperAdmin::tooltip(Text::_('JSHOP_PDF_INMM'))?>
     </td>
     <td>
         <input size="55" type="text" class="inputbox form-control" name="pdf_parameters[pdf_header_height]" value="<?php echo $jshopConfig->pdf_header_height?>" />
@@ -320,8 +326,8 @@ $lists=$this->lists;
     </tr>
     <tr>
     <td  class="key">
-       <?php echo JText::_('JSHOP_PDF_FOOTER')?>
-       <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_PDF_ONLYJPG'))?>
+       <?php echo Text::_('JSHOP_PDF_FOOTER')?>
+       <?php echo HelperAdmin::tooltip(Text::_('JSHOP_PDF_ONLYJPG'))?>
     </td>
     <td>
         <input size="55" type="file" name="footer" value="" />
@@ -329,8 +335,8 @@ $lists=$this->lists;
     </tr>
     <tr>
     <td  class="key">
-       <?php echo JText::_('JSHOP_IMAGE_WIDTH')?>
-       <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_PDF_INMM'))?>
+       <?php echo Text::_('JSHOP_IMAGE_WIDTH')?>
+       <?php echo HelperAdmin::tooltip(Text::_('JSHOP_PDF_INMM'))?>
     </td>
     <td>
         <input size="55" type="text" class="inputbox form-control" name="pdf_parameters[pdf_footer_width]" value="<?php echo $jshopConfig->pdf_footer_width?>" />
@@ -338,8 +344,8 @@ $lists=$this->lists;
     </tr>
     <tr>
     <td  class="key">
-       <?php echo JText::_('JSHOP_IMAGE_HEIGHT')?>
-       <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_PDF_INMM'))?>
+       <?php echo Text::_('JSHOP_IMAGE_HEIGHT')?>
+       <?php echo HelperAdmin::tooltip(Text::_('JSHOP_PDF_INMM'))?>
     </td>
     <td>
         <input size="55" type="text" class="inputbox form-control" name="pdf_parameters[pdf_footer_height]" value="<?php echo $jshopConfig->pdf_footer_height?>" />
@@ -348,8 +354,8 @@ $lists=$this->lists;
     <tr>
     <td></td>
     <td >
-        <?php print JText::_('JSHOP_PDF_PREVIEW_INFO1')?>
-        <a class="btn btn-secondary" target="_blank" href="index.php?option=com_jshopping&controller=config&task=preview_pdf&config_id=<?php echo $jshopConfig->id?>"><?php echo JText::_('JSHOP_PDF_PREVIEW')?></a>
+        <?php print Text::_('JSHOP_PDF_PREVIEW_INFO1')?>
+        <a class="btn btn-secondary" target="_blank" href="index.php?option=com_jshopping&controller=config&task=preview_pdf&config_id=<?php echo $jshopConfig->id?>"><?php echo Text::_('JSHOP_PDF_PREVIEW')?></a>
     </td>
     </tr>
     </table>

@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class CheckoutShippingModel  extends CheckoutModel{
@@ -15,23 +18,23 @@ class CheckoutShippingModel  extends CheckoutModel{
 	private $active_shipping_method_price;
 	
 	public function getCheckoutListShippings($adv_user){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$cart = $this->getCart();
-		$shippingmethod = \JSFactory::getTable('shippingMethod');
-        $shippingmethodprice = \JSFactory::getTable('shippingMethodPrice');
+		$shippingmethod = JSFactory::getTable('shippingMethod');
+        $shippingmethodprice = JSFactory::getTable('shippingMethodPrice');
 
 		$id_country = $this->getAnyIdCountry($adv_user);
         if (!$id_country){
-			$this->setError(\JText::_('JSHOP_REGWARN_COUNTRY'));
+			$this->setError(Text::_('JSHOP_REGWARN_COUNTRY'));
             return false;
         }
 
         if ($jshopConfig->show_delivery_time_checkout){
-            $deliverytimes = \JSFactory::getAllDeliveryTime();
+            $deliverytimes = JSFactory::getAllDeliveryTime();
             $deliverytimes[0] = '';
         }
         if ($jshopConfig->show_delivery_date){
-            $deliverytimedays = \JSFactory::getAllDeliveryTimeDays();
+            $deliverytimedays = JSFactory::getAllDeliveryTimeDays();
         }
 		
         $sh_pr_method_id = $cart->getShippingPrId();
@@ -54,8 +57,8 @@ class CheckoutShippingModel  extends CheckoutModel{
             if ($jshopConfig->show_delivery_date){
                 $day = isset($deliverytimedays[$value->delivery_times_id]) ? $deliverytimedays[$value->delivery_times_id] : 0;
                 if ($day){
-                    $shippings[$key]->delivery_date = \JSHelper::getCalculateDeliveryDay($day);
-                    $shippings[$key]->delivery_date_f = \JSHelper::formatdate($shippings[$key]->delivery_date);
+                    $shippings[$key]->delivery_date = Helper::getCalculateDeliveryDay($day);
+                    $shippings[$key]->delivery_date_f = Helper::formatdate($shippings[$key]->delivery_date);
                 }
             }
             
@@ -98,29 +101,29 @@ class CheckoutShippingModel  extends CheckoutModel{
 	}
 	
 	public function saveShippingData($sh_pr_method_id, &$allparams, &$adv_user){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$cart = $this->getCart();
                 
-        $shipping_method_price = \JSFactory::getTable('shippingMethodPrice');
+        $shipping_method_price = JSFactory::getTable('shippingMethodPrice');
         $shipping_method_price->load($sh_pr_method_id);
         
-        $sh_method = \JSFactory::getTable('shippingMethod');
+        $sh_method = JSFactory::getTable('shippingMethod');
         $sh_method->load($shipping_method_price->shipping_method_id);
         		
         if (!$shipping_method_price->sh_pr_method_id){
-            $this->setError(\JText::_('JSHOP_ERROR_SHIPPING'));
+            $this->setError(Text::_('JSHOP_ERROR_SHIPPING'));
             return 0;
         }
         
 		$id_country = $this->getAnyIdCountry($adv_user);
 		
         if (!$shipping_method_price->isCorrectMethodForCountry($id_country)){
-            $this->setError(\JText::_('JSHOP_ERROR_SHIPPING'));
+            $this->setError(Text::_('JSHOP_ERROR_SHIPPING'));
             return 0;
         }
         
         if (!$sh_method->shipping_id){
-            $this->setError(\JText::_('JSHOP_ERROR_SHIPPING'));
+            $this->setError(Text::_('JSHOP_ERROR_SHIPPING'));
             return 0;
         }
           
@@ -148,15 +151,15 @@ class CheckoutShippingModel  extends CheckoutModel{
         
         if ($jshopConfig->show_delivery_date){
             $delivery_date = '';
-            $deliverytimedays = \JSFactory::getAllDeliveryTimeDays();
+            $deliverytimedays = JSFactory::getAllDeliveryTimeDays();
             $day = $deliverytimedays[$shipping_method_price->delivery_times_id] ?? 0;
             if ($day){
-                $delivery_date = \JSHelper::getCalculateDeliveryDay($day);
+                $delivery_date = Helper::getCalculateDeliveryDay($day);
             }else{
                 if ($jshopConfig->delivery_order_depends_delivery_product){
                     $day = $cart->getDeliveryDaysProducts();
                     if ($day){
-                        $delivery_date = \JSHelper::getCalculateDeliveryDay($day);                    
+                        $delivery_date = Helper::getCalculateDeliveryDay($day);                    
                     }
                 }
             }
@@ -197,7 +200,7 @@ class CheckoutShippingModel  extends CheckoutModel{
 	}
 	
 	public function getAnyIdCountry($adv_user){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if ($adv_user->delivery_adress){
             $id_country = $adv_user->d_country;
         }else{

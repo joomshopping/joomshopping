@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -11,7 +13,7 @@ defined('_JEXEC') or die();
 <table>
    <tr>
      <td width="200">
-       <?php echo \JText::_('JSHOP_ACCOUNT_HOLDER')?>
+       <?php echo Text::_('JSHOP_ACCOUNT_HOLDER')?>
      </td>
      <td>
        <input type="text" class="inputbox" name="params[pm_debit][acc_holder]" id="params_pm_debit_acc_holder" value="<?php print $params['acc_holder']?>"/>
@@ -19,7 +21,7 @@ defined('_JEXEC') or die();
    </tr>
    <tr>
      <td>
-       <?php echo \JText::_('JSHOP_IBAN')?>
+       <?php echo Text::_('JSHOP_IBAN')?>
      </td>
      <td>
        <input type="text" class="inputbox" name="params[pm_debit][bank_iban]" id="params_pm_debit_bank_iban" value="<?php print $params['bank_iban']?>"/>
@@ -27,7 +29,7 @@ defined('_JEXEC') or die();
    </tr>
    <tr>
      <td>
-       <?php echo \JText::_('JSHOP_BIC_BIC')?>
+       <?php echo Text::_('JSHOP_BIC_BIC')?>
      </td>
      <td>
        <input type="text" class="inputbox" name="params[pm_debit][bank_bic]" id="params_pm_debit_bank_bic" value="<?php print $params['bank_bic']?>"/>
@@ -35,7 +37,7 @@ defined('_JEXEC') or die();
    </tr>
    <tr>
      <td>
-       <?php echo \JText::_('JSHOP_BANK')?>
+       <?php echo Text::_('JSHOP_BANK')?>
      </td>
      <td>
        <input type="text" class="inputbox" name="params[pm_debit][bank]" id="params_pm_debit_bank" value="<?php print $params['bank']?>"/>

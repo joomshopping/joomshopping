@@ -8,6 +8,11 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Lib\UploadFile;
 defined('_JEXEC') or die();
 
@@ -16,22 +21,22 @@ class AttributValueModel extends BaseadminModel{
     protected $tableFieldOrdering = 'value_ordering';
     
     function getNameValue($value_id) {
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $query = "SELECT `".$lang->get("name")."` as name FROM `#__jshopping_attr_values` WHERE value_id = '".$db->escape($value_id)."'";
         $db->setQuery($query);        
         return $db->loadResult();
     }
 
     function getAllValues($attr_id, $order = null, $orderDir = null) {
-        $db = \JFactory::getDBO(); 
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO(); 
+        $lang = JSFactory::getLang();
         $ordering = 'value_ordering, value_id';
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
         $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering FROM `#__jshopping_attr_values` where attr_id='".$attr_id."' ORDER BY ".$ordering;
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
     }
@@ -43,10 +48,10 @@ class AttributValueModel extends BaseadminModel{
     * @param mixed $resulttype
     */
     function getAllAttributeValues($resulttype=0){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering FROM `#__jshopping_attr_values` ORDER BY value_ordering, value_id";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $attribs = $db->loadObjectList();
 
@@ -68,12 +73,12 @@ class AttributValueModel extends BaseadminModel{
     }
     
     public function save(array $post, $image = null){
-        $jshopConfig = \JSFactory::getConfig();
-        $dispatcher = \JFactory::getApplication();        
+        $jshopConfig = JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();        
 		$value_id = (int)$post["value_id"];
 		$attr_id = (int)$post["attr_id"];
         
-        $attributValue = \JSFactory::getTable('attributvalue');
+        $attributValue = JSFactory::getTable('attributvalue');
         
         $dispatcher->triggerEvent('onBeforeSaveAttributValue', array(&$post));
         
@@ -91,8 +96,8 @@ class AttributValueModel extends BaseadminModel{
                 @chmod($jshopConfig->image_attributes_path."/".$post['image'], 0777);
             }else{
                 if ($upload->getError() != 4){
-                    \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_UPLOADING_IMAGE'));
-                    \JSHelper::saveToLog("error.log", "SaveAttributeValue - Error upload image. code: ".$upload->getError());
+                    JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_IMAGE'));
+                    Helper::saveToLog("error.log", "SaveAttributeValue - Error upload image. code: ".$upload->getError());
                 }
             }
         }
@@ -104,7 +109,7 @@ class AttributValueModel extends BaseadminModel{
         $attributValue->bind($post);
                 
         if (!$attributValue->store()){
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE').' '.$attributValue->getError());
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE').' '.$attributValue->getError());
             return 0;
         }
                 
@@ -120,7 +125,7 @@ class AttributValueModel extends BaseadminModel{
 	}
 	
 	public function deleteAttributeValue($id){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "DELETE FROM `#__jshopping_attr_values` WHERE `value_id` = '".$db->escape($id)."'";
 		$db->setQuery($query);
 		$db->execute();
@@ -129,12 +134,12 @@ class AttributValueModel extends BaseadminModel{
 	public function deleteImage($id){
 		$image = $this->getImage($id);
 		if ($image){
-			@unlink(\JSFactory::getConfig()->image_attributes_path."/".$image);
+			@unlink(JSFactory::getConfig()->image_attributes_path."/".$image);
 		}
 	}
 	
 	public function getImage($id){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "SELECT image FROM `#__jshopping_attr_values` WHERE value_id ='".$db->escape($id)."'";
 		$db->setQuery($query);
 		return $db->loadResult();
@@ -146,8 +151,8 @@ class AttributValueModel extends BaseadminModel{
 	}
 	
 	public function deleteProductAttributeValueDependent($id){
-		$db = \JFactory::getDBO();
-		$attributValue = \JSFactory::getTable('attributValue');
+		$db = Factory::getDBO();
+		$attributValue = JSFactory::getTable('attributValue');
 		$attributValue->load($id);
 		$attr_id = $attributValue->attr_id;
 		if ($attr_id){
@@ -159,28 +164,28 @@ class AttributValueModel extends BaseadminModel{
 	}
 	
 	public function deleteProductAttributeValueNotDependent($id){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "delete from `#__jshopping_products_attr2` where `attr_value_id` = '".$db->escape($id)."'";
 		$db->setQuery($query);
 		$db->execute();
 	}
     
     public function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();
-        $dispatcher = \JFactory::getApplication();		
+        $app = Factory::getApplication();
+        $dispatcher = Factory::getApplication();		
         $dispatcher->triggerEvent('onBeforeRemoveAttributValue', array(&$cid));		
 		foreach($cid as $value){
             $this->delete(intval($value));
             if ($msg){
-                $app->enqueueMessage(\JText::_('JSHOP_ATTRIBUT_VALUE_DELETED'), 'message');
+                $app->enqueueMessage(Text::_('JSHOP_ATTRIBUT_VALUE_DELETED'), 'message');
             }
 		}
         $dispatcher->triggerEvent('onAfterRemoveAttributValue', array(&$cid));
     }
     
     public function deleteFoto($id){
-        $jshopConfig = \JSFactory::getConfig();
-        $attributValue = \JSFactory::getTable('attributValue');
+        $jshopConfig = JSFactory::getConfig();
+        $attributValue = JSFactory::getTable('attributValue');
         $attributValue->load($id);
         @unlink($jshopConfig->image_attributes_path."/".$attributValue->image);
         $attributValue->image = "";

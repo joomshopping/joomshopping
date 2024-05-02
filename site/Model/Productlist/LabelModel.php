@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class LabelModel extends ListModel{
@@ -14,18 +15,18 @@ class LabelModel extends ListModel{
     public $default_adv_query = " AND prod.label_id!=0 ";
     
     function getCountProductsPerPage(){       
-        return \JSFactory::getConfig()->count_products_to_page_label;
+        return JSFactory::getConfig()->count_products_to_page_label;
     }
     
     function getCountProductsToRow(){
-        return \JSFactory::getConfig()->count_products_to_row_label;
+        return JSFactory::getConfig()->count_products_to_row_label;
     }
     
     function getProductFieldSorting($order){
         if ($order==4){
             $order = 1;
         }
-        return \JSFactory::getConfig()->sorting_products_field_s_select[$order];
+        return JSFactory::getConfig()->sorting_products_field_s_select[$order];
     }
     
     public function getContext(){

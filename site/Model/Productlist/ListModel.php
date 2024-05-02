@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Component\Jshopping\Site\Helper\Selects;
 defined('_JEXEC') or die();
 
@@ -19,7 +24,7 @@ class ListModel{
     public $default_adv_from = "";
 
     public function loadRequestData(){
-		$app = \JFactory::getApplication();
+		$app = Factory::getApplication();
 		$context = $this->getContext();
 		$limitstart = $app->input->getInt('limitstart');
         $orderby = $app->getUserStateFromRequest($context.'orderby', 'orderby', $this->getDefaultProductSortingDirection(), 'int');
@@ -35,7 +40,7 @@ class ListModel{
 	}
 
 	public function load(){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
 		$app->triggerEvent('onBeforeLoadProductList', array());
 
 		$this->loadRequestData();
@@ -44,8 +49,8 @@ class ListModel{
 		$order = $this->getOrder();
 		$limit = $this->getLimit();
 
-        $orderbyq = \JSHelper::getQuerySortDirection($order, $orderby);
-        $image_sort_dir = \JSHelper::getImgSortDirection($order, $orderby);
+        $orderbyq = Helper::getQuerySortDirection($order, $orderby);
+        $image_sort_dir = Helper::getImgSortDirection($order, $orderby);
 		$this->setImageSortDir($image_sort_dir);
         $field_order = $this->getProductFieldSorting($order);
 		$filters = $this->getFilterListProduct();
@@ -59,7 +64,7 @@ class ListModel{
                 $limitstart = 0;
 				$this->setLimitStart($limitstart);
             }
-			$pagination = new \JPagination($total, $limitstart, $limit);
+			$pagination = new Pagination($total, $limitstart, $limit);
             $pagenav = $pagination->getPagesLinks();
 			$this->setPagination($pagination);
 			$this->setPagenav($pagenav);
@@ -73,14 +78,14 @@ class ListModel{
 	}
 
     function getLoadProducts($filters = [], $order = null, $orderby = null, $limitstart = 0, $limit = 0, $listProductUpdateData = 1){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $adv_query = $this->default_adv_query;
         $adv_from = $this->default_adv_from;
         $adv_result = $this->getBuildQueryListProductDefaultResult();
         $this->getBuildQueryListProduct($this->getProductListName(), "list", $filters, $adv_query, $adv_from, $adv_result);
         $order_query = $this->getBuildQueryOrderListProduct($order, $orderby, $adv_from);
 
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $app->triggerEvent('onBeforeQueryGetProductList', array($this->getProductListName(), &$adv_result, &$adv_from, &$adv_query, &$order_query, &$filters));
         $query = "SELECT $adv_result FROM `#__jshopping_products` AS prod
                   LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat USING (product_id)
@@ -97,19 +102,19 @@ class ListModel{
         }
         $products = $db->loadObjectList();
         if ($listProductUpdateData){
-            $products = \JSHelper::listProductUpdateData($products, 1);
+            $products = Helper::listProductUpdateData($products, 1);
         }
         return $products;
     }
 
     function getLoadCountProducts($filters = [], $order = null, $orderby = null){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $adv_query = $this->default_adv_query;
         $adv_from = $this->default_adv_from;
         $adv_result = "COUNT(distinct prod.product_id)";
         $this->getBuildQueryListProduct($this->getProductListName(), "count", $filters, $adv_query, $adv_from, $adv_result);
 
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $app->triggerEvent('onBeforeQueryCountProductList', array($this->getProductListName(), &$adv_result, &$adv_from, &$adv_query, &$filters) );
         $query = "SELECT $adv_result  FROM `#__jshopping_products` as prod
                   LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat USING (product_id)
@@ -123,16 +128,16 @@ class ListModel{
     }
 
     function getBuildQueryListProductDefaultResult($adfields=array()){
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
 		if (count($adfields)>0) $adquery = ",".implode(', ',$adfields); else $adquery = '';
         return "prod.product_id, pr_cat.category_id, prod.main_category_id, prod.`".$lang->get('name')."` as name, prod.`".$lang->get('short_description')."` as short_description, prod.product_ean, prod.manufacturer_code, prod.real_ean, prod.image, prod.product_price, prod.currency_id, prod.product_tax_id as tax_id, prod.product_old_price, prod.product_weight, prod.average_rating, prod.reviews_count, prod.hits, prod.weight_volume_units, prod.basic_price_unit_id, prod.label_id, prod.product_manufacturer_id, prod.min_price, prod.product_quantity, prod.different_prices".$adquery;
     }
 
     function getBuildQueryListProduct($type, $restype, &$filters, &$adv_query, &$adv_from, &$adv_result){
-        $jshopConfig = \JSFactory::getConfig();
-        $user = \JFactory::getUser();
-        $app = \JFactory::getApplication();
-        $db = \JFactory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
+        $user = Factory::getUser();
+        $app = Factory::getApplication();
+        $db = Factory::getDBO();
         $originaladvres = $adv_result;
 
         $groups = implode(',', $user->getAuthorisedViewLevels());
@@ -146,7 +151,7 @@ class ListModel{
             $adv_result .= ", prod.delivery_times_id";
         }
         if ($jshopConfig->admin_show_product_extra_field){
-            $adv_result .= \JSHelper::getQueryListProductsExtraFields();
+            $adv_result .= Helper::getQueryListProductsExtraFields();
             $adv_from .= " LEFT JOIN `#__jshopping_products_to_extra_fields` AS prod_to_ef ON prod.product_id=prod_to_ef.product_id ";
         }
         if ($jshopConfig->product_list_show_vendor){
@@ -199,10 +204,10 @@ class ListModel{
             }
         }
 
-        if (isset($filters['date_to']) && $filters['date_to'] && \JSHelper::checkMyDate($filters['date_to'])) {
+        if (isset($filters['date_to']) && $filters['date_to'] && Helper::checkMyDate($filters['date_to'])) {
             $adv_query .= " AND prod.product_date_added <= '".$db->escape($filters['date_to'])."'";
         }
-        if (isset($filters['date_from']) && $filters['date_from'] && \JSHelper::checkMyDate($filters['date_from'])) {
+        if (isset($filters['date_from']) && $filters['date_from'] && Helper::checkMyDate($filters['date_from'])) {
             $adv_query .= " AND prod.product_date_added >= '".$db->escape($filters['date_from'])."'";
         }
         if (isset($filters['products']) && $filters['products'] && is_array($filters['products']) && count($filters['products'])){
@@ -214,7 +219,7 @@ class ListModel{
                 $word = addcslashes($db->escape($filters['search']), "_%");
                 $tmp = array();
                 foreach($jshopConfig->product_search_fields as $field){
-                    $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
+                    $tmp[] = "LOWER(".Helper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
                 }
                 $where_search = implode(' OR ', $tmp);
             }else{
@@ -224,7 +229,7 @@ class ListModel{
                     $word = addcslashes($db->escape($word), "_%");
                     $tmp = array();
                     foreach($jshopConfig->product_search_fields as $field){
-                        $tmp[] = "LOWER(".\JSHelper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
+                        $tmp[] = "LOWER(".Helper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
                     }
                     $where_search_block = implode(' OR ', $tmp);
                     $search_word[] = "(".$where_search_block.")";
@@ -253,20 +258,20 @@ class ListModel{
 
     function getBuildQueryListProductFilterPrice($filters, &$adv_query, &$adv_from){
         if (isset($filters['price_from'])){
-            $price_from = \JSHelper::getCorrectedPriceForQueryFilter($filters['price_from']);
+            $price_from = Helper::getCorrectedPriceForQueryFilter($filters['price_from']);
         }else{
             $price_from = 0;
         }
         if (isset($filters['price_to'])){
-            $price_to = \JSHelper::getCorrectedPriceForQueryFilter($filters['price_to']);
+            $price_to = Helper::getCorrectedPriceForQueryFilter($filters['price_to']);
         }else{
             $price_to = 0;
         }
         if (!$price_from && !$price_to) return 0;
 
-        $jshopConfig = \JSFactory::getConfig();
-        $userShop = \JSFactory::getUserShop();
-        $multyCurrency = count(\JSFactory::getAllCurrency());
+        $jshopConfig = JSFactory::getConfig();
+        $userShop = JSFactory::getUserShop();
+        $multyCurrency = count(JSFactory::getAllCurrency());
         if ($userShop->percent_discount){
             $price_part = 1-$userShop->percent_discount/100;
         }else{
@@ -310,8 +315,8 @@ class ListModel{
             }
         }
 
-        \JPluginHelper::importPlugin('jshoppingproducts');
-        $app = \JFactory::getApplication();
+        PluginHelper::importPlugin('jshoppingproducts');
+        $app = Factory::getApplication();
         $app->triggerEvent('onBuildQueryListProductFilterPrice', array($filters, &$adv_query, &$adv_from, &$adv_query2, &$adv_from2) );
 
         $adv_query .= $adv_query2;
@@ -322,8 +327,8 @@ class ListModel{
         $order_query = "";
         if (!$order) return $order_query;
         $order_original = $order;
-        $jshopConfig = \JSFactory::getConfig();
-        $multyCurrency = count(\JSFactory::getAllCurrency());
+        $jshopConfig = JSFactory::getConfig();
+        $multyCurrency = count(JSFactory::getAllCurrency());
         if ($multyCurrency>1 && $order=="prod.product_price"){
             if (strpos($adv_from,"jshopping_currencies")===false){
                 $adv_from .= " LEFT JOIN `#__jshopping_currencies` AS cr USING (currency_id) ";
@@ -342,8 +347,8 @@ class ListModel{
             $order_query .= " ".$orderby;
         }
 
-        \JPluginHelper::importPlugin('jshoppingproducts');
-        $app = \JFactory::getApplication();
+        PluginHelper::importPlugin('jshoppingproducts');
+        $app = Factory::getApplication();
         $app->triggerEvent('onBuildQueryOrderListProduct', array($order, $orderby, &$adv_from, &$order_query, $order_original) );
 
     return $order_query;
@@ -426,7 +431,7 @@ class ListModel{
     }
 	
     public function getAction(){
-		$action = \JSHelper::xhtmlUrl($_SERVER['REQUEST_URI']);
+		$action = Helper::xhtmlUrl($_SERVER['REQUEST_URI']);
         return $action;
     }
 	
@@ -447,23 +452,23 @@ class ListModel{
     }
     
     function getDefaultProductSorting(){
-        return \JSFactory::getConfig()->product_sorting;
+        return JSFactory::getConfig()->product_sorting;
     }
 
     function getDefaultProductSortingDirection(){
-        return \JSFactory::getConfig()->product_sorting_direction;
+        return JSFactory::getConfig()->product_sorting_direction;
     }
 
     function getCountProductsPerPage(){
-        return \JSFactory::getConfig()->count_products_to_page;
+        return JSFactory::getConfig()->count_products_to_page;
     }
 
     function getCountProductsToRow(){
-        return \JSFactory::getConfig()->count_products_to_row;
+        return JSFactory::getConfig()->count_products_to_row;
     }
 
     function getProductFieldSorting($order){
-        return \JSFactory::getConfig()->sorting_products_field_select[$order];
+        return JSFactory::getConfig()->sorting_products_field_select[$order];
     }
 
     public function getContext(){
@@ -491,7 +496,7 @@ class ListModel{
     }
 
 	public function getFilterListProduct(){
-		return \JSFactory::getModel('filter', 'Site\\Productlist')->getFilter($this->getContextFilter(), $this->getNoFilterListProduct());
+		return JSFactory::getModel('filter', 'Site\\Productlist')->getFilter($this->getContextFilter(), $this->getNoFilterListProduct());
 	}
     
     public function getHtmlSelectSorting(){
@@ -503,12 +508,12 @@ class ListModel{
     }
     
     public function getHtmlSelectFilterManufacturer($fulllist = 0){
-        if (\JSFactory::getConfig()->show_product_list_filters){
+        if (JSFactory::getConfig()->show_product_list_filters){
             $filters = $this->getFilters();
             if (!$fulllist){
                 $filter_manufactures = $this->table->getManufacturers();
             }else{
-                $filter_manufactures = \JSFactory::getTable('manufacturer')->getList();
+                $filter_manufactures = JSFactory::getTable('manufacturer')->getList();
             }
             if (isset($filters['manufacturers'][0])){
                 $active_manufacturer = $filters['manufacturers'][0];            
@@ -523,12 +528,12 @@ class ListModel{
     }
     
     public function getHtmlSelectFilterCategory($fulllist = 0){
-        if (\JSFactory::getConfig()->show_product_list_filters){
+        if (JSFactory::getConfig()->show_product_list_filters){
             $filters = $this->getFilters();
             if (!$fulllist){
                 $filter_categorys = $this->table->getCategorys();
             }else{
-                $filter_categorys = \JSHelper::buildTreeCategory(1);
+                $filter_categorys = Helper::buildTreeCategory(1);
             }
             if (isset($filters['categorys'][0])){
                 $active_category = $filters['categorys'][0];
@@ -543,42 +548,42 @@ class ListModel{
     }
     
     public function getWillBeUseFilter(){
-        return \JSFactory::getModel('filter', 'Site\\Productlist')->willBeUseFilter($this->getFilters(), $this->getStandartFilterListProduct());
+        return JSFactory::getModel('filter', 'Site\\Productlist')->willBeUseFilter($this->getFilters(), $this->getStandartFilterListProduct());
     }
     
     public function getDisplayListProducts(){
         $display_list_products = (count($this->getProducts())>0 || $this->getWillBeUseFilter());
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
         return $display_list_products;
     }
     
     public function getAllowReview(){
-        $allow_review = \JSFactory::getTable('review')->getAllowReview();
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+        $allow_review = JSFactory::getTable('review')->getAllowReview();
+        extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
         return $allow_review;
     }
     
     public function configDisableSortAndFilters(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $jshopConfig->show_sort_product = 0;
         $jshopConfig->show_count_select_products = 0;
         $jshopConfig->show_product_list_filters = 0;
     }
 	
 	public function getTmplBlockListProduct(){
-		return \JSFactory::getConfig()->default_template_block_list_product;
+		return JSFactory::getConfig()->default_template_block_list_product;
 	}
 	
 	public function getTmplNoListProduct(){
-		return \JSFactory::getConfig()->default_template_no_list_product;
+		return JSFactory::getConfig()->default_template_no_list_product;
 	}
 	
 	public function getTmplBlockFormFilter(){
-		return \JSFactory::getConfig()->default_template_block_form_filter_product;
+		return JSFactory::getConfig()->default_template_block_form_filter_product;
 	}
 	
 	public function getTmplBlockPagination(){
-		return \JSFactory::getConfig()->default_template_block_pagination_product;
+		return JSFactory::getConfig()->default_template_block_pagination_product;
 	}
 
 }

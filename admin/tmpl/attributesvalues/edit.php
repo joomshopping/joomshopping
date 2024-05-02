@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -21,7 +23,7 @@ $attr_id=$this->attr_id;
     ?>
      <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_NAME_ATTRIBUT_VALUE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>* 
+         <?php echo Text::_('JSHOP_NAME_ATTRIBUT_VALUE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>* 
        </td>
        <td>
          <input type="text" class="inputbox form-control" name="<?php print $field?>" value="<?php echo $this->attributValue->$field?>" />
@@ -29,14 +31,14 @@ $attr_id=$this->attr_id;
      </tr>
   <?php } ?>
   <tr>
-    <td class="key"><?php print JText::_('JSHOP_IMAGE_ATTRIBUT_VALUE')?></td>
+    <td class="key"><?php print Text::_('JSHOP_IMAGE_ATTRIBUT_VALUE')?></td>
     <td>
     <?php if ($this->attributValue->image) {?>
     <div id="image_attrib_value">
         <div><img src="<?php echo $this->config->image_attributes_live_path."/".$this->attributValue->image?>" alt=""/></div>
         <div style="padding-bottom:5px;" class="link_delete_foto">
-            <a class="btn btn-micro btn-danger" href="#" onclick="if (confirm('<?php print JText::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoAttribValue('<?php echo $this->attributValue->value_id?>');return false;">
-                <img src="components/com_jshopping/images/publish_x.png"> <?php print JText::_('JSHOP_DELETE_IMAGE')?></a>
+            <a class="btn btn-micro btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoAttribValue('<?php echo $this->attributValue->value_id?>');return false;">
+                <img src="components/com_jshopping/images/publish_x.png"> <?php print Text::_('JSHOP_DELETE_IMAGE')?></a>
             </div>
     </div>
     <?php }?>

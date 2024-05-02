@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Languages_list;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -15,10 +18,10 @@ class HtmlView extends BaseHtmlView{
     
     function display($tpl=null){
         
-        \JToolBarHelper::title( \JText::_('JSHOP_LIST_LANGUAGE'), 'generic.png' ); 
-        \JToolBarHelper::publishList();
-        \JToolBarHelper::unpublishList();
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_LIST_LANGUAGE'), 'generic.png' ); 
+        ToolbarHelper::publishList();
+        ToolbarHelper::unpublishList();
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
 }

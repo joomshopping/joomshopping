@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.7 02.09.2022
 * @author       MAXXmarketing GmbH
@@ -71,8 +73,8 @@ defined('_JEXEC') or die();
         <div class="info mb-3">
             <div class="img"><img src="components/com_jshopping/images/jshop_import_export_b.png"></div>
             <div>                
-                <div><a href="index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm1:demo_products_5.0.0.zip&back=<?php print urldecode("index.php?option=com_jshopping")?>">
-                        <b><?php print \JText::_('JSHOP_LOAD_SAMPLE_DATA')?></b>
+                <div><a href="index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm1:demo_products_5.4.1.zip&back=<?php print urldecode("index.php?option=com_jshopping")?>">
+                        <b><?php print Text::_('JSHOP_LOAD_SAMPLE_DATA')?></b>
                     </a>
                 </div>
             </div>

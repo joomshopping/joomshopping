@@ -7,6 +7,12 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Lib\UploadFile;
 use Joomla\Component\Jshopping\Site\Lib\ImageLib;
 
@@ -18,21 +24,21 @@ class ManufacturersModel extends BaseadminModel{
     protected $tableFieldPublish = 'manufacturer_publish';
 
     function getAllManufacturers($publish=0, $order=null, $orderDir=null){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang(); 
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang(); 
         $query_where = ($publish)?(" WHERE manufacturer_publish = '1'"):("");  
         $queryorder = '';        
         if ($order && $orderDir){
             $queryorder = "order by ".$order." ".$orderDir;
         }
         $query = "SELECT manufacturer_id, manufacturer_url, manufacturer_logo, manufacturer_publish, ordering, `".$lang->get('name')."` as name FROM `#__jshopping_manufacturers` $query_where ".$queryorder;
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
     }
     
     function getList(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if ($jshopConfig->manufacturer_sorting==2){
             $morder = 'name';
         }else{
@@ -42,21 +48,21 @@ class ManufacturersModel extends BaseadminModel{
     }
     
     public function getPrepareDataSave($input){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $post = $input->post->getArray();
-        $_alias = \JSFactory::getModel("alias");
+        $_alias = JSFactory::getModel("alias");
         $man_id = $post["manufacturer_id"];
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         foreach($languages as $lang){
             $post['name_'.$lang->language] = trim($post['name_'.$lang->language]);
             if ($jshopConfig->create_alias_product_category_auto && $post['alias_'.$lang->language]==""){
                 $post['alias_'.$lang->language] = $post['name_'.$lang->language];
             }
-            $post['alias_'.$lang->language] = \JApplicationHelper::stringURLSafe($post['alias_'.$lang->language]);
+            $post['alias_'.$lang->language] = ApplicationHelper::stringURLSafe($post['alias_'.$lang->language]);
             if ($post['alias_'.$lang->language]!="" && !$_alias->checkExistAlias1Group($post['alias_'.$lang->language], $lang->language, 0, $man_id)){
                 $post['alias_'.$lang->language] = "";
-                \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_ALIAS_ALREADY_EXIST'));
+                JSError::raiseWarning("",Text::_('JSHOP_ERROR_ALIAS_ALREADY_EXIST'));
             }
             $post['description_'.$lang->language] = $input->get('description'.$lang->id, '', 'RAW');
             $post['short_description_'.$lang->language] = $input->get('short_description_'.$lang->language, '', 'RAW');
@@ -65,7 +71,7 @@ class ManufacturersModel extends BaseadminModel{
     }
     
     public function imageUpload(array $post, $image){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $upload = new UploadFile($image);
         $upload->setAllowFile($jshopConfig->allow_image_upload);
         $upload->setDir($jshopConfig->image_manufs_path);
@@ -94,25 +100,25 @@ class ManufacturersModel extends BaseadminModel{
                 $path_thumb = $jshopConfig->image_manufs_path."/".$name;
 
                 if (!ImageLib::resizeImageMagic($path_full, $category_width_image, $category_height_image, $jshopConfig->image_cut, $jshopConfig->image_fill, $path_thumb, $jshopConfig->image_quality, $jshopConfig->image_fill_color, $jshopConfig->image_interlace)) {
-                    \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_CREATE_THUMBAIL'));
-                    \JSHelper::saveToLog("error.log", "SaveManufacturer - Error create thumbail");
+                    JSError::raiseWarning("",Text::_('JSHOP_ERROR_CREATE_THUMBAIL'));
+                    Helper::saveToLog("error.log", "SaveManufacturer - Error create thumbail");
                 }
                 @chmod($jshopConfig->image_manufs_path."/".$name, 0777);
             }
             return $name;
         }else{
             if ($upload->getError() != 4){
-                \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_UPLOADING_IMAGE'));
-                \JSHelper::saveToLog("error.log", "SaveManufacturer - Error upload image. code: ".$upload->getError());
+                JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_IMAGE'));
+                Helper::saveToLog("error.log", "SaveManufacturer - Error upload image. code: ".$upload->getError());
             }
             return '';
         }
     }
     
     public function save(array $post, $image = null){
-        $jshopConfig = \JSFactory::getConfig();
-        $dispatcher = \JFactory::getApplication();
-        $man = \JSFactory::getTable('manufacturer');
+        $jshopConfig = JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
+        $man = JSFactory::getTable('manufacturer');
         $man->load($post["manufacturer_id"]);
         if (!$post['manufacturer_publish']){
             $post['manufacturer_publish'] = 0;
@@ -137,7 +143,7 @@ class ManufacturersModel extends BaseadminModel{
             );
         }
         if (!$man->store()){
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
         }
         $dispatcher->triggerEvent('onAfterSaveManufacturer', array(&$man));
@@ -145,8 +151,8 @@ class ManufacturersModel extends BaseadminModel{
     }
     
     function deleteFoto($id){
-        $jshopConfig = \JSFactory::getConfig();
-        $manuf = \JSFactory::getTable('manufacturer');
+        $jshopConfig = JSFactory::getConfig();
+        $manuf = JSFactory::getTable('manufacturer');
         $manuf->load($id);
         @unlink($jshopConfig->image_manufs_path.'/'.$manuf->manufacturer_logo);
         $manuf->manufacturer_logo = "";
@@ -154,19 +160,19 @@ class ManufacturersModel extends BaseadminModel{
     }
     
     public function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();
-        $dispatcher = \JFactory::getApplication();
+        $app = Factory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeRemoveManufacturer', array(&$cid));
         $res = array();
         foreach($cid as $value){
-            $manuf = \JSFactory::getTable('manufacturer');
+            $manuf = JSFactory::getTable('manufacturer');
             $manuf->load($value);
             if($manuf->delete()){
                 if($manuf->manufacturer_logo){
-                    @unlink(\JSFactory::getConfig()->image_manufs_path.'/'.$manuf->manufacturer_logo);
+                    @unlink(JSFactory::getConfig()->image_manufs_path.'/'.$manuf->manufacturer_logo);
                 }
                 if($msg){
-                    $app->enqueueMessage(sprintf(\JText::_('JSHOP_MANUFACTURER_DELETED'), $value), 'message');
+                    $app->enqueueMessage(sprintf(Text::_('JSHOP_MANUFACTURER_DELETED'), $value), 'message');
                 }
                 $res[$value] = true;
             }else if($msg){
@@ -178,7 +184,7 @@ class ManufacturersModel extends BaseadminModel{
     }
     
     public function publish(array $cid, $flag){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforePublishManufacturer', array(&$cid, &$flag));
         parent::publish($cid, $flag);
         $dispatcher->triggerEvent('onAfterPublishManufacturer', array(&$cid, &$flag));

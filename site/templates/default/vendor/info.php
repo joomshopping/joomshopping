@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -18,7 +20,7 @@ defined('_JEXEC') or die;
             <table class="vendor_info">
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_F_NAME')?>: 
+                    <?php print Text::_('JSHOP_F_NAME')?>: 
                 </td>
                 <td>
                     <?php print $this->vendor->f_name ?>
@@ -27,7 +29,7 @@ defined('_JEXEC') or die;
 
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_L_NAME')?>:
+                    <?php print Text::_('JSHOP_L_NAME')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->l_name ?>
@@ -35,7 +37,7 @@ defined('_JEXEC') or die;
             </tr>        
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_FIRMA_NAME')?>:
+                    <?php print Text::_('JSHOP_FIRMA_NAME')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->company_name ?>
@@ -44,7 +46,7 @@ defined('_JEXEC') or die;
 
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_EMAIL')?>:
+                    <?php print Text::_('JSHOP_EMAIL')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->email ?>
@@ -52,7 +54,7 @@ defined('_JEXEC') or die;
             </tr>        
             <tr>
                 <td  class="name">
-                    <?php print JText::_('JSHOP_STREET_NR')?>:
+                    <?php print Text::_('JSHOP_STREET_NR')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->adress ?>
@@ -61,7 +63,7 @@ defined('_JEXEC') or die;
 
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_ZIP')?>:
+                    <?php print Text::_('JSHOP_ZIP')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->zip ?>
@@ -69,7 +71,7 @@ defined('_JEXEC') or die;
             </tr>        
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_CITY')?>:
+                    <?php print Text::_('JSHOP_CITY')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->city ?>
@@ -77,7 +79,7 @@ defined('_JEXEC') or die;
             </tr>        
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_STATE')?>:
+                    <?php print Text::_('JSHOP_STATE')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->state ?>
@@ -86,7 +88,7 @@ defined('_JEXEC') or die;
 
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_COUNTRY')?>:
+                    <?php print Text::_('JSHOP_COUNTRY')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->country ?>
@@ -95,7 +97,7 @@ defined('_JEXEC') or die;
 
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_TELEFON')?>:
+                    <?php print Text::_('JSHOP_TELEFON')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->phone ?>
@@ -104,7 +106,7 @@ defined('_JEXEC') or die;
             
             <tr>
                 <td class="name">
-                    <?php print JText::_('JSHOP_FAX')?>:
+                    <?php print Text::_('JSHOP_FAX')?>:
                 </td>
                 <td>
                     <?php print $this->vendor->fax ?>

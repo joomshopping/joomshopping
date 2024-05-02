@@ -7,44 +7,48 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class PaymentMethodTable extends MultilangTable{
 
     function __construct(&$_db){
         parent::__construct('#__jshopping_payment_method', 'payment_id', $_db);
-        \JPluginHelper::importPlugin('jshoppingcheckout');
+        PluginHelper::importPlugin('jshoppingcheckout');
     }
 
 	function loadFromClass($class, $use_scriptname = 0){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
 		$field = 'payment_class';
 		if ($use_scriptname) {
 			$field = 'scriptname';
 		}
         $query = "SELECT payment_id FROM `#__jshopping_payment_method` WHERE ".$field."='".$db->escape($class)."'";
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $id = $db->loadResult();
         return $this->load($id);
 	}
 
     function getAllPaymentMethods($publish = 1, $shipping_id = 0){
-        $db = \JFactory::getDBO();
-        $JshopConfig = \JSFactory::getConfig();
-        $user = \JFactory::getUser();        
+        $db = Factory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
+        $user = Factory::getUser();        
         $groups = implode(',', $user->getAuthorisedViewLevels());
         $query_where = 'WHERE `access` IN ('.$groups.')';
         if ($publish) {
             $query_where .= " AND payment_publish=1 ";
         }
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         $query = "SELECT payment_id, `".$lang->get("name")."` as name, `".$lang->get("description")."` as description , payment_code, payment_class, scriptname, payment_publish, payment_ordering, payment_params, payment_type, price, price_type, tax_id, image FROM `#__jshopping_payment_method` $query_where ORDER BY payment_ordering";
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $rows = $db->loadObJectList();
         if ($shipping_id && $JshopConfig->step_4_3){
-            $sh = \JSFactory::getTable('shippingMethod');            
+            $sh = JSFactory::getTable('shippingMethod');            
             $sh->load($shipping_id);
             $payments = $sh->getPayments();
             if (count($payments)>0){
@@ -64,9 +68,9 @@ class PaymentMethodTable extends MultilangTable{
     * get id payment for payment_class
     */
     function getId(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT payment_id FROM `#__jshopping_payment_method` WHERE payment_class = '".$db->escape($this->class)."'";
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         return $db->loadResult();
     }
@@ -80,42 +84,42 @@ class PaymentMethodTable extends MultilangTable{
     }
     
     function getPrice(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($this->price_type==2){
             $cart = $this->getCart();
             $price = $cart->getSummForCalculePlusPayment() * $this->price / 100;
             if ($JshopConfig->display_price_front_current){
-                $price = \JSHelper::getPriceCalcParamsTax($price, $this->tax_id, $cart->products);
+                $price = Helper::getPriceCalcParamsTax($price, $this->tax_id, $cart->products);
             }
         }else{
             $cart = $this->getCart();
             $price = $this->price * $JshopConfig->currency_value; 
-            $price = \JSHelper::getPriceCalcParamsTax($price, $this->tax_id, $cart->products);
+            $price = Helper::getPriceCalcParamsTax($price, $this->tax_id, $cart->products);
         }
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onAfterGetPricePaymant', array(&$obj, &$price));        
         return $price;
     }
     
     function getTax(){        
-        $taxes = \JSFactory::getAllTaxes();        
+        $taxes = JSFactory::getAllTaxes();        
         return $taxes[$this->tax_id];
     }
     
     function calculateTax($price = 0){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if (!$price){
             $price = $this->getPrice();
         }
-        $pricetax = \JSHelper::getPriceTaxValue($price, $this->getTax(), $JshopConfig->display_price_front_current);
+        $pricetax = Helper::getPriceTaxValue($price, $this->getTax(), $JshopConfig->display_price_front_current);
         return $pricetax;
     }
     
     function getPriceForTaxes($price){
         if ($this->tax_id==-1){
             $cart = $this->getCart();
-            $prodtaxes = \JSHelper::getPriceTaxRatioForProducts($cart->products);
+            $prodtaxes = Helper::getPriceTaxRatioForProducts($cart->products);
             $prices = array();
             foreach($prodtaxes as $k=>$v){
                 $prices[$k] = $price*$v;
@@ -129,9 +133,9 @@ class PaymentMethodTable extends MultilangTable{
     
     function calculateTaxList($price){
         $cart = $this->getCart();
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($this->tax_id==-1){
-            $prodtaxes = \JSHelper::getPriceTaxRatioForProducts($cart->products);
+            $prodtaxes = Helper::getPriceTaxRatioForProducts($cart->products);
             $prices = array();
             foreach($prodtaxes as $k=>$v){
                 $prices[] = array('tax'=>$k, 'price'=>$price*$v);
@@ -158,9 +162,9 @@ class PaymentMethodTable extends MultilangTable{
     * get config payment for classname
     */
     function getConfigsForClassName($classname) {
-        $db = \JFactory::getDBO(); 
+        $db = Factory::getDBO(); 
         $query = "SELECT payment_params FROM `#__jshopping_payment_method` WHERE payment_class = '".$db->escape($classname)."'";
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $params_str = $db->loadResult();
         return (array)json_decode($params_str, true);
@@ -186,7 +190,7 @@ class PaymentMethodTable extends MultilangTable{
     }
 	
     function getPaymentSystemData($script=''){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($script==''){
             if ($this->scriptname!=''){
                 $script = $this->scriptname;

@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -11,15 +14,15 @@ $jshopConfig=$this->config;
 $lists=$this->lists;
 ?>
 <div class="jshop_edit">
-<script type="text/javascript">jshopAdmin.lang_delete="<?php print JText::_('JSHOP_DELETE')?>";</script>
+<script type="text/javascript">jshopAdmin.lang_delete="<?php print Text::_('JSHOP_DELETE')?>";</script>
 <form action="index.php?option=com_jshopping&controller=products" method="post" name="adminForm" id="adminForm" id="item-form">
 <ul class="joomla-tabs nav nav-tabs">    
-    <li class="nav-item"><a href="#main-page" class="nav-link active" data-toggle="tab"><?php echo JText::_('JSHOP_INFO_PRODUCT')?></a></li>
+    <li class="nav-item"><a href="#main-page" class="nav-link active" data-toggle="tab"><?php echo Text::_('JSHOP_INFO_PRODUCT')?></a></li>
     <?php if ($jshopConfig->admin_show_product_extra_field) {?>
-    <li class="nav-item"><a href="#product_extra_fields" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_EXTRA_FIELDS')?></a></li>
+    <li class="nav-item"><a href="#product_extra_fields" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_EXTRA_FIELDS')?></a></li>
     <?php } ?>
     <?php if ($jshopConfig->admin_show_product_related || isset($this->ptab_related)){?>
-        <li class="nav-item"><a href="#product_related" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_PRODUCT_RELATED')?></a></li>
+        <li class="nav-item"><a href="#product_related" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_PRODUCT_RELATED')?></a></li>
     <?php }?>
     <?php print $this->_nav_tab ?? ''; ?>
 </ul>
@@ -30,7 +33,7 @@ $lists=$this->lists;
 <table class="admintable" width="90%">
   <tr>
     <td class="key" style="width:180px;">
-         <?php echo JText::_('JSHOP_PUBLISH')?>
+         <?php echo Text::_('JSHOP_PUBLISH')?>
     </td>
     <td>
         <?php print $this->lists['product_publish'];?>
@@ -38,7 +41,7 @@ $lists=$this->lists;
   </tr>
   <tr>
    <td class="key" style="width:180px;">
-     <?php echo JText::_('JSHOP_ACCESS')?>
+     <?php echo Text::_('JSHOP_ACCESS')?>
    </td>
    <td>
      <?php print $this->lists['access'];?>
@@ -46,7 +49,7 @@ $lists=$this->lists;
  </tr>     
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_PRODUCT_PRICE')?>
+     <?php echo Text::_('JSHOP_PRODUCT_PRICE')?>
    </td>
    <td>
      <?php echo $this->lists['price_mod_price'];?>
@@ -56,20 +59,20 @@ $lists=$this->lists;
  </tr>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_OLD_PRICE')?>
+     <?php echo Text::_('JSHOP_OLD_PRICE')?>
    </td>
    <td>
     <span id='foldprice'><?php echo $this->lists['price_mod_old_price'];?>
     <input type = "text" class = "form-control" name = "product_old_price" value = "" />
     <span style="width:5px;"></span>
     </span>
-    <input type="checkbox" name="use_old_val_price" value="1" onclick="jshopAdmin.shfoldprice(this.checked)"> <?php print JText::_('JSHOP_USE_OLD_VALUE_PRICE')?>
+    <input type="checkbox" name="use_old_val_price" value="1" onclick="jshopAdmin.shfoldprice(this.checked)"> <?php print Text::_('JSHOP_USE_OLD_VALUE_PRICE')?>
    </td>
  </tr>
  <?php if ($jshopConfig->admin_show_product_bay_price) { ?>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_PRODUCT_BUY_PRICE')?>
+     <?php echo Text::_('JSHOP_PRODUCT_BUY_PRICE')?>
    </td>
    <td>
      <input type="text" class = "form-control" name="product_buy_price" value="" />
@@ -79,29 +82,29 @@ $lists=$this->lists;
  
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_PRODUCT_WEIGHT')?>
+     <?php echo Text::_('JSHOP_PRODUCT_WEIGHT')?>
    </td>
    <td>
-     <input type="text" class = "form-control" name="product_weight" value="" /> <?php print \JSHelper::sprintUnitWeight();?>
+     <input type="text" class = "form-control" name="product_weight" value="" /> <?php print Helper::sprintUnitWeight();?>
    </td>
  </tr>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_QUANTITY_PRODUCT')?>
+     <?php echo Text::_('JSHOP_QUANTITY_PRODUCT')?>
    </td>
    <td>
      <div id="block_enter_prod_qty" style="padding-bottom:2px;">
          <input type="text" class = "form-control" name="product_quantity" id="product_quantity" value="" />
      </div>
      <div>         
-        <input type="checkbox" name="unlimited" value="1" onclick="jshopAdmin.ShowHideEnterProdQty(this.checked)" /> <?php print JText::_('JSHOP_UNLIMITED')?>
+        <input type="checkbox" name="unlimited" value="1" onclick="jshopAdmin.ShowHideEnterProdQty(this.checked)" /> <?php print Text::_('JSHOP_UNLIMITED')?>
      </div>         
    </td>
  </tr>
  <?php if ($jshopConfig->use_different_templates_cat_prod) { ?>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_TEMPLATE_PRODUCT')?>
+     <?php echo Text::_('JSHOP_TEMPLATE_PRODUCT')?>
    </td>
    <td>
      <?php echo $lists['templates'];?>
@@ -112,7 +115,7 @@ $lists=$this->lists;
  <?php if (!$this->withouttax){?>
  <tr>     
    <td class="key">
-     <?php echo JText::_('JSHOP_NAME_TAX')?>*
+     <?php echo Text::_('JSHOP_NAME_TAX')?>*
    </td>
    <td>
      <?php echo $lists['tax'];?>
@@ -121,7 +124,7 @@ $lists=$this->lists;
  <?php }?>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_NAME_MANUFACTURER')?>
+     <?php echo Text::_('JSHOP_NAME_MANUFACTURER')?>
    </td>
    <td>
      <?php echo $lists['manufacturers'];?>
@@ -129,7 +132,7 @@ $lists=$this->lists;
  </tr>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_CATEGORIES')?>*
+     <?php echo Text::_('JSHOP_CATEGORIES')?>*
    </td>
    <td>
      <?php echo $lists['categories'];?>
@@ -138,7 +141,7 @@ $lists=$this->lists;
  <?php if ($jshopConfig->admin_show_vendors && $this->display_vendor_select) { ?>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_VENDOR')?>
+     <?php echo Text::_('JSHOP_VENDOR')?>
    </td>
    <td>
      <?php echo $lists['vendors'];?>
@@ -149,7 +152,7 @@ $lists=$this->lists;
  <?php if ($jshopConfig->admin_show_delivery_time) { ?>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_DELIVERY_TIME')?>
+     <?php echo Text::_('JSHOP_DELIVERY_TIME')?>
    </td>
    <td>
      <?php echo $lists['deliverytimes'];?>
@@ -160,7 +163,7 @@ $lists=$this->lists;
  <?php if ($jshopConfig->admin_show_product_labels) { ?>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_LABEL')?>
+     <?php echo Text::_('JSHOP_LABEL')?>
    </td>
    <td>
      <?php echo $lists['labels'];?>
@@ -170,11 +173,11 @@ $lists=$this->lists;
  
  <?php if ($jshopConfig->admin_show_product_basic_price) { ?>
  <tr>
-   <td class="key"><br/><?php echo JText::_('JSHOP_BASIC_PRICE')?></td>
+   <td class="key"><br/><?php echo Text::_('JSHOP_BASIC_PRICE')?></td>
  </tr>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_WEIGHT_VOLUME_UNITS')?>
+     <?php echo Text::_('JSHOP_WEIGHT_VOLUME_UNITS')?>
    </td>
    <td>
      <input type="text" class = "form-control" name="weight_volume_units" value="" />
@@ -182,7 +185,7 @@ $lists=$this->lists;
  </tr>
  <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_UNIT_MEASURE')?>
+     <?php echo Text::_('JSHOP_UNIT_MEASURE')?>
    </td>
    <td>
      <?php echo $lists['basic_price_units'];?>

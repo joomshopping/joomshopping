@@ -7,30 +7,34 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 defined('_JEXEC') or die();
 
 class ProductsController extends BaseController{
     
     public function init(){
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerProducts', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerProducts', array(&$obj));
     }
 	
 	function display($cachable = false, $urlparams = false){
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
 
-		\JSFactory::getModel('productShop', 'Site')->storeEndPages();
-        $params = \JFactory::getApplication()->getParams();
+		JSFactory::getModel('productShop', 'Site')->storeEndPages();
+        $params = Factory::getApplication()->getParams();
 
-        $header = \JSHelper::getPageHeaderOfParams($params);
+        $header = Helper::getPageHeaderOfParams($params);
         $prefix = $params->get('pageclass_sfx');
 		
         Metadata::allProducts();
 
-        $productlist = \JSFactory::getModel('product', 'Site\\Productlist');
+        $productlist = JSFactory::getModel('product', 'Site\\Productlist');
         $productlist->load();
         
         $orderby = $productlist->getOrderBy();
@@ -76,7 +80,7 @@ class ProductsController extends BaseController{
         $view->set('filters', $filters);
         $view->set('willBeUseFilter', $willBeUseFilter);
         $view->set('display_list_products', $display_list_products);
-        $view->set('shippinginfo', \JSHelper::SEFLink($jshopConfig->shippinginfourl,1));
+        $view->set('shippinginfo', Helper::SEFLink($jshopConfig->shippinginfourl,1));
         $view->set('total', $productlist->getTotal());
         $view->_tmp_list_products_html_start = "";
         $view->_tmp_list_products_html_end = "";
@@ -117,15 +121,15 @@ class ProductsController extends BaseController{
     }
     
     protected function verySimpleProductList($type){        
-        $jshopConfig = \JSFactory::getConfig();        
+        $jshopConfig = JSFactory::getConfig();        
         
-		\JSFactory::getModel('productShop', 'Site')->storeEndPages();		
+		JSFactory::getModel('productShop', 'Site')->storeEndPages();		
 
-        $params = \JFactory::getApplication()->getParams();
-        $header = \JSHelper::getPageHeaderOfParams($params);
+        $params = Factory::getApplication()->getParams();
+        $header = Helper::getPageHeaderOfParams($params);
         $prefix = $params->get('pageclass_sfx');
 
-        $productlist = \JSFactory::getModel($type, 'Site\\Productlist');
+        $productlist = JSFactory::getModel($type, 'Site\\Productlist');
         $productlist->setMultiPageList(0);
         $productlist->load();
         $productlist->configDisableSortAndFilters();
@@ -151,7 +155,7 @@ class ProductsController extends BaseController{
         $view->set('allow_review', $allow_review);
         $view->set('display_list_products', $display_list_products);
         $view->set('display_pagination', 0);
-        $view->set('shippinginfo', \JSHelper::SEFLink($jshopConfig->shippinginfourl,1));
+        $view->set('shippinginfo', Helper::SEFLink($jshopConfig->shippinginfourl,1));
         $view->set('action', $action);
         $view->set('orderby', $orderby);
 		$view->set('willBeUseFilter', $willBeUseFilter);
@@ -159,7 +163,7 @@ class ProductsController extends BaseController{
         $view->_tmp_list_products_html_end = "";
         $view->_tmp_ext_filter_box = "";
         $view->_tmp_ext_filter = "";
-        \JFactory::getApplication()->triggerEvent('onBeforeDisplayProductListView', array(&$view, &$productlist));
+        Factory::getApplication()->triggerEvent('onBeforeDisplayProductListView', array(&$view, &$productlist));
         $view->display();
     }
 

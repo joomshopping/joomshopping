@@ -7,13 +7,16 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class RelatedModel extends ListModel{
 
     function getLoadProducts($filters = [], $order = null, $orderby = null, $limitstart = 0, $limit = 0, $listProductUpdateData = 1){
-        $jshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         $adv_query = $this->default_adv_query;
         $adv_from = $this->default_adv_from;
         $adv_result = $this->getBuildQueryListProductDefaultResult();
@@ -24,7 +27,7 @@ class RelatedModel extends ListModel{
             $order_query = $this->getBuildQueryOrderListProduct($order, $orderby, $adv_from);
         }
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeQueryGetProductList', array($this->getProductListName(), &$adv_result, &$adv_from, &$adv_query, &$order_query, &$filters) );
         $query = "SELECT $adv_result FROM `#__jshopping_products_relations` AS relation
                 INNER JOIN `#__jshopping_products` AS prod ON relation.product_related_id = prod.product_id
@@ -41,7 +44,7 @@ class RelatedModel extends ListModel{
         }
         $products = $db->loadObjectList();
         if ($listProductUpdateData){
-            $products = \JSHelper::listProductUpdateData($products, 1);
+            $products = Helper::listProductUpdateData($products, 1);
         }
         return $products;
     }    

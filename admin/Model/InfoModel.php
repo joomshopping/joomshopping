@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 
 
 defined('_JEXEC') or die();
@@ -20,7 +22,7 @@ class InfoModel{
     function getUpdateObj($version, $jshopConfig) {
 		$result = new \stdClass();
 		$xml = null;
-		$str = \JSHelper::file_get_content_curl($jshopConfig->xml_update_path);        
+		$str = Helper::file_get_content_curl($jshopConfig->xml_update_path);        
         if ($str){
             $xml = simplexml_load_string($str);
         }elseif (self::_remote_file_exists($jshopConfig->xml_update_path)){
@@ -30,10 +32,10 @@ class InfoModel{
             if (count($xml->update)) {
                 foreach($xml->update as $v){
                     if (((string)$v['version'] == $version) && ((string)$v['newversion'])) {
-                        $result->text = sprintf(\JText::_('JSHOP_UPDATE_ARE_AVAILABLE'), (string)$v['newversion']);
+                        $result->text = sprintf(Text::_('JSHOP_UPDATE_ARE_AVAILABLE'), (string)$v['newversion']);
                         $result->file = (string)$v['file'];
                         $result->link = $jshopConfig->updates_site_path;
-                        $result->text2 = sprintf(\JText::_('JSHOP_UPDATE_TO'), (string)$v['newversion']);
+                        $result->text2 = sprintf(Text::_('JSHOP_UPDATE_TO'), (string)$v['newversion']);
                         $result->link2 = 'index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm0:'.$result->file.'&back='.urlencode('index.php?option=com_jshopping&controller=info');
                     }
                 }

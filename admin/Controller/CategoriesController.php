@@ -7,6 +7,13 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 
 defined('_JEXEC') or die();
@@ -18,14 +25,14 @@ class CategoriesController extends BaseadminController{
     protected $checkToken = array('save' => 1, 'remove' => 0);
     
     public function init(){
-        \JSHelperAdmin::checkAccessController("categories");
-        \JSHelperAdmin::addSubmenu("categories");
+        HelperAdmin::checkAccessController("categories");
+        HelperAdmin::addSubmenu("categories");
     }
     
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         
-        $_categories = \JSFactory::getModel("Categories");
+        $_categories = JSFactory::getModel("Categories");
         
         $context = "jshopping.list.admin.category";
         $limit = $app->getUserStateFromRequest($context.'limit', 'limit', $app->getCfg('list_limit'), 'int' );
@@ -40,7 +47,7 @@ class CategoriesController extends BaseadminController{
         $total = count($categories);
 
         jimport('joomla.html.pagination');
-        $pagination = new \JPagination($total, $limitstart, $limit);
+        $pagination = new Pagination($total, $limitstart, $limit);
         
         $countproducts = $_categories->getAllCatCountProducts();
         $categories = array_slice($categories, $pagination->limitstart, $pagination->limit);
@@ -64,41 +71,41 @@ class CategoriesController extends BaseadminController{
         $view->tmp_html_col_before_td_foot = "";
         $view->tmp_html_col_after_td_foot = "";
         $view->tmp_html_end = "";
-        \JFactory::getApplication()->triggerEvent('onBeforeDisplayListCategoryView', array(&$view));
+        Factory::getApplication()->triggerEvent('onBeforeDisplayListCategoryView', array(&$view));
         $view->displayList();
     }
     
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $cid = $this->input->getInt("category_id");
-        $category = \JSFactory::getTable("Category");
+        $category = JSFactory::getTable("Category");
         $category->load($cid);
         
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
 
-        \JFilterOutput::objectHTMLSafe($category, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($category, ENT_QUOTES);
 
         if ($cid){
             $parentid = $category->category_parent_id;
-            $rows = \JSFactory::getModel("categories")->_getAllCategoriesLevel($category->category_parent_id, $category->ordering);
+            $rows = JSFactory::getModel("categories")->_getAllCategoriesLevel($category->category_parent_id, $category->ordering);
         } else {
             $category->category_publish = 1;
             $parentid = $this->input->getInt("catid");
-            $rows = \JSFactory::getModel("categories")->_getAllCategoriesLevel($parentid);
+            $rows = JSFactory::getModel("categories")->_getAllCategoriesLevel($parentid);
         }
         
-        $categories = SelectOptions::getCategories(\JText::_('JSHOP_TOP_LEVEL'));
-        $lists['templates'] = \JSHelperAdmin::getTemplates('category', $category->category_template);
+        $categories = SelectOptions::getCategories(Text::_('JSHOP_TOP_LEVEL'));
+        $lists['templates'] = HelperAdmin::getTemplates('category', $category->category_template);
         $lists['onelevel'] = $rows;
-        $lists['treecategories'] = \JHTML::_('select.genericlist', $categories, 'category_parent_id','class="inputbox form-select" onchange = "jshopAdmin.changeCategory()"','category_id','name', $parentid);
+        $lists['treecategories'] = HTMLHelper::_('select.genericlist', $categories, 'category_parent_id','class="inputbox form-select" onchange = "jshopAdmin.changeCategory()"','category_id','name', $parentid);
         $lists['parentid'] = $parentid;
-        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $category->access);
+        $lists['access'] = HTMLHelper::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $category->access);
 
         $view = $this->getView("category", 'html');
         $view->setLayout("edit");
-        $view->set('config', \JSFactory::getConfig());
+        $view->set('config', JSFactory::getConfig());
         $view->set('category', $category);
         $view->set('lists', $lists);
         $view->set('languages', $languages);
@@ -106,18 +113,18 @@ class CategoriesController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditCategories', array(&$view));
         $view->displayEdit();
     }
     
     protected function getMessageSaveOk($post){
-        return $post['category_id'] ? \JText::_('JSHOP_CATEGORY_SUCC_UPDATE') : \JText::_('JSHOP_CATEGORY_SUCC_ADDED');
+        return $post['category_id'] ? Text::_('JSHOP_CATEGORY_SUCC_UPDATE') : Text::_('JSHOP_CATEGORY_SUCC_ADDED');
     }
     
     function sorting_cats_html(){
         $catid = $this->input->getVar('catid');
-        print \JSFactory::getModel("categories")->_getAllCategoriesLevel($catid);
+        print JSFactory::getModel("categories")->_getAllCategoriesLevel($catid);
     die();    
     }
     

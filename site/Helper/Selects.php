@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Helper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class Selects{
@@ -16,8 +21,8 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultAttribs();
 		}
-		\JFactory::getApplication()->triggerEvent('onSelectsGetCountry', array(&$options, &$name, &$attribs, &$selected));
-    return \JHTML::_('select.genericlist', $options, $name, $attribs, 'country_id', 'name', $selected);
+		Factory::getApplication()->triggerEvent('onSelectsGetCountry', array(&$options, &$name, &$attribs, &$selected));
+    return HTMLHelper::_('select.genericlist', $options, $name, $attribs, 'country_id', 'name', $selected);
 	}
 	
 	public static function getTitle($selected = null, $attribs = null, $name = 'title'){
@@ -25,8 +30,8 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultAttribs();
 		}
-		\JFactory::getApplication()->triggerEvent('onSelectsGetTitle', array(&$options, &$name, &$attribs, &$selected));
-    return \JHTML::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
+		Factory::getApplication()->triggerEvent('onSelectsGetTitle', array(&$options, &$name, &$attribs, &$selected));
+    return HTMLHelper::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
 	}
 	
 	public static function getClientType($selected = null, $attribs = null, $name = 'client_type'){
@@ -34,8 +39,8 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultClientTypeAttribs();
 		}
-		\JFactory::getApplication()->triggerEvent('onSelectsGetClientType', array(&$options, &$name, &$attribs, &$selected));
-    return \JHTML::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
+		Factory::getApplication()->triggerEvent('onSelectsGetClientType', array(&$options, &$name, &$attribs, &$selected));
+    return HTMLHelper::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
 	}
 	
 	public static function getProductsOrdering($typelist, $selected = null, $attribs = null, $name = 'order'){
@@ -43,8 +48,8 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultProductsOrderingAttribs();
 		}
-		\JFactory::getApplication()->triggerEvent('onSelectsGetProductsOrdering', array(&$options, &$name, &$attribs, &$selected));
-    return \JHTML::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
+		Factory::getApplication()->triggerEvent('onSelectsGetProductsOrdering', array(&$options, &$name, &$attribs, &$selected));
+    return HTMLHelper::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
 	}
 	
 	public static function getProductsCount($extended_value = null, $selected = null, $attribs = null, $name = 'limit'){
@@ -52,41 +57,41 @@ class Selects{
 		if (is_null($attribs)){
 			$attribs = self::getDataultProductsCountAttribs();
 		}
-		\JFactory::getApplication()->triggerEvent('onSelectsGetProductsCount', array(&$options, &$name, &$attribs, &$selected));
-    return \JHTML::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
+		Factory::getApplication()->triggerEvent('onSelectsGetProductsCount', array(&$options, &$name, &$attribs, &$selected));
+    return HTMLHelper::_('select.genericlist', $options, $name, $attribs, 'id', 'name', $selected);
 	}
 	
 	public static function getManufacturer($selected = null, $attribs = null, $name = 'manufacturer_id'){
-		$first = \JHTML::_('select.option', 0, \JText::_('JSHOP_SEARCH_ALL_MANUFACTURERS'), 'manufacturer_id', 'name');
-        $_manufacturers = \JSFactory::getTable('manufacturer');
+		$first = HTMLHelper::_('select.option', 0, Text::_('JSHOP_SEARCH_ALL_MANUFACTURERS'), 'manufacturer_id', 'name');
+        $_manufacturers = JSFactory::getTable('manufacturer');
         $options = $_manufacturers->getList();
 		array_unshift($options, $first);
 		if (is_null($attribs)){
 			$attribs = self::getDataultAttribs('');
 		}
-		\JFactory::getApplication()->triggerEvent('onSelectsGetManufacturer', array(&$options, &$name, &$attribs, &$selected));
-        return \JHTML::_('select.genericlist', $options, $name, $attribs, 'manufacturer_id', 'name', $selected);
+		Factory::getApplication()->triggerEvent('onSelectsGetManufacturer', array(&$options, &$name, &$attribs, &$selected));
+        return HTMLHelper::_('select.genericlist', $options, $name, $attribs, 'manufacturer_id', 'name', $selected);
 	}
 	
 	public static function getCategory($selected = null, $attribs = null, $name = 'category_id'){
 		$options = Helper::buildTreeCategory(1);
-        $first = \JHTML::_('select.option', 0, \JText::_('JSHOP_SEARCH_ALL_CATEGORIES'), 'category_id', 'name' );
+        $first = HTMLHelper::_('select.option', 0, Text::_('JSHOP_SEARCH_ALL_CATEGORIES'), 'category_id', 'name' );
 		array_unshift($options, $first);
 		
 		if (is_null($attribs)){
 			$attribs = self::getDataultAttribs('');
 		}
-		\JFactory::getApplication()->triggerEvent('onSelectsGetCategory', array(&$options, &$name, &$attribs, &$selected));
-        return \JHTML::_('select.genericlist', $options, $name, $attribs, 'category_id', 'name', $selected);
+		Factory::getApplication()->triggerEvent('onSelectsGetCategory', array(&$options, &$name, &$attribs, &$selected));
+        return HTMLHelper::_('select.genericlist', $options, $name, $attribs, 'category_id', 'name', $selected);
 	}
 	
 	public static function getSearchCategory($selected = null, $attribs = null){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
         if (!$attribs){
             $attribs = self::getDataultAttribs('');
         }
 		if ($jshopConfig->admin_show_product_extra_field){
-            $urlsearchcaracters = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=search&task=get_html_characteristics&ajax=1", 0, 1);
+            $urlsearchcaracters = Helper::SEFLink("index.php?option=com_jshopping&controller=search&task=get_html_characteristics&ajax=1", 0, 1);
             $attribs .= " onchange='jshop.updateSearchCharacteristic(\"".$urlsearchcaracters."\",this.value);'";
         }		
 		return self::getCategory($selected, $attribs);
@@ -97,14 +102,14 @@ class Selects{
 		if (isset($manufacturers[0]) && isset($manufacturers[0]->manufacturer_id)){
 			$key = 'manufacturer_id';
 		}
-		$first = \JHTML::_('select.option', 0, \JText::_('JSHOP_ALL'), $key, 'name');        
+		$first = HTMLHelper::_('select.option', 0, Text::_('JSHOP_ALL'), $key, 'name');        
         $options = $manufacturers;
 		array_unshift($options, $first);
 		if (is_null($attribs)){
 			$attribs = self::getDataultFilterManufacturerAttribs();
 		}
-		\JFactory::getApplication()->triggerEvent('onSelectsGetFilterManufacturer', array(&$options, &$name, &$attribs, &$selected, &$key));
-        return \JHTML::_('select.genericlist', $options, $name, $attribs, $key, 'name', $selected);
+		Factory::getApplication()->triggerEvent('onSelectsGetFilterManufacturer', array(&$options, &$name, &$attribs, &$selected, &$key));
+        return HTMLHelper::_('select.genericlist', $options, $name, $attribs, $key, 'name', $selected);
 	}
 	
 	public static function getFilterCategory($categories, $selected = null, $attribs = null, $name = 'categorys[]'){
@@ -112,18 +117,18 @@ class Selects{
 		if (isset($categories[0]) && isset($categories[0]->category_id)){
 			$key = 'category_id';
 		}
-		$first = \JHTML::_('select.option', 0, \JText::_('JSHOP_ALL'), $key, 'name');        
+		$first = HTMLHelper::_('select.option', 0, Text::_('JSHOP_ALL'), $key, 'name');        
         $options = $categories;
 		array_unshift($options, $first);
 		if (is_null($attribs)){
 			$attribs = self::getDataultFilterCategoryAttribs();
 		}
-		\JFactory::getApplication()->triggerEvent('onSelectsGetFilterCategory', array(&$options, &$name, &$attribs, &$selected, &$key));
-        return \JHTML::_('select.genericlist', $options, $name, $attribs, $key, 'name', $selected);
+		Factory::getApplication()->triggerEvent('onSelectsGetFilterCategory', array(&$options, &$name, &$attribs, &$selected, &$key));
+        return HTMLHelper::_('select.genericlist', $options, $name, $attribs, $key, 'name', $selected);
 	}
 	
 	public static function getDataultAttribs($type = 'register'){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if ($type=='register'){
 			return 'class = "'.$jshopConfig->registration_select_class_css.'"';
 		}else{
@@ -132,27 +137,27 @@ class Selects{
 	}
 	
 	public static function getDataultClientTypeAttribs(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return 'class = "'.$jshopConfig->registration_select_class_css.'"';
 	}
 	
 	public static function getDataultProductsOrderingAttribs(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return 'class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
 	}
 	
 	public static function getDataultProductsCountAttribs(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return 'class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
 	}
 	
 	public static function getDataultFilterManufacturerAttribs(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return 'class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
 	}
 	
 	public static function getDataultFilterCategoryAttribs(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return 'class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
 	}
 	

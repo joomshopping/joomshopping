@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class OrderMailModel  extends BaseModel{
@@ -43,9 +48,9 @@ class OrderMailModel  extends BaseModel{
 	}
 	
 	public function getMessage($type, $products = null, $show_customer_info = 1, $show_weight_order = 1, $show_total_info = 1, $show_payment_shipping_info = 1){
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
-        $liveurlhost = \JURI::getInstance()->toString(array("scheme",'host', 'port'));
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
+        $liveurlhost = Uri::getInstance()->toString(array("scheme",'host', 'port'));
 		
 		if ($type=='client'){
 			$client = 1;
@@ -104,8 +109,8 @@ class OrderMailModel  extends BaseModel{
 	}
 	
 	public function send(){
-        $jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeSendEmailsOrder', 
 			array(&$this->order, &$this->listVendors, &$this->file_generete_pdf_order, &$this->admin_send_order, &$obj));
@@ -149,18 +154,18 @@ class OrderMailModel  extends BaseModel{
 	
 	public function getSubjectMail($type, $order){
 		if ($type=='vendormessage'){
-			$subject = sprintf(\JText::_('JSHOP_NEW_ORDER_V'), $order->order_number, "");
+			$subject = sprintf(Text::_('JSHOP_NEW_ORDER_V'), $order->order_number, "");
 		}else{
-			$subject = sprintf(\JText::_('JSHOP_NEW_ORDER'), $order->order_number, $order->f_name." ".$order->l_name);
+			$subject = sprintf(Text::_('JSHOP_NEW_ORDER'), $order->order_number, $order->f_name." ".$order->l_name);
 		}
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
 		return $subject;
 	}	
 	
 	public function sendMail($type, $recipient, $message, $vendor = null){
-		$app = \JFactory::getApplication();
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+		$app = Factory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
 		
 		$mailfrom = $app->getCfg('mailfrom');
         $fromname = $app->getCfg('fromname');
@@ -170,7 +175,7 @@ class OrderMailModel  extends BaseModel{
 		$pdfsendtype = $this->getPdfSendType($type);		
 		
 		try {
-			$mailer = \JFactory::getMailer();
+			$mailer = Factory::getMailer();
 			$mailer->setSender(array($mailfrom, $fromname));
 			$mailer->addRecipient($recipient);
 			$mailer->setSubject($subject);
@@ -184,15 +189,15 @@ class OrderMailModel  extends BaseModel{
 			$res = $mailer->Send();
 		} catch (\Exception $e) {
 			$res = 0;
-			\JSHelper::saveToLog('error.log', 'Ordermail mail send error: '.$e->getMessage());			
+			Helper::saveToLog('error.log', 'Ordermail mail send error: '.$e->getMessage());			
 		}
 		return $res;
 	}
 	
 	protected function loadOrderData(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		
-		$this->order = \JSFactory::getTable('order');
+		$this->order = JSFactory::getTable('order');
         $this->order->load($this->getOrderId());
         $this->order->prepareOrderPrint('', 1);
         $this->show_percent_tax = $this->order->getShowPercentTax();
@@ -246,18 +251,18 @@ class OrderMailModel  extends BaseModel{
 	
 	protected function getPdfSend(){
 		$pdfsend = 1;
-        if (\JSFactory::getConfig()->send_invoice_manually && !$this->getManuallysend()){
+        if (JSFactory::getConfig()->send_invoice_manually && !$this->getManuallysend()){
 			$pdfsend = 0;
 		}
 		return $pdfsend;
 	}
 	
 	protected function getGeneretePdf(){
-		return $this->getPdfSend() && \JSFactory::getConfig()->generate_pdf;
+		return $this->getPdfSend() && JSFactory::getConfig()->generate_pdf;
 	}
 	
 	protected function getListVendors($order){
-		if (\JSFactory::getConfig()->admin_show_vendors){
+		if (JSFactory::getConfig()->admin_show_vendors){
             $listVendors = $order->getVendors();
         }else{
             $listVendors = array();
@@ -266,16 +271,16 @@ class OrderMailModel  extends BaseModel{
 	}
 	
 	protected function getVendorsSendMessage(){
-		return  \JSFactory::getConfig()->vendor_order_message_type==1;
+		return  JSFactory::getConfig()->vendor_order_message_type==1;
 	}
 	
 	protected function getVendorSendOrderAdmin($order){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return (($jshopConfig->vendor_order_message_type==2 && $order->vendor_type == 0 && $order->vendor_id) || $jshopConfig->vendor_order_message_type==3);
 	}
 	
 	protected function getVendorSendOrder($order){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$vendor_send_order = $jshopConfig->vendor_order_message_type==2;        
         if ($this->getVendorSendOrderAdmin($order)){
 			$vendor_send_order = 0;
@@ -285,14 +290,14 @@ class OrderMailModel  extends BaseModel{
 	
 	protected function getAdminSendOrder($order, $listVendors){		
 		$admin_send_order = 1;	
-        if (\JSFactory::getConfig()->admin_not_send_email_order_vendor_order && $this->getVendorSendOrderAdmin($order) && count($listVendors)){
+        if (JSFactory::getConfig()->admin_not_send_email_order_vendor_order && $this->getVendorSendOrderAdmin($order) && count($listVendors)){
 			$admin_send_order = 0;
 		}
 		return $admin_send_order;
 	}
 	
 	protected function getPdfSendType($type){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$pdfsend = $this->getPdfSend();
 		if ($type=='client'){
 			$pdfsendtype = $pdfsend && $jshopConfig->order_send_pdf_client;			

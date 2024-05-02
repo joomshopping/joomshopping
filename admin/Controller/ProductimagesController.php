@@ -7,12 +7,14 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined( '_JEXEC' ) or die();
 
 class ProductimagesController extends BaseadminController{
     
     function display($cachable = false, $urlparams = false){
-		$jshopConfig = \JSFactory::getConfig();        
+		$jshopConfig = JSFactory::getConfig();        
 		$filter = $this->input->getVar('filter', '');
 		$path_length = strlen($jshopConfig->image_product_path) + 1;
         $files = [];
@@ -28,7 +30,7 @@ class ProductimagesController extends BaseadminController{
         $view->set('list', $files);
         $view->set('config', $jshopConfig);
         $view->set('filter', $filter);
-        \JFactory::getApplication()->triggerEvent('onBeforeDisplayProductsImages', array(&$view));
+        Factory::getApplication()->triggerEvent('onBeforeDisplayProductsImages', array(&$view));
 		$view->displayList();
 	}
 }

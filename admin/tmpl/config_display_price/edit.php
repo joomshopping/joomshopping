@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -17,7 +19,7 @@ $row=$this->row;
 <table width="100%" class="admintable">
    <tr>
     <td class="key" style="width:250px;">
-        <?php echo JText::_('JSHOP_COUNTRY'). "<br/><br/><span style='font-weight:normal'>".JText::_('JSHOP_MULTISELECT_INFO')."</span>"; ?>
+        <?php echo Text::_('JSHOP_COUNTRY'). "<br/><br/><span style='font-weight:normal'>".Text::_('JSHOP_MULTISELECT_INFO')."</span>"; ?>
     </td>
     <td>
         <?php echo $this->lists['countries'];?>
@@ -25,7 +27,7 @@ $row=$this->row;
    </tr>
    <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_DISPLAY_PRICE')?>
+       <?php echo Text::_('JSHOP_DISPLAY_PRICE')?>
      </td>
      <td>
        <?php echo $this->lists['display_price'];?>
@@ -33,7 +35,7 @@ $row=$this->row;
    </tr>
    <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_DISPLAY_PRICE_FOR_FIRMA')?>
+       <?php echo Text::_('JSHOP_DISPLAY_PRICE_FOR_FIRMA')?>
      </td>
      <td>
        <?php echo $this->lists['display_price_firma'];?>

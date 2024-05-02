@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Factory;
+use Joomla\CMS\Object\CMSObject;
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -8,7 +10,7 @@
 */
 defined('_JEXEC') or die();
 
-class IeController extends JObject{
+class IeController extends CMSObject{
     
     function execute( $task ){
         $this->$task();
@@ -18,7 +20,7 @@ class IeController extends JObject{
     }
     
     function loadLanguageFile(){
-        $adminlang = \JFactory::getLanguage();
+        $adminlang = Factory::getLanguage();
         $alias = $this->get('alias'); 
         if(file_exists(dirname(__FILE__).'/'.$alias.'/lang/'.$adminlang->getTag().'.php')) {
             require_once (dirname(__FILE__).'/'.$alias.'/lang/'.$adminlang->getTag().'.php');

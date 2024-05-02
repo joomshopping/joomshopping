@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Component\ComponentHelper;
 
 defined('_JEXEC') or die();
 
@@ -18,7 +22,7 @@ class ConfigTable{
             $keys = $this->id;
         }
         $this->id = $keys;
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $query->select([$db->qn('key'), $db->qn('value')])->from($db->qn('#__jshopping_configs'))->where([$db->qn('config_id') . '=' . $db->q($keys)]);        
         $db->setQuery($query);
@@ -35,7 +39,7 @@ class ConfigTable{
 
     public function bind($src, $ignore = array()) {
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onBeforeBindConfigTable', array(&$obj, &$src, &$ignore));
+        Factory::getApplication()->triggerEvent('onBeforeBindConfigTable', array(&$obj, &$src, &$ignore));
 
         foreach ($src as $k => $v) {
 			if (!in_array($k, $ignore)) {
@@ -45,7 +49,7 @@ class ConfigTable{
 			}
 		}
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterBindConfigTable', array(&$obj, &$src, &$ignore));
+        Factory::getApplication()->triggerEvent('onAfterBindConfigTable', array(&$obj, &$src, &$ignore));
         return true;
     }
 
@@ -69,7 +73,7 @@ class ConfigTable{
     }
 
     protected function getFieldFromKey($key, $config_id = 1) {        
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $query->select('*')->from($db->qn('#__jshopping_configs'))->where([$db->qn('key') . '=' . $db->q($key), $db->qn('config_id') . '=' . $db->q($config_id)]);
         $db->setQuery($query);
@@ -77,7 +81,7 @@ class ConfigTable{
     }
 
     protected function updateRow($id, $key, $value, $config_id = 1) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $query->update($db->qn('#__jshopping_configs'))
             ->set([$db->qn('key') . '=' . $db->q($key), $db->qn('value') . '=' . $db->q($value), $db->qn('config_id') . '=' . $db->q($config_id)])
@@ -87,7 +91,7 @@ class ConfigTable{
     }
     
     protected function insertRow($key, $value, $config_id = 1) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $query->insert($db->qn('#__jshopping_configs'))
             ->columns($db->qn(['key', 'value', 'config_id']))
@@ -103,8 +107,8 @@ class ConfigTable{
     }
 
     function loadCurrencyValue(){
-        $app = \JFactory::getApplication();
-        $session = \JFactory::getSession();
+        $app = Factory::getApplication();
+        $session = Factory::getSession();
         $id_currency_session = $session->get('Js_id_currency');
         $id_currency = $app->input->getInt('id_currency');
         $main_currency = $this->mainCurrency;
@@ -130,7 +134,7 @@ class ConfigTable{
         if (!$app->isClient('administrator')){
             $session->set('Js_id_currency', $this->cur_currency);
         }
-        $all_currency = \JSFactory::getAllCurrency();
+        $all_currency = JSFactory::getAllCurrency();
 		if (isset($all_currency[$this->cur_currency])) {
 			$current_currency = $all_currency[$this->cur_currency];
 		} else {
@@ -148,11 +152,11 @@ class ConfigTable{
         $display_price = $this->display_price_front;
 
         if ($this->use_extend_display_price_rule > 0){
-            $adv_user = \JSFactory::getUserShop();
+            $adv_user = JSFactory::getUserShop();
             $country_id = $adv_user->country;
             $client_type = $adv_user->client_type;
             if (!$adv_user->user_id){
-                $adv_user = \JSFactory::getUserShopGuest();
+                $adv_user = JSFactory::getUserShopGuest();
                 $country_id = $adv_user->country;
                 $client_type = $adv_user->client_type;
             }
@@ -160,7 +164,7 @@ class ConfigTable{
                 $country_id = $this->default_country;
             }    
             if ($country_id){
-                $configDisplayPrice = \JSFactory::getTable('configdisplaypriceTable');
+                $configDisplayPrice = JSFactory::getTable('configdisplaypriceTable');
                 $rows = $configDisplayPrice->getList();
                 foreach($rows as $v){
                     if (in_array($country_id, $v->countries)){
@@ -302,14 +306,14 @@ class ConfigTable{
     }
     
     function updateNextOrderNumber(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "update `#__jshopping_configs` set `value`=`value`+1 where `key`='next_order_number' and `config_id`=".intval($this->id);
         $db->setQuery($query);
         $db->execute();
     }
 	
     function getNextOrderNumber($update = 0){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
 		if ($update){
 			$db->lockTable('#__jshopping_configs');
 		}
@@ -324,16 +328,16 @@ class ConfigTable{
     }
 
     function getVersion(){
-        $data = \JInstaller::parseXMLInstallFile($this->admin_path . "jshopping.xml");
+        $data = Installer::parseXMLInstallFile($this->admin_path . "jshopping.xml");
         return $data['version'];
     }
     
     function loadLang(){
-        $this->cur_lang = \JFactory::getLanguage()->getTag();
+        $this->cur_lang = Factory::getLanguage()->getTag();
     }
     
     function loadFrontLand(){
-        $params = \JComponentHelper::getParams('com_languages');
+        $params = ComponentHelper::getParams('com_languages');
         $this->frontend_lang = $params->get('site', 'en-GB');
     }
     

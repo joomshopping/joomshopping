@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -14,7 +19,7 @@ $pageNav = $this->pageNav;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions();?>
+<?php HelperAdmin::displaySubmenuOptions();?>
 <form name="adminForm" id="adminForm" method="post" action="index.php?option=com_jshopping&controller=vendors">
 <?php print $this->tmp_html_start?>
 
@@ -23,18 +28,18 @@ $pageNav = $this->pageNav;
    <?php print $this->tmp_html_filter?>
 
    <div>
-      <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+      <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
    </div>
    <div>
       <span class="input-group-append">
-            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                <span class="icon-search" aria-hidden="true"></span>
             </button>                        
       </span>
    </div>
 
    <div>
-      <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+      <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
    </div>
    <?php print $this->tmp_html_filter_end?>
 
@@ -47,28 +52,28 @@ $pageNav = $this->pageNav;
         #
      </th>
      <th width="20">
-        <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+        <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
      </th>
      <th width="150" align="left">
-       <?php echo JText::_('JSHOP_USER_FIRSTNAME')?>
+       <?php echo Text::_('JSHOP_USER_FIRSTNAME')?>
      </th>
      <th width="150" align="left">
-       <?php echo JText::_('JSHOP_USER_LASTNAME')?>
+       <?php echo Text::_('JSHOP_USER_LASTNAME')?>
      </th>
      <th align="left">
-       <?php echo JText::_('JSHOP_STORE_NAME')?>
+       <?php echo Text::_('JSHOP_STORE_NAME')?>
      </th>
      <th width="150">
-       <?php echo JText::_('JSHOP_EMAIL')?>
+       <?php echo Text::_('JSHOP_EMAIL')?>
      </th>
      <th width="60" class="center">
-        <?php echo JText::_('JSHOP_DEFAULT')?>    
+        <?php echo Text::_('JSHOP_DEFAULT')?>    
     </th>	 	      
      <th width="50" class="center">
-        <?php echo JText::_('JSHOP_EDIT')?>
+        <?php echo Text::_('JSHOP_EDIT')?>
     </th>
      <th width="40" class="center">
-        <?php echo JText::_('JSHOP_ID')?>
+        <?php echo Text::_('JSHOP_ID')?>
     </th>
 </tr>
 </thead> 
@@ -80,7 +85,7 @@ foreach($rows as $row){?>
         <?php echo $pageNav->getRowOffset($i);?>
      </td>
      <td align="center">
-        <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+        <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
      </td>
      <td>
         <?php echo $row->f_name?>
@@ -125,6 +130,6 @@ $i++;
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

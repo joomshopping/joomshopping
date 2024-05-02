@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\File;
 defined('_JEXEC') or die();
 
 class AddonTable extends ShopbaseTable{
@@ -39,20 +43,20 @@ class AddonTable extends ShopbaseTable{
     }
     
     function getKeyForAlias($alias){
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = "select `key` from #__jshopping_addons where `alias`='".$db->escape($alias)."'";
         $db->setQuery($query);
         return $db->loadResult();
     }
 	
 	function installJoomlaExtension($data, $installexist = 0){
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $db->setQuery("SELECT extension_id FROM `#__extensions` WHERE element='".$db->escape($data['element'])."' AND folder='".$db->escape($data['folder'])."'");
         $exid = (int)$db->loadResult();
         if ($exid && !$installexist){
             return -1;
         }
-        $extension = \JSFactory::getTable('extension', 'Joomla\\CMS\\Table\\');
+        $extension = JSFactory::getTable('extension', 'Joomla\\CMS\\Table\\');
         if ($exid){
             $extension->load($exid);
         }
@@ -66,13 +70,13 @@ class AddonTable extends ShopbaseTable{
     }
 	
 	function installJoomlaModule($data, $installexist = 0){
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $db->setQuery("SELECT id FROM `#__modules` WHERE module='".$db->escape($data['module'])."'");
         $exid = (int)$db->loadResult();
         if ($exid && !$installexist){
             return -1;
         }
-        $extension = \JSFactory::getTable('module', 'Joomla\\CMS\\Table\\');
+        $extension = JSFactory::getTable('module', 'Joomla\\CMS\\Table\\');
         if ($exid){
             $extension->load($exid);
         }
@@ -92,13 +96,13 @@ class AddonTable extends ShopbaseTable{
     }
     
     function installShipping($data, $installexist = 0){
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $db->setQuery("SELECT id FROM `#__jshopping_shipping_ext_calc` WHERE `alias`='".$db->escape($data['alias'])."'");
         $exid = (int)$db->loadResult();
         if ($exid && !$installexist){
             return -1;
         }
-        $extension = \JSFactory::getTable('shippingExt');
+        $extension = JSFactory::getTable('shippingExt');
         if ($exid){
             $extension->load($exid);
         }
@@ -117,13 +121,13 @@ class AddonTable extends ShopbaseTable{
     }
 	
 	function installShippingMethod($data, $installexist = 0){
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $db->setQuery("SELECT shipping_id FROM `#__jshopping_shipping_method` WHERE `alias`='".$db->escape($data['alias'])."'");
         $exid = (int)$db->loadResult();
         if ($exid && !$installexist){
             return -1;
         }
-        $extension = \JSFactory::getTable('shippingMethod');
+        $extension = JSFactory::getTable('shippingMethod');
         if ($exid){
             $extension->load($exid);
         }
@@ -142,13 +146,13 @@ class AddonTable extends ShopbaseTable{
     }
     
     function installPayment($data, $installexist = 0){
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $db->setQuery("SELECT payment_id FROM `#__jshopping_payment_method` WHERE `payment_class`='".$db->escape($data['payment_class'])."'");
         $exid = (int)$db->loadResult();
         if ($exid && !$installexist){
             return -1;
         }
-        $extension = \JSFactory::getTable('paymentMethod');
+        $extension = JSFactory::getTable('paymentMethod');
         if ($exid){
             $extension->load($exid);
         }
@@ -166,13 +170,13 @@ class AddonTable extends ShopbaseTable{
         }
     }
     function installImportExport($data, $installexist = 0){
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $db->setQuery("SELECT id FROM `#__jshopping_import_export` WHERE `alias`='".$db->escape($data['alias'])."'");
         $exid = (int)$db->loadResult();
         if ($exid && !$installexist){
             return -1;
         }
-        $extension = \JSFactory::getTable('importExport');
+        $extension = JSFactory::getTable('importExport');
         if ($exid){
             $extension->load($exid);
         }
@@ -186,7 +190,7 @@ class AddonTable extends ShopbaseTable{
     }
     
     function addFieldTable($table, $field, $type){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $listfields = $db->getTableColumns($table);
         if (!isset($listfields[$field])){
             $query = "ALTER TABLE ".$db->quoteName($table)." ADD ".$db->quoteName($field)." ".$type;
@@ -196,28 +200,28 @@ class AddonTable extends ShopbaseTable{
     }
 	
 	function deleteFieldTable($table, $field){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "ALTER TABLE ".$db->quoteName($table)." DROP ".$db->quoteName($field);
 		$db->setQuery($query);
 		$db->execute();
 	}
 
 	function deleteTable($name) {
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = 'DROP TABLE IF EXISTS '.$db->quoteName($name);
         $db->setQuery($query);
 		$db->execute();
     }
 	
 	function unInstallJoomlaExtension($type, $element, $folder){
-		$db = \JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = "delete from `#__extensions` WHERE element='".$db->escape($element)."' AND folder='".$db->escape($folder)."' AND `type`='".$db->escape($type)."'";
 		$db->setQuery($query);
 		return $db->execute();
 	}
 	
 	function unInstallJoomlaModule($name){
-		$db = \JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = "DELETE FROM `#__modules` WHERE module='".$db->escape($name)."'";
 		$db->setQuery($query);
 		return $db->execute();
@@ -227,7 +231,7 @@ class AddonTable extends ShopbaseTable{
 		jimport('joomla.filesystem.folder');
 		foreach($folders as $folder){
 			if ($folder!=''){
-				\JFolder::delete(JPATH_ROOT."/".$folder);
+				Folder::delete(JPATH_ROOT."/".$folder);
 			}
 		}
 	}
@@ -236,7 +240,7 @@ class AddonTable extends ShopbaseTable{
 		jimport('joomla.filesystem.file');
 		foreach($files as $file){
 			if ($file!=''){
-				\JFile::delete(JPATH_ROOT."/".$file);
+				File::delete(JPATH_ROOT."/".$file);
 			}
 		}
 	}

@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Language\Text;
+
 /**
  * @version      5.3.4 23.02.2024
  * @author       MAXXmarketing GmbH
@@ -22,7 +24,7 @@ $row = $this->row;
                     ?>
                         <tr>
                             <td class="key" style="width:250px;">
-                                <?php echo JText::_('JSHOP_TITLE') ?> <?php if ($this->multilang) print "(" . $lang->lang . ")"; ?>*
+                                <?php echo Text::_('JSHOP_TITLE') ?> <?php if ($this->multilang) print "(" . $lang->lang . ")"; ?>*
                             </td>
                             <td>
                                 <input type="text" class="inputbox form-control" id="<?php print $name ?>" name="<?php print $name ?>" value="<?php echo $row->$name; ?>" />
@@ -35,7 +37,7 @@ $row = $this->row;
                     ?>
                         <tr>
                             <td class="key" style="width:250px;">
-                                <?php echo JText::_('JSHOP_DESCRIPTION') ?> <?php if ($this->multilang) print "(" . $lang->lang . ")"; ?>
+                                <?php echo Text::_('JSHOP_DESCRIPTION') ?> <?php if ($this->multilang) print "(" . $lang->lang . ")"; ?>
                             </td>
                             <td>
                                 <input type="text" class="inputbox form-control" id="<?php print $description ?>" name="<?php print $description ?>" value="<?php echo $row->$description; ?>" />
@@ -44,7 +46,7 @@ $row = $this->row;
                     <?php } ?>
                     <tr>
                         <td class="key">
-                            <?php echo JText::_('JSHOP_SHOW_FOR_CATEGORY') ?>*
+                            <?php echo Text::_('JSHOP_SHOW_FOR_CATEGORY') ?>*
                         </td>
                         <td>
                             <?php echo $this->lists['allcats']; ?>
@@ -52,7 +54,7 @@ $row = $this->row;
                     </tr>
                     <tr id="tr_categorys" <?php if ($row->allcats == "1") print "style='display:none;'"; ?>>
                         <td class="key">
-                            <?php echo JText::_('JSHOP_CATEGORIES') ?>*
+                            <?php echo Text::_('JSHOP_CATEGORIES') ?>*
                         </td>
                         <td>
                             <?php echo $this->lists['categories']; ?>
@@ -60,7 +62,7 @@ $row = $this->row;
                     </tr>
                     <tr>
                         <td class="key">
-                            <?php echo JText::_('JSHOP_TYPE') ?>*
+                            <?php echo Text::_('JSHOP_TYPE') ?>*
                         </td>
                         <td>
                             <?php echo $this->lists['type']; ?>
@@ -68,7 +70,7 @@ $row = $this->row;
                     </tr>
                     <tr>
                         <td class="key">
-                            <?php echo JText::_('JSHOP_GROUP') ?>
+                            <?php echo Text::_('JSHOP_GROUP') ?>
                         </td>
                         <td>
                             <?php echo $this->lists['group']; ?>

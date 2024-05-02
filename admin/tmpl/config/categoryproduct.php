@@ -1,4 +1,8 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.3.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -8,11 +12,11 @@
 */
 defined('_JEXEC') or die();
 
-$jshopConfig=\JSFactory::getConfig();
+$jshopConfig=JSFactory::getConfig();
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php \JSHelperAdmin::displaySubmenuConfigs('catprod');?>
+<?php HelperAdmin::displaySubmenuConfigs('catprod');?>
 <div class="jshop_edit">
 <form action="index.php?option=com_jshopping&controller=config" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 <?php print $this->tmp_html_start?>
@@ -20,13 +24,13 @@ $jshopConfig=\JSFactory::getConfig();
 <input type="hidden" name="tab" value="6">
 
 <div class="card">
-	<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_LIST_PRODUCTS')." / ".JText::_('JSHOP_PRODUCT')?></h3>
+	<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_LIST_PRODUCTS')." / ".Text::_('JSHOP_PRODUCT')?></h3>
 	<div class="card-body">		
 	<table class="admintable table-striped">
 	<?php if ($jshopConfig->tax){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_TAX')?>
+			<?php echo Text::_('JSHOP_SHOW_TAX')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_tax_in_product" value="0">
@@ -35,7 +39,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_TAX_IN_CART')?>
+			<?php echo Text::_('JSHOP_SHOW_TAX_IN_CART')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_tax_product_in_cart" value="0">
@@ -45,7 +49,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php }?>
 	<tr>
 		<td class="key" style="width:220px;">
-			<?php echo JText::_('JSHOP_SHOW_PLUS_SHIPPING')?>
+			<?php echo Text::_('JSHOP_SHOW_PLUS_SHIPPING')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_plus_shipping_in_product" value="0">
@@ -55,7 +59,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->stock){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_HIDE_PRODUCT_NOT_AVAIBLE_STOCK')?>
+			<?php echo Text::_('JSHOP_HIDE_PRODUCT_NOT_AVAIBLE_STOCK')?>
 		</td>
 		<td>
 			<input type="hidden" name="hide_product_not_avaible_stock" value="0">
@@ -64,7 +68,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_HIDE_BUY_PRODUCT_NOT_AVAIBLE_STOCK')?>
+			<?php echo Text::_('JSHOP_HIDE_BUY_PRODUCT_NOT_AVAIBLE_STOCK')?>
 		</td>
 		<td>
 			<input type="hidden" name="hide_buy_not_avaible_stock" value="0">
@@ -73,7 +77,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_HIDE_HIDE_TEXT_PRODUCT_NOT_AVAILABLE')?>
+			<?php echo Text::_('JSHOP_HIDE_HIDE_TEXT_PRODUCT_NOT_AVAILABLE')?>
 		</td>
 		<td>
 			<input type="hidden" name="hide_text_product_not_available" value="0">
@@ -83,7 +87,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php }?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_DEFAULT_PRICE')?>
+			<?php echo Text::_('JSHOP_SHOW_DEFAULT_PRICE')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_list_show_price_default" value="0">
@@ -92,7 +96,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_HIDE_PRICE_NULL')?>
+			<?php echo Text::_('JSHOP_HIDE_PRICE_NULL')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_hide_price_null" value="0">
@@ -101,7 +105,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_PRICE')?>
+			<?php echo Text::_('JSHOP_SHOW_PRICE')?>
 		</td>
 		<td>
 			<?php print $this->lists['displayprice'];?>
@@ -110,7 +114,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_DISPLAY_WEIGHT_AS')?>
+			<?php echo Text::_('JSHOP_DISPLAY_WEIGHT_AS')?>
 		</td>
 		<td>
 			<?php print $this->lists['units'];?>
@@ -123,12 +127,12 @@ $jshopConfig=\JSFactory::getConfig();
 
 
 <div class="card">
-	<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_LIST_PRODUCTS')?></h3>
+	<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_LIST_PRODUCTS')?></h3>
 	<div class="card-body">
 	<table class="admintable table-striped" width="100%" >
 	<tr>
 		<td class="key" style="width:220px;">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
 		</td>
 		<td>
 			<input type="text" name="count_products_to_page" class="inputbox form-control" id="count_products_to_page" value="<?php echo $jshopConfig->count_products_to_page;?>" />
@@ -136,7 +140,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW')?>
 		</td>
 		<td>
 			<input type="text" name="count_products_to_row" class="inputbox form-control" id="count_products_to_row" value="<?php echo $jshopConfig->count_products_to_row;?>" />
@@ -145,7 +149,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_CHANGE_COUNTS_PROD_ROWS_FOR_ALL_CATS')?>
+			<?php echo Text::_('JSHOP_CHANGE_COUNTS_PROD_ROWS_FOR_ALL_CATS')?>
 		</td>
 		<td>
 			<input type="hidden" name="update_count_prod_rows_all_cats" value="0">
@@ -155,7 +159,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_CATEGORY_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_CATEGORY_ROW')?>
 		</td>
 		<td>
 			<input type="text" name="count_category_to_row" class="inputbox form-control" id="count_category_to_row" value="<?php echo $jshopConfig->count_category_to_row;?>" />
@@ -163,7 +167,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_MANUFACTURER_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_MANUFACTURER_ROW')?>
 		</td>
 		<td>
 			<input type="text" name="count_manufacturer_to_row" class="inputbox form-control" value="<?php echo $jshopConfig->count_manufacturer_to_row;?>" />
@@ -171,7 +175,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_ORDERING_CATEGORY')?>
+			<?php echo Text::_('JSHOP_ORDERING_CATEGORY')?>
 		</td>
 		<td>
 			<?php print $this->lists['category_sorting'];?>
@@ -179,7 +183,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_MANUFACTURER_SORTING')?>
+			<?php echo Text::_('JSHOP_MANUFACTURER_SORTING')?>
 		</td>
 		<td>
 			<?php print $this->lists['manufacturer_sorting'];?>
@@ -188,7 +192,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_PRODUCT_SORTING')?>
+			<?php echo Text::_('JSHOP_PRODUCT_SORTING')?>
 		</td>
 		<td>
 			<?php print $this->lists['product_sorting'];?>
@@ -196,7 +200,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_PRODUCT_SORTING_DIRECTION')?>
+			<?php echo Text::_('JSHOP_PRODUCT_SORTING_DIRECTION')?>
 		</td>
 		<td>
 			<?php print $this->lists['product_sorting_direction'];?>
@@ -205,7 +209,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_BAY_BUT_IN_CAT')?>
+			<?php echo Text::_('JSHOP_SHOW_BAY_BUT_IN_CAT')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_buy_in_category" value="0">
@@ -214,7 +218,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_ABILITY_TO_SORT_PRODUCTS')?>
+			<?php echo Text::_('JSHOP_ABILITY_TO_SORT_PRODUCTS')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_sort_product" value="0">
@@ -223,7 +227,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_SELECTBOX_COUNT_PRODUCTS_TO_PAGE')?>
+			<?php echo Text::_('JSHOP_SHOW_SELECTBOX_COUNT_PRODUCTS_TO_PAGE')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_count_select_products" value="0">
@@ -232,7 +236,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_FILTERS')?>
+			<?php echo Text::_('JSHOP_SHOW_FILTERS')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_product_list_filters" value="0">
@@ -241,7 +245,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_WEIGHT_PRODUCT')?>
+			<?php echo Text::_('JSHOP_SHOW_WEIGHT_PRODUCT')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_list_show_weight" value="0">
@@ -250,7 +254,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_MANUFACTURER')?>
+			<?php echo Text::_('JSHOP_SHOW_MANUFACTURER')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_list_show_manufacturer" value="0">
@@ -259,7 +263,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_EAN_PRODUCT')?>
+			<?php echo Text::_('JSHOP_SHOW_EAN_PRODUCT')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_list_show_product_code" value="0">
@@ -269,7 +273,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->disable_admin['manufacturer_code']==0){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_MANUFACTURER_CODE')?>
+			<?php echo Text::_('JSHOP_MANUFACTURER_CODE')?>
 		</td>
 		<td>
 			<input type="hidden" name="manufacturer_code_in_product_list" value="0">
@@ -280,7 +284,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->disable_admin['real_ean']==0){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_EAN')?>
+			<?php echo Text::_('JSHOP_EAN')?>
 		</td>
 		<td>
 			<input type="hidden" name="real_ean_in_product_list" value="0">
@@ -290,7 +294,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php }?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_MIN_PRICE')?>
+			<?php echo Text::_('JSHOP_SHOW_MIN_PRICE')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_list_show_min_price" value="0">
@@ -300,7 +304,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_PRICE_DESCRIPTION')?>
+			<?php echo Text::_('JSHOP_SHOW_PRICE_DESCRIPTION')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_list_show_price_description" value="0">
@@ -311,7 +315,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->admin_show_delivery_time){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_DELIVERY_TIME')?>
+			<?php echo Text::_('JSHOP_SHOW_DELIVERY_TIME')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_list_show_delivery_time" value="0">
@@ -323,7 +327,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->admin_show_vendors){?>
 	<tr>
 		<td class="key">
-		  <?php echo JText::_('JSHOP_SHOW_VENDOR')?>
+		  <?php echo Text::_('JSHOP_SHOW_VENDOR')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_list_show_vendor" value="0">
@@ -335,7 +339,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->admin_show_product_extra_field){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_EXTRA_FIELDS')?>
+			<?php echo Text::_('JSHOP_SHOW_EXTRA_FIELDS')?>
 		</td>
 		<td>
 			<?php print $this->lists['product_list_display_extra_fields'];?>
@@ -344,7 +348,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_EXTRA_FIELDS_FILTER')?>
+			<?php echo Text::_('JSHOP_SHOW_EXTRA_FIELDS_FILTER')?>
 		</td>
 		<td>
 			<?php print $this->lists['filter_display_extra_fields'];?>
@@ -353,7 +357,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_EXTRA_FIELDS_CART')?>
+			<?php echo Text::_('JSHOP_SHOW_EXTRA_FIELDS_CART')?>
 		</td>
 		<td>
 			<?php print $this->lists['cart_display_extra_fields'];?>
@@ -363,7 +367,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->stock){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_QTY_IN_STOCK')?>
+			<?php echo Text::_('JSHOP_QTY_IN_STOCK')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_list_show_qty_stock" value="0" />
@@ -373,7 +377,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php }?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHORT_DESCR_MULTILINE')?>
+			<?php echo Text::_('JSHOP_SHORT_DESCR_MULTILINE')?>
 		</td>
 		<td>
 			<input type="hidden" name="display_short_descr_multiline" value="0" />
@@ -383,118 +387,118 @@ $jshopConfig=\JSFactory::getConfig();
 
 
 	<tr>
-		<td><b><?php print JText::_('JSHP_SEOPAGE_tophitsproducts')?></b></td>
+		<td><b><?php print Text::_('JSHP_SEOPAGE_tophitsproducts')?></b></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
 		</td>
 		<td><input type="text" name="count_products_to_page_tophits" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_page_tophits;?>" /></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW')?>
 		</td>
 		<td><input type="text" name="count_products_to_row_tophits" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_row_tophits;?>" /></td>
 	</tr>
 
 
 	<tr>
-		<td><b><?php print JText::_('JSHP_SEOPAGE_topratingproducts')?></b></td>
+		<td><b><?php print Text::_('JSHP_SEOPAGE_topratingproducts')?></b></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
 		</td>
 		<td><input type="text" name="count_products_to_page_toprating" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_page_toprating;?>" /></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW')?>
 		</td>
 		<td><input type="text" name="count_products_to_row_toprating" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_row_toprating;?>" /></td>
 	</tr>
 
 
 	<tr>
-		<td><b><?php print JText::_('JSHP_SEOPAGE_labelproducts')?></b></td>
+		<td><b><?php print Text::_('JSHP_SEOPAGE_labelproducts')?></b></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
 		</td>
 		<td><input type="text" name="count_products_to_page_label" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_page_label;?>" /></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW')?>
 		</td>
 		<td><input type="text" name="count_products_to_row_label" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_row_label;?>" /></td>
 	</tr>
 
 
 	<tr>
-		<td><b><?php print JText::_('JSHP_SEOPAGE_bestsellerproducts')?></b></td>
+		<td><b><?php print Text::_('JSHP_SEOPAGE_bestsellerproducts')?></b></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
 		</td>
 		<td><input type="text" name="count_products_to_page_bestseller" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_page_bestseller;?>" /></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW')?>
 		</td>
 		<td><input type="text" name="count_products_to_row_bestseller" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_row_bestseller;?>" /></td>
 	</tr>
 
 
 	<tr>
-		<td><b><?php print JText::_('JSHP_SEOPAGE_randomproducts')?></b></td>
+		<td><b><?php print Text::_('JSHP_SEOPAGE_randomproducts')?></b></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
 		</td>
 		<td><input type="text" name="count_products_to_page_random" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_page_random;?>" /></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW')?>
 		</td>
 		<td><input type="text" name="count_products_to_row_random" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_row_random;?>" /></td>
 	</tr>
 
 
 	<tr>
-		<td><b><?php print JText::_('JSHP_SEOPAGE_lastproducts')?></b></td>
+		<td><b><?php print Text::_('JSHP_SEOPAGE_lastproducts')?></b></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
 		</td>
 		<td><input type="text" name="count_products_to_page_last" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_page_last;?>" /></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW')?>
 		</td>
 		<td><input type="text" name="count_products_to_row_last" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_row_last;?>" /></td>
 	</tr>
 
 	<tr>
-		<td><b><?php print JText::_('JSHP_SEOPAGE_search')?></b></td>
+		<td><b><?php print Text::_('JSHP_SEOPAGE_search')?></b></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE')?>
 		</td>
 		<td><input type="text" name="count_products_to_page_search" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_page_search;?>" /></td>
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_COUNT_PRODUCTS_ROW')?>
+			<?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW')?>
 		</td>
 		<td><input type="text" name="count_products_to_row_search" class="inputbox form-control middle" value="<?php echo $jshopConfig->count_products_to_row_search;?>" /></td>
 	</tr>
@@ -504,13 +508,13 @@ $jshopConfig=\JSFactory::getConfig();
 </div>
 
 <div class="card">
-	<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_PRODUCT')?></h3>
+	<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_PRODUCT')?></h3>
 	<div class="card-body">
 	<table class="admintable table-striped" >
 
 	<tr>
 		<td class="key" style="width:220px;">
-			<?php echo JText::_('JSHOP_SHOW_DEMO_TYPE_AS_MEDIA')?>
+			<?php echo Text::_('JSHOP_SHOW_DEMO_TYPE_AS_MEDIA')?>
 		</td>
 		<td>
 			<input type="hidden" name="demo_type" value="0">
@@ -520,7 +524,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_MANUFACTURER_LOGO')?>
+			<?php echo Text::_('JSHOP_SHOW_MANUFACTURER_LOGO')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_show_manufacturer_logo" value="0">
@@ -529,7 +533,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_MANUFACTURER')?>
+			<?php echo Text::_('JSHOP_SHOW_MANUFACTURER')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_show_manufacturer" value="0" />
@@ -539,7 +543,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_WEIGHT_PRODUCT')?>
+			<?php echo Text::_('JSHOP_SHOW_WEIGHT_PRODUCT')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_show_weight" value="0">
@@ -549,7 +553,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_PRODUCT_ATTRIBUT_FIRST_VALUE_EMPTY')?>
+			<?php echo Text::_('JSHOP_PRODUCT_ATTRIBUT_FIRST_VALUE_EMPTY')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_attribut_first_value_empty" value="0">
@@ -558,7 +562,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_PRODUCT_ATTRIBUT_RADIO_VALUE_DISPLAY_VERTICAL')?>
+			<?php echo Text::_('JSHOP_PRODUCT_ATTRIBUT_RADIO_VALUE_DISPLAY_VERTICAL')?>
 		</td>
 		<td>
 			<input type="hidden" name="radio_attr_value_vertical" value="0">
@@ -567,7 +571,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_PRODUCT_ATTRIBUT_ADD_PRICE_DISPLAY')?>
+			<?php echo Text::_('JSHOP_PRODUCT_ATTRIBUT_ADD_PRICE_DISPLAY')?>
 		</td>
 		<td>
 			<input type="hidden" name="attr_display_addprice" value="0">
@@ -576,7 +580,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_PRODUCT_ATTRIBUT_SORTING')." (".JText::_('JSHOP_DEPENDENT').")"?>
+			<?php echo Text::_('JSHOP_PRODUCT_ATTRIBUT_SORTING')." (".Text::_('JSHOP_DEPENDENT').")"?>
 		</td>
 		<td>
 			<?php print $this->lists['attribut_dep_sorting_in_product'];?>
@@ -584,7 +588,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_PRODUCT_ATTRIBUT_SORTING')." (".JText::_('JSHOP_INDEPENDENT').")"?>
+			<?php echo Text::_('JSHOP_PRODUCT_ATTRIBUT_SORTING')." (".Text::_('JSHOP_INDEPENDENT').")"?>
 		</td>
 		<td>
 			<?php print $this->lists['attribut_nodep_sorting_in_product'];?>
@@ -592,7 +596,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_HITS')?>
+			<?php echo Text::_('JSHOP_HITS')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_hits" value="0">
@@ -601,7 +605,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_EAN_PRODUCT')?>
+			<?php echo Text::_('JSHOP_SHOW_EAN_PRODUCT')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_product_code" value="0">
@@ -611,7 +615,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->disable_admin['manufacturer_code']==0){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_MANUFACTURER_CODE')?>
+			<?php echo Text::_('JSHOP_MANUFACTURER_CODE')?>
 		</td>
 		<td>
 			<input type="hidden" name="manufacturer_code_in_product_detail" value="0">
@@ -622,7 +626,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->disable_admin['real_ean']==0){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_EAN')?>
+			<?php echo Text::_('JSHOP_EAN')?>
 		</td>
 		<td>
 			<input type="hidden" name="real_ean_in_product_detail" value="0">
@@ -633,7 +637,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->admin_show_delivery_time){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_SHOW_DELIVERY_TIME')?>
+			<?php echo Text::_('JSHOP_SHOW_DELIVERY_TIME')?>
 		</td>
 		<td>
 			<input type="hidden" name="show_delivery_time" value="0">
@@ -643,7 +647,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php }?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_USE_PLUGIN_CONTENT')?>
+			<?php echo Text::_('JSHOP_USE_PLUGIN_CONTENT')?>
 		</td>
 		<td>
 			<input type="hidden" name="use_plugin_content" value="0">
@@ -653,7 +657,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-		  <?php echo JText::_('JSHOP_ALLOW_REVIEW_PRODUCT')?>
+		  <?php echo Text::_('JSHOP_ALLOW_REVIEW_PRODUCT')?>
 		</td>
 		<td>
 			<input type="hidden" name="allow_reviews_prod" value="0">
@@ -662,7 +666,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr> 
 	<tr>
 		<td class="key">
-		  <?php echo JText::_('JSHOP_ALLOW_REVIEW_ONLY_REGISTERED')?>
+		  <?php echo Text::_('JSHOP_ALLOW_REVIEW_ONLY_REGISTERED')?>
 		</td>
 		<td>
 			<input type="hidden" name="allow_reviews_only_registered" value="0">
@@ -671,7 +675,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-		  <?php echo JText::_('JSHOP_DISPLAY_REVIEW_WITHOUT_CONFIRM')?>
+		  <?php echo Text::_('JSHOP_DISPLAY_REVIEW_WITHOUT_CONFIRM')?>
 		</td>
 		<td>
 			<input type="hidden" name="display_reviews_without_confirm" value="0">
@@ -680,7 +684,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-		  <?php echo JText::_('JSHOP_SHOP_BUTTON_BACK')?>
+		  <?php echo Text::_('JSHOP_SHOP_BUTTON_BACK')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_show_button_back" value="0">
@@ -690,7 +694,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->admin_show_vendors){?>
 	<tr>
 		<td class="key">
-		  <?php echo JText::_('JSHOP_SHOW_VENDOR')?>
+		  <?php echo Text::_('JSHOP_SHOW_VENDOR')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_show_vendor" value="0">
@@ -699,7 +703,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 		<td class="key">
-		  <?php echo JText::_('JSHOP_SHOW_VENDOR_DETAIL')?>
+		  <?php echo Text::_('JSHOP_SHOW_VENDOR_DETAIL')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_show_vendor_detail" value="0">
@@ -710,7 +714,7 @@ $jshopConfig=\JSFactory::getConfig();
 
 	<tr>
 		<td class="key">
-		  <?php echo JText::_('JSHOP_SHOW_BUTTON_PRINT')?>
+		  <?php echo Text::_('JSHOP_SHOW_BUTTON_PRINT')?>
 		</td>
 		<td>
 			<input type="hidden" name="display_button_print" value="0">
@@ -720,7 +724,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->stock){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_QTY_IN_STOCK')?>
+			<?php echo Text::_('JSHOP_QTY_IN_STOCK')?>
 		</td>
 		<td>
 			<input type="hidden" name="product_show_qty_stock" value="0" />
@@ -730,7 +734,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php }?>
 	<tr>
 		<td class="key">
-		  <?php echo JText::_('JSHOP_REVIEW_MAX_MARK')?>
+		  <?php echo Text::_('JSHOP_REVIEW_MAX_MARK')?>
 		</td>
 		<td>
 		  <input type="text" name="max_mark" class = "form-control" id="max_mark" value="<?php echo $jshopConfig->max_mark?>" />
@@ -738,7 +742,7 @@ $jshopConfig=\JSFactory::getConfig();
 	</tr>
 	<tr>
 	   <td class="key">
-		 <?php echo JText::_('JSHOP_PRODUCTS_RELATED_IN_ROW')?>
+		 <?php echo Text::_('JSHOP_PRODUCTS_RELATED_IN_ROW')?>
 	   </td>
 	   <td>
 		 <input type="text" class="inputbox form-control" name="product_count_related_in_row" value="<?php echo $jshopConfig->product_count_related_in_row?>" />
@@ -748,7 +752,7 @@ $jshopConfig=\JSFactory::getConfig();
 	<?php if ($jshopConfig->admin_show_product_extra_field){?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_HIDE_EXTRA_FIELDS')?>
+			<?php echo Text::_('JSHOP_HIDE_EXTRA_FIELDS')?>
 		</td>
 		<td>
 			<?php print $this->lists['product_hide_extra_fields'];?>

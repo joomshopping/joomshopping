@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 abstract class BaseModel{
@@ -22,7 +23,7 @@ abstract class BaseModel{
     }
     
     public function getView($name){
-		$jshopConfig = \JSFactory::getConfig();		
+		$jshopConfig = JSFactory::getConfig();		
 		include_once(JPATH_JOOMSHOPPING."/View/".ucfirst($name)."/HtmlView.php");
 		$config = array("template_path"=>$jshopConfig->template_path.$jshopConfig->template."/".$name);
 		$viewClass = '\\Joomla\\Component\\Jshopping\\Site\\View\\'.ucfirst($name).'\\HtmlView';

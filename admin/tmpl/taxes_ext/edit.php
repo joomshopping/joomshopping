@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -18,7 +21,7 @@ $row=$this->tax;
 <table width="100%" class="admintable">
    <tr>
      <td class="key" style="width:250px;">
-       <?php echo JText::_('JSHOP_TITLE')?>*
+       <?php echo Text::_('JSHOP_TITLE')?>*
      </td>
      <td>
        <?php print $this->lists['taxes'];?>
@@ -26,7 +29,7 @@ $row=$this->tax;
    </tr>
    <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_COUNTRY')."*<br/><br/><span style='font-weight:normal'>".JText::_('JSHOP_MULTISELECT_INFO')."</span>"; ?>
+        <?php echo Text::_('JSHOP_COUNTRY')."*<br/><br/><span style='font-weight:normal'>".Text::_('JSHOP_MULTISELECT_INFO')."</span>"; ?>
     </td>
     <td>
         <?php echo $this->lists['countries'];?>
@@ -34,25 +37,25 @@ $row=$this->tax;
    </tr>
    <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_TAX')?>*
+       <?php echo Text::_('JSHOP_TAX')?>*
      </td>
      <td>
        <input type="text" class="inputbox form-control" name="tax" value="<?php echo $row->tax;?>" /> %
-       <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_VALUE_TAX_INFO'));?>
+       <?php echo HelperAdmin::tooltip(Text::_('JSHOP_VALUE_TAX_INFO'));?>
      </td>
    </tr>
    <tr>
      <td class="key">
        <?php 
         if ($this->config->ext_tax_rule_for==1) 
-            echo JText::_('JSHOP_USER_WITH_TAX_ID_TAX');
+            echo Text::_('JSHOP_USER_WITH_TAX_ID_TAX');
         else
-            echo JText::_('JSHOP_FIRMA_TAX');
+            echo Text::_('JSHOP_FIRMA_TAX');
         ?>*
      </td>
      <td>
        <input type="text" class="inputbox form-control" name="firma_tax" value="<?php echo $row->firma_tax;?>" /> %
-       <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_VALUE_TAX_INFO'));?>
+       <?php echo HelperAdmin::tooltip(Text::_('JSHOP_VALUE_TAX_INFO'));?>
      </td>
    </tr>
    <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>

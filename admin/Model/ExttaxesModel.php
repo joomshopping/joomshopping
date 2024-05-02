@@ -8,6 +8,11 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 defined('_JEXEC') or die();
 
 class ExtTaxesModel extends BaseadminModel{
@@ -16,31 +21,31 @@ class ExtTaxesModel extends BaseadminModel{
     
     public function getPrepareDataSave($input){
         $post = $input->post->getArray();
-        $post['tax'] = \JSHelper::saveAsPrice($post['tax']);
-        $post['firma_tax'] = \JSHelper::saveAsPrice($post['firma_tax']);
+        $post['tax'] = Helper::saveAsPrice($post['tax']);
+        $post['firma_tax'] = Helper::saveAsPrice($post['firma_tax']);
         return $post;
     }
     
     public function save(array $post){
-        $tax = \JSFactory::getTable('taxExt');
-        $dispatcher = \JFactory::getApplication();
+        $tax = JSFactory::getTable('taxExt');
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveExtTax', array(&$post));        
         $tax->bind($post);
         $tax->setZones($post['countries_id']);
         if (!$tax->store()){
             print $tax->getError();
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0; 
         }
-        \JSHelperAdmin::updateCountExtTaxRule();
+        HelperAdmin::updateCountExtTaxRule();
         $dispatcher->triggerEvent('onAfterSaveExtTax', array(&$tax));
         return $tax;
     }
     
     public function deleteList(array $cid, $msg = 1){
-        $db = \JFactory::getDBO();
-        $app = \JFactory::getApplication();
-        $dispatcher = \JFactory::getApplication();
+        $db = Factory::getDBO();
+        $app = Factory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeRemoveExtTax', array(&$cid));
         $res = array();
         foreach($cid as $id){
@@ -49,13 +54,13 @@ class ExtTaxesModel extends BaseadminModel{
             if ($db->execute()){
                 $res[$id] = true;
                 if ($msg){
-                    $app->enqueueMessage(\JText::_('JSHOP_ITEM_DELETED'), 'message');
+                    $app->enqueueMessage(Text::_('JSHOP_ITEM_DELETED'), 'message');
                 }
             }else{
                 $res[$id] = false;
             }
         }
-        \JSHelperAdmin::updateCountExtTaxRule();
+        HelperAdmin::updateCountExtTaxRule();
         $dispatcher->triggerEvent('onAfterRemoveExtTax', array(&$cid));
         return $res;
     }

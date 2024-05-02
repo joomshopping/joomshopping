@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Panel;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die;
@@ -14,24 +18,24 @@ defined('_JEXEC') or die;
 class HtmlView extends BaseHtmlView
 {
     function displayHome($tpl=null){        
-        \JToolBarHelper::title(\JText::_("JoomShopping"), 'generic.png' );
+        ToolbarHelper::title(Text::_("JoomShopping"), 'generic.png' );
         parent::display($tpl);
 	}
     function displayInfo($tpl=null){
-        \JToolBarHelper::title( \JText::_('JSHOP_ABOUT_AS'), 'generic.png' );
+        ToolbarHelper::title( Text::_('JSHOP_ABOUT_AS'), 'generic.png' );
         parent::display($tpl);
     }
     function displayConfig($tpl=null){
-        \JToolBarHelper::title( \JText::_('JSHOP_CONFIG'), 'generic.png' );
-        \JSHelperAdmin::btnHome();
-        if (\JFactory::getUser()->authorise('core.admin')){
-            \JToolBarHelper::preferences('com_jshopping');
+        ToolbarHelper::title( Text::_('JSHOP_CONFIG'), 'generic.png' );
+        HelperAdmin::btnHome();
+        if (Factory::getUser()->authorise('core.admin')){
+            ToolbarHelper::preferences('com_jshopping');
         }
         parent::display($tpl);
     }
     function displayOptions($tpl=null){
-        \JSHelperAdmin::btnHome();
-        \JToolBarHelper::title( \JText::_('JSHOP_OTHER_ELEMENTS'), 'generic.png' );
+        HelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_OTHER_ELEMENTS'), 'generic.png' );
         parent::display($tpl);
     }
 }

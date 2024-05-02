@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class AttributValueTable extends MultilangTable{
@@ -16,8 +18,8 @@ class AttributValueTable extends MultilangTable{
     }
     
     function getAllValues($attr_id, $ordering = null) {
-        $db = \JFactory::getDBO(); 
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO(); 
+        $lang = JSFactory::getLang();
         if (!isset($ordering)) {
             $ordering = 'value_ordering, value_id';
         }
@@ -34,8 +36,8 @@ class AttributValueTable extends MultilangTable{
     * @param mixed $resulttype
     */
     function getAllAttributeValues($resulttype=0){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering FROM `#__jshopping_attr_values` ORDER BY value_ordering, value_id";
         $db->setQuery($query);
         $attribs = $db->loadObJectList();
@@ -58,7 +60,7 @@ class AttributValueTable extends MultilangTable{
     }
     
     public function getNextOrder($where = ''){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
 		$query = $db->getQuery(true)
 			->select('MAX(value_ordering)')
 			->from($this->_tbl);

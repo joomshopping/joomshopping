@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class LanguageTable extends ShopbaseTable{
@@ -16,8 +18,8 @@ class LanguageTable extends ShopbaseTable{
     }
     
     function getAllLanguages($publish = 1){
-        $JshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         $where_add = $publish ? "where `publish`='1'": ""; 
         $query = "SELECT * FROM `#__jshopping_languages` ".$where_add." order by `ordering`";
         $db->setQuery($query);

@@ -7,19 +7,21 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Site\Table\UsershopbaseTable;
 defined('_JEXEC') or die();
 
 class UserGuestModel  extends UsershopbaseTable{
     
     function __construct(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
 		parent::__construct($db);
     }
     
     function load($keys = null, $reset = true){
-        $jshopConfig = \JSFactory::getConfig();
-        $session = \JFactory::getSession();
+        $jshopConfig = JSFactory::getConfig();
+        $session = Factory::getSession();
         $objuser = $session->get('user_shop_guest');
         if (isset($objuser) && $objuser!=''){
             $tmp = unserialize($objuser);
@@ -28,20 +30,20 @@ class UserGuestModel  extends UsershopbaseTable{
             }
         }
         $this->user_id = -1;
-        $usergroup = \JSFactory::getTable('usergroup');
+        $usergroup = JSFactory::getTable('usergroup');
         $this->usergroup_id = isset($jshopConfig->default_usergroup_id_guest) ? intval($jshopConfig->default_usergroup_id_guest) : 0;
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onLoadJshopUserGust', array(&$obj));
+        Factory::getApplication()->triggerEvent('onLoadJshopUserGust', array(&$obj));
     return true;
     }
     	
     function store($updateNulls = false){
         $this->user_id = -1;
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $properties = $this->getProperties();
         $session->set('user_shop_guest', serialize($properties));
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterStoreJshopUserGust', array(&$obj));
+        Factory::getApplication()->triggerEvent('onAfterStoreJshopUserGust', array(&$obj));
     return true;
     }
 	

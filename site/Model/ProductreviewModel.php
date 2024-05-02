@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class ProductReviewModel  extends BaseModel{
@@ -15,7 +19,7 @@ class ProductReviewModel  extends BaseModel{
 	protected $data = array();
 	
 	public function __construct(){
-		$this->review = \JSFactory::getTable('review');
+		$this->review = JSFactory::getTable('review');
 	}
 	
 	public function checkAllow(){
@@ -28,13 +32,13 @@ class ProductReviewModel  extends BaseModel{
 	}
 	
 	public function setData($data, $load_data_config = 1){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$this->data = $data;
 		$review = $this->review;
 		$review->bind($data);
 		if ($load_data_config){
-			$review->user_id = \JFactory::getUser()->id;
-			$review->time = \JSHelper::getJsDate();
+			$review->user_id = Factory::getUser()->id;
+			$review->time = Helper::getJsDate();
 			$review->ip = $_SERVER['REMOTE_ADDR'];
 			if ($jshopConfig->display_reviews_without_confirm){
 				$review->publish = 1;    
@@ -55,9 +59,9 @@ class ProductReviewModel  extends BaseModel{
 	}
 	
 	public function check(){
-		\JFactory::getApplication()->triggerEvent('onBeforeSaveReview', array(&$this->review));
+		Factory::getApplication()->triggerEvent('onBeforeSaveReview', array(&$this->review));
 		if (!$this->review->check()){
-            $this->setError(\JText::_('JSHOP_ENTER_CORRECT_INFO_REVIEW'));
+            $this->setError(Text::_('JSHOP_ENTER_CORRECT_INFO_REVIEW'));
 			return 0;
 		}else{
 			return 1;
@@ -68,9 +72,9 @@ class ProductReviewModel  extends BaseModel{
 		$this->review->store();
 		$product_id = $this->getProductId();
 		
-        \JFactory::getApplication()->triggerEvent('onAfterSaveReview', array(&$this->review));
+        Factory::getApplication()->triggerEvent('onAfterSaveReview', array(&$this->review));
 
-        $product = \JSFactory::getTable('product');
+        $product = JSFactory::getTable('product');
         $product->load($product_id);
         $product->loadAverageRating();
         $product->loadReviewsCount();
@@ -82,7 +86,7 @@ class ProductReviewModel  extends BaseModel{
 		$data['product_id'] = $this->getProductId();
 		$data['review'] = $this->review;
 		
-		$mail = \JSFactory::getModel('reviewMail', 'Site');
+		$mail = JSFactory::getModel('reviewMail', 'Site');
 		$mail->setData($data);
 		return $mail->send();
 	}

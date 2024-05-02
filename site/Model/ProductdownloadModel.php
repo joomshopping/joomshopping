@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Uri\Uri;
 defined('_JEXEC') or die();
 
 class ProductDownloadModel{
@@ -23,7 +27,7 @@ class ProductDownloadModel{
 	
 	public function setOid($oid){
 		$this->oid = $oid;
-		$this->order = \JSFactory::getTable('order');
+		$this->order = JSFactory::getTable('order');
         $this->order->load($oid);
 		$this->stat_download = $this->order->getFilesStatDownloads();
 	}
@@ -45,32 +49,32 @@ class ProductDownloadModel{
 	}
     
 	public function checkOrderStatusPaid(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return in_array($this->order->order_status, $jshopConfig->payment_status_enable_download_sale_file);
 	}
 	
 	public function checkUser(){
-		$jshopConfig = \JSFactory::getConfig();
-		$user = \JFactory::getUser();
+		$jshopConfig = JSFactory::getConfig();
+		$user = Factory::getUser();
 		return !($jshopConfig->user_registered_download_sale_file && $this->order->user_id>0 && $this->order->user_id!=$user->id);
 	}
 	
 	public function checkTimeDownload(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return !($jshopConfig->max_day_download_sale_file && (time() > ($this->order->getStatusTime()+(86400*$jshopConfig->max_day_download_sale_file))));
 	}
 	
 	public function checkNumberDownload(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return !($jshopConfig->max_number_download_sale_file>0 && $this->stat_download[$this->id]['download'] >= $jshopConfig->max_number_download_sale_file);
 	}
 	
 	public function checkFileId(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$items = $this->order->getAllItems();
 		$filesid = array();
         if ($jshopConfig->order_display_new_digital_products){
-            $product = \JSFactory::getTable('product');
+            $product = JSFactory::getTable('product');
             foreach($items as $item){
                 $product->product_id = $item->product_id;
 				$product->setAttributeActive(unserialize($item->attributes));
@@ -92,9 +96,9 @@ class ProductDownloadModel{
 	}
 	
 	public function getFileName(){
-		$file = \JSFactory::getTable('productFiles');
+		$file = JSFactory::getTable('productFiles');
         $file->load($this->id);
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onAfterLoadProductFile', array(&$file, &$this->order));
         return $file->file;
 	}
@@ -103,14 +107,14 @@ class ProductDownloadModel{
 		if ($name==''){
 			$name = $this->getFileName();
 		}
-		return \JSFactory::getConfig()->files_product_path."/".$name;
+		return JSFactory::getConfig()->files_product_path."/".$name;
 	}
 	
 	public function storeStatDownloads(){
 		$stat_download = $this->stat_download;
 		$id = $this->id;
 		$stat_download[$id]['download'] = intval($stat_download[$id]['download']) + 1;
-        $stat_download[$id]['time'] = \JSHelper::getJsDate();
+        $stat_download[$id]['time'] = Helper::getJsDate();
         $this->order->setFilesStatDownloads($stat_download);
         $this->order->store();
 	}
@@ -127,7 +131,7 @@ class ProductDownloadModel{
         header('Content-Disposition: attachment; filename="' . basename($file_name) . '"');
         header("Content-Transfer-Encoding: binary");
 
-        if (\JSFactory::getConfig()->productDownloadFilePart8kb) {
+        if (JSFactory::getConfig()->productDownloadFilePart8kb) {
             $fp = fopen($file_name, "rb");
             while( (!feof($fp)) && (connection_status()==0) ){
                 print(fread($fp, 1024*8));
@@ -140,7 +144,7 @@ class ProductDownloadModel{
 	}
 	
 	public function getUrlDownload(){
-		return \JURI::root()."index.php?option=com_jshopping&controller=product&task=getfile&oid=".$this->oid."&id=".$this->id."&hash=".$this->hash;
+		return Uri::root()."index.php?option=com_jshopping&controller=product&task=getfile&oid=".$this->oid."&id=".$this->id."&hash=".$this->hash;
 	}
 	
 }

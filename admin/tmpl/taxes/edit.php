@@ -1,4 +1,8 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -19,7 +23,7 @@ $edit=$this->edit;
 <table width="100%" class="admintable">
    <tr>
      <td class="key" style="width:250px;">
-       <?php echo JText::_('JSHOP_TITLE')?>*
+       <?php echo Text::_('JSHOP_TITLE')?>*
      </td>
      <td>
        <input type="text" class="inputbox form-control" id="tax_name" name="tax_name" value="<?php echo $row->tax_name;?>" />
@@ -27,11 +31,11 @@ $edit=$this->edit;
    </tr>
    <tr>
      <td  class="key">
-       <?php echo JText::_('JSHOP_VALUE')?>*
+       <?php echo Text::_('JSHOP_VALUE')?>*
      </td>
      <td>
        <input type="text" class="inputbox form-control" id="tax_value" name="tax_value" value="<?php echo $row->tax_value;?>" /> %
-       <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_VALUE_TAX_INFO'));?>
+       <?php echo HelperAdmin::tooltip(Text::_('JSHOP_VALUE_TAX_INFO'));?>
      </td>
    </tr>
    <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
@@ -40,7 +44,7 @@ $edit=$this->edit;
 </div>
 <div class="clr"></div>
 
-<input type="hidden" name="task" value="<?php echo \JFactory::getApplication()->input->getVar('task')?>" />
+<input type="hidden" name="task" value="<?php echo Factory::getApplication()->input->getVar('task')?>" />
 <input type="hidden" name="edit" value="<?php echo $edit;?>" />
 <?php if ($edit) {?>
 <input type="hidden" name="tax_id" value="<?php echo (int)$row->tax_id?>" />
@@ -52,10 +56,10 @@ Joomla.submitbutton=function(task){
      if (task == 'save' || task == 'apply'){
          var taxValue=jQuery('#tax_value').val();
          if (isNaN(taxValue)){
-           alert ('<?php echo JText::_('JSHOP_WRITE_TAX_NO_VALID')?>');
+           alert ('<?php echo Text::_('JSHOP_WRITE_TAX_NO_VALID')?>');
            return 0;
          } else if (taxValue < 0 || taxValue >= 100){
-           alert ('<?php echo JText::_('JSHOP_WRITE_TAX_BIG_LESS')?>');
+           alert ('<?php echo Text::_('JSHOP_WRITE_TAX_BIG_LESS')?>');
            return 0;
          }
      }

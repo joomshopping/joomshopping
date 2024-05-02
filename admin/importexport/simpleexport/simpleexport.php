@@ -1,4 +1,11 @@
 <?php
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -8,52 +15,51 @@
 */
 use Joomla\Component\Jshopping\Site\Lib\Csv;
 defined('_JEXEC') or die();
-jimport('joomla.filesystem.folder');
 
 class IeSimpleExport extends IeController{
     
     function view(){	
-        $app = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
+        $app = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
         $ie_id = $this->ie_id;
-        $_importexport = \JSFactory::getTable('ImportExport'); 
+        $_importexport = JSFactory::getTable('ImportExport'); 
         $_importexport->load($ie_id);
         $name = $_importexport->get('name');
         $ie_params_str = $_importexport->get('params');
-        $ie_params = \JSHelper::parseParamsToArray($ie_params_str);
+        $ie_params = Helper::parseParamsToArray($ie_params_str);
                 
-        $files = \JFolder::files($jshopConfig->importexport_path.$_importexport->get('alias'), '.csv');
+        $files = Folder::files($jshopConfig->importexport_path.$_importexport->get('alias'), '.csv');
         $count = count($files);
             
-        JToolBarHelper::title(\JText::_('JSHOP_EXPORT'). ' "'.$name.'"', 'generic.png' ); 
-        JToolBarHelper::custom("backtolistie", "arrow-left", 'arrow-left', \JText::_('JSHOP_BACK_TO').' "'.\JText::_('JSHOP_PANEL_IMPORT_EXPORT').'"', false );
-        JToolBarHelper::spacer();
-        JToolBarHelper::save("save", \JText::_('JSHOP_EXPORT'));                
+        ToolbarHelper::title(Text::_('JSHOP_EXPORT'). ' "'.$name.'"', 'generic.png' ); 
+        ToolbarHelper::custom("backtolistie", "arrow-left", 'arrow-left', Text::_('JSHOP_BACK_TO').' "'.Text::_('JSHOP_PANEL_IMPORT_EXPORT').'"', false );
+        ToolbarHelper::spacer();
+        ToolbarHelper::save("save", Text::_('JSHOP_EXPORT'));                
         
         include(dirname(__FILE__)."/list_csv.php");  
     }
 
     function save(){
-        $app = \JFactory::getApplication();        
+        $app = Factory::getApplication();        
         
         $ie_id = $this->get('ie_id');
-        $_importexport = \JSFactory::getTable('ImportExport'); 
+        $_importexport = JSFactory::getTable('ImportExport'); 
         $_importexport->load($ie_id);
         $alias = $_importexport->get('alias');
         $_importexport->set('endstart', time());        
         $params = $app->input->getVar("params");        
         if (is_array($params)){        
-            $paramsstr = \JSHelper::parseArrayToParams($params);
+            $paramsstr = Helper::parseArrayToParams($params);
             $_importexport->set('params', $paramsstr);
         }        
         $_importexport->store();
         
         $ie_params_str = $_importexport->get('params');
-        $ie_params = \JSHelper::parseParamsToArray($ie_params_str);
+        $ie_params = Helper::parseParamsToArray($ie_params_str);
         
-        $jshopConfig = \JSFactory::getConfig();
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();
         
         $query = "SELECT prod.product_id, prod.product_ean, prod.product_quantity, prod.product_date_added, prod.product_price, tax.tax_value as tax, prod.`".$lang->get('name')."` as name, prod.`".$lang->get('short_description')."` as short_description,  prod.`".$lang->get('description')."` as description, cat.`".$lang->get('name')."` as cat_name
                   FROM `#__jshopping_products` AS prod
@@ -95,10 +101,10 @@ class IeSimpleExport extends IeController{
     }
 
     function filedelete(){
-        $app = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
+        $app = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
         $ie_id = $app->input->getInt("ie_id");
-        $_importexport = \JSFactory::getTable('ImportExport'); 
+        $_importexport = JSFactory::getTable('ImportExport'); 
         $_importexport->load($ie_id);
         $alias = $_importexport->get('alias');
         $file = $app->input->getVar("file");

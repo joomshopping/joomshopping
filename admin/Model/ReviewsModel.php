@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die;
 
 class ReviewsModel extends BaseadminModel{
@@ -15,8 +19,8 @@ class ReviewsModel extends BaseadminModel{
 
      function getAllReviews($category_id = null, $product_id = null, $limitstart = null, $limit = null, $text_search = null, $result = "list", $vendor_id = 0, $order = null, $orderDir = null) {
 
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();
         $where = "";
         if ($product_id) $where .= " AND pr_rew.product_id='".$db->escape($product_id)."' ";
         if ($vendor_id) $where .= " AND pr.vendor_id='".$db->escape($vendor_id)."' ";
@@ -43,7 +47,7 @@ class ReviewsModel extends BaseadminModel{
             LEFT JOIN #__jshopping_products  as pr USING (product_id)
             WHERE 1 ".$where." ORDER BY ". $ordering ." ". $limit;
         }
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         if ($result=="list"){
             return $db->loadObjectList();
@@ -54,37 +58,37 @@ class ReviewsModel extends BaseadminModel{
     }
 
     function getReview($id){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $query = "select pr_rew.*, pr.`".$lang->get('name')."` as name from #__jshopping_products_reviews as pr_rew LEFT JOIN #__jshopping_products  as pr USING (product_id)  where pr_rew.review_id = ".intval($id);
         $db->setQuery($query);
         return $db->loadObject();
     }
 
     function getProdNameById($id){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $query = "select pr.`".$lang->get('name')."` as name from #__jshopping_products  as pr where pr.product_id =".intval($id);
         $db->setQuery($query);
         return $db->loadResult();
     }
 
     function deleteReview($id){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "delete from #__jshopping_products_reviews where review_id =".intval($id);
         $db->setQuery($query);
         return $db->execute();
     }
 
     public function save(array $post){
-        $review = \JSFactory::getTable('review');
+        $review = JSFactory::getTable('review');
         if (intval($post['review_id']) == 0) {
-            $post['time'] = \JSHelper::getJsDate();
+            $post['time'] = Helper::getJsDate();
         }
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveReview', array(&$post));
         if (!$post['product_id']) {
-            $this->setError(\JText::_('JSHOP_ERROR_DATA'));
+            $this->setError(Text::_('JSHOP_ERROR_DATA'));
             return 0;
         }
         if (!isset($post['publish'])) {
@@ -95,10 +99,10 @@ class ReviewsModel extends BaseadminModel{
 
         $review->bind($post);
         if (!$review->store()){
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
         }
-        $product = \JSFactory::getTable('product');
+        $product = JSFactory::getTable('product');
         $product->load($review->product_id);
         $product->loadAverageRating();
         $product->loadReviewsCount();
@@ -108,14 +112,14 @@ class ReviewsModel extends BaseadminModel{
     }
 
     public function deleteList(array $cid, $msg = 1){
-        $model = \JSFactory::getModel("reviews");
-        $dispatcher = \JFactory::getApplication();
+        $model = JSFactory::getModel("reviews");
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeRemoveReview', array(&$cid));
         foreach($cid as $value) {
-            $review = \JSFactory::getTable('review');
+            $review = JSFactory::getTable('review');
             $review->load($value);
             $model->deleteReview($value);
-            $product = \JSFactory::getTable('product');
+            $product = JSFactory::getTable('product');
             $product->load($review->product_id);
             $product->loadAverageRating();
             $product->loadReviewsCount();
@@ -127,8 +131,8 @@ class ReviewsModel extends BaseadminModel{
     }
     
     public function publish(array $cid, $flag){
-        $db = \JFactory::getDBO();
-        $dispatcher = \JFactory::getApplication();
+        $db = Factory::getDBO();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforePublishReview', array(&$cid, &$flag));
         foreach($cid as $value){
             $query = "UPDATE `#__jshopping_products_reviews` SET `publish` = '".$db->escape($flag)."' "
@@ -136,9 +140,9 @@ class ReviewsModel extends BaseadminModel{
             $db->setQuery($query);
             $db->execute();
 
-            $review = \JSFactory::getTable('review');
+            $review = JSFactory::getTable('review');
             $review->load($value);
-            $product = \JSFactory::getTable('product');
+            $product = JSFactory::getTable('product');
             $product->load($review->product_id);
             $product->loadAverageRating();
             $product->loadReviewsCount();

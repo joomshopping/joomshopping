@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class StaticTextTable extends ShopbaseTable{
@@ -16,10 +18,10 @@ class StaticTextTable extends ShopbaseTable{
     }
     
     function loadData($alias){
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();         
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();         
         $query = "SELECT id, alias, `".$lang->get('text')."` as text FROM `#__jshopping_config_statictext` where alias='".$db->escape($alias)."'";
-		\JFactory::getApplication()->triggerEvent('onBeforeLoadDataStaticTextTable', array(&$query, &$alias));
+		Factory::getApplication()->triggerEvent('onBeforeLoadDataStaticTextTable', array(&$query, &$alias));
         $db->setQuery($query);
         return $db->loadObJect();
     }
@@ -28,8 +30,8 @@ class StaticTextTable extends ShopbaseTable{
         if (!count($list)){
             return array();
         }
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();  
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();  
         $ids = implode(',', $list);
         $query = "SELECT id, alias, `".$lang->get('text')."` as text FROM `#__jshopping_config_statictext` where id IN (".$db->escape($ids).")";
         $db->setQuery($query);
@@ -37,7 +39,7 @@ class StaticTextTable extends ShopbaseTable{
     }
     
     function getReturnPolicyForProducts($products){
-        $productOption = \JSFactory::getTable('productOption');
+        $productOption = JSFactory::getTable('productOption');
         $listrp = $productOption->getProductOptionList($products, 'return_policy');
         $listrp = array_unique($listrp);
         $tmp = $this->loadData('return_policy');

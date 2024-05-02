@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\taxes_ext;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,19 +17,19 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_LIST_TAXES_EXT'), 'generic.png' );
-        \JToolBarHelper::custom( "back", 'folder', 'folder', \JText::_('JSHOP_LIST_TAXES'), false);
-        \JToolBarHelper::addNew();
-        \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE')."?");
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_LIST_TAXES_EXT'), 'generic.png' );
+        ToolbarHelper::custom( "back", 'folder', 'folder', Text::_('JSHOP_LIST_TAXES'), false);
+        ToolbarHelper::addNew();
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE')."?");
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
     
     function displayEdit($tpl=null){
-        \JToolBarHelper::title( $temp=($this->tax->id) ? (\JText::_('JSHOP_EDIT_TAX_EXT')) : (\JText::_('JSHOP_NEW_TAX_EXT')), 'generic.png' ); 
-        \JToolBarHelper::save();
-        \JToolBarHelper::apply();
-        \JToolBarHelper::cancel();
+        ToolbarHelper::title( $temp=($this->tax->id) ? (Text::_('JSHOP_EDIT_TAX_EXT')) : (Text::_('JSHOP_NEW_TAX_EXT')), 'generic.png' ); 
+        ToolbarHelper::save();
+        ToolbarHelper::apply();
+        ToolbarHelper::cancel();
         parent::display($tpl);
     }
 }

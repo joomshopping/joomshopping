@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class ProductShopModel extends BaseModel{
@@ -19,15 +24,15 @@ class ProductShopModel extends BaseModel{
 	public $select_review;
 	
     public function __construct(){
-        \JPluginHelper::importPlugin('jshoppingcheckout');
+        PluginHelper::importPlugin('jshoppingcheckout');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshopProductShop', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshopProductShop', array(&$obj));
     }
 	
 	public function setProduct($product){
 		$this->product = $product;
         $obj = $this;
-		\JFactory::getApplication()->triggerEvent('onAfterJshopProductShopSetProduct', array(&$obj));
+		Factory::getApplication()->triggerEvent('onAfterJshopProductShopSetProduct', array(&$obj));
 	}
 	
 	public function getProduct(){
@@ -35,15 +40,15 @@ class ProductShopModel extends BaseModel{
 	}
 	
 	public function storeEndPageBuy(){
-		if (\JFactory::getApplication()->input->get("tmpl") == 'component') return 0;
-		$session = \JFactory::getSession();
+		if (Factory::getApplication()->input->get("tmpl") == 'component') return 0;
+		$session = Factory::getSession();
         $session->set("jshop_end_page_buy_product", $_SERVER['REQUEST_URI']);
 		return 1;
 	}
 	
 	public function storeEndPageList(){
-		if (\JFactory::getApplication()->input->get("tmpl") == 'component') return 0;
-		$session = \JFactory::getSession();
+		if (Factory::getApplication()->input->get("tmpl") == 'component') return 0;
+		$session = Factory::getSession();
 		$session->set("jshop_end_page_list_product", $_SERVER['REQUEST_URI']);
 		return 1;
 	}
@@ -54,22 +59,22 @@ class ProductShopModel extends BaseModel{
 	}
 	
 	public function getEndPageBuy(){
-		$session = \JFactory::getSession();
+		$session = Factory::getSession();
         return $session->get("jshop_end_page_buy_product");
 	}
 	
 	public function getEndPageList(){
-		$session = \JFactory::getSession();
+		$session = Factory::getSession();
         return $session->get("jshop_end_page_list_product");
 	}
 	
 	public function setBackValue(array $back_value){
-		$session = \JFactory::getSession();
+		$session = Factory::getSession();
         $session->set('product_back_value', $back_value);
 	}
 	
 	public function getBackValue($product_id, $attr = null){
-		$session = \JFactory::getSession();
+		$session = Factory::getSession();
 		$back_value = $session->get('product_back_value');        
         if (!isset($back_value['pid'])) $back_value = array('pid'=>null, 'attr'=>null, 'qty'=>null);
         if ($back_value['pid']!=$product_id) $back_value = array('pid'=>null, 'attr'=>null, 'qty'=>null);
@@ -87,11 +92,11 @@ class ProductShopModel extends BaseModel{
 	}
 	
 	public function prepareView($back_value = array()){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$product = $this->product;
         $product->product_price_default = 0;
 		
-		if (!\JSHelper::getDisplayPriceForProduct($product->product_price)){
+		if (!Helper::getDisplayPriceForProduct($product->product_price)){
             $jshopConfig->attr_display_addprice = 0;
         }
 
@@ -99,7 +104,7 @@ class ProductShopModel extends BaseModel{
 		$this->attributes = $product->getInitLoadAttribute($back_value_attr);
 		
 		if (count($this->attributes)){
-            $_attributevalue = \JSFactory::getTable('AttributValue');
+            $_attributevalue = JSFactory::getTable('AttributValue');
             $this->all_attr_values = $_attributevalue->getAllAttributeValues();
         }else{
             $this->all_attr_values = array();
@@ -118,7 +123,7 @@ class ProductShopModel extends BaseModel{
 			$product->product_template = "default";
 		}
 		
-		$_review = \JSFactory::getTable('review');
+		$_review = JSFactory::getTable('review');
 		$this->allow_review = $_review->getAllowReview();
         if ($this->allow_review > 0){            
             $this->text_review = '';            
@@ -142,8 +147,8 @@ class ProductShopModel extends BaseModel{
         if ($jshopConfig->product_show_vendor){
             $vendorinfo = $product->getVendorInfo();
 			if (isset($vendorinfo)) {
-				$vendorinfo->urllistproducts = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=products&vendor_id=".$vendorinfo->id,1);
-				$vendorinfo->urlinfo = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=info&vendor_id=".$vendorinfo->id,1);
+				$vendorinfo->urllistproducts = Helper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=products&vendor_id=".$vendorinfo->id,1);
+				$vendorinfo->urlinfo = Helper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=info&vendor_id=".$vendorinfo->id,1);
 				$product->vendor_info = $vendorinfo;
 			} else {
 				$product->vendor_info = null;
@@ -171,23 +176,23 @@ class ProductShopModel extends BaseModel{
             $product->freeattribrequire = 0;
         }
         if ($jshopConfig->product_show_qty_stock){
-            $product->qty_in_stock = \JSHelper::getDataProductQtyInStock($product);
+            $product->qty_in_stock = Helper::getDataProductQtyInStock($product);
         }
 		
 		if (!$jshopConfig->admin_show_product_labels){
 			$product->label_id = null;
 		}
         if ($product->label_id){
-            $image = \JSHelper::getNameImageLabel($product->label_id);
+            $image = Helper::getNameImageLabel($product->label_id);
             if ($image){
                 $product->_label_image = $jshopConfig->image_labels_live_path."/".$image;
             } else {
 				$product->_label_image = null;
 			}
-            $product->_label_name = \JSHelper::getNameImageLabel($product->label_id, 2);
+            $product->_label_name = Helper::getNameImageLabel($product->label_id, 2);
         }
 		
-		$product->_display_price = \JSHelper::getDisplayPriceForProduct($product->getPriceCalculate());
+		$product->_display_price = Helper::getDisplayPriceForProduct($product->getPriceCalculate());
         if (!$product->_display_price){
             $product->product_old_price = 0;
             $product->product_price_default = 0;
@@ -202,7 +207,7 @@ class ProductShopModel extends BaseModel{
 		}
 		
 		if ($jshopConfig->use_plugin_content){
-            \JSHelper::changeDataUsePluginContent($product, "product");
+            Helper::changeDataUsePluginContent($product, "product");
         }
 		
 		$product->hide_delivery_time = 0;
@@ -213,13 +218,13 @@ class ProductShopModel extends BaseModel{
 		$product->button_back_js_click = "history.go(-1);";
 		$end_page_list = $this->getEndPageList();
         if ($end_page_list && $jshopConfig->product_button_back_use_end_list){
-            $product->button_back_js_click = "location.href='".\JSHelper::jsFilterUrl($end_page_list)."';";
+            $product->button_back_js_click = "location.href='".Helper::jsFilterUrl($end_page_list)."';";
         }
 		
 	}
 	
 	public function getHideBuy(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$hide_buy = 0;
         if ($jshopConfig->user_as_catalog) $hide_buy = 1;
         if ($jshopConfig->hide_buy_not_avaible_stock && $this->product->product_quantity <= 0) $hide_buy = 1;
@@ -231,15 +236,15 @@ class ProductShopModel extends BaseModel{
 		$product = $this->product;
 		$available = "";
         if ($product->getQty() <= 0 && $product->product_quantity > 0 ){
-            $available = \JText::_('JSHOP_PRODUCT_NOT_AVAILABLE_THIS_OPTION');
+            $available = Text::_('JSHOP_PRODUCT_NOT_AVAILABLE_THIS_OPTION');
         }elseif ($product->product_quantity <= 0){
-            $available = \JText::_('JSHOP_PRODUCT_NOT_AVAILABLE');
+            $available = Text::_('JSHOP_PRODUCT_NOT_AVAILABLE');
         }
 		return $available;
 	}
 	
 	public function getDefaultCountProduct($back_value = array()){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$default_count_product = 1;
         if ($jshopConfig->min_count_order_one_product>1){
             $default_count_product = $jshopConfig->min_count_order_one_product;
@@ -252,7 +257,7 @@ class ProductShopModel extends BaseModel{
 	
 	public function getDisplayButtonsStyle(){
 		$style = '';
-        if (\JSFactory::getConfig()->hide_buy_not_avaible_stock && $this->product->getQty() <= 0){
+        if (JSFactory::getConfig()->hide_buy_not_avaible_stock && $this->product->getQty() <= 0){
 			$style = 'display:none;';
 		}
 		return $style;

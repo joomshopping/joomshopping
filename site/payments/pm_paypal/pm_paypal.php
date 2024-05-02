@@ -1,4 +1,10 @@
 <?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+
 /**
  * @version      5.0.0 15.09.2018
  * @author       MAXXmarketing GmbH
@@ -21,12 +27,12 @@ class pm_paypal extends PaymentRoot {
       }
       if (!isset($params['address_override'])) $params['address_override'] = 0;
       
-      $orders = \JSFactory::getModel('orders'); //admin model
+      $orders = JSFactory::getModel('orders'); //admin model
       include(dirname(__FILE__)."/adminparamsform.php");
     }
 
     function checkTransaction($pmconfigs, $order, $act) {
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
 
         if ($pmconfigs['testmode']) {
             $host = "www.sandbox.paypal.com";
@@ -34,7 +40,7 @@ class pm_paypal extends PaymentRoot {
             $host = "www.paypal.com";
         }
 
-        $post = \JFactory::getApplication()->input->post->getArray();
+        $post = Factory::getApplication()->input->post->getArray();
         $order->order_total = $this->fixOrderTotal($order);
         
         $opending = 0;
@@ -75,24 +81,24 @@ class pm_paypal extends PaymentRoot {
         curl_setopt($ch, CURLOPT_USERAGENT, 'PayPal-PHP-SDK');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
         if (!($res = curl_exec($ch))) {
-            \JSHelper::saveToLog("payment.log", "Paypal failed: " . curl_error($ch) . '(' . curl_errno($ch) . ')');
+            Helper::saveToLog("payment.log", "Paypal failed: " . curl_error($ch) . '(' . curl_errno($ch) . ')');
             curl_close($ch);
             exit;
         } else {
             curl_close($ch);
         }
-        \JSHelper::saveToLog("paymentdata.log", "RES: $res");
+        Helper::saveToLog("paymentdata.log", "RES: $res");
 
         if (strcmp($res, "VERIFIED") == 0) {
             if ($payment_status == 'Completed') {
                 if ($opending) {
-                    \JSHelper::saveToLog("payment.log", "Status pending. Order ID " . $order->order_id . ". Error mc_gross or mc_currency.");
+                    Helper::saveToLog("payment.log", "Status pending. Order ID " . $order->order_id . ". Error mc_gross or mc_currency.");
                     return array(2, "Status pending. Order ID " . $order->order_id, $transaction, $transactiondata);
                 } else {
                     return array(1, '', $transaction, $transactiondata);
                 }
             } elseif ($payment_status == 'Pending') {
-                \JSHelper::saveToLog("payment.log", "Status pending. Order ID " . $order->order_id . ". Reason: " . $_POST['pending_reason']);
+                Helper::saveToLog("payment.log", "Status pending. Order ID " . $order->order_id . ". Reason: " . $_POST['pending_reason']);
                 return array(2, trim(stripslashes($_POST['pending_reason'])), $transaction, $transactiondata);
             } else {
                 return array(3, "Status $payment_status. Order ID " . $order->order_id, $transaction, $transactiondata);
@@ -103,9 +109,9 @@ class pm_paypal extends PaymentRoot {
     }
 
     function showEndForm($pmconfigs, $order) {
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $pm_method = $this->getPmMethod();
-        $item_name = sprintf(\JText::_('JSHOP_PAYMENT_NUMBER'), $order->order_number);
+        $item_name = sprintf(Text::_('JSHOP_PAYMENT_NUMBER'), $order->order_number);
 
         if ($pmconfigs['testmode']) {
             $host = "www.sandbox.paypal.com";
@@ -115,22 +121,22 @@ class pm_paypal extends PaymentRoot {
         $email = $pmconfigs['email_received'];
         $address_override = isset($pmconfigs['address_override']) ? (int)$pmconfigs['address_override'] : 0;
 
-        $uri = \JURI::getInstance();
+        $uri = Uri::getInstance();
         $liveurlhost = $uri->toString(array("scheme", 'host', 'port'));
 
         if (isset($pmconfigs['notifyurlsef']) && $pmconfigs['notifyurlsef']){
-            $notify_url = $liveurlhost . \JSHelper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step7&act=notify&js_paymentclass=" . $pm_method->payment_class . "&no_lang=1");
+            $notify_url = $liveurlhost . Helper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step7&act=notify&js_paymentclass=" . $pm_method->payment_class . "&no_lang=1");
         } else {
-            $notify_url = \JURI::root() . "index.php?option=com_jshopping&controller=checkout&task=step7&act=notify&js_paymentclass=" . $pm_method->payment_class . "&no_lang=1";
+            $notify_url = Uri::root() . "index.php?option=com_jshopping&controller=checkout&task=step7&act=notify&js_paymentclass=" . $pm_method->payment_class . "&no_lang=1";
         }
-        $return = $liveurlhost . \JSHelper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step7&act=return&js_paymentclass=" . $pm_method->payment_class);
+        $return = $liveurlhost . Helper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step7&act=return&js_paymentclass=" . $pm_method->payment_class);
 		if ($this->cancel_url_step5) {
-			$cancel_return = $liveurlhost . \JSHelper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step5");
+			$cancel_return = $liveurlhost . Helper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step5");
 		} else {
-			$cancel_return = $liveurlhost . \JSHelper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step7&act=cancel&js_paymentclass=" . $pm_method->payment_class);
+			$cancel_return = $liveurlhost . Helper::SEFLink("index.php?option=com_jshopping&controller=checkout&task=step7&act=cancel&js_paymentclass=" . $pm_method->payment_class);
 		}		
 
-        $_country = \JSFactory::getTable('country');
+        $_country = JSFactory::getTable('country');
         $_country->load($order->d_country);
         $country = $_country->country_code_2;
         $order->order_total = $this->fixOrderTotal($order);
@@ -175,7 +181,7 @@ class pm_paypal extends PaymentRoot {
                     <input type='hidden' name='email' value='<?php print $order->email ?>'>
                     <input type='hidden' name='bn' value='JoomShopping_Cart_ECM'>
                 </form>        
-                <?php print \JText::_('JSHOP_REDIRECT_TO_PAYMENT_PAGE')?>
+                <?php print Text::_('JSHOP_REDIRECT_TO_PAYMENT_PAGE')?>
                 <br>
                 <script type="text/javascript">document.getElementById('paymentform').submit();</script>
             </body>
@@ -186,7 +192,7 @@ class pm_paypal extends PaymentRoot {
 
     function getUrlParams($pmconfigs) {
         $params = array();
-        $params['order_id'] = \JFactory::getApplication()->input->getInt("custom");
+        $params['order_id'] = Factory::getApplication()->input->getInt("custom");
         $params['hash'] = "";
         $params['checkHash'] = 0;
         $params['checkReturnParams'] = $pmconfigs['checkdatareturn'];

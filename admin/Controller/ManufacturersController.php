@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Filter\OutputFilter;
 defined('_JEXEC') or die();
 
 class ManufacturersController extends BaseadminController{
@@ -14,8 +18,8 @@ class ManufacturersController extends BaseadminController{
     protected $modelSaveItemFileName = 'manufacturer_logo';
 
     function init(){
-        \JSHelperAdmin::checkAccessController("manufacturers");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("manufacturers");
+        HelperAdmin::addSubmenu("other");
     }
     
     public function getUrlEditItem($id = 0){
@@ -23,11 +27,11 @@ class ManufacturersController extends BaseadminController{
     }
 
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $context = "jshopping.list.admin.manufacturers";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
-        $manufacturer = \JSFactory::getModel("manufacturers");
+        $manufacturer = JSFactory::getModel("manufacturers");
         $rows = $manufacturer->getAllManufacturers(0, $filter_order, $filter_order_Dir);        
         $view = $this->getView("manufacturer", 'html');
         $view->setLayout("list");
@@ -37,15 +41,15 @@ class ManufacturersController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayManufacturers', array(&$view));
         $view->displayList();
     }
 
     function edit() {
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $man_id = $this->input->getInt("man_id");
-        $manufacturer = \JSFactory::getTable('manufacturer');
+        $manufacturer = JSFactory::getTable('manufacturer');
         $manufacturer->load($man_id);
         $edit = ($man_id)?(1):(0);
         
@@ -53,12 +57,12 @@ class ManufacturersController extends BaseadminController{
             $manufacturer->manufacturer_publish = 1;
         }
         
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
         
         $nofilter = array();
-        \JFilterOutput::objectHTMLSafe($manufacturer, ENT_QUOTES, $nofilter);
+        OutputFilter::objectHTMLSafe($manufacturer, ENT_QUOTES, $nofilter);
 
         $view=$this->getView("manufacturer", 'html');
         $view->setLayout("edit");
@@ -69,14 +73,14 @@ class ManufacturersController extends BaseadminController{
         $view->set('multilang', $multilang);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditManufacturers', array(&$view));        
         $view->displayEdit();
     }
 
     function delete_foto(){
         $id = $this->input->getInt("id");
-        \JSFactory::getModel('manufacturers')->deleteFoto($id);        
+        JSFactory::getModel('manufacturers')->deleteFoto($id);        
         die();
     }
 

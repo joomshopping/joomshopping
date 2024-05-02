@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -10,50 +15,50 @@ defined('_JEXEC') or die();
 $row=$this->product;
 $lists=$this->lists;
 $tax_value=$this->tax_value;
-$jshopConfig=\JSFactory::getConfig();
+$jshopConfig=JSFactory::getConfig();
 $currency = $this->currency;
 
-$dispatcher = \JFactory::getApplication();
+$dispatcher = Factory::getApplication();
 ?>
 <div class="jshop_edit product_edit">
-<script type="text/javascript">jshopAdmin.lang_delete="<?php print JText::_('JSHOP_DELETE')?>";</script>
+<script type="text/javascript">jshopAdmin.lang_delete="<?php print Text::_('JSHOP_DELETE')?>";</script>
 <form action="index.php?option=com_jshopping&controller=products" method="post" enctype="multipart/form-data" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start ?? '';?>
-<?php echo \JHTML::_('form.token');?>
+<?php echo HTMLHelper::_('form.token');?>
 <ul class="joomla-tabs nav nav-tabs">
     <?php if ($this->product->parent_id==0 || isset($this->ptab_descr)){?>
     <?php $i=0; foreach($this->languages as $lang){ $i++;?>
         <li class="nav-item">
             <a class="nav-link <?php if ($i==1){?>active<?php }?>" href="#<?php print $lang->language.'-page'?>" data-toggle="tab">
-                <?php echo JText::_('JSHOP_DESCRIPTION')?><?php if ($this->multilang){?> (<?php print $lang->lang?>)<img class="tab_image" src="components/com_jshopping/images/flags/<?php print $lang->lang?>.gif" /><?php }?>
+                <?php echo Text::_('JSHOP_DESCRIPTION')?><?php if ($this->multilang){?> (<?php print $lang->lang?>)<img class="tab_image" src="components/com_jshopping/images/flags/<?php print $lang->lang?>.gif" /><?php }?>
             </a>
         </li>
     <?php }?>
     <?php }?>
     <?php if ($this->product->parent_id==0 || isset($this->ptab_info)){?>
-    <li class="nav-item"><a class="nav-link" href="#main-page" data-toggle="tab"><?php echo JText::_('JSHOP_INFO_PRODUCT')?></a></li>
+    <li class="nav-item"><a class="nav-link" href="#main-page" data-toggle="tab"><?php echo Text::_('JSHOP_INFO_PRODUCT')?></a></li>
     <?php }?>
     <?php if ($this->product->parent_id==0){
         $dispatcher->triggerEvent('onDisplayProductEditTabsTab', array(&$row, &$lists, &$tax_value));
     }?>
     <?php if ($jshopConfig->admin_show_attributes && ($this->product->parent_id==0  || isset($this->ptab_attr))){?>
-        <li class="nav-item"><a href="#attribs-page" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_ATTRIBUTES')?></a></li>
+        <li class="nav-item"><a href="#attribs-page" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_ATTRIBUTES')?></a></li>
     <?php }?>
     <?php if ($jshopConfig->admin_show_freeattributes && ($this->product->parent_id==0 || isset($this->ptab_free_attr))){?>
-        <li class="nav-item"><a href="#product_freeattribute" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_FREE_ATTRIBUTES')?></a></li>
+        <li class="nav-item"><a href="#product_freeattribute" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_FREE_ATTRIBUTES')?></a></li>
     <?php }?>
-    <li class="nav-item"><a href="#product_images_tab" class = "nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_PRODUCT_IMAGES')?></a></li>
+    <li class="nav-item"><a href="#product_images_tab" class = "nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_PRODUCT_IMAGES')?></a></li>
     <?php if ($jshopConfig->admin_show_product_video && ($this->product->parent_id==0 || isset($this->ptab_video))){?>
-        <li class="nav-item"><a href="#product_videos" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_PRODUCT_VIDEOS')?></a></li>
+        <li class="nav-item"><a href="#product_videos" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_PRODUCT_VIDEOS')?></a></li>
     <?php }?>
     <?php if ($jshopConfig->admin_show_product_related && ($this->product->parent_id==0 || isset($this->ptab_related))){?>
-        <li class="nav-item"><a href="#product_related" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_PRODUCT_RELATED')?></a></li>
+        <li class="nav-item"><a href="#product_related" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_PRODUCT_RELATED')?></a></li>
     <?php }?>
     <?php if ($jshopConfig->admin_show_product_files){?>
-        <li class="nav-item"><a href="#product_files" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_FILES')?></a></li>
+        <li class="nav-item"><a href="#product_files" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_FILES')?></a></li>
     <?php }?>
     <?php if ($jshopConfig->admin_show_product_extra_field && ($this->product->parent_id==0 || isset($this->ptab_extra_field))){?>
-        <li class="nav-item"><a href="#product_extra_fields" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_EXTRA_FIELDS')?></a></li>
+        <li class="nav-item"><a href="#product_extra_fields" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_EXTRA_FIELDS')?></a></li>
     <?php }?>
 	<?php if ($this->product->parent_id==0){
        $dispatcher->triggerEvent('onDisplayProductEditTabsEndTab', array(&$row, &$lists, &$tax_value));	
@@ -100,7 +105,7 @@ $dispatcher = \JFactory::getApplication();
 ?>
 </div>
 <input type="hidden" name="task" value="save" />
-<input type="hidden" name="current_cat" value="<?php echo \JFactory::getApplication()->input->getVar('current_cat', 0)?>" />
+<input type="hidden" name="current_cat" value="<?php echo Factory::getApplication()->input->getVar('current_cat', 0)?>" />
 <input type="hidden" name="product_id" value="<?php echo (int)$row->product_id?>" />
 <input type="hidden" name="parent_id" value="<?php echo (int)$row->parent_id?>" />
 <?php print $this->tmp_html_end ?? '';?>
@@ -112,7 +117,7 @@ jshopAdmin.product_price_precision=<?php print intval($jshopConfig->product_pric
 Joomla.submitbutton=function(task){
     if (task=='save' || task=='apply'){
         if (jshop.isEmpty(jQuery('#product_width_image').val()) && jshop.isEmpty(jQuery('#product_height_image'))){
-           alert('<?php echo JText::_('JSHOP_WRITE_SIZE_BAD')?>');
+           alert('<?php echo Text::_('JSHOP_WRITE_SIZE_BAD')?>');
            return false;
         }
     }

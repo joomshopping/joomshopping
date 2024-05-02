@@ -7,24 +7,25 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class LastModel extends ListModel{
     
     function getBuildQueryOrderListProduct($order, $orderby, &$adv_from){
 		if (!$order){
-			return 'ORDER BY '.\JSFactory::getConfig()->get_last_products_order_query.' DESC';
+			return 'ORDER BY '.JSFactory::getConfig()->get_last_products_order_query.' DESC';
 		}else{
 			return parent::getBuildQueryOrderListProduct($order, $orderby, $adv_from);
 		}
     }
         
     function getCountProductsPerPage(){       
-        return \JSFactory::getConfig()->count_products_to_page_last;
+        return JSFactory::getConfig()->count_products_to_page_last;
     }
     
     function getCountProductsToRow(){
-        return \JSFactory::getConfig()->count_products_to_row_last;
+        return JSFactory::getConfig()->count_products_to_row_last;
     }
     
     function getProductFieldSorting($order){

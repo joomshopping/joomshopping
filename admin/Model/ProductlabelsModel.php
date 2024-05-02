@@ -8,6 +8,11 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Lib\UploadFile;
 defined('_JEXEC') or die();
 
@@ -16,24 +21,24 @@ class ProductLabelsModel extends BaseadminModel{
     protected $nameTable = 'productlabel';
 
     function getList($order = null, $orderDir = null){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $ordering = "name";
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
-		$lang = \JSFactory::getLang();
+		$lang = JSFactory::getLang();
         $query = "SELECT id, image, `".$lang->get("name")."` as name FROM `#__jshopping_product_labels` ORDER BY ".$ordering;
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
     }
     
     function save(array $post, $image = null){
-        $jshopConfig = \JSFactory::getConfig();
-		$productLabel = \JSFactory::getTable('productLabel');
-		$lang = \JSFactory::getLang();
+        $jshopConfig = JSFactory::getConfig();
+		$productLabel = JSFactory::getTable('productLabel');
+		$lang = JSFactory::getLang();
         $post['name'] = $post[$lang->get("name")];
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveProductLabel', array(&$post));
         if ($image){
             $upload = new UploadFile($image);            
@@ -49,14 +54,14 @@ class ProductLabelsModel extends BaseadminModel{
                 @chmod($jshopConfig->image_labels_path."/".$post['image'], 0777);
             }else{
                 if ($upload->getError() != 4){
-                    \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_UPLOADING_IMAGE'));
-                    \JSHelper::saveToLog("error.log", "Label - Error upload image. code: ".$upload->getError());
+                    JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_IMAGE'));
+                    Helper::saveToLog("error.log", "Label - Error upload image. code: ".$upload->getError());
                 }
             }
         }
 		$productLabel->bind($post);
 		if (!$productLabel->store()){
-			$this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE').' '.$productLabel->getError());
+			$this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE').' '.$productLabel->getError());
 			return 0;
 		}        
         $dispatcher->triggerEvent('onAfterSaveProductLabel', array(&$productLabel));        
@@ -64,10 +69,10 @@ class ProductLabelsModel extends BaseadminModel{
     }
     
     public function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
+        $app = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
         $res = array();
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeRemoveProductLabel', array(&$cid));
 		foreach($cid as $id){
             $table = $this->getDefaultTable();
@@ -75,7 +80,7 @@ class ProductLabelsModel extends BaseadminModel{
             @unlink($jshopConfig->image_labels_path."/".$productLabel->image);
             $table->delete();			
             if ($msg){
-                $app->enqueueMessage(\JText::_('JSHOP_ITEM_DELETED'), 'message');
+                $app->enqueueMessage(Text::_('JSHOP_ITEM_DELETED'), 'message');
             }
             $res[$id] = true;
 		}

@@ -7,19 +7,22 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined( '_JEXEC' ) or die();
 
 class LanguagesController extends BaseadminController{
     
     function init(){
-        \JSHelperAdmin::checkAccessController("languages");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("languages");
+        HelperAdmin::addSubmenu("other");
     }
 
     function display($cachable = false, $urlparams = false){
-        $languages = \JSFactory::getModel("languages");
+        $languages = JSFactory::getModel("languages");
         $rows = $languages->getAllLanguages(0);
-        $jshopConfig = \JSFactory::getConfig();        
+        $jshopConfig = JSFactory::getConfig();        
                 
 		$view = $this->getView("languages_list", 'html');
         $view->set('rows', $rows);
@@ -28,7 +31,7 @@ class LanguagesController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayLanguage', array(&$view));
 		$view->display();
     }

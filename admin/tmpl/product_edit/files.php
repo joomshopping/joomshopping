@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Language\Text;
+
 /**
  * @version      5.3.0 15.09.2018
  * @author       MAXXmarketing GmbH
@@ -13,18 +15,18 @@ defined('_JEXEC') or die();
 		<?php foreach ($lists['files'] as $file) { ?>
 			<?php if ($jshopConfig->product_admin_demo_file) {?>
 				<tr class="rows_file_prod_<?php print $file->id ?>">
-					<td class="key" style="width:250px;"><?php print JText::_('JSHOP_DEMO_FILE') ?></td>
+					<td class="key" style="width:250px;"><?php print Text::_('JSHOP_DEMO_FILE') ?></td>
 					<td id='product_demo_<?php print $file->id ?>'>
 						<?php if ($file->demo) { ?>
 							<a target="_blank" href="<?php print $jshopConfig->demo_product_live_path . "/" . $file->demo ?>"><?php print $file->demo ?></a>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<a href="#" onclick="if (confirm('<?php print JText::_('JSHOP_DELETE') ?>')) jshopAdmin.deleteFileProduct('<?php echo $file->id ?>','demo');return false;"><img src="components/com_jshopping/images/publish_r.png"> <?php print JText::_('JSHOP_DELETE') ?></a>
+							<a href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE') ?>')) jshopAdmin.deleteFileProduct('<?php echo $file->id ?>','demo');return false;"><img src="components/com_jshopping/images/publish_r.png"> <?php print Text::_('JSHOP_DELETE') ?></a>
 						<?php } ?>
 					</td>
 				</tr>
 				<tr class="rows_file_prod_<?php print $file->id ?>">
 					<td class="key">
-						<?php echo JText::_('JSHOP_DESCRIPTION_DEMO_FILE') ?>
+						<?php echo Text::_('JSHOP_DESCRIPTION_DEMO_FILE') ?>
 					</td>
 					<td>
 						<input type="text" class="form-control" size="100" name="product_demo_descr[<?php print $file->id; ?>]" value="<?php print htmlspecialchars($file->demo_descr); ?>" />
@@ -38,20 +40,20 @@ defined('_JEXEC') or die();
 			<?php } ?>
 			<?php if ($jshopConfig->product_admin_sale_file) {?>
 				<tr class="rows_file_prod_<?php print $file->id ?>">
-					<td class="key"><?php print JText::_('JSHOP_FILE_SALE') ?></td>
+					<td class="key"><?php print Text::_('JSHOP_FILE_SALE') ?></td>
 					<td id='product_file_<?php print $file->id ?>'>
 						<?php if ($file->file) { ?>
 							<a target="_blank" href="index.php?option=com_jshopping&controller=products&task=getfilesale&id=<?php print $file->id ?>">
 								<?php print $file->file ?>
 							</a>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<a href="#" onclick="if (confirm('<?php print JText::_('JSHOP_DELETE') ?>')) jshopAdmin.deleteFileProduct('<?php echo $file->id ?>','file');return false;"><img src="components/com_jshopping/images/publish_r.png"> <?php print JText::_('JSHOP_DELETE') ?></a>
+							<a href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE') ?>')) jshopAdmin.deleteFileProduct('<?php echo $file->id ?>','file');return false;"><img src="components/com_jshopping/images/publish_r.png"> <?php print Text::_('JSHOP_DELETE') ?></a>
 						<?php } ?>
 					</td>
 				</tr>
 				<tr class="rows_file_prod_<?php print $file->id ?>">
 					<td class="key">
-						<?php echo JText::_('JSHOP_DESCRIPTION_FILE_SALE') ?>
+						<?php echo Text::_('JSHOP_DESCRIPTION_FILE_SALE') ?>
 					</td>
 					<td>
 						<input type="text" class="form-control" size="100" name="product_file_descr[<?php print $file->id; ?>]" value="<?php print htmlspecialchars($file->file_descr); ?>" />
@@ -60,7 +62,7 @@ defined('_JEXEC') or die();
 			<?php }?>
 			<tr class="rows_file_prod_<?php print $file->id ?>">
 				<td class="key">
-					<?php echo JText::_('JSHOP_ORDERING') ?>
+					<?php echo Text::_('JSHOP_ORDERING') ?>
 				</td>
 				<td>
 					<input type="text" class="form-control" size="25" name="product_file_sort[<?php print $file->id; ?>]" value="<?php print $file->ordering; ?>" />
@@ -83,19 +85,19 @@ defined('_JEXEC') or die();
 		for ($i = 0; $i < $jshopConfig->product_file_upload_count; $i++) { ?>
 			<?php if ($jshopConfig->product_admin_demo_file) {?>
 				<tr>
-					<td class="key" style="width:250px;"><?php print JText::_('JSHOP_DEMO_FILE') ?></td>
+					<td class="key" style="width:250px;"><?php print Text::_('JSHOP_DEMO_FILE') ?></td>
 					<td>
 						<?php if ($jshopConfig->product_file_upload_via_ftp != 1) { ?>
 							<input type="file" name="product_demo_file_<?php print $i; ?>" />
 						<?php } ?>
 						<?php if ($jshopConfig->product_file_upload_via_ftp) { ?>
-							<div style="padding-top:3px;"><input size="34" type="text" name="product_demo_file_name_<?php print $i; ?>" title="<?php print JText::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" /></div>
+							<div style="padding-top:3px;"><input size="34" type="text" name="product_demo_file_name_<?php print $i; ?>" title="<?php print Text::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" /></div>
 						<?php } ?>
 					</td>
 				</tr>
 				<tr>
 					<td class="key">
-						<?php echo JText::_('JSHOP_DESCRIPTION_DEMO_FILE') ?>
+						<?php echo Text::_('JSHOP_DESCRIPTION_DEMO_FILE') ?>
 					</td>
 					<td>
 						<input type="text" class="form-control" size="100" name="product_demo_descr_<?php print $i; ?>" value="" />
@@ -109,19 +111,19 @@ defined('_JEXEC') or die();
 			<?php } ?>
 			<?php if ($jshopConfig->product_admin_sale_file) {?>
 				<tr>
-					<td class="key"><?php print JText::_('JSHOP_FILE_SALE') ?></td>
+					<td class="key"><?php print Text::_('JSHOP_FILE_SALE') ?></td>
 					<td>
 						<?php if ($jshopConfig->product_file_upload_via_ftp != 1) { ?>
 							<input type="file" name="product_file_<?php print $i; ?>" />
 						<?php } ?>
 						<?php if ($jshopConfig->product_file_upload_via_ftp) { ?>
-							<div style="padding-top:3px;"><input size="34" type="text" name="product_file_name_<?php print $i; ?>" title="<?php print JText::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" /></div>
+							<div style="padding-top:3px;"><input size="34" type="text" name="product_file_name_<?php print $i; ?>" title="<?php print Text::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" /></div>
 						<?php } ?>
 					</td>
 				</tr>
 				<tr>
 					<td class="key">
-						<?php echo JText::_('JSHOP_DESCRIPTION_FILE_SALE') ?>
+						<?php echo Text::_('JSHOP_DESCRIPTION_FILE_SALE') ?>
 					</td>
 					<td>
 						<input type="text" class="form-control" size="100" name="product_file_descr_<?php print $i; ?>" value="" />
@@ -130,7 +132,7 @@ defined('_JEXEC') or die();
 			<?php } ?>
 			<tr>
 				<td class="key">
-					<?php echo JText::_('JSHOP_ORDERING') ?>
+					<?php echo Text::_('JSHOP_ORDERING') ?>
 				</td>
 				<td>
 					<input type="text" class="form-control" size="25" name="product_file_sort_<?php print $i; ?>" value="<?php print $sort + $i ?>" />
@@ -154,9 +156,9 @@ defined('_JEXEC') or die();
 	</table>
 
 	<div class="helpbox mt-3">
-		<div class="head"><?php echo JText::_('JSHOP_ABOUT_UPLOAD_FILES') ?></div>
+		<div class="head"><?php echo Text::_('JSHOP_ABOUT_UPLOAD_FILES') ?></div>
 		<div class="text">
-			<?php print sprintf(JText::_('JSHOP_SIZE_FILES_INFO'), ini_get("upload_max_filesize"), ini_get("post_max_size")); ?>
+			<?php print sprintf(Text::_('JSHOP_SIZE_FILES_INFO'), ini_get("upload_max_filesize"), ini_get("post_max_size")); ?>
 		</div>
 	</div>
 </div>

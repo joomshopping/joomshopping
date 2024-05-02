@@ -1,4 +1,10 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -17,35 +23,35 @@ if ($saveOrder){
 ?>
 
 <div id="j-main-container" class="j-main-container">
-    <?php JSHelperAdmin::displaySubmenuOptions("attributes");?>
+    <?php HelperAdmin::displaySubmenuOptions("attributes");?>
     <form action="index.php?option=com_jshopping&controller=attributes" method="post" name="adminForm" id="adminForm">
     <?php print $this->tmp_html_start?>
     <table class="table table-striped">
     <thead>
     <tr>
         <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
-            <?php echo \JHTML::_('grid.sort', $this->filter_order!='A.attr_ordering' ? '#' : '', 'A.attr_ordering', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', $this->filter_order!='A.attr_ordering' ? '#' : '', 'A.attr_ordering', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="20">
-          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </th>
         <th width="200" align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th align="left">
-          <?php echo JText::_('JSHOP_OPTIONS')?>
+          <?php echo Text::_('JSHOP_OPTIONS')?>
         </th>
         <th align="left">
-          <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_DEPENDENT'), 'A.independent', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_DEPENDENT'), 'A.independent', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th align = "left">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_GROUP'), 'groupname', $this->filter_order_Dir, $this->filter_order);?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_GROUP'), 'groupname', $this->filter_order_Dir, $this->filter_order);?>
         </th>
         <th width="50" class="center">
-            <?php echo JText::_('JSHOP_EDIT')?>
+            <?php echo Text::_('JSHOP_EDIT')?>
         </th>
         <th width="40" class="center">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'A.attr_id', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'A.attr_id', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
     </tr>
     </thead>
@@ -61,21 +67,21 @@ if ($saveOrder){
             <?php } ?>
         </td>
        <td>
-         <?php echo \JHTML::_('grid.id', $i, $row->attr_id);?>
+         <?php echo HTMLHelper::_('grid.id', $i, $row->attr_id);?>
        </td>
        <td>
         <?php if (!$row->count_values) {?><img src="components/com_jshopping/images/disabled.png" alt="" /><?php }?>
          <a href="index.php?option=com_jshopping&controller=attributes&task=edit&attr_id=<?php echo $row->attr_id; ?>"><?php echo $row->name;?></a>
        </td>
        <td>
-         <a href="index.php?option=com_jshopping&controller=attributesvalues&task=show&attr_id=<?php echo $row->attr_id?>"><?php echo JText::_('JSHOP_OPTIONS')?></a>
+         <a href="index.php?option=com_jshopping&controller=attributesvalues&task=show&attr_id=<?php echo $row->attr_id?>"><?php echo Text::_('JSHOP_OPTIONS')?></a>
          <?php echo $row->values;?>
        </td>
        <td>
         <?php if ($row->independent==0){
-            print JText::_('JSHOP_YES');
+            print Text::_('JSHOP_YES');
         }else{
-            print JText::_('JSHOP_NO');
+            print Text::_('JSHOP_NO');
         }?>
        </td>
        <td>
@@ -99,7 +105,7 @@ if ($saveOrder){
 
     <input type="hidden" name="filter_order" value="<?php echo $this->filter_order?>" />
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter_order_Dir?>" />
-    <input type="hidden" name="task" value="<?php echo \JFactory::getApplication()->input->getVar('task', 0)?>" />
+    <input type="hidden" name="task" value="<?php echo Factory::getApplication()->input->getVar('task', 0)?>" />
     <input type="hidden" name="hidemainmenu" value="0" />
     <input type="hidden" name="boxchecked" value="0" />
     <?php print $this->tmp_html_end?>
@@ -107,6 +113,6 @@ if ($saveOrder){
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

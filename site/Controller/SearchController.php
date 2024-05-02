@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 use Joomla\Component\Jshopping\Site\Helper\Selects;
 defined('_JEXEC') or die();
@@ -14,17 +18,17 @@ defined('_JEXEC') or die();
 class SearchController extends BaseController{
     
     public function init(){
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerSearch', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerSearch', array(&$obj));
     }
     
     function display($cachable = false, $urlparams = false){
-    	$jshopConfig = \JSFactory::getConfig();    	
+    	$jshopConfig = JSFactory::getConfig();    	
         $Itemid = $this->input->getInt('Itemid');
 		$category_id = $this->input->getInt('category_id');
 		
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeLoadSearchForm', array());
         		
 		Metadata::search();
@@ -36,7 +40,7 @@ class SearchController extends BaseController{
 		$view->set('characteristics', $characteristics);
         $view->set('config', $jshopConfig);
         $view->set('Itemid', $Itemid);
-		$view->set('action', \JSHelper::SEFLink("index.php?option=com_jshopping&controller=search&task=result"));
+		$view->set('action', Helper::SEFLink("index.php?option=com_jshopping&controller=search&task=result"));
         $view->_tmp_ext_search_html_start = "";
         $view->_tmp_ext_search_html_end = "";
         $dispatcher->triggerEvent('onBeforeDisplaySearchFormView', array(&$view) );
@@ -44,13 +48,13 @@ class SearchController extends BaseController{
     }
     
     function result(){        
-        $jshopConfig = \JSFactory::getConfig();		
+        $jshopConfig = JSFactory::getConfig();		
 
-		\JSFactory::getModel('productShop', 'Site')->storeEndPages();
+		JSFactory::getModel('productShop', 'Site')->storeEndPages();
 
 		Metadata::searchResult();
 		
-		$productlist = \JSFactory::getModel('search', 'Site\\Productlist');
+		$productlist = JSFactory::getModel('search', 'Site\\Productlist');
         $productlist->load();
 		
 		$orderby = $productlist->getOrderBy();
@@ -93,11 +97,11 @@ class SearchController extends BaseController{
         $view->set('count_product_to_row', $productlist->getCountProductsToRow());
         $view->set('rows', $products);
         $view->set('allow_review', $allow_review);
-        $view->set('shippinginfo', \JSHelper::SEFLink($jshopConfig->shippinginfourl,1));
+        $view->set('shippinginfo', Helper::SEFLink($jshopConfig->shippinginfourl,1));
         $view->set('total', $productlist->getTotal());
         $view->_tmp_list_products_html_start = "";
         $view->_tmp_list_products_html_end  = "";
-        \JFactory::getApplication()->triggerEvent('onBeforeDisplayProductListView', array(&$view, &$productlist));
+        Factory::getApplication()->triggerEvent('onBeforeDisplayProductListView', array(&$view, &$productlist));
         $view->display();
     }
     
@@ -115,12 +119,12 @@ class SearchController extends BaseController{
 	}
 	
 	private function load_tmpl_characteristics($category_id){
-		$jshopConfig = \JSFactory::getConfig();		
+		$jshopConfig = JSFactory::getConfig();		
 		if ($jshopConfig->admin_show_product_extra_field){
-            $dispatcher = \JFactory::getApplication();
-            $characteristic_fields = \JSFactory::getAllProductExtraField();			
-            $characteristic_fieldvalues = \JSFactory::getAllProductExtraFieldValueDetail();
-            $characteristic_displayfields = \JSFactory::getDisplayFilterExtraFieldForCategory($category_id);
+            $dispatcher = Factory::getApplication();
+            $characteristic_fields = JSFactory::getAllProductExtraField();			
+            $characteristic_fieldvalues = JSFactory::getAllProductExtraFieldValueDetail();
+            $characteristic_displayfields = JSFactory::getDisplayFilterExtraFieldForCategory($category_id);
 
             $view = $this->getView("search");
             $view->setLayout("characteristics");

@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -14,7 +16,7 @@ defined('_JEXEC') or die();
 <input type="hidden" name="boxchecked" value="0" />
 <input type="hidden" name="ie_id" value="<?php print $ie_id;?>" />
 
-<?php print \JText::_('JSHOP_FILE')?> (*.csv):
+<?php print Text::_('JSHOP_FILE')?> (*.csv):
 <input type="file" name="file">
 
 

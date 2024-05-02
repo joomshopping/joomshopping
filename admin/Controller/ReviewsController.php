@@ -7,14 +7,21 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die;
 
 class ReviewsController extends BaseadminController{
 
     function init(){
-        \JSHelperAdmin::checkAccessController("reviews");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("reviews");
+        HelperAdmin::addSubmenu("other");
     }
 
     public function getUrlEditItem($id = 0){
@@ -22,10 +29,10 @@ class ReviewsController extends BaseadminController{
     }
     
     function display($cachable = false, $urlparams = false){
-        $jshopConfig = \JSFactory::getConfig();
-        $app = \JFactory::getApplication();
-        $id_vendor_cuser = \JSHelperAdmin::getIdVendorForCUser();
-        $reviews_model = \JSFactory::getModel("reviews");
+        $jshopConfig = JSFactory::getConfig();
+        $app = Factory::getApplication();
+        $id_vendor_cuser = HelperAdmin::getIdVendorForCUser();
+        $reviews_model = JSFactory::getModel("reviews");
         $context = "jshoping.list.admin.reviews";
         $limit = $app->getUserStateFromRequest( $context.'limit', 'limit', $app->getCfg('list_limit'), 'int' );
         $limitstart = $app->getUserStateFromRequest( $context.'limitstart', 'limitstart', 0, 'int' );
@@ -48,17 +55,17 @@ class ReviewsController extends BaseadminController{
                 $prod_filter['vendor_id'] = $id_vendor_cuser;
             }
             $products = SelectOptions::getProducts(1, 0, array('filter'=>$prod_filter, 'limitstart'=>0, 'limit'=>100));
-            $products_select = \JHTML::_('select.genericlist', $products, 'product_id', 'class="form-select" onchange="document.adminForm.submit();" ', 'product_id', 'name', $product_id);
+            $products_select = HTMLHelper::_('select.genericlist', $products, 'product_id', 'class="form-select" onchange="document.adminForm.submit();" ', 'product_id', 'name', $product_id);
         }
 
         $total = $reviews_model->getAllReviews($category_id, $product_id, NULL, NULL, $text_search, "count", $id_vendor_cuser, $filter_order, $filter_order_Dir);
 
         jimport('joomla.html.pagination');
-        $pagination = new \JPagination($total, $limitstart, $limit);
+        $pagination = new Pagination($total, $limitstart, $limit);
 
         $reviews = $reviews_model->getAllReviews($category_id, $product_id, $pagination->limitstart, $pagination->limit, $text_search, "list", $id_vendor_cuser, $filter_order, $filter_order_Dir);
 
-        $categories = \JHTML::_('select.genericlist', SelectOptions::getCategories(\JText::_('JSHOP_SELECT_CATEGORY')), 'category_id', 'class="form-select" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id);
+        $categories = HTMLHelper::_('select.genericlist', SelectOptions::getCategories(Text::_('JSHOP_SELECT_CATEGORY')), 'category_id', 'class="form-select" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id);
 
         foreach ($reviews as $review) {
             $review->_tmp_cols_14 = "";
@@ -82,25 +89,25 @@ class ReviewsController extends BaseadminController{
         $view->_tmp_cols_14 = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayReviews', array(&$view));
         $view->displayList();
      }
 
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
-        $jshopConfig = \JSFactory::getConfig();
-        $reviews_model = \JSFactory::getModel("reviews");
+        Factory::getApplication()->input->set('hidemainmenu', true);
+        $jshopConfig = JSFactory::getConfig();
+        $reviews_model = JSFactory::getModel("reviews");
         $cid = $this->input->getVar('cid');
 		$id = $cid[0] ?? 0;
 		$edit = $this->getTask()=='edit';
 		if ($id) {
 			$review = $reviews_model->getReview($id);
 		} else {
-			$review = \JSFactory::getTable('review');        
+			$review = JSFactory::getTable('review');        
 		}
-        $mark = \JHTML::_('select.genericlist', SelectOptions::getReviewMarks(), 'mark', 'class = "inputbox form-select"', 'value', 'text', $review->mark ?? 0);
-        \JFilterOutput::objectHTMLSafe($review, ENT_QUOTES);
+        $mark = HTMLHelper::_('select.genericlist', SelectOptions::getReviewMarks(), 'mark', 'class = "inputbox form-select"', 'value', 'text', $review->mark ?? 0);
+        OutputFilter::objectHTMLSafe($review, ENT_QUOTES);
 
         $view = $this->getView("comments", 'html');
         $view->setLayout("edit");        
@@ -111,7 +118,7 @@ class ReviewsController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditReviews', array(&$view));
         $view->displayEdit();
     }

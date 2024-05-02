@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -22,7 +25,7 @@ $edit=$this->edit;
    ?>
    <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>*
+       <?php echo Text::_('JSHOP_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>*
      </td>
      <td>
        <input type="text" class="inputbox form-control" id="<?php print $field;?>" name="<?php print $field;?>" value="<?php echo $row->$field;?>" />
@@ -31,7 +34,7 @@ $edit=$this->edit;
    <?php }?>
    <tr>
      <td class="key">
-       <?php echo JText::_('JSHOP_CODE')?>*
+       <?php echo Text::_('JSHOP_CODE')?>*
      </td>
      <td>
        <input type="text" class="inputbox form-control" id="status_code" name="status_code" value="<?php echo $row->status_code;?>" />
@@ -43,7 +46,7 @@ $edit=$this->edit;
 </div>
 <div class="clr"></div>
  
-<input type="hidden" name="task" value="<?php echo \JFactory::getApplication()->input->getVar('task')?>" />
+<input type="hidden" name="task" value="<?php echo Factory::getApplication()->input->getVar('task')?>" />
 <input type="hidden" name="edit" value="<?php echo $edit;?>" />
 <?php if ($edit) {?>
   <input type="hidden" name="status_id" value="<?php echo (int)$row->status_id?>" />

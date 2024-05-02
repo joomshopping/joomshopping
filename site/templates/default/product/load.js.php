@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.3.4 29.02.2024
 * @author       MAXXmarketing GmbH
@@ -11,12 +14,12 @@ defined('_JEXEC') or die();
 <script type="text/javascript">
     var jshopParams = jshopParams || {};
     <?php if ($this->product->product_quantity > 0){?>
-    jshopParams.translate_not_available = "<?php print addslashes(JText::_('JSHOP_PRODUCT_NOT_AVAILABLE_THIS_OPTION'))?>";
+    jshopParams.translate_not_available = "<?php print addslashes(Text::_('JSHOP_PRODUCT_NOT_AVAILABLE_THIS_OPTION'))?>";
     <?php }else{?>
-    jshopParams.translate_not_available = "<?php print addslashes(JText::_('JSHOP_PRODUCT_NOT_AVAILABLE'))?>";
+    jshopParams.translate_not_available = "<?php print addslashes(Text::_('JSHOP_PRODUCT_NOT_AVAILABLE'))?>";
     <?php }?>
-    jshopParams.translate_available = "<?php print addslashes(JText::_('JSHOP_PRODUCT_AVAILABLE'))?>";
-    jshopParams.translate_zoom_image = "<?php print addslashes(JText::_('JSHOP_ZOOM_IMAGE'))?>";
+    jshopParams.translate_available = "<?php print addslashes(Text::_('JSHOP_PRODUCT_AVAILABLE'))?>";
+    jshopParams.translate_zoom_image = "<?php print addslashes(Text::_('JSHOP_ZOOM_IMAGE'))?>";
     jshopParams.product_basic_price_volume = <?php print $this->product->weight_volume_units;?>;
     jshopParams.product_basic_price_unit_qty = <?php print $this->product->product_basic_price_unit_qty;?>;
     jshopParams.currency_code = "<?php print $this->config->currency_code;?>";
@@ -34,7 +37,7 @@ defined('_JEXEC') or die();
         <?php } ?>
     <?php } ?>
     <?php foreach($this->all_attr_values as $attrval){ if ($attrval->image){?>jshopParams.attr_img[<?php print $attrval->value_id?>] = "<?php print $attrval->image?>";<?php } }?>
-    jshopParams.liveurl = '<?php print \JURI::root()?>';
+    jshopParams.liveurl = '<?php print Uri::root()?>';
     jshopParams.liveattrpath = '<?php print $this->config->image_attributes_live_path;?>';
     jshopParams.liveproductimgpath = '<?php print $this->config->image_product_live_path;?>';
     jshopParams.liveimgpath = '<?php print $this->config->live_path."images";?>';

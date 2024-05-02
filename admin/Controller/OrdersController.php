@@ -7,6 +7,16 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 use Joomla\Component\Jshopping\Site\Helper\Selects;
 
@@ -18,20 +28,20 @@ class OrdersController extends BaseadminController{
     public function init(){
         $this->registerTask('add', 'edit');
         $this->registerTask('apply', 'save');
-        \JSHelperAdmin::checkAccessController("orders");
+        HelperAdmin::checkAccessController("orders");
         if (!$this->input->getVar("js_nolang")){
-            \JSHelperAdmin::addSubmenu("orders");
+            HelperAdmin::addSubmenu("orders");
         }  
-        \JPluginHelper::importPlugin('jshoppingorder');
+        PluginHelper::importPlugin('jshoppingorder');
     }
 
     function display($cachable = false, $urlparams = false){
-        $jshopConfig = \JSFactory::getConfig();
-        $app = \JFactory::getApplication();        
+        $jshopConfig = JSFactory::getConfig();
+        $app = Factory::getApplication();        
         $context = "jshopping.list.admin.orders";
         $limit = $app->getUserStateFromRequest( $context.'limit', 'limit', $app->getCfg('list_limit'), 'int' );
         $limitstart = $app->getUserStateFromRequest( $context.'limitstart', 'limitstart', 0, 'int' );
-        $id_vendor_cuser = \JSHelperAdmin::getIdVendorForCUser();
+        $id_vendor_cuser = HelperAdmin::getIdVendorForCUser();
         $client_id = $this->input->getInt('client_id',0);
         
         $status_id = $app->getUserStateFromRequest( $context.'status_id', 'status_id', 0 );
@@ -47,11 +57,10 @@ class OrdersController extends BaseadminController{
             $filter["vendor_id"] = $id_vendor_cuser;
         }
         
-        $orders = \JSFactory::getModel("orders");
+        $orders = JSFactory::getModel("orders");
         
-        $total = $orders->getCountAllOrders($filter);        
-        jimport('joomla.html.pagination');
-        $pageNav = new \JPagination($total, $limitstart, $limit);
+        $total = $orders->getCountAllOrders($filter);
+        $pageNav = new Pagination($total, $limitstart, $limit);
         
         $_list_order_status = $orders->getAllOrderStatus();
         $list_order_status = array();
@@ -61,13 +70,13 @@ class OrdersController extends BaseadminController{
         $rows = $orders->getAllOrders($pageNav->limitstart, $pageNav->limit, $filter, $filter_order, $filter_order_Dir);
         
         $lists['status_orders'] = SelectOptions::getOrderStatus();       
-        $lists['changestatus'] = \JHTML::_('select.genericlist', SelectOptions::getOrderStatus(1) ,'status_id','class="form-select" style="width: 170px;" ','status_id','name', $status_id);
-        $lists['notfinished'] = \JHTML::_('select.genericlist', SelectOptions::getNotFinshed(), 'notfinished','class="form-select" style="width: 170px;" title="'.\JText::_('JSHOP_NOT_FINISHED').'" ','id','name', $notfinished);
-        		
-		$payments = \JSFactory::getModel("payments");
+        $lists['changestatus'] = HTMLHelper::_('select.genericlist', SelectOptions::getOrderStatus(1) ,'status_id','class="form-select" style="width: 170px;" ','status_id','name', $status_id);
+        $lists['notfinished'] = HTMLHelper::_('select.genericlist', SelectOptions::getNotFinshed(), 'notfinished','class="form-select" style="width: 170px;" title="'.Text::_('JSHOP_NOT_FINISHED').'" ','id','name', $notfinished);
+
+		$payments = JSFactory::getModel("payments");
         $payments_list = $payments->getListNamePaymens(0);
         
-        $shippings = \JSFactory::getModel("shippings");
+        $shippings = JSFactory::getModel("shippings");
         $shippings_list = $shippings->getListNameShippings(0);
         
         $show_vendor = $jshopConfig->admin_show_vendors;
@@ -91,7 +100,7 @@ class OrdersController extends BaseadminController{
             $rows[$k]->display_info_order = $display_info_order;
             
             $blocked = 0;
-            if (\JSHelperAdmin::orderBlocked($row) || !$display_info_order) $blocked = 1;
+            if (HelperAdmin::orderBlocked($row) || !$display_info_order) $blocked = 1;
             $rows[$k]->blocked = $blocked;
 			
             $rows[$k]->payment_name = isset($payments_list[$row->payment_method_id]) ? $payments_list[$row->payment_method_id] : '';
@@ -112,10 +121,10 @@ class OrdersController extends BaseadminController{
             $row->_tmp_cols_8 = "";
             $row->_tmp_ext_info_status = "";
             $row->_tmp_ext_info_update = "";
-            $row->_tmp_ext_info_order_total = "";			
+            $row->_tmp_ext_info_order_total = "";
         }
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayListOrderAdmin', array(&$rows));
 		
 		$view=$this->getView("orders", 'html');
@@ -131,7 +140,6 @@ class OrdersController extends BaseadminController{
         $view->set('list_order_status', $list_order_status);
         $view->set('client_id', $client_id);
         $view->set('total', $total);
-
         $view->_tmp_order_list_html_end = '';
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
@@ -155,17 +163,17 @@ class OrdersController extends BaseadminController{
     }
     
     function show(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $order_id = $this->input->getInt("order_id");
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
 		
-        $orders = \JSFactory::getModel("orders");
-        $order = \JSFactory::getTable('order');
+        $orders = JSFactory::getModel("orders");
+        $order = JSFactory::getTable('order');
         $order->load($order_id);
         
 		$order->prepareOrderPrint('order_show');
         
-        $id_vendor_cuser = \JSHelperAdmin::getIdVendorForCUser();
+        $id_vendor_cuser = HelperAdmin::getIdVendorForCUser();
         
 		$order->loadItemsNewDigitalProducts();
         $order_items = $order->getAllItems();
@@ -189,7 +197,7 @@ class OrdersController extends BaseadminController{
             if ($order->vendor_id!=$id_vendor_cuser) $display_info_only_product = 1; 
         }
         
-        $display_block_change_order_status = $order->order_created;        
+        $display_block_change_order_status = $order->order_created;
         if ($jshopConfig->admin_show_vendors && $id_vendor_cuser){
             if ($order->vendor_id!=$id_vendor_cuser) $display_block_change_order_status = 0;
             foreach($order_items as $k=>$v){
@@ -201,7 +209,7 @@ class OrdersController extends BaseadminController{
         		
 		$stat_download = $order->getFilesStatDownloads(1);
         
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayOrderAdmin', array(&$order, &$order_items));
         
         $print = $this->input->getInt("print");
@@ -263,26 +271,26 @@ class OrdersController extends BaseadminController{
         $client_id = $this->input->getInt('client_id', 0);
 		$sendmessage = $notify;
 		
-		$model = \JSFactory::getModel('orderchangestatus', 'Site');
+		$model = JSFactory::getModel('orderchangestatus', 'Site');
 		$model->setData($order_id, $status, $sendmessage, $status_id, $notify, $comments, $include, $view_order);
 		$model->setAppAdmin(1);
 		$model->store();
 		
-		\JSFactory::loadAdminLanguageFile();
+		JSFactory::loadAdminLanguageFile();
         
         if ($view_order){
-            $this->setRedirect("index.php?option=com_jshopping&controller=orders&task=show&order_id=".$order_id, \JText::_('JSHOP_ORDER_STATUS_CHANGED'));
+            $this->setRedirect("index.php?option=com_jshopping&controller=orders&task=show&order_id=".$order_id, Text::_('JSHOP_ORDER_STATUS_CHANGED'));
         }else{
-            $this->setRedirect("index.php?option=com_jshopping&controller=orders&client_id=".$client_id, \JText::_('JSHOP_ORDER_STATUS_CHANGED'));
+            $this->setRedirect("index.php?option=com_jshopping&controller=orders&client_id=".$client_id, Text::_('JSHOP_ORDER_STATUS_CHANGED'));
 		}
     }
     
     function finish(){
-		$dispatcher = \JFactory::getApplication();
-		$jshopConfig = \JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
 		
         $order_id = $this->input->getInt("order_id");
-        $order = \JSFactory::getTable('order');
+        $order = JSFactory::getTable('order');
         $order->load($order_id);
         $order->order_created = 1;
         $dispatcher->triggerEvent('onBeforeAdminFinishOrder', array(&$order));
@@ -290,39 +298,39 @@ class OrdersController extends BaseadminController{
 		$order->updateProductsInStock(1);
 		$order->saveOrderHistory(1, '');
         
-        \JSFactory::loadLanguageFile($order->getLang(), true);
-		$lang = \JSFactory::getLang($order->getLang());
-        $checkout = \JSFactory::getModel('checkout', 'Site');
+        JSFactory::loadLanguageFile($order->getLang(), true);
+		$lang = JSFactory::getLang($order->getLang());
+        $checkout = JSFactory::getModel('checkout', 'Site');
         if ($jshopConfig->send_order_email){
             $checkout->sendOrderEmail($order_id, 1);
         }
         
-        \JSFactory::loadAdminLanguageFile();
-        $this->setRedirect("index.php?option=com_jshopping&controller=orders", \JText::_('JSHOP_ORDER_FINISHED'));
+        JSFactory::loadAdminLanguageFile();
+        $this->setRedirect("index.php?option=com_jshopping&controller=orders", Text::_('JSHOP_ORDER_FINISHED'));
     }
 
     function remove(){
-		\JSession::checkToken() or die('Invalid Token');
+		Session::checkToken() or die('Invalid Token');
         $client_id = $this->input->getInt('client_id', 0);
         $cid = (array)$this->input->getVar("cid");
-        \JSFactory::getModel("orders")->deleteList($cid);
+        JSFactory::getModel("orders")->deleteList($cid);
         $this->setRedirect("index.php?option=com_jshopping&controller=orders&client_id=".$client_id);
     }
     
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
-        $app = \JFactory::getApplication();
+        Factory::getApplication()->input->set('hidemainmenu', true);
+        $app = Factory::getApplication();
         $order_id = $this->input->getVar("order_id");
         $client_id = $this->input->getInt('client_id',0);
-        $jshopConfig = \JSFactory::getConfig();
-        $orders = \JSFactory::getModel("orders");
-        $order = \JSFactory::getTable('order');
-        $order->load($order_id);        
+        $jshopConfig = JSFactory::getConfig();
+        $orders = JSFactory::getModel("orders");
+        $order = JSFactory::getTable('order');
+        $order->load($order_id);
         
-        $id_vendor_cuser = \JSHelperAdmin::getIdVendorForCUser();
+        $id_vendor_cuser = HelperAdmin::getIdVendorForCUser();
         if ($jshopConfig->admin_show_vendors && $id_vendor_cuser){
             if ($order->vendor_id!=$id_vendor_cuser) {
-				$app->enqueueMessage(\JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
+				$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
                 $app->redirect('index.php');
                 return 0;
             }
@@ -330,7 +338,7 @@ class OrdersController extends BaseadminController{
 
         $order_items = $order->getAllItems();
         
-        $select_language = \JHTML::_('select.genericlist', SelectOptions::getLanguages(), 'lang', 'class = "inputbox form-select" style="float:none"','language', 'name', $order->lang);
+        $select_language = HTMLHelper::_('select.genericlist', SelectOptions::getLanguages(), 'lang', 'class = "inputbox form-select" style="float:none"','language', 'name', $order->lang);
         
 		$select_countries = Selects::getCountry($order->country, 'class="form-select"');
 		$select_d_countries = Selects::getCountry($order->d_country, 'class = "inputbox ende form-select"', 'd_country');
@@ -353,22 +361,22 @@ class OrdersController extends BaseadminController{
         }
 
         
-        $_currency = \JSFactory::getModel("Currencies");
+        $_currency = JSFactory::getModel("Currencies");
         $currency_list = $_currency->getAllCurrencies();
         $order_currency = 0;
         foreach($currency_list as $k=>$v){
             if ($v->currency_code_iso==$order->currency_code_iso) $order_currency = $v->currency_id;
         }
-        $select_currency = \JHTML::_('select.genericlist', $currency_list, 'currency_id','class = "inputbox form-select"','currency_id','currency_code', $order_currency);
-        $display_price_select = \JHTML::_('select.genericlist', SelectOptions::getPriceType(), 'display_price', 'class="form-select" onchange="jshopAdmin.updateOrderTotalValue();"', 'id', 'name', $order->display_price);
-        $shippings_select = \JHTML::_('select.genericlist', SelectOptions::getShippings(), 'shipping_method_id', 'class="form-select" onchange="jshopAdmin.order_shipping_calculate()"', 'shipping_id', 'name', $order->shipping_method_id);
-        $payments_select = \JHTML::_('select.genericlist', SelectOptions::getPayments(), 'payment_method_id', 'class="form-select" onchange="jshopAdmin.order_payment_calculate()"', 'payment_id', 'name', $order->payment_method_id);
-        $delivery_time_select = \JHTML::_('select.genericlist', SelectOptions::getDeliveryTimes('- - -'), 'order_delivery_times_id','class = "form-select"', 'id', 'name', $order->delivery_times_id);
-        $users_list_select = \JHTML::_('select.genericlist', SelectOptions::getUsers(0, 1), 'user_id', 'class="form-select" onchange="jshopAdmin.updateBillingShippingForUser(this.value);"', 'user_id', 'name', $order->user_id);        
+        $select_currency = HTMLHelper::_('select.genericlist', $currency_list, 'currency_id','class = "inputbox form-select"','currency_id','currency_code', $order_currency);
+        $display_price_select = HTMLHelper::_('select.genericlist', SelectOptions::getPriceType(), 'display_price', 'class="form-select" onchange="jshopAdmin.updateOrderTotalValue();"', 'id', 'name', $order->display_price);
+        $shippings_select = HTMLHelper::_('select.genericlist', SelectOptions::getShippings(), 'shipping_method_id', 'class="form-select" onchange="jshopAdmin.order_shipping_calculate()"', 'shipping_id', 'name', $order->shipping_method_id);
+        $payments_select = HTMLHelper::_('select.genericlist', SelectOptions::getPayments(), 'payment_method_id', 'class="form-select" onchange="jshopAdmin.order_payment_calculate()"', 'payment_id', 'name', $order->payment_method_id);
+        $delivery_time_select = HTMLHelper::_('select.genericlist', SelectOptions::getDeliveryTimes('- - -'), 'order_delivery_times_id','class = "form-select"', 'id', 'name', $order->delivery_times_id);
+        $users_list_select = HTMLHelper::_('select.genericlist', SelectOptions::getUsers(0, 1), 'user_id', 'class="form-select" onchange="jshopAdmin.updateBillingShippingForUser(this.value);"', 'user_id', 'name', $order->user_id);        
         
-        \JSHelper::filterHTMLSafe($order);
+        Helper::filterHTMLSafe($order);
         foreach($order_items as $k=>$v){
-            \JFilterOutput::objectHTMLSafe($order_items[$k]);
+            OutputFilter::objectHTMLSafe($order_items[$k]);
             $v->_ext_attribute_html = "";
         }
 		
@@ -403,27 +411,27 @@ class OrdersController extends BaseadminController{
         $view->_tmp_html_after_subtotal = "";
         $view->_tmp_html_after_total = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditOrders', array(&$view));
         $view->displayEdit();
     }
 
     function save(){
-		\JSession::checkToken() or die('Invalid Token');
+		Session::checkToken() or die('Invalid Token');
         $client_id = $this->input->getInt('client_id', 0);
-        $model = \JSFactory::getModel("orders");
+        $model = JSFactory::getModel("orders");
         $post = $model->getPrepareDataSave($this->input);
-        $order = $model->save($post);        
+        $order = $model->save($post);
         if ($this->getTask()=='apply'){
             $this->setRedirect("index.php?option=com_jshopping&controller=orders&task=edit&order_id=".$order->order_id.'&client_id='.$client_id);
         }else{
             $this->setRedirect("index.php?option=com_jshopping&controller=orders&client_id=".$client_id);
-        }        
+        }
     }
     
-	function stat_file_download_clear(){        
+	function stat_file_download_clear(){
         $order_id = $this->input->getInt("order_id");
-        $order = \JSFactory::getTable('order');
+        $order = JSFactory::getTable('order');
         $order->load($order_id);
         $order->file_stat_downloads = '';
         $order->store();
@@ -433,27 +441,27 @@ class OrdersController extends BaseadminController{
     function send(){
         $order_id = $this->input->getInt("order_id");
         $back = $this->input->getVar("back");
-        $order = \JSFactory::getTable('order');
+        $order = JSFactory::getTable('order');
         $order->load($order_id);
-        \JSFactory::loadLanguageFile($order->getLang());
-        \JSFactory::getLang($order->getLang());
-        $checkout = \JSFactory::getModel('checkout', 'Site');
+        JSFactory::loadLanguageFile($order->getLang());
+        JSFactory::getLang($order->getLang());
+        $checkout = JSFactory::getModel('checkout', 'Site');
         $checkout->sendOrderEmail($order_id, 1);
-        \JSFactory::loadAdminLanguageFile();
+        JSFactory::loadAdminLanguageFile();
         if ($back=='orders'){
             $backurl = 'index.php?option=com_jshopping&controller=orders';
         }else{
             $backurl = "index.php?option=com_jshopping&controller=orders&task=show&order_id=".$order_id;
         }
-        $this->setRedirect($backurl, \JText::_('JSHOP_MAIL_HAS_BEEN_SENT'));
+        $this->setRedirect($backurl, Text::_('JSHOP_MAIL_HAS_BEEN_SENT'));
     }
     
     function transactions(){
         $order_id = $this->input->getInt("order_id");
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         
-        $orders = \JSFactory::getModel("orders");
-        $order = \JSFactory::getTable('order');
+        $orders = JSFactory::getModel("orders");
+        $order = JSFactory::getTable('order');
         $order->load($order_id);
         $rows = $order->getListTransactions();
         
@@ -471,7 +479,7 @@ class OrdersController extends BaseadminController{
         $view->set('list_order_status', $list_order_status);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeShowOrderTransactions', array(&$view));
         $view->displayTrx();   
     }
@@ -486,7 +494,7 @@ class OrdersController extends BaseadminController{
         $data_order = (array)$post['data_order'];
         $products = (array)$data_order['product'];
 
-        $orders = \JSFactory::getModel("orders");
+        $orders = JSFactory::getModel("orders");
         $taxes_array = $orders->loadtaxorder($data_order, $products);
         print json_encode($taxes_array);
         die;
@@ -497,7 +505,7 @@ class OrdersController extends BaseadminController{
         $data_order = (array)$post['data_order'];
         $products = (array)($data_order['product'] ?? []);
 
-        $orders = \JSFactory::getModel("orders");
+        $orders = JSFactory::getModel("orders");
         $prices = $orders->loadshippingprice($data_order, $products);
         print json_encode($prices);
         die;
@@ -508,7 +516,7 @@ class OrdersController extends BaseadminController{
         $data_order = (array)$post['data_order'];
         $products = (array)($data_order['product'] ?? []);
 
-        $orders = \JSFactory::getModel("orders");
+        $orders = JSFactory::getModel("orders");
         $price = $orders->loadpaymentprice($data_order, $products);
         $prices = array('price'=>$price);
         print json_encode($prices);
@@ -520,7 +528,7 @@ class OrdersController extends BaseadminController{
         $data_order = (array)$post['data_order'];
         $products = (array)$data_order['product'];
 
-        $orders = \JSFactory::getModel("orders");
+        $orders = JSFactory::getModel("orders");
         $price = $orders->loaddiscountprice($data_order, $products);
         $prices = array('price'=>$price);
         print json_encode($prices);

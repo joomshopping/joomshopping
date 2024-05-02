@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 defined('_JEXEC') or die();
 
 class ProductLabelsController extends BaseadminController{
@@ -14,18 +18,18 @@ class ProductLabelsController extends BaseadminController{
     protected $modelSaveItemFileName = 'image';
     
     function init(){
-        \JSHelperAdmin::checkAccessController("productlabels");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("productlabels");
+        HelperAdmin::addSubmenu("other");
     }
 
 	function display($cachable = false, $urlparams = false){
-        $jshopConfig = \JSFactory::getConfig();
-        $app = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.productlabels";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "name", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         
-		$_productLabels = \JSFactory::getModel("productlabels");
+		$_productLabels = JSFactory::getModel("productlabels");
 		$rows = $_productLabels->getList($filter_order, $filter_order_Dir);
         
 		$view = $this->getView("product_labels", 'html');
@@ -37,22 +41,22 @@ class ProductLabelsController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayProductLabels', array(&$view));		
 		$view->displayList();
 	}
 	
 	function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
-        $jshopConfig = \JSFactory::getConfig();
+        Factory::getApplication()->input->set('hidemainmenu', true);
+        $jshopConfig = JSFactory::getConfig();
 		$id = $this->input->getInt("id");
-		$productLabel = \JSFactory::getTable('productlabel');
+		$productLabel = JSFactory::getTable('productlabel');
 		$productLabel->load($id);
 		$edit = ($id)?(1):(0);
-		$_lang = \JSFactory::getModel("languages");
+		$_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
-        \JFilterOutput::objectHTMLSafe($productLabel, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($productLabel, ENT_QUOTES);
 
 		$view = $this->getView("product_labels", 'html');
         $view->setLayout("edit");
@@ -64,15 +68,15 @@ class ProductLabelsController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditProductLabels', array(&$view));
 		$view->displayEdit();
 	}
     
     function delete_foto(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $id = $this->input->getInt("id");
-        $productLabel = \JSFactory::getTable('productlabel');
+        $productLabel = JSFactory::getTable('productlabel');
         $productLabel->load($id);
         @unlink($jshopConfig->image_labels_path."/".$productLabel->image);
         $productLabel->image = "";

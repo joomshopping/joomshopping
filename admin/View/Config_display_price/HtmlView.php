@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Config_display_price;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,19 +16,19 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_CONFIG_DISPLAY_PRICE_LIST'), 'generic.png' );
-        \JToolBarHelper::custom( "back", 'arrow-left', 'arrow-left', \JText::_('JSHOP_CONFIG'), false);
-        \JToolBarHelper::addNew();
-        \JToolBarHelper::deleteList();        
+        ToolbarHelper::title( Text::_('JSHOP_CONFIG_DISPLAY_PRICE_LIST'), 'generic.png' );
+        ToolbarHelper::custom( "back", 'arrow-left', 'arrow-left', Text::_('JSHOP_CONFIG'), false);
+        ToolbarHelper::addNew();
+        ToolbarHelper::deleteList();        
         parent::display($tpl);
 	}
     function displayEdit($tpl=null){        
-        \JToolBarHelper::title( $temp=($this->row->id) ? (\JText::_('JSHOP_EDIT')) : (\JText::_('JSHOP_NEW')), 'generic.png' );
-        \JToolBarHelper::save();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::apply();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::cancel();        
+        ToolbarHelper::title( $temp=($this->row->id) ? (Text::_('JSHOP_EDIT')) : (Text::_('JSHOP_NEW')), 'generic.png' );
+        ToolbarHelper::save();
+        ToolbarHelper::spacer();
+        ToolbarHelper::apply();
+        ToolbarHelper::spacer();
+        ToolbarHelper::cancel();        
         parent::display($tpl);
     }
 }

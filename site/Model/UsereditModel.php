@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\User\User;
 defined('_JEXEC') or die();
 
 class UsereditModel  extends UserbaseModel{
@@ -20,12 +25,12 @@ class UsereditModel  extends UserbaseModel{
     public function __construct(){
         $this->loadUserParams();
 		$obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshopUseredit', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshopUseredit', array(&$obj));
     }
 	
 	public function setUserId($id){
 		$this->user_id = $id;
-		$this->user = \JSFactory::getTable('userShop');
+		$this->user = JSFactory::getTable('userShop');
 		$this->user->load($this->user_id);
 	}
 	
@@ -39,13 +44,13 @@ class UsereditModel  extends UserbaseModel{
 	}
 
     public function prepateData(&$post){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if (!isset($post['password'])) $post['password'] = '';
         if (!isset($post['password_2'])) $post['password_2'] = '';
 		if (isset($post['password2'])) $post['password_2'] = $post['password2'];
 		if ($post['password_2']!='') $post['password2'] = $post['password_2'];
-        if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = \JSHelper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
-        if (isset($post['d_birthday']) && $post['d_birthday']) $post['d_birthday'] = \JSHelper::getJsDateDB($post['d_birthday'], $jshopConfig->field_birthday_format);
+        if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = Helper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
+        if (isset($post['d_birthday']) && $post['d_birthday']) $post['d_birthday'] = Helper::getJsDateDB($post['d_birthday'], $jshopConfig->field_birthday_format);
         unset($post['user_id']);
 		if (!$this->admin_registration){
 			$post['lang'] = $jshopConfig->getLang();
@@ -67,10 +72,10 @@ class UsereditModel  extends UserbaseModel{
 	
 	public function check($type){
 		if (!count($this->data)){
-			$this->setError(\JText::_('JSHOP_ERROR_DATA'));
+			$this->setError(Text::_('JSHOP_ERROR_DATA'));
 			return 0;
 		}
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
 		foreach($jshopConfig->fields_client_only_check as $_field) {
 			$this->user->$_field = isset($this->data[$_field]) ? $this->data[$_field] : null;
 		}		
@@ -91,13 +96,13 @@ class UsereditModel  extends UserbaseModel{
 	}
 	
 	public function userJoomlaSave(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
         $post = $this->data;
 		$user_shop = $this->user;
 		if ($user_shop->user_id<=0){
 			return 2;
 		}
-		$user = new \JUser($user_shop->user_id);
+		$user = new User($user_shop->user_id);
 		if (!$jshopConfig->not_update_user_joomla){
 			if ($user_shop->email){
 				$user->email = $user_shop->email;
@@ -140,7 +145,7 @@ class UsereditModel  extends UserbaseModel{
 		if (!$this->user_joomla){
 			return 0;
 		}
-		$app = \JFactory::getApplication();
+		$app = Factory::getApplication();
 		$data = array();
         $data['email'] = $this->user_joomla->email;
         $data['name'] = $this->user_joomla->name;

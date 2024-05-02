@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -21,7 +23,7 @@ $row=$this->productLabel;
 	?>
 	<tr>
 		<td class="key">
-			<?php echo JText::_('JSHOP_NAME')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>*
+			<?php echo Text::_('JSHOP_NAME')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>*
 		</td>
 		<td>
 			<input type="text" class="inputbox form-control" name="<?php print $name?>" value="<?php echo $row->$name;?>" />
@@ -29,14 +31,14 @@ $row=$this->productLabel;
 	</tr>
 	<?php } ?>
 	<tr>
-		<td class="key"><?php print JText::_('JSHOP_IMAGE')?></td>
+		<td class="key"><?php print Text::_('JSHOP_IMAGE')?></td>
 		<td>
 			<?php if ($row->image) {?>
 				<div id="image_block">
 					<div><img src="<?php echo $this->config->image_labels_live_path."/".$row->image?>" alt=""/></div>
 					<div style="padding-bottom:5px;" class="link_delete_foto">
-                        <a class="btn btn-micro btn-danger" href="#" onclick="if (confirm('<?php print JText::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoLabel('<?php echo $row->id?>');return false;">
-                            <img src="components/com_jshopping/images/publish_r.png"> <?php print JText::_('JSHOP_DELETE_IMAGE')?>
+                        <a class="btn btn-micro btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoLabel('<?php echo $row->id?>');return false;">
+                            <img src="components/com_jshopping/images/publish_r.png"> <?php print Text::_('JSHOP_DELETE_IMAGE')?>
                         </a>
                     </div>
 				</div>

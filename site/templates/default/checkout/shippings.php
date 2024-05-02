@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -24,7 +27,7 @@ defined('_JEXEC') or die();
                             ?><span class="shipping_image"><img src="<?php print $shipping->image?>" alt="<?php print htmlspecialchars($shipping->name)?>" /></span><?php
                         }
                         ?><b><?php print $shipping->name?></b>
-                        <span class="shipping_price">(<?php print \JSHelper::formatprice($shipping->calculeprice); ?>)</span>
+                        <span class="shipping_price">(<?php print Helper::formatprice($shipping->calculeprice); ?>)</span>
                         </label>
                         
                         <?php if ($this->config->show_list_price_shipping_weight && count($shipping->shipping_price)){ ?>
@@ -33,13 +36,13 @@ defined('_JEXEC') or die();
                                     <tr>
                                         <td class="weight">
                                             <?php if ($price->shipping_weight_to!=0){?>
-                                                <?php print \JSHelper::formatweight($price->shipping_weight_from);?> - <?php print \JSHelper::formatweight($price->shipping_weight_to);?>
+                                                <?php print Helper::formatweight($price->shipping_weight_from);?> - <?php print Helper::formatweight($price->shipping_weight_to);?>
                                             <?php }else{ ?>
-                                                <?php print JText::_('JSHOP_FROM')." ".\JSHelper::formatweight($price->shipping_weight_from);?>
+                                                <?php print Text::_('JSHOP_FROM')." ".Helper::formatweight($price->shipping_weight_from);?>
                                             <?php } ?>
                                         </td>
                                         <td class="price">
-                                            <?php print \JSHelper::formatprice($price->shipping_price); ?>
+                                            <?php print Helper::formatprice($price->shipping_price); ?>
                                         </td>
                                     </tr>
                                 <?php } ?>
@@ -51,18 +54,18 @@ defined('_JEXEC') or die();
                         <div id="shipping_form_<?php print $shipping->shipping_id?>" class="shipping_form <?php if ($shipping->sh_pr_method_id==$this->active_shipping) print 'shipping_form_active'?>"><?php print $shipping->form?></div>
                         
                         <?php if ($shipping->delivery){?>
-                            <div class="shipping_delivery"><?php print JText::_('JSHOP_DELIVERY_TIME').": ".$shipping->delivery?></div>
+                            <div class="shipping_delivery"><?php print Text::_('JSHOP_DELIVERY_TIME').": ".$shipping->delivery?></div>
                         <?php }?>
                         
                         <?php if ($shipping->delivery_date_f){?>
-                            <div class="shipping_delivery_date"><?php print JText::_('JSHOP_DELIVERY_DATE').": ".$shipping->delivery_date_f?></div>
+                            <div class="shipping_delivery_date"><?php print Text::_('JSHOP_DELIVERY_DATE').": ".$shipping->delivery_date_f?></div>
                         <?php }?>      
                     </div>
                 <?php } ?>
             </div>
 
             <?php print $this->_tmp_ext_html_shipping_end?>
-            <input type="submit" class="btn btn-success button" value="<?php print JText::_('JSHOP_NEXT')?>">
+            <input type="submit" class="btn btn-success button" value="<?php print Text::_('JSHOP_NEXT')?>">
         </form>
     </div>
 </div>

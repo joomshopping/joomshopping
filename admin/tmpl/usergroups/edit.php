@@ -1,4 +1,9 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Editor\Editor;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -22,7 +27,7 @@ $usergroup=$this->usergroup;
     ?>
     <tr>
        <td class="key" width = "20%">
-         <?php echo JText::_('JSHOP_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>* 
+         <?php echo Text::_('JSHOP_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>* 
        </td>
        <td>
          <input type = "text" class = "inputbox form-control" name = "<?php print $name?>" value = "<?php echo $usergroup->$name?>" />
@@ -32,16 +37,16 @@ $usergroup=$this->usergroup;
     <tr>
     <tr>
         <td class="key">
-            <?php echo JText::_('JSHOP_USERGROUP_IS_DEFAULT')?>                
+            <?php echo Text::_('JSHOP_USERGROUP_IS_DEFAULT')?>                
         </td>
         <td>
             <input type="checkbox" name="usergroup_is_default" <?php if ($usergroup->usergroup_is_default) echo 'checked="checked"';?> value="1" />
-            <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_USERGROUP_IS_DEFAULT_DESCRIPTION'));?>
+            <?php echo HelperAdmin::tooltip(Text::_('JSHOP_USERGROUP_IS_DEFAULT_DESCRIPTION'));?>
         </td>
     </tr>
     <tr>
         <td class="key">
-            <?php echo JText::_('JSHOP_USERGROUP_DISCOUNT')?>*    
+            <?php echo Text::_('JSHOP_USERGROUP_DISCOUNT')?>*    
         </td>
         <td>
             <input class="inputbox form-control" type="text" name="usergroup_discount" value="<?php echo $usergroup->usergroup_discount;?>" /> %
@@ -53,11 +58,11 @@ $usergroup=$this->usergroup;
     ?>
 	<tr>
 		<td class="key">
-            <?php echo JText::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
+            <?php echo Text::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
 		</td>
         <td>
             <?php 
-            $editor = \JEditor::getInstance(\JFactory::getConfig()->get('editor'));
+            $editor = Editor::getInstance(Factory::getConfig()->get('editor'));
             print $editor->display('description'.$lang->id, $usergroup->$name, '100%', '350', '75', '20');
             ?>
         </td>

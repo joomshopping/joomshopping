@@ -7,19 +7,24 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class ManufacturerTable extends MultilangTable{
 
     function __construct(&$_db){
         parent::__construct('#__jshopping_manufacturers', 'manufacturer_id', $_db);
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
     }
 
 	function getAllManufacturers($publish = 0, $order = "ordering", $dir ="asc" ) {
-		$lang = \JSFactory::getLang();
-        $jshopConfig = \JSFactory::getConfig();
-		$db = \JFactory::getDBO();
+		$lang = JSFactory::getLang();
+        $jshopConfig = JSFactory::getConfig();
+		$db = Factory::getDBO();
         if ($order=="id") $orderby = "manufacturer_id";
         if ($order=="name") $orderby = "name";
         if ($order=="ordering") $orderby = "ordering";
@@ -31,7 +36,7 @@ class ManufacturerTable extends MultilangTable{
 		$list = $db->loadObJectList();
 		
 		foreach($list as $key=>$value){
-            $list[$key]->link = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=manufacturer&task=view&manufacturer_id='.$list[$key]->manufacturer_id, 1);
+            $list[$key]->link = Helper::SEFLink('index.php?option=com_jshopping&controller=manufacturer&task=view&manufacturer_id='.$list[$key]->manufacturer_id, 1);
             if (!$jshopConfig->product_img_seo) {
                 if (!$list[$key]->img_alt) {
                     $list[$key]->img_alt = $value->name;
@@ -41,12 +46,12 @@ class ManufacturerTable extends MultilangTable{
                 }
             }
         }
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));		
+        extract(Helper::Js_add_trigger(get_defined_vars(), "after"));		
 		return $list;
 	}
     
     function getList(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($JshopConfig->manufacturer_sorting==2){
             $morder = 'name';
         }else{
@@ -60,7 +65,7 @@ class ManufacturerTable extends MultilangTable{
             $this->getDescriptionMainPage($preparePluginContent);
             return 1;
         }        
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         $name = $lang->get('name');        
         $description = $lang->get('description');
         $short_description = $lang->get('short_description');
@@ -75,27 +80,27 @@ class ManufacturerTable extends MultilangTable{
         $this->meta_keyword = $this->$meta_keyword;
         $this->meta_description = $this->$meta_description;
         
-        if ($preparePluginContent && \JSFactory::getConfig()->use_plugin_content){
-            \JSHelper::changeDataUsePluginContent($this, "manufacturer");
+        if ($preparePluginContent && JSFactory::getConfig()->use_plugin_content){
+            Helper::changeDataUsePluginContent($this, "manufacturer");
         }
         return $this->description;
     }
     
     function getDescriptionMainPage($preparePluginContent = 1){
-        $statictext = \JSFactory::getTable("statictext");
+        $statictext = JSFactory::getTable("statictext");
         $rowstatictext = $statictext->loadData("manufacturer");
         $this->description = $rowstatictext->text;
-        if ($preparePluginContent && \JSFactory::getConfig()->use_plugin_content){
-            \JSHelper::changeDataUsePluginContent($this, "manufacturer");
+        if ($preparePluginContent && JSFactory::getConfig()->use_plugin_content){
+            Helper::changeDataUsePluginContent($this, "manufacturer");
         }
         return $this->description;
     }
     
     function getCategorys(){
-        $JshopConfig = \JSFactory::getConfig();
-        $user = \JFactory::getUser();
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
+        $user = Factory::getUser();
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();
         $adv_query = "";
         $groups = implode(',', $user->getAuthorisedViewLevels());
         $adv_query .=' AND prod.access IN ('.$groups.') AND cat.access IN ('.$groups.')';
@@ -109,18 +114,18 @@ class ManufacturerTable extends MultilangTable{
                  .$adv_query." order by name";
         $db->setQuery($query);
         $list = $db->loadObJectList();
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));        
+        extract(Helper::Js_add_trigger(get_defined_vars(), "after"));        
         return $list;
            
     }
     
     function getFieldListOrdering(){
-        $ordering = \JSFactory::getConfig()->manufacturer_sorting==1 ? "ordering" : "name";
+        $ordering = JSFactory::getConfig()->manufacturer_sorting==1 ? "ordering" : "name";
         return $ordering;
     }
 	
 	function getSortingDirection(){
-		$sort = \JSFactory::getConfig()->manufacturer_sorting_direction;
+		$sort = JSFactory::getConfig()->manufacturer_sorting_direction;
 		if (!$sort){
 			$sort = 'asc';
 		}
@@ -136,11 +141,11 @@ class ManufacturerTable extends MultilangTable{
     }
 	
 	function getCountToRow(){
-		return \JSFactory::getConfig()->count_manufacturer_to_row;
+		return JSFactory::getConfig()->count_manufacturer_to_row;
 	}
 
     public function delete($manufacturer_id = null){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $result = false;
         if(is_null($manufacturer_id)){
             $manufacturer_id = $this->manufacturer_id;
@@ -153,7 +158,7 @@ class ManufacturerTable extends MultilangTable{
         if((int)$db->loadResult() == 0){
             $result = parent::delete($pk);
         }else{
-            $this->setError(sprintf(\JText::_('JSHOP_NOT_EMPTY_MANUFACTURER_DELETE_ERROR'), $manufacturer_id));
+            $this->setError(sprintf(Text::_('JSHOP_NOT_EMPTY_MANUFACTURER_DELETE_ERROR'), $manufacturer_id));
         }
         return $result;
     }

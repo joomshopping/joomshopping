@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class UserloginModel{
@@ -14,8 +19,8 @@ class UserloginModel{
     private $return_url = '';
     
     function login($login, $passwd, $params = array()){        
-        $app = \JFactory::getApplication();
-        $dispatcher = \JFactory::getApplication();		       
+        $app = Factory::getApplication();
+        $dispatcher = Factory::getApplication();		       
         $return = $this->getRequestReturnUrl();
         $options = array();
         $options['remember'] = $params['remember'];
@@ -29,9 +34,9 @@ class UserloginModel{
         
         $error = $app->login($credentials, $options);
 
-        if ((!\JSError::isError($error)) && ($error !== FALSE)){
+        if ((!JSError::isError($error)) && ($error !== FALSE)){
             if (!$return ){
-                $return = \JURI::base();
+                $return = Uri::base();
             }
             $this->setReturnUrl($return);
             $dispatcher->triggerEvent('onAfterLogin', array(&$options, &$credentials));
@@ -45,9 +50,9 @@ class UserloginModel{
     }
 	
 	public function logout(){
-		$app = \JFactory::getApplication();
-        $dispatcher = \JFactory::getApplication();
-		$session = \JFactory::getSession();
+		$app = Factory::getApplication();
+        $dispatcher = Factory::getApplication();
+		$session = Factory::getSession();
 		
         $dispatcher->triggerEvent('onBeforeLogout', array());
 
@@ -56,7 +61,7 @@ class UserloginModel{
         $session->set('user_shop_guest', null);
         $session->set('cart', null);
 
-        if (!\JSError::isError($error)){
+        if (!JSError::isError($error)){
             $return = $this->getRequestReturnUrl();
 			
             $dispatcher->triggerEvent('onAfterLogout', array());
@@ -64,7 +69,7 @@ class UserloginModel{
             if ( $return && !( strpos( $return, 'com_user')) ){
                 $this->setReturnUrl( $return );
             }else{
-                $this->setReturnUrl(\JURI::base());
+                $this->setReturnUrl(Uri::base());
             }
             $obj = $this;
 			$dispatcher->triggerEvent('onAfterShopLogout', array(&$obj));
@@ -72,8 +77,8 @@ class UserloginModel{
 	}
 	
 	public function getUrlHash(){
-		$session = \JFactory::getSession();
-        $app = \JFactory::getApplication();
+		$session = Factory::getSession();
+        $app = Factory::getApplication();
 		if ($app->input->getVar('return')){
             $return = $app->input->getVar('return');
         }else{
@@ -83,17 +88,17 @@ class UserloginModel{
 	}
 	
 	public function getPayWithoutReg(){
-		$session = \JFactory::getSession();
+		$session = Factory::getSession();
 		return $session->get("show_pay_without_reg");
 	}
     
     public function setPayWithoutReg(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         return $session->set("show_pay_without_reg", 1);
     }
     
     public function getRequestReturnUrl(){
-        if ($return = \JFactory::getApplication()->input->getBase64('return', '')){
+        if ($return = Factory::getApplication()->input->getBase64('return', '')){
             $return = base64_decode($return);
             if (!\Joomla\Component\Jshopping\Site\Lib\JSUri::isInternal($return)){
                 $return = '';
@@ -111,9 +116,9 @@ class UserloginModel{
     }
     
     public function getUrlBackToLogin(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $return = $this->getReturnUrl();
-        $back = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=login&return='.base64_encode($return), 1, 1, $jshopConfig->use_ssl);
+        $back = Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=login&return='.base64_encode($return), 1, 1, $jshopConfig->use_ssl);
         return $back;
     }
     

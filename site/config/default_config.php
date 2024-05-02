@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.3.6 24.04.2024
 * @author       MAXXmarketing GmbH
@@ -13,8 +16,8 @@ $config->load_id = 1;
 $config->path = JPATH_ROOT."/components/com_jshopping/";
 $config->admin_path = JPATH_ROOT.'/administrator/components/com_jshopping/';
 
-$config->live_path = \JURI::root().'components/com_jshopping/';
-$config->live_admin_path = \JURI::root().'administrator/components/com_jshopping/';
+$config->live_path = Uri::root().'components/com_jshopping/';
+$config->live_admin_path = Uri::root().'administrator/components/com_jshopping/';
 
 $config->log_path = JPATH_ROOT."/components/com_jshopping/log/";
 $config->cache_path = JPATH_ROOT."/components/com_jshopping/files/cache/";
@@ -301,13 +304,13 @@ $config->load_javascript_bootstrap = 1;
 $config->load_javascript_jquery = 1;
 $config->file_jquery_media_js = $config->live_path.'js/jquery/jquery.media.js';
 $config->file_functions_js = $config->live_path.'js/functions.js';
-$config->script_js_init = 'var jshopParams = jshopParams || {};jshopParams.liveurl="'.\JURI::root().'";';
+$config->script_js_init = 'var jshopParams = jshopParams || {};jshopParams.liveurl="'.Uri::root().'";';
 $config->file_lightbox_js = $config->live_path.'js/jquery/lightbox2.js';
 $config->file_lightbox_css = $config->live_path.'css/lightbox2.css';
 $config->script_lightbox_init = 'lightbox.option({
     "disableScrolling": true,
     "AlwaysShowNavOnTouchDevices": true,
-    "albumLabel": "'.\JText::_('JSHOP_IMAGE').' %1 '.\JText::_('JSHOP_OF') .' %2"
+    "albumLabel": "'.Text::_('JSHOP_IMAGE').' %1 '.Text::_('JSHOP_OF') .' %2"
   });';
 $config->file_metadata_js = $config->live_path.'js/jquery/jquery.MetaData.js';
 $config->file_rating_js = $config->live_path.'js/jquery/jquery.rating.pack.js';
@@ -342,6 +345,7 @@ $config->disable_admin = array(
     'usergroups' => 0,
     'importexport' => 0,
     'addons' => 0,
+    'addons_catalog' => 0,
     'statistic' => 0
 );
 

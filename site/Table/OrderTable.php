@@ -7,14 +7,19 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class OrderTable extends ShopbaseTable{
 
     function __construct(&$_db){
         parent::__construct('#__jshopping_orders', 'order_id', $_db);
-        \JPluginHelper::importPlugin('jshoppingcheckout');
-        \JPluginHelper::importPlugin('jshoppingorder');
+        PluginHelper::importPlugin('jshoppingcheckout');
+        PluginHelper::importPlugin('jshoppingorder');
     }
     
     public function store($updateNulls = false){
@@ -22,14 +27,14 @@ class OrderTable extends ShopbaseTable{
             throw new Exception('Error JshopOrder::store()');
         }
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onBeforeStoreTableOrder', array(&$obj));
+        Factory::getApplication()->triggerEvent('onBeforeStoreTableOrder', array(&$obj));
         return parent::store($updateNulls);
     }
 
     function getAllItems(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         if (!isset($this->items)){
-            $JshopConfig = \JSFactory::getConfig();
+            $JshopConfig = JSFactory::getConfig();
             $query = "SELECT OI.* FROM `#__jshopping_order_item` as OI WHERE OI.order_id=".(int)$this->order_id;
             $db->setQuery($query);
             $this->items = $db->loadObJectList();
@@ -38,7 +43,7 @@ class OrderTable extends ShopbaseTable{
                 $this->items[$k]->delivery_time = '';
             }
             if ($JshopConfig->display_delivery_time_for_product_in_order_mail){
-                $deliverytimes = \JSFactory::getAllDeliveryTime();
+                $deliverytimes = JSFactory::getAllDeliveryTime();
                 foreach($this->items as $k=>$v){
                     if (isset($deliverytimes[$v->delivery_times_id])) {
                         $this->items[$k]->delivery_time = $deliverytimes[$v->delivery_times_id];
@@ -55,15 +60,15 @@ class OrderTable extends ShopbaseTable{
         foreach($items as $row){
             $weight += $row->product_quantity * $row->weight;
         }
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onGetWeightOrderProducts', array(&$obj, &$weight));
     return $weight;
     }
 
     function getHistory() {
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $query = "SELECT history.*, status.*, status.`".$lang->get('name')."` as status_name  FROM `#__jshopping_order_history` AS history
                   INNER JOIN `#__jshopping_order_status` AS status ON history.order_status_id = status.status_id
                   WHERE history.order_id = '" . $db->escape($this->order_id) . "'
@@ -73,7 +78,7 @@ class OrderTable extends ShopbaseTable{
     }
 
     function getStatusTime(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT max(status_date_added) FROM `#__jshopping_order_history` WHERE order_id = '".$db->escape($this->order_id)."'";
         $db->setQuery($query);
         $res = $db->loadResult();
@@ -81,13 +86,13 @@ class OrderTable extends ShopbaseTable{
     }
 
     function getStatus(){
-		$status = \JSFactory::getTable('orderStatus');
+		$status = JSFactory::getTable('orderStatus');
         $status->load($this->order_status);        
         return $status->getName();
     }
 
     function copyDeliveryData(){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $this->d_title = $this->title;
         $this->d_f_name = $this->f_name;
         $this->d_l_name = $this->l_name;
@@ -114,8 +119,8 @@ class OrderTable extends ShopbaseTable{
     }
 
     function getOrdersForUser($id_user) {
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang(); 
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang(); 
         $query = "SELECT orders.*, order_status.`".$lang->get('name')."` as status_name, COUNT(order_item.order_id) AS count_products
                   FROM `#__jshopping_orders` AS orders
                   LEFT JOIN `#__jshopping_order_status` AS order_status ON orders.order_status = order_status.status_id
@@ -123,7 +128,7 @@ class OrderTable extends ShopbaseTable{
                   WHERE orders.user_id = '".$db->escape($id_user)."' and orders.order_created='1'
                   GROUP BY order_item.order_id 
                   ORDER BY orders.order_date DESC";
-		\JFactory::getApplication()->triggerEvent('onBeforeGetOrdersForUser', array(&$query, &$id_user));
+		Factory::getApplication()->triggerEvent('onBeforeGetOrdersForUser', array(&$query, &$id_user));
         $db->setQuery($query);
         return $db->loadObJectList();
     }
@@ -132,16 +137,16 @@ class OrderTable extends ShopbaseTable{
     * Next order id    
     */
     function getLastOrderId() {
-        $db = \JFactory::getDBO(); 
+        $db = Factory::getDBO(); 
         $query = "SELECT MAX(orders.order_id) AS max_order_id FROM `#__jshopping_orders` AS orders";
         $db->setQuery($query);
         return $db->loadResult() + 1;
     }
 
     function formatOrderNumber($num){
-		$JshopConfig = \JSFactory::getConfig();
-        $number = \JSHelper::outputDigit($num, $JshopConfig->ordernumberlength);
-        $dispatcher = \JFactory::getApplication();
+		$JshopConfig = JSFactory::getConfig();
+        $number = Helper::outputDigit($num, $JshopConfig->ordernumberlength);
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onAfterFormatOrderNumber', array(&$number, &$num));
         return $number;
     }
@@ -150,16 +155,16 @@ class OrderTable extends ShopbaseTable{
     * save name pdf from order
     */
     function insertPDF(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "UPDATE `#__jshopping_orders` SET pdf_file = '".$db->escape($this->pdf_file)."' WHERE order_id='".$db->escape($this->order_id)."'";
         $db->setQuery($query);
         $db->execute();
     }
     
 	function setInvoiceDate(){
-        if (\JSHelper::datenull($this->invoice_date)){
-            $db = \JFactory::getDBO();
-            $this->invoice_date = \JSHelper::getJsDate();
+        if (Helper::datenull($this->invoice_date)){
+            $db = Factory::getDBO();
+            $this->invoice_date = Helper::getJsDate();
             $query = "UPDATE `#__jshopping_orders` SET invoice_date='".$db->escape($this->invoice_date)."' WHERE order_id = '".$db->escape($this->order_id)."'";
             $db->setQuery($query);
             $db->execute();
@@ -170,7 +175,7 @@ class OrderTable extends ShopbaseTable{
         if ($this->file_stat_downloads == "") return array();
         $rows = unserialize($this->file_stat_downloads);
         if ($fileinfo && count($rows)){
-            $db = \JFactory::getDBO();
+            $db = Factory::getDBO();
             $files_id = array_keys($rows);
             $query = "SELECT * FROM `#__jshopping_products_files` where id in (".implode(',',$files_id).")";
             $db->setQuery($query);
@@ -252,17 +257,17 @@ class OrderTable extends ShopbaseTable{
     }
 	
 	function getListFieldCopyUserToOrder(){
-        $dispatcher = \JFactory::getApplication();        
+        $dispatcher = Factory::getApplication();        
         $list = array('user_id','f_name','l_name','m_name','firma_name','client_type','firma_code','tax_number','email','birthday','home','apartment','street','street_nr','zip','city','state','country','phone','mobil_phone','fax','title','ext_field_1','ext_field_2','ext_field_3','d_f_name','d_l_name','d_m_name','d_firma_name','d_email','d_birthday','d_home','d_apartment','d_street','d_street_nr','d_zip','d_city','d_state','d_country','d_phone','d_mobil_phone','d_title','d_fax','d_ext_field_1','d_ext_field_2','d_ext_field_3');
         $dispatcher->triggerEvent('onBeforeGetListFieldCopyUserToOrder', array(&$list));
     return $list;
     }
     
     function saveOrderItem($items) {
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         
         foreach($items as $key=>$value){
-            $order_item = \JSFactory::getTable('orderItem');
+            $order_item = JSFactory::getTable('orderItem');
             $order_item->order_id = $this->order_id;
             $order_item->product_id = $value['product_id'];
             $order_item->category_id = $value['category_id'];
@@ -320,8 +325,8 @@ class OrderTable extends ShopbaseTable{
     * @param $change ("-" - get, "+" - return) 
     */
     function changeProductQTYinStock($change = "-"){
-        $db = \JFactory::getDBO();
-        $dispatcher = \JFactory::getApplication();
+        $db = Factory::getDBO();
+        $dispatcher = Factory::getApplication();
         
         $query = "SELECT OI.*, P.unlimited FROM `#__jshopping_order_item` as OI left Join `#__jshopping_products` as P on P.product_id=OI.product_id
                   WHERE order_id = '".$db->escape($this->order_id)."'";
@@ -341,7 +346,7 @@ class OrderTable extends ShopbaseTable{
             }            
             if (!is_array($attributes)) $attributes = array();
             
-            $allattribs = \JSFactory::getAllAttributes(1);
+            $allattribs = JSFactory::getAllAttributes(1);
             $dependent_attr = array();
             foreach($attributes as $k=>$v){
                 if ($allattribs[$k]->independent==0){
@@ -390,7 +395,7 @@ class OrderTable extends ShopbaseTable{
     * get list vendors for order
     */
     function getVendors(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT distinct V.* FROM `#__jshopping_order_item` as OI
                   left Join `#__jshopping_vendors` as V on V.id = OI.vendor_id
                   WHERE order_id = '".$db->escape($this->order_id)."'";
@@ -409,15 +414,15 @@ class OrderTable extends ShopbaseTable{
     }
     
     function getVendorInfo(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         $vendor_id = $this->vendor_id;
         if ($vendor_id==-1) $vendor_id = 0;
         if ($JshopConfig->vendor_order_message_type<2) $vendor_id = 0;
-        $vendor = \JSFactory::getTable('vendor');
+        $vendor = JSFactory::getTable('vendor');
         $vendor->loadFull($vendor_id);
         $vendor->country_id = $vendor->country;
-        $lang = \JSFactory::getLang($this->getLang());
-        $country = \JSFactory::getTable('country');
+        $lang = JSFactory::getLang($this->getLang());
+        $country = JSFactory::getTable('country');
         $country->load($vendor->country_id);
         $field_country_name = $lang->get("name");
         $vendor->country = $country->$field_country_name;
@@ -447,25 +452,25 @@ class OrderTable extends ShopbaseTable{
             $products[] = $v->product_id;
         }
         $products = array_unique($products);
-        $statictext = \JSFactory::getTable("statictext");
+        $statictext = JSFactory::getTable("statictext");
         $rows = $statictext->getReturnPolicyForProducts($products);
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onAfterOrderGetReturnPolicy', array(&$obj, &$rows));
         return $rows;
     }
     
     function saveTransactionData($rescode, $status_id, $data){
-        $row = \JSFactory::getTable("PaymentTrx");
+        $row = JSFactory::getTable("PaymentTrx");
         $row->order_id = $this->order_id;
         $row->rescode = $rescode;
         $row->status_id = $status_id;
         $row->transaction = $this->transaction;
-        $row->date = \JSHelper::getJsDate();
+        $row->date = Helper::getJsDate();
         $row->store();
         if (is_array($data)){
             foreach($data as $k=>$v){
-                $rowdata = \JSFactory::getTable("PaymentTrxData");
+                $rowdata = JSFactory::getTable("PaymentTrxData");
                 $rowdata->id = 0;
                 $rowdata->trx_id = $row->id;
                 $rowdata->order_id = $this->order_id;
@@ -477,7 +482,7 @@ class OrderTable extends ShopbaseTable{
     }
     
     function getListTransactions(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_payment_trx` WHERE order_id = '".$db->escape($this->order_id)."' order by id desc";
         $db->setQuery($query);
         $rows = $db->loadObJectList();
@@ -488,7 +493,7 @@ class OrderTable extends ShopbaseTable{
     }
     
     function getTransactionData($trx_id){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_payment_trx_data` WHERE trx_id = '".$db->escape($trx_id)."' order by id";
         $db->setQuery($query);        
     return $db->loadObJectList();
@@ -504,8 +509,8 @@ class OrderTable extends ShopbaseTable{
     }
     
     function prepareOrderPrint($page = '', $date_format = 0){
-        $JshopConfig = \JSFactory::getConfig();
-        $lang = \JSFactory::getLang();
+        $JshopConfig = JSFactory::getConfig();
+        $lang = JSFactory::getLang();
         $JshopConfig->user_field_title[0] = '';
         $JshopConfig->user_field_client_type[0] = '';
         
@@ -516,8 +521,8 @@ class OrderTable extends ShopbaseTable{
         }
 		
         if (!isset($this->order_date_print)){
-			$this->order_date_print = \JSHelper::formatdate($this->order_date);
-			$this->order_datetime_print = \JSHelper::formatdate($this->order_date, 1);
+			$this->order_date_print = Helper::formatdate($this->order_date);
+			$this->order_datetime_print = Helper::formatdate($this->order_date, 1);
 			if ($date_format){
 				$this->order_date = $this->order_date_print;
 			}
@@ -530,7 +535,7 @@ class OrderTable extends ShopbaseTable{
             $this->delivery_time_name = '';
         }
         if ($JshopConfig->show_delivery_time_checkout){
-            $deliverytimes = \JSFactory::getAllDeliveryTime();
+            $deliverytimes = JSFactory::getAllDeliveryTime();
             if (isset($deliverytimes[$this->delivery_times_id])){
                 $this->order_delivery_time = $deliverytimes[$this->delivery_times_id];
             }else{
@@ -551,16 +556,16 @@ class OrderTable extends ShopbaseTable{
             $this->d_country_id = $this->d_country;
         }
         
-        $country = \JSFactory::getTable('country');
+        $country = JSFactory::getTable('country');
         $country->load($this->country_id);
         $this->country = $country->getName();
         
-        $d_country = \JSFactory::getTable('country');
+        $d_country = JSFactory::getTable('country');
         $d_country->load($this->d_country_id);
         $this->d_country = $d_country->getName();
 		
-        if ($JshopConfig->show_delivery_date && !\JSHelper::datenull($this->delivery_date)){
-            $this->delivery_date_f = \JSHelper::formatdate($this->delivery_date);
+        if ($JshopConfig->show_delivery_date && !Helper::datenull($this->delivery_date)){
+            $this->delivery_date_f = Helper::formatdate($this->delivery_date);
         }else{
             $this->delivery_date_f = '';
         }
@@ -574,10 +579,10 @@ class OrderTable extends ShopbaseTable{
             $this->d_birthday_date = $this->d_birthday;
         }
         
-        $this->title = \JText::_($JshopConfig->user_field_title[$this->title_id]);
-        $this->d_title = \JText::_($JshopConfig->user_field_title[$this->d_title_id]);
-        $this->birthday = \JSHelper::getDisplayDate($this->birthday_date, $JshopConfig->field_birthday_format);
-        $this->d_birthday = \JSHelper::getDisplayDate($this->d_birthday_date, $JshopConfig->field_birthday_format);
+        $this->title = Text::_($JshopConfig->user_field_title[$this->title_id]);
+        $this->d_title = Text::_($JshopConfig->user_field_title[$this->d_title_id]);
+        $this->birthday = Helper::getDisplayDate($this->birthday_date, $JshopConfig->field_birthday_format);
+        $this->d_birthday = Helper::getDisplayDate($this->d_birthday_date, $JshopConfig->field_birthday_format);
         $this->client_type_name = $this->getClientTypeName();
         
         $shippingMethod = $this->getShipping();
@@ -627,7 +632,7 @@ class OrderTable extends ShopbaseTable{
     }
 
     function getCouponCode(){
-        $coupon = \JSFactory::getTable('coupon');
+        $coupon = JSFactory::getTable('coupon');
         $coupon->load($this->coupon_id);
         return $coupon->coupon_code;
     }
@@ -637,18 +642,18 @@ class OrderTable extends ShopbaseTable{
         $this->pdf_file = $file_generete_pdf_order::generatePdf($this);
         $this->insertPDF();
         $obj = $this;
-		\JFactory::getApplication()->triggerEvent('onAfterGeneratePdfOrder', array(&$obj));
+		Factory::getApplication()->triggerEvent('onAfterGeneratePdfOrder', array(&$obj));
 		return $this->pdf_file;
     }
     
     function prepareBirthdayFormat(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if (!isset($this->birthday_date)){
             $this->birthday_date = $this->birthday;
             $this->d_birthday_date = $this->d_birthday;
         }
-        $this->birthday = \JSHelper::getDisplayDate($this->birthday_date, $JshopConfig->field_birthday_format);
-        $this->d_birthday = \JSHelper::getDisplayDate($this->d_birthday_date, $JshopConfig->field_birthday_format);
+        $this->birthday = Helper::getDisplayDate($this->birthday_date, $JshopConfig->field_birthday_format);
+        $this->d_birthday = Helper::getDisplayDate($this->d_birthday_date, $JshopConfig->field_birthday_format);
     }
     
     function delete($id = null){
@@ -657,7 +662,7 @@ class OrderTable extends ShopbaseTable{
         if ($id === null){
             throw new Exception('Null primary key not allowed.');
         }
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "DELETE FROM `#__jshopping_orders` WHERE `order_id` = '".$db->escape($id)."'";
         $db->setQuery($query);
         $db->execute();
@@ -670,13 +675,13 @@ class OrderTable extends ShopbaseTable{
     }
 	
 	function getPayment(){
-		$pm_method = \JSFactory::getTable('paymentMethod');
+		$pm_method = JSFactory::getTable('paymentMethod');
         $pm_method->load($this->payment_method_id);
         return $pm_method;
 	}
 	
 	function getShipping(){
-		$sh = \JSFactory::getTable('shippingMethod');
+		$sh = JSFactory::getTable('shippingMethod');
         $sh->load($this->shipping_method_id);
 		return $sh;
 	}
@@ -691,14 +696,14 @@ class OrderTable extends ShopbaseTable{
     
     function getClientTypeName(){
         if ($this->client_type){
-            return \JText::_(\JSFactory::getConfig()->user_field_client_type[$this->client_type]);
+            return Text::_(JSFactory::getConfig()->user_field_client_type[$this->client_type]);
         }else{
             return '';
         }
     }
     
     function getProductStockRemoved($status, $order_create = 0){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($JshopConfig->order_stock_removed_only_paid_status){
             $product_stock_removed = (in_array($status, $JshopConfig->payment_status_enable_download_sale_file));
         }else{
@@ -712,7 +717,7 @@ class OrderTable extends ShopbaseTable{
     }
 	
 	function updateProductsInStock($order_create = 0){
-		$jshopConfig = \JSFactory::getConfig(); 
+		$jshopConfig = JSFactory::getConfig(); 
         if (!$jshopConfig->stock) return;
 		
 		$product_stock_removed = $this->getProductStockRemoved($this->order_status, $order_create);
@@ -727,20 +732,20 @@ class OrderTable extends ShopbaseTable{
 	}
     
     function saveOrderHistory($notify, $comments, $include_comment = 0){
-        $history = \JSFactory::getTable('orderHistory');
+        $history = JSFactory::getTable('orderHistory');
         $history->order_id = $this->order_id;
         $history->order_status_id = $this->order_status;
-        $history->status_date_added = \JSHelper::getJsDate();
+        $history->status_date_added = Helper::getJsDate();
         $history->customer_notify = $notify;
         $history->comments = $comments;	
 		$history->include_comment = $include_comment;
         $obj = $this;	
-        \JFactory::getApplication()->triggerEvent('onBeforeJshopOrderSaveOrderHistory', array(&$history, &$notify, &$comments, &$obj));
+        Factory::getApplication()->triggerEvent('onBeforeJshopOrderSaveOrderHistory', array(&$history, &$notify, &$comments, &$obj));
         return $history->store();
     }
     
     function getClientAllowCancel(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($JshopConfig->client_allow_cancel_order && 
             $this->order_status!=$JshopConfig->payment_status_for_cancel_client && 
             !in_array($this->order_status, $JshopConfig->payment_status_disable_cancel_client) ){
@@ -752,7 +757,7 @@ class OrderTable extends ShopbaseTable{
     }
     
     function getShowPercentTax(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if (!$this->prepareOrderPrint){
             throw new Exception('Error JshopOrder::getShowPercentTax()');
         }
@@ -763,7 +768,7 @@ class OrderTable extends ShopbaseTable{
     }
     
     function getHideSubtotal(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if (!$this->prepareOrderPrint){
             throw new Exception('Error JshopOrder::getHideSubtotal()');
         }
@@ -779,28 +784,28 @@ class OrderTable extends ShopbaseTable{
     }
     
     function getTextTotal(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if (!$this->prepareOrderPrint){
             throw new Exception('Error JshopOrder::getTextTotal()');
         }
-        $text_total = \JText::_('JSHOP_ENDTOTAL');
+        $text_total = Text::_('JSHOP_ENDTOTAL');
         if (($JshopConfig->show_tax_in_product || $JshopConfig->show_tax_product_in_cart) && (count($this->order_tax_list)>0)){
-            $text_total = \JText::_('JSHOP_ENDTOTAL_INKL_TAX');
+            $text_total = Text::_('JSHOP_ENDTOTAL_INKL_TAX');
         }
         return $text_total;
     }
     
     function fixConfigShowWeightOrder(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($this->weight==0 && $JshopConfig->hide_weight_in_cart_weight0){
             $JshopConfig->show_weight_order = 0;
         }
     }
     
     function loadItemsNewDigitalProducts(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if (isset($this->items) && $JshopConfig->order_display_new_digital_products){
-            $product = \JSFactory::getTable('product');
+            $product = JSFactory::getTable('product');
             foreach($this->items as $k=>$v){
                 $product->product_id = $v->product_id;
                 $product->setAttributeActive(unserialize($v->attributes));
@@ -811,8 +816,8 @@ class OrderTable extends ShopbaseTable{
     }
     
     function getStaticText($alias){
-        $JshopConfig = \JSFactory::getConfig();
-        $statictext = \JSFactory::getTable("statictext");
+        $JshopConfig = JSFactory::getConfig();
+        $statictext = JSFactory::getTable("statictext");
         $row = $statictext->loadData($alias);
         $text = $row->text;
         $text = str_replace("{name}", $this->f_name, $text);
@@ -839,7 +844,7 @@ class OrderTable extends ShopbaseTable{
             $this->coupon_id = 0;
             return 0;
         }else{
-            $coupon = \JSFactory::getTable('coupon');
+            $coupon = JSFactory::getTable('coupon');
             $coupon_id = $coupon->getIdFromCode($code);
             if ($coupon_id){
                 $this->coupon_id = $coupon_id;
@@ -854,21 +859,21 @@ class OrderTable extends ShopbaseTable{
     }
 
     public function saveTransaction($transaction){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "UPDATE `#__jshopping_orders` SET `transaction`=".$db->q($transaction)." WHERE order_id=".$db->q($this->order_id);
         $db->setQuery($query);
         $db->execute();
     }
 
 	public function getCurrentOrderStatus() {
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
         $query = "SELECT order_status, order_created FROM `#__jshopping_orders` WHERE order_id=".$db->q($this->order_id);
         $db->setQuery($query);
         return $db->loadObject();
 	}
 
     public function orderCreateAndSetStatus($status, $need_create_order) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
 		$db->lockTable('#__jshopping_orders');
         $prev_order_status_data = $this->getCurrentOrderStatus();
 		$adv_query = $need_create_order ? ", order_created=1" : '';
@@ -876,7 +881,7 @@ class OrderTable extends ShopbaseTable{
         $db->setQuery($query);
         $db->execute();
         $db->unlockTables();
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $app->triggerEvent('onOrderCreateAndSetStatus', array(&$this->order_id, &$status, &$prev_order_status_data));
         return $prev_order_status_data;
     }

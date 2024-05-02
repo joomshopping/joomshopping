@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -16,7 +19,7 @@ defined('_JEXEC') or die();
     <?php if ($this->config->show_sort_product) : ?>
         <div class="control-group box_products_sorting d-flex">
             <div class="control-label mt-2">
-                <?php print JText::_('JSHOP_ORDER_BY');?>:
+                <?php print Text::_('JSHOP_ORDER_BY');?>:
             </div>
             <div class="controls">
                 <div class="input-group">
@@ -35,7 +38,7 @@ defined('_JEXEC') or die();
     <?php if ($this->config->show_count_select_products) : ?>
         <div class="control-group box_products_count_to_page d-flex">
             <div class="control-label mt-2">
-                <?php print JText::_('JSHOP_DISPLAY_NUMBER').": "; ?>
+                <?php print Text::_('JSHOP_DISPLAY_NUMBER').": "; ?>
             </div>
             <div class="controls">
                 <?php echo $this->product_count?>
@@ -53,14 +56,14 @@ defined('_JEXEC') or die();
     
 	<div class="filter_mob_head" id="filter_mob_head">
 		<span class="icon-play-2"></span>
-		<?php print JText::_('JSHOP_FILTERS')?>
+		<?php print Text::_('JSHOP_FILTERS')?>
 	</div>
     <div class="jshop filters">
         <div class="box_cat_man d-flex">
             <?php if ($this->filter_show_category) : ?>
                 <div class = "control-group box_category d-flex">
                     <div class = "control-label mt-2">
-                        <?php print JText::_('JSHOP_CATEGORY').": "; ?>
+                        <?php print Text::_('JSHOP_CATEGORY').": "; ?>
                     </div>
                     <div class = "controls"><?php echo $this->categorys_sel?></div>
                 </div>
@@ -68,7 +71,7 @@ defined('_JEXEC') or die();
             <?php if ($this->filter_show_manufacturer) : ?>
                 <div class="control-group box_manufacrurer d-flex">
                     <div class="control-label mt-2">
-                        <?php print JText::_('JSHOP_MANUFACTURER').": "; ?>
+                        <?php print Text::_('JSHOP_MANUFACTURER').": "; ?>
                     </div>
                     <div class="controls">
                         <?php echo $this->manufacuturers_sel; ?>
@@ -78,19 +81,19 @@ defined('_JEXEC') or die();
             <?php print $this->_tmp_ext_filter_box;?>
         </div>
         
-        <?php if (\JSHelper::getDisplayPriceShop()) : ?>
+        <?php if (Helper::getDisplayPriceShop()) : ?>
             <div class="filter_price d-sm-flex">
                 <div class="control-group box_price_from_to d-flex">
                     <div class="control-label mt-2">
-                        <?php print JText::_('JSHOP_PRICE')?> (<?php print $this->config->currency_code?>):
+                        <?php print Text::_('JSHOP_PRICE')?> (<?php print $this->config->currency_code?>):
                     </div>
                     <div class="controls form-inline d-flex">
                         <span class="input-append">
-                            <input type="text" class="input form-control" name="fprice_from" id="price_from" size="7" placeholder="<?php print \JText::_('JSHOP_FROM')?>" value="<?php if ($this->filters['price_from']>0) print $this->filters['price_from']?>" />
+                            <input type="text" class="input form-control" name="fprice_from" id="price_from" size="7" placeholder="<?php print Text::_('JSHOP_FROM')?>" value="<?php if ($this->filters['price_from']>0) print $this->filters['price_from']?>" />
                         </span>
                         <span class="price_ftspace mt-2">-</span>
                         <span class="input-append">
-                            <input type="text" class="input form-control" name="fprice_to"  id="price_to" size="7" placeholder="<?php print \JText::_('JSHOP_TO')?>" value="<?php if ($this->filters['price_to']>0) print $this->filters['price_to']?>" />
+                            <input type="text" class="input form-control" name="fprice_to"  id="price_to" size="7" placeholder="<?php print Text::_('JSHOP_TO')?>" value="<?php if ($this->filters['price_to']>0) print $this->filters['price_to']?>" />
                         </span>
                     </div>
 
@@ -99,8 +102,8 @@ defined('_JEXEC') or die();
                 <?php print $this->_tmp_ext_filter;?>
                 <div class="control-group box_button">
                     <div class="controls d-flex align-items-center">
-                    <input type="button" class="btn button btn-primary" id="submit_product_list_filter" value="<?php print JText::_('JSHOP_GO')?>">
-                    <span class="clear_filter"><a href="#" class="btn btn-secondary" id="clear_product_list_filter"><?php print JText::_('JSHOP_CLEAR_FILTERS')?></a></span>
+                    <input type="button" class="btn button btn-primary" id="submit_product_list_filter" value="<?php print Text::_('JSHOP_GO')?>">
+                    <span class="clear_filter"><a href="#" class="btn btn-secondary" id="clear_product_list_filter"><?php print Text::_('JSHOP_CLEAR_FILTERS')?></a></span>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -12,7 +17,7 @@ $rows=$this->rows;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions();?>
+<?php HelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping&controller=usergroups" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <table class="table table-striped">
@@ -22,25 +27,25 @@ $rows=$this->rows;
       		#
     	</th>
     	<th width="20">
-	  		<input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+	  		<input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     	</th>
     	<th width="150" align="left">
-      		<?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TITLE'), 'usergroup_name', $this->filter_order_Dir, $this->filter_order); ?>
+      		<?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TITLE'), 'usergroup_name', $this->filter_order_Dir, $this->filter_order); ?>
     	</th>
     	<th align="left">
-      		<?php echo \JHTML::_('grid.sort', JText::_('JSHOP_DESCRIPTION'), 'usergroup_description', $this->filter_order_Dir, $this->filter_order); ?>
+      		<?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_DESCRIPTION'), 'usergroup_description', $this->filter_order_Dir, $this->filter_order); ?>
     	</th>
         <th width="80">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_USERGROUP_DISCOUNT'), 'usergroup_discount', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_USERGROUP_DISCOUNT'), 'usergroup_discount', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
     	<th width="100" class="center">
-			<?php echo JText::_('JSHOP_USERGROUP_IS_DEFAULT')?>
+			<?php echo Text::_('JSHOP_USERGROUP_IS_DEFAULT')?>
 		</th>
 	    <th width="50" class="center">
-	        <?php echo JText::_('JSHOP_EDIT')?>
+	        <?php echo Text::_('JSHOP_EDIT')?>
 	    </th>
         <th width="40" class="center">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'usergroup_id', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'usergroup_id', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
   	</tr>
 </thead>
@@ -50,7 +55,7 @@ $rows=$this->rows;
 		<?php echo $i + 1;?>
 	</td>
 	<td align="center">
-        <?php echo \JHTML::_('grid.id', $i, $row->usergroup_id);?>
+        <?php echo HTMLHelper::_('grid.id', $i, $row->usergroup_id);?>
 	</td>
 	<td>
 		<a href="index.php?option=com_jshopping&controller=usergroups&task=edit&usergroup_id=<?php echo $row->usergroup_id;?>"><?php echo $row->usergroup_name; ?></a>
@@ -92,6 +97,6 @@ $rows=$this->rows;
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

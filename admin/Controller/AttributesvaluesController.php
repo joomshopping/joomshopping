@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 defined('_JEXEC') or die();
 
 class AttributesValuesController extends BaseadminController{
@@ -15,8 +19,8 @@ class AttributesValuesController extends BaseadminController{
     protected $modelSaveItemFileName = 'image';
 
     function init(){
-        \JSHelperAdmin::checkAccessController("attributesvalues");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("attributesvalues");
+        HelperAdmin::addSubmenu("other");
     }
     
     public function getUrlListItems(){
@@ -31,16 +35,16 @@ class AttributesValuesController extends BaseadminController{
 
     function display($cachable = false, $urlparams = false){
 		$attr_id = $this->input->getInt("attr_id");
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.attr_values";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "value_ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         
-		$attributValues = \JSFactory::getModel("attributvalue");
+		$attributValues = JSFactory::getModel("attributvalue");
 		$rows = $attributValues->getAllValues($attr_id, $filter_order, $filter_order_Dir);
-		$attribut = \JSFactory::getModel("attribut");
+		$attribut = JSFactory::getModel("attribut");
 		$attr_name = $attribut->getName($attr_id);
         
 		$view = $this->getView("attributesvalues", 'html');
@@ -54,26 +58,26 @@ class AttributesValuesController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayAttributesValues', array(&$view));
 		$view->displayList(); 
 	}
 	
 	function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
 		$value_id = $this->input->getInt("value_id");
 		$attr_id = $this->input->getInt("attr_id");
         
-		$jshopConfig = \JSFactory::getConfig();	
+		$jshopConfig = JSFactory::getConfig();	
         
-        $attributValue = \JSFactory::getTable('attributValue');
+        $attributValue = JSFactory::getTable('attributValue');
         $attributValue->load($value_id);
         
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;	
         
-        \JFilterOutput::objectHTMLSafe($attributValue, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($attributValue, ENT_QUOTES);
 		
 		$view = $this->getView("attributesvalues", 'html');
         $view->setLayout("edit");		
@@ -85,7 +89,7 @@ class AttributesValuesController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditAtributesValues', array(&$view));
 		$view->displayEdit();
 	}

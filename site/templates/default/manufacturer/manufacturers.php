@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
@@ -42,7 +44,7 @@ defined('_JEXEC') or die;
 					<?php if ($row->manufacturer_url != "") : ?>
 						<div class="manufacturer_url">
 							<a target="_blank" href="<?php print $row->manufacturer_url?>">
-								<?php print JText::_('JSHOP_MANUFACTURER_INFO')?>
+								<?php print Text::_('JSHOP_MANUFACTURER_INFO')?>
 							</a>
 						</div>
 					<?php endif; ?>

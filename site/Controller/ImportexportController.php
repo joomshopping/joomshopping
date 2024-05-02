@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 defined('_JEXEC') or die();
 include_once(JPATH_COMPONENT_ADMINISTRATOR."/importexport/iecontroller.php");
@@ -14,7 +16,7 @@ include_once(JPATH_COMPONENT_ADMINISTRATOR."/importexport/iecontroller.php");
 class ImportexportController extends BaseController{
     
     function display($cachable = false, $urlparams = false){        
-		throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+		throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
     }
 
     function start(){
@@ -22,7 +24,7 @@ class ImportexportController extends BaseController{
 		$key = $this->input->getVar("key");
         $alias = $this->input->getVar("alias");
         $id = $this->input->getInt("id");
-		$model = \JSFactory::getModel('importExportStart', 'Site');
+		$model = JSFactory::getModel('importExportStart', 'Site');
 		if ($model->checkKey($key)){
 			$model->executeList(null, 1, $alias, $id);
 		}

@@ -7,6 +7,14 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\User\UserHelper;
+use Joomla\CMS\Router\Route;
 defined('_JEXEC') or die();
 
 class UseractivateModel  extends UserbaseModel{
@@ -14,49 +22,49 @@ class UseractivateModel  extends UserbaseModel{
     public function __construct(){
 		$this->loadUserParams();
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshopUseractivate', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshopUseractivate', array(&$obj));
     }
 	
 	public function check($token){
 		$params = $this->getUserParams();
 		if ($params->get('useractivation') == 0 || $params->get('allowUserRegistration') == 0) {
-            $this->setError(\JText::_('JLIB_APPLICATION_ERROR_ACCESS_FORBIDDEN'));
+            $this->setError(Text::_('JLIB_APPLICATION_ERROR_ACCESS_FORBIDDEN'));
             return 0;
         }
         if ($token === null || strlen($token) !== 32) {
-            $this->setError(\JText::_('JINVALID_TOKEN'));
+            $this->setError(Text::_('JINVALID_TOKEN'));
             return 0;
         }
 		return 1;
 	}
 	    
 	public function activate($token){
-        $config = \JFactory::getConfig();
+        $config = Factory::getConfig();
         $userParams = $this->getUserParams();
-		\JPluginHelper::importPlugin('user');
+		PluginHelper::importPlugin('user');
 
         $userId = $this->getUserId($token);
         if (!$userId){
-            $this->setError(\JText::_('COM_USERS_ACTIVATION_TOKEN_NOT_FOUND'));
+            $this->setError(Text::_('COM_USERS_ACTIVATION_TOKEN_NOT_FOUND'));
             return false;
         }
 
-        $user = \JFactory::getUser($userId);
+        $user = Factory::getUser($userId);
 		$obj = $this;
-        \JFactory::getApplication()->triggerEvent('onBeforeUserActivate', array(&$obj, &$token, &$user, &$userParams));
-		$usermail = \JSFactory::getModel('usermailactivation', 'Site');
-		$uri = \JURI::getInstance();
+        Factory::getApplication()->triggerEvent('onBeforeUserActivate', array(&$obj, &$token, &$user, &$userParams));
+		$usermail = JSFactory::getModel('usermailactivation', 'Site');
+		$uri = Uri::getInstance();
 		$base = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port'));
 		$data = $user->getProperties();
 		$data['fromname'] = $config->get('fromname');
 		$data['mailfrom'] = $config->get('mailfrom');
 		$data['sitename'] = $config->get('sitename');
-		$data['siteurl'] = \JURI::base();
+		$data['siteurl'] = Uri::base();
 
         // Admin activation is on and user is verifying their email
         if (($userParams->get('useractivation') == 2) && !$user->getParam('activate', 0)){
-            $data['activation'] = \JApplicationHelper::getHash(\JUserHelper::genRandomPassword());
-            $data['activate'] = $base.\JRoute::_('index.php?option=com_jshopping&controller=user&task=activate&token='.$data['activation'], false);
+            $data['activation'] = ApplicationHelper::getHash(UserHelper::genRandomPassword());
+            $data['activate'] = $base.Route::_('index.php?option=com_jshopping&controller=user&task=activate&token='.$data['activation'], false);
 
 			$user->set('activation', $data['activation']);
             $user->setParam('activate', 1);
@@ -83,30 +91,30 @@ class UseractivateModel  extends UserbaseModel{
             $user->set('block', '0');
         }
         if (!$user->save()) {
-            $this->setError(\JText::sprintf('COM_USERS_REGISTRATION_ACTIVATION_SAVE_FAILED', $user->getError()));
+            $this->setError(Text::sprintf('COM_USERS_REGISTRATION_ACTIVATION_SAVE_FAILED', $user->getError()));
             $user = false;
         }
         $obj = $this;
-		\JFactory::getApplication()->triggerEvent('onAfterUserActivate', array(&$obj, &$token, &$user));
+		Factory::getApplication()->triggerEvent('onAfterUserActivate', array(&$obj, &$token, &$user));
         return $user;
     }
 	
 	public function getMessageUserActivation($user){
 		$useractivation = $this->getUserParams()->get('useractivation');
         if ($useractivation == 0){
-            $msg = \JText::_('COM_USERS_REGISTRATION_SAVE_SUCCESS');            
+            $msg = Text::_('COM_USERS_REGISTRATION_SAVE_SUCCESS');            
         }elseif ($useractivation == 1){
-            $msg = \JText::_('COM_USERS_REGISTRATION_ACTIVATE_SUCCESS');            
+            $msg = Text::_('COM_USERS_REGISTRATION_ACTIVATE_SUCCESS');            
         }elseif ($user->getParam('activate')){
-            $msg = \JText::_('COM_USERS_REGISTRATION_VERIFY_SUCCESS');            
+            $msg = Text::_('COM_USERS_REGISTRATION_VERIFY_SUCCESS');            
         }else{
-            $msg = \JText::_('COM_USERS_REGISTRATION_ADMINACTIVATE_SUCCESS');            
+            $msg = Text::_('COM_USERS_REGISTRATION_ADMINACTIVATE_SUCCESS');            
         }
 		return $msg;
 	}
 	
 	private function getUserId($token) {
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$db->setQuery(
             'SELECT '.$db->qn('id').' FROM '.$db->qn('#__users') .
             ' WHERE '.$db->qn('activation').' = '.$db->q($token) .

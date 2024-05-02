@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class ProductAjaxRequestModel  extends BaseModel{
@@ -20,11 +23,11 @@ class ProductAjaxRequestModel  extends BaseModel{
 	public $request;
 	
 	public function __construct(){
-		$this->product = \JSFactory::getTable('product');
+		$this->product = JSFactory::getTable('product');
 	}	
 	
 	public function setData(&$product_id, &$change_attr, &$qty, &$attribs, &$freeattr, &$request){		
-        \JFactory::getApplication()->triggerEvent('onBeforeLoadDisplayAjaxAttrib', array(&$product_id, &$change_attr, &$qty, &$attribs, &$freeattr, &$request));
+        Factory::getApplication()->triggerEvent('onBeforeLoadDisplayAjaxAttrib', array(&$product_id, &$change_attr, &$qty, &$attribs, &$freeattr, &$request));
 		$this->product_id = $product_id;
 		$this->change_attr = $change_attr;
 		$this->qty = $qty;
@@ -62,8 +65,8 @@ class ProductAjaxRequestModel  extends BaseModel{
 	}
 	
 	public function getLoadProductData(){
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
 		
 		$product = $this->product;
 		$product->load($this->product_id);
@@ -78,14 +81,14 @@ class ProductAjaxRequestModel  extends BaseModel{
         }
 
         $pricefloat = $product->getPrice($this->qty, 1, 1, 1);
-        $price = \JSHelper::formatprice($pricefloat);
+        $price = Helper::formatprice($pricefloat);
         $available = intval($product->getQty() > 0);
 		$displaybuttons = intval(intval($product->getQty() > 0) || $jshopConfig->hide_buy_not_avaible_stock==0);
         $ean = $product->getEan();
         $manufacturer_code = $product->getManufacturerCode();
         $real_ean = $product->getRealEan();
-        $weight = \JSHelper::formatweight($product->getWeight());
-        $basicprice = \JSHelper::formatprice($product->getBasicPrice());
+        $weight = Helper::formatweight($product->getWeight());
+        $basicprice = Helper::formatprice($product->getBasicPrice());
         
         $rows['price'] = $price;
         $rows['pricefloat'] = $pricefloat;
@@ -100,25 +103,25 @@ class ProductAjaxRequestModel  extends BaseModel{
             $rows['weight'] = $weight;
         }
         if ($jshopConfig->product_list_show_price_default && isset($product->product_price_default) && $product->product_price_default>0){
-            $rows['pricedefault'] = \JSHelper::formatprice($product->product_price_default);
+            $rows['pricedefault'] = Helper::formatprice($product->product_price_default);
         }
         if ($jshopConfig->product_show_qty_stock){
-            $qty_in_stock = \JSHelper::getDataProductQtyInStock($product);
-            $rows['qty'] = \JSHelper::sprintQtyInStock($qty_in_stock);
+            $qty_in_stock = Helper::getDataProductQtyInStock($product);
+            $rows['qty'] = Helper::sprintQtyInStock($qty_in_stock);
         }
 		
         $product->updateOtherPricesIncludeAllFactors();
 
         if (is_array($product->product_add_prices)){
             foreach($product->product_add_prices as $k=>$v){
-                $rows['pq_'.$v->product_quantity_start] = \JSHelper::formatprice($v->price).(isset($v->ext_price) ? $v->ext_price : '');
+                $rows['pq_'.$v->product_quantity_start] = Helper::formatprice($v->price).(isset($v->ext_price) ? $v->ext_price : '');
                 if (isset($v->basic_price)) {
-                    $rows['pqb_'.$v->product_quantity_start] = \JSHelper::formatprice($v->basic_price);
+                    $rows['pqb_'.$v->product_quantity_start] = Helper::formatprice($v->basic_price);
                 }
             }
         }
         if ($product->product_old_price){
-            $old_price = \JSHelper::formatprice($product->product_old_price);
+            $old_price = Helper::formatprice($product->product_old_price);
             $rows['oldprice'] = $old_price;
         }
 		$rows['displaybuttons'] = $displaybuttons;
@@ -185,7 +188,7 @@ class ProductAjaxRequestModel  extends BaseModel{
 	
 	public function getProductDataJson(){        
 		$prod_data = $this->getLoadProductData();
-        \JFactory::getApplication()->triggerEvent('onBeforeDisplayAjaxAttrib', array(&$prod_data, &$this->product) );
+        Factory::getApplication()->triggerEvent('onBeforeDisplayAjaxAttrib', array(&$prod_data, &$this->product) );
         return json_encode($prod_data);		
 	}
 	

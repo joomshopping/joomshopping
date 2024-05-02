@@ -7,6 +7,14 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 
 defined('_JEXEC') or die();
@@ -17,17 +25,17 @@ class ConfigController extends BaseadminController{
         $this->registerTask('apply', 'save');
         $this->registerTask('applyseo', 'saveseo');
         $this->registerTask('applystatictext', 'savestatictext');
-        \JSHelperAdmin::checkAccessController("config");
-        \JSHelperAdmin::addSubmenu("config");        
+        HelperAdmin::checkAccessController("config");
+        HelperAdmin::addSubmenu("config");        
     }
 
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();        
-        $current_currency = \JSFactory::getTable('currency');
+        $app = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();        
+        $current_currency = JSFactory::getTable('currency');
         $current_currency->load($jshopConfig->mainCurrency);
         if ($current_currency->currency_value!=1){
-            $app->enqueueMessage(\JText::_('JSHOP_ERROR_MAIN_CURRENCY_VALUE'), 'message');
+            $app->enqueueMessage(Text::_('JSHOP_ERROR_MAIN_CURRENCY_VALUE'), 'message');
         }
         $view = $this->getView("panel", 'html');
         $view->setLayout("config");
@@ -38,13 +46,13 @@ class ConfigController extends BaseadminController{
     }
     
     function general(){
-	    $jshopConfig = \JSFactory::getConfig();
+	    $jshopConfig = JSFactory::getConfig();
 
-        $lists['languages'] = \JHTML::_('select.genericlist', \JSHelper::getAllLanguages(), 'defaultLanguage', 'class = "form-select"', 'language', 'name', $jshopConfig->defaultLanguage);
+        $lists['languages'] = HTMLHelper::_('select.genericlist', Helper::getAllLanguages(), 'defaultLanguage', 'class = "form-select"', 'language', 'name', $jshopConfig->defaultLanguage);
         $display_price_list = SelectOptions::getPriceType();
-        $lists['display_price_admin'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price_admin', 'class = "form-select"', 'id', 'name', $jshopConfig->display_price_admin);
-        $lists['display_price_front'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price_front', 'class = "form-select"', 'id', 'name', $jshopConfig->display_price_front);
-        $lists['template'] = \JSHelperAdmin::getShopTemplatesSelect($jshopConfig->template);
+        $lists['display_price_admin'] = HTMLHelper::_('select.genericlist', $display_price_list, 'display_price_admin', 'class = "form-select"', 'id', 'name', $jshopConfig->display_price_admin);
+        $lists['display_price_front'] = HTMLHelper::_('select.genericlist', $display_price_list, 'display_price_front', 'class = "form-select"', 'id', 'name', $jshopConfig->display_price_front);
+        $lists['template'] = HelperAdmin::getShopTemplatesSelect($jshopConfig->template);
 
     	$view = $this->getView("config", 'html');
         $view->setLayout("general");
@@ -53,63 +61,63 @@ class ConfigController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigGeneral', array(&$view));
         $view->display();
     }
     
     function catprod(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         
         $displayprice = array();
-        $displayprice[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_YES'), 'id', 'value');
-        $displayprice[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_NO'), 'id', 'value');
-        $displayprice[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_ONLY_REGISTER_USER'), 'id', 'value');
-        $lists['displayprice'] = \JHTML::_('select.genericlist', $displayprice, 'displayprice','class = "form-select"','id','value', $jshopConfig->displayprice);
+        $displayprice[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_YES'), 'id', 'value');
+        $displayprice[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_NO'), 'id', 'value');
+        $displayprice[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_ONLY_REGISTER_USER'), 'id', 'value');
+        $lists['displayprice'] = HTMLHelper::_('select.genericlist', $displayprice, 'displayprice','class = "form-select"','id','value', $jshopConfig->displayprice);
         
         $catsort = array();
-        $catsort[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_SORT_MANUAL'), 'id','value');
-        $catsort[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_SORT_ALPH'), 'id','value');
-        $lists['category_sorting'] = \JHTML::_('select.genericlist', $catsort, 'category_sorting','class = "form-select"','id','value', $jshopConfig->category_sorting);
-        $lists['manufacturer_sorting'] = \JHTML::_('select.genericlist', $catsort, 'manufacturer_sorting','class = "form-select"','id','value', $jshopConfig->manufacturer_sorting);
+        $catsort[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_SORT_MANUAL'), 'id','value');
+        $catsort[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_SORT_ALPH'), 'id','value');
+        $lists['category_sorting'] = HTMLHelper::_('select.genericlist', $catsort, 'category_sorting','class = "form-select"','id','value', $jshopConfig->category_sorting);
+        $lists['manufacturer_sorting'] = HTMLHelper::_('select.genericlist', $catsort, 'manufacturer_sorting','class = "form-select"','id','value', $jshopConfig->manufacturer_sorting);
         
         $sortd = array();
-        $sortd[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_A_Z'), 'id','value');
-        $sortd[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_Z_A'), 'id','value');
-        $lists['product_sorting_direction'] = \JHTML::_('select.genericlist', $sortd, 'product_sorting_direction','class = "form-select"','id','value', $jshopConfig->product_sorting_direction);
+        $sortd[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_A_Z'), 'id','value');
+        $sortd[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_Z_A'), 'id','value');
+        $lists['product_sorting_direction'] = HTMLHelper::_('select.genericlist', $sortd, 'product_sorting_direction','class = "form-select"','id','value', $jshopConfig->product_sorting_direction);
         
         $opt = array();
-        $opt[] = \JHTML::_('select.option', 'V.value_ordering', \JText::_('JSHOP_SORT_MANUAL'), 'id','value');
-        $opt[] = \JHTML::_('select.option', 'value_name', \JText::_('JSHOP_SORT_ALPH'), 'id','value');
-        $opt[] = \JHTML::_('select.option', 'PA.price', \JText::_('JSHOP_SORT_PRICE'), 'id','value');
-        $opt[] = \JHTML::_('select.option', 'PA.ean', \JText::_('JSHOP_EAN_PRODUCT'), 'id','value');
-        $opt[] = \JHTML::_('select.option', 'PA.count', \JText::_('JSHOP_QUANTITY_PRODUCT'), 'id','value');
-        $opt[] = \JHTML::_('select.option', 'PA.product_attr_id', \JText::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
-        $lists['attribut_dep_sorting_in_product'] = \JHTML::_('select.genericlist', $opt, 'attribut_dep_sorting_in_product','class = "form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product);
+        $opt[] = HTMLHelper::_('select.option', 'V.value_ordering', Text::_('JSHOP_SORT_MANUAL'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'value_name', Text::_('JSHOP_SORT_ALPH'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'PA.price', Text::_('JSHOP_SORT_PRICE'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'PA.ean', Text::_('JSHOP_EAN_PRODUCT'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'PA.count', Text::_('JSHOP_QUANTITY_PRODUCT'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'PA.product_attr_id', Text::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
+        $lists['attribut_dep_sorting_in_product'] = HTMLHelper::_('select.genericlist', $opt, 'attribut_dep_sorting_in_product','class = "form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product);
         
         $opt = array();
-        $opt[] = \JHTML::_('select.option', 'V.value_ordering', \JText::_('JSHOP_SORT_MANUAL'), 'id','value');
-        $opt[] = \JHTML::_('select.option', 'value_name', \JText::_('JSHOP_SORT_ALPH'), 'id','value');
-        $opt[] = \JHTML::_('select.option', 'addprice', \JText::_('JSHOP_SORT_PRICE'), 'id','value');
-        $opt[] = \JHTML::_('select.option', 'PA.id', \JText::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
-        $lists['attribut_nodep_sorting_in_product'] = \JHTML::_('select.genericlist', $opt, 'attribut_nodep_sorting_in_product','class = "form-select"','id','value', $jshopConfig->attribut_nodep_sorting_in_product);        
+        $opt[] = HTMLHelper::_('select.option', 'V.value_ordering', Text::_('JSHOP_SORT_MANUAL'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'value_name', Text::_('JSHOP_SORT_ALPH'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'addprice', Text::_('JSHOP_SORT_PRICE'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'PA.id', Text::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
+        $lists['attribut_nodep_sorting_in_product'] = HTMLHelper::_('select.genericlist', $opt, 'attribut_nodep_sorting_in_product','class = "form-select"','id','value', $jshopConfig->attribut_nodep_sorting_in_product);        
         
         $select = array();        
         foreach($jshopConfig->sorting_products_name_select as $key => $value){
-            $select[] = \JHTML::_('select.option', $key, \JText::_($value), 'id', 'value');
+            $select[] = HTMLHelper::_('select.option', $key, Text::_($value), 'id', 'value');
         }
-        $lists['product_sorting'] = \JHTML::_('select.genericlist',$select, "product_sorting", 'class = "form-select"', 'id','value', $jshopConfig->product_sorting);
+        $lists['product_sorting'] = HTMLHelper::_('select.genericlist',$select, "product_sorting", 'class = "form-select"', 'id','value', $jshopConfig->product_sorting);
         
         if ($jshopConfig->admin_show_product_extra_field){
-            $_productfields = \JSFactory::getModel("productfields");
+            $_productfields = JSFactory::getModel("productfields");
             $rows = $_productfields->getList();
-            $lists['product_list_display_extra_fields'] = \JHTML::_('select.genericlist', $rows, "product_list_display_extra_fields[]", ' class = "form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getProductListDisplayExtraFields() );
-            $lists['filter_display_extra_fields'] = \JHTML::_('select.genericlist', $rows, "filter_display_extra_fields[]", ' class = "form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getFilterDisplayExtraFields() );
-            $lists['product_hide_extra_fields'] = \JHTML::_('select.genericlist', $rows, "product_hide_extra_fields[]", ' class = "form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getProductHideExtraFields() );
-            $lists['cart_display_extra_fields'] = \JHTML::_('select.genericlist', $rows, "cart_display_extra_fields[]", ' class = "form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getCartDisplayExtraFields() );
+            $lists['product_list_display_extra_fields'] = HTMLHelper::_('select.genericlist', $rows, "product_list_display_extra_fields[]", ' class = "form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getProductListDisplayExtraFields() );
+            $lists['filter_display_extra_fields'] = HTMLHelper::_('select.genericlist', $rows, "filter_display_extra_fields[]", ' class = "form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getFilterDisplayExtraFields() );
+            $lists['product_hide_extra_fields'] = HTMLHelper::_('select.genericlist', $rows, "product_hide_extra_fields[]", ' class = "form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getProductHideExtraFields() );
+            $lists['cart_display_extra_fields'] = HTMLHelper::_('select.genericlist', $rows, "cart_display_extra_fields[]", ' class = "form-select" size="10" multiple = "multiple" ', 'id','name', $jshopConfig->getCartDisplayExtraFields() );
         }
 
-        $lists['units'] = \JHTML::_('select.genericlist', SelectOptions::getUnits(), "main_unit_weight", 'class = "form-select"', 'id','name', $jshopConfig->main_unit_weight);        
+        $lists['units'] = HTMLHelper::_('select.genericlist', SelectOptions::getUnits(), "main_unit_weight", 'class = "form-select"', 'id','name', $jshopConfig->main_unit_weight);        
             
         $view = $this->getView("config", 'html');
         $view->setLayout("categoryproduct");
@@ -118,29 +126,29 @@ class ConfigController extends BaseadminController{
 
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigCatProd', array(&$view));
         $view->display();
     }
     
     function checkout(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
 
-        $lists['status'] = \JHTML::_('select.genericlist', SelectOptions::getOrderStatus(), 'default_status_order', 'class = "inputbox form-select"', 'status_id', 'name', $jshopConfig->default_status_order);
-        $currency_code = \JSHelper::getMainCurrencyCode();        
-        $lists['default_country'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(3), 'default_country','class = "inputbox form-select"','country_id','name', $jshopConfig->default_country);
+        $lists['status'] = HTMLHelper::_('select.genericlist', SelectOptions::getOrderStatus(), 'default_status_order', 'class = "inputbox form-select"', 'status_id', 'name', $jshopConfig->default_status_order);
+        $currency_code = Helper::getMainCurrencyCode();        
+        $lists['default_country'] = HTMLHelper::_('select.genericlist', SelectOptions::getCountrys(3), 'default_country','class = "inputbox form-select"','country_id','name', $jshopConfig->default_country);
         
         $vendor_order_message_type = array();
-        $vendor_order_message_type[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_NOT_SEND_MESSAGE'), 'id', 'name' );
-        $vendor_order_message_type[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_WE_SEND_MESSAGE'), 'id', 'name' );
-        $vendor_order_message_type[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_WE_SEND_ORDER'), 'id', 'name' );
-        $vendor_order_message_type[] = \JHTML::_('select.option', 3, \JText::_('JSHOP_WE_ALWAYS_SEND_ORDER'), 'id', 'name' );
-        $lists['vendor_order_message_type'] = \JHTML::_('select.genericlist', $vendor_order_message_type, 'vendor_order_message_type','class = "inputbox form-select" size = "1"','id','name', $jshopConfig->vendor_order_message_type);
+        $vendor_order_message_type[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_NOT_SEND_MESSAGE'), 'id', 'name' );
+        $vendor_order_message_type[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_WE_SEND_MESSAGE'), 'id', 'name' );
+        $vendor_order_message_type[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_WE_SEND_ORDER'), 'id', 'name' );
+        $vendor_order_message_type[] = HTMLHelper::_('select.option', 3, Text::_('JSHOP_WE_ALWAYS_SEND_ORDER'), 'id', 'name' );
+        $lists['vendor_order_message_type'] = HTMLHelper::_('select.genericlist', $vendor_order_message_type, 'vendor_order_message_type','class = "inputbox form-select" size = "1"','id','name', $jshopConfig->vendor_order_message_type);
         
 		$option = array();
-        $option[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_STEP_3_4'), 'id', 'name');
-        $option[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_STEP_4_3'), 'id', 'name');
-        $lists['step_4_3'] = \JHTML::_('select.genericlist', $option, 'step_4_3','class = "inputbox form-select"','id','name', $jshopConfig->step_4_3);
+        $option[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_STEP_3_4'), 'id', 'name');
+        $option[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_STEP_4_3'), 'id', 'name');
+        $lists['step_4_3'] = HTMLHelper::_('select.genericlist', $option, 'step_4_3','class = "inputbox form-select"','id','name', $jshopConfig->step_4_3);
 
         $view = $this->getView("config", 'html');
         $view->setLayout("checkout");
@@ -150,13 +158,13 @@ class ConfigController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigCheckout', array(&$view));
         $view->display();
     }
 
     function fieldregister(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $view = $this->getView("config", 'html');
         $view->setLayout("fieldregister");
         $config = new \stdClass();
@@ -170,23 +178,23 @@ class ConfigController extends BaseadminController{
 
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigFieldRegister', array(&$view));
         $view->display();
     }
 
     function adminfunction(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $shop_register_type = array();
-        $shop_register_type[] = \JHTML::_('select.option', 0, "-", 'id', 'name' );
-        $shop_register_type[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_MEYBY_SKIP_REGISTRATION'), 'id', 'name' );
-        $shop_register_type[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_WITHOUT_REGISTRATION'), 'id', 'name' );
-        $lists['shop_register_type'] = \JHTML::_('select.genericlist', $shop_register_type, 'shop_user_guest','class = "inputbox form-select" size = "1"','id','name', $jshopConfig->shop_user_guest);
+        $shop_register_type[] = HTMLHelper::_('select.option', 0, "-", 'id', 'name' );
+        $shop_register_type[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_MEYBY_SKIP_REGISTRATION'), 'id', 'name' );
+        $shop_register_type[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_WITHOUT_REGISTRATION'), 'id', 'name' );
+        $lists['shop_register_type'] = HTMLHelper::_('select.genericlist', $shop_register_type, 'shop_user_guest','class = "inputbox form-select" size = "1"','id','name', $jshopConfig->shop_user_guest);
         
         $opt = array();
-        $opt[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_NORMAL'), 'id', 'name');
-        $opt[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_DEVELOPER'), 'id', 'name');
-        $lists['shop_mode'] = \JHTML::_('select.genericlist', $opt, 'shop_mode','class = "inputbox form-select"','id','name', $jshopConfig->shop_mode);
+        $opt[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_NORMAL'), 'id', 'name');
+        $opt[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_DEVELOPER'), 'id', 'name');
+        $lists['shop_mode'] = HTMLHelper::_('select.genericlist', $opt, 'shop_mode','class = "inputbox form-select"','id','name', $jshopConfig->shop_mode);
 
         $view = $this->getView("config", 'html');
         $view->setLayout("adminfunction");
@@ -195,15 +203,15 @@ class ConfigController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigAdminFunction', array(&$view));
         $view->display();
     }
 
     function currency(){
-    	$jshopConfig = \JSFactory::getConfig();
+    	$jshopConfig = JSFactory::getConfig();
 		
-		$lists['currencies'] = \JHTML::_('select.genericlist', SelectOptions::getCurrencies(), 'mainCurrency','class = "inputbox form-select"','currency_id','currency_code',$jshopConfig->mainCurrency);
+		$lists['currencies'] = HTMLHelper::_('select.genericlist', SelectOptions::getCurrencies(), 'mainCurrency','class = "inputbox form-select"','currency_id','currency_code',$jshopConfig->mainCurrency);
 		
 		$i = 0;
 		foreach($jshopConfig->format_currency as $key => $value){
@@ -212,7 +220,7 @@ class ConfigController extends BaseadminController{
 			$currenc[$i]->format = $value;
 			$i++;
 		}
-		$lists['format_currency'] = \JHTML::_('select.genericlist', $currenc, 'currency_format','class = "inputbox form-select"', 'id_cur', 'format', $jshopConfig->currency_format);
+		$lists['format_currency'] = HTMLHelper::_('select.genericlist', $currenc, 'currency_format','class = "inputbox form-select"', 'id_cur', 'format', $jshopConfig->currency_format);
 				
         $view = $this->getView("config", 'html');
         $view->setLayout("currency");
@@ -221,20 +229,20 @@ class ConfigController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigCurrency', array(&$view));
         $view->display();
     }
     
     function image(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         
         $resize_type = array();
-        $resize_type[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_CUT'), 'id', 'name' );
-        $resize_type[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_FILL'), 'id', 'name' );
-        $resize_type[] = \JHTML::_('select.option', 2, \JText::_('JSHOP_STRETCH'), 'id', 'name' );
-        $select_resize_type = \JHTML::_('select.genericlist', $resize_type, 'image_resize_type','class = "inputbox form-select"','id','name', $jshopConfig->image_resize_type);
-		$image_fill_colors = \JHTML::_('select.genericlist', $jshopConfig->image_fill_colors, 'image_fill_color','class = "inputbox form-select"', 'id', 'name', $jshopConfig->image_fill_color);
+        $resize_type[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_CUT'), 'id', 'name' );
+        $resize_type[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_FILL'), 'id', 'name' );
+        $resize_type[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_STRETCH'), 'id', 'name' );
+        $select_resize_type = HTMLHelper::_('select.genericlist', $resize_type, 'image_resize_type','class = "inputbox form-select"','id','name', $jshopConfig->image_resize_type);
+		$image_fill_colors = HTMLHelper::_('select.genericlist', $jshopConfig->image_fill_colors, 'image_fill_color','class = "inputbox form-select"', 'id', 'name', $jshopConfig->image_fill_color);
     	
     	$view = $this->getView("config", 'html');
         $view->setLayout("image");
@@ -244,17 +252,17 @@ class ConfigController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigImage', array(&$view));
         $view->display();
     }
     
     function storeinfo(){
-        $vendor = \JSFactory::getTable('vendor');
+        $vendor = JSFactory::getTable('vendor');
         $vendor->loadMain();
-		$lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(3), 'country', 'class = "inputbox form-select"', 'country_id', 'name', $vendor->country);
+		$lists['countries'] = HTMLHelper::_('select.genericlist', SelectOptions::getCountrys(3), 'country', 'class = "inputbox form-select"', 'country_id', 'name', $vendor->country);
         
-        \JFilterOutput::objectHTMLSafe($vendor, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($vendor, ENT_QUOTES);
         
     	$view = $this->getView("config", 'html');
         $view->setLayout("storeinfo");
@@ -264,23 +272,23 @@ class ConfigController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigStoreInfo', array(&$view));
         $view->display();
     }
     
     function save(){
-	    $jshopConfig = \JSFactory::getConfig();
+	    $jshopConfig = JSFactory::getConfig();
 		$tab = $this->input->getVar('tab');
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
         
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
 		$extconf = array('imageheader'=>'header.jpg', 'imagefooter'=>'footer.jpg');	
 		$post = $this->input->post->getArray();
         $dispatcher->triggerEvent('onBeforeSaveConfig', array(&$post, &$extconf));
         
         if ($tab == 5){
-            $vendor = \JSFactory::getTable('vendor');
+            $vendor = JSFactory::getTable('vendor');
             $post = $this->input->post->getArray();
             $vendor->id = $post['vendor_id'];
             $vendor->main = 1;
@@ -323,10 +331,10 @@ class ConfigController extends BaseadminController{
         }
         
         if ($tab != 4){
-		    $config = \JSFactory::getTable('Config');
+		    $config = JSFactory::getTable('Config');
 		    $config->id = $jshopConfig->load_id;
 		    if (!$config->bind($post, ['task', 'tab', 'option', 'controller'])) {
-			    \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_BIND'));
+			    JSError::raiseWarning("",Text::_('JSHOP_ERROR_BIND'));
 			    $this->setRedirect('index.php?option=com_jshopping&controller=config');
 			    return 0;
 		    }
@@ -340,7 +348,7 @@ class ConfigController extends BaseadminController{
 		    
 		    $config->transformPdfParameters();
 		    if (!$config->store()) {
-			    \JSError::raiseWarning("",\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
+			    JSError::raiseWarning("",Text::_('JSHOP_ERROR_SAVE_DATABASE'));
 			    $this->setRedirect('index.php?option=com_jshopping&controller=config');
 			    return 0;
 		    }
@@ -386,14 +394,14 @@ class ConfigController extends BaseadminController{
                 case 9: $task = "fieldregister"; break;
 				case 10: $task = "otherconfig"; break;
             }
-            $this->setRedirect('index.php?option=com_jshopping&controller=config&task='.$task, \JText::_('JSHOP_CONFIG_SUCCESS'));
+            $this->setRedirect('index.php?option=com_jshopping&controller=config&task='.$task, Text::_('JSHOP_CONFIG_SUCCESS'));
         }else{
-		    $this->setRedirect('index.php?option=com_jshopping&controller=config', \JText::_('JSHOP_CONFIG_SUCCESS'));
+		    $this->setRedirect('index.php?option=com_jshopping&controller=config', Text::_('JSHOP_CONFIG_SUCCESS'));
         }
     }
     
     function seo(){        
-        $rows = \JSFactory::getModel("seo")->getList();
+        $rows = JSFactory::getModel("seo")->getList();
         
         $view = $this->getView("config", 'html');
         $view->setLayout("listseo");
@@ -402,21 +410,21 @@ class ConfigController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplaySeo', array(&$view));
         $view->displayListSeo();    
     }
     
     function seoedit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $id = $this->input->getInt("id");
-        $seo = \JSFactory::getTable("seo");
+        $seo = JSFactory::getTable("seo");
         $seo->load($id);
         
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;        
-        \JFilterOutput::objectHTMLSafe($seo, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($seo, ENT_QUOTES);
         
         $view=$this->getView("config", 'html');
         $view->setLayout("editseo");        
@@ -426,24 +434,24 @@ class ConfigController extends BaseadminController{
         $view->set('multilang', $multilang);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplaySeoEdit', array(&$view));
         $view->displayEditSeo();
     }
     
     function saveseo(){
         $post = $this->input->post->getArray();
-        $model = \JSFactory::getModel("seo");
+        $model = JSFactory::getModel("seo");
         $seo = $model->save($post);
         if ($this->getTask()=='applyseo'){
-            $this->setRedirect('index.php?option=com_jshopping&controller=config&task=seoedit&id='.$seo->id, \JText::_('JSHOP_CONFIG_SUCCESS'));
+            $this->setRedirect('index.php?option=com_jshopping&controller=config&task=seoedit&id='.$seo->id, Text::_('JSHOP_CONFIG_SUCCESS'));
         }else{
-            $this->setRedirect('index.php?option=com_jshopping&controller=config&task=seo', \JText::_('JSHOP_CONFIG_SUCCESS'));
+            $this->setRedirect('index.php?option=com_jshopping&controller=config&task=seo', Text::_('JSHOP_CONFIG_SUCCESS'));
         }
     }
     
     function statictext(){
-        $rows = \JSFactory::getModel("statictext")->getList();
+        $rows = JSFactory::getModel("statictext")->getList();
 
         $view = $this->getView("config", 'html');
         $view->setLayout("liststatictext");
@@ -452,23 +460,23 @@ class ConfigController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayStatisticText', array(&$view)); 
         $view->displayListStatictext();    
     }
     
     function statictextedit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $id = $this->input->getInt("id");
         
-        $statictext = \JSFactory::getTable("statictext");
+        $statictext = JSFactory::getTable("statictext");
         $statictext->load($id);
         
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
         
-        \JFilterOutput::objectHTMLSafe( $statictext, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe( $statictext, ENT_QUOTES);
         
         $view = $this->getView("config", 'html');
         $view->setLayout("editstatictext");        
@@ -478,46 +486,46 @@ class ConfigController extends BaseadminController{
         $view->set('multilang', $multilang);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayStatisticTextEdit', array(&$view));
         $view->displayEditStatictext();
     }
     
     function savestatictext(){
-        $model = \JSFactory::getModel("statictext");
+        $model = JSFactory::getModel("statictext");
         $post = $model->getPrepareDataSave($this->input);
         $statictext = $model->save($post);
         if ($this->getTask()=='applystatictext'){
-            $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictextedit&id='.$statictext->id, \JText::_('JSHOP_CONFIG_SUCCESS'));
+            $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictextedit&id='.$statictext->id, Text::_('JSHOP_CONFIG_SUCCESS'));
         }else{            
-            $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictext', \JText::_('JSHOP_CONFIG_SUCCESS'));
+            $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictext', Text::_('JSHOP_CONFIG_SUCCESS'));
         }
     }
     
     function deletestatictext(){
         $id = $this->input->getInt("id");
-        \JSFactory::getModel("statictext")->delete($id);
+        JSFactory::getModel("statictext")->delete($id);
         $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictext');
     }
     
     function publish(){
         $cid = $this->input->getVar('cid');
-        \JSFactory::getModel("statictext")->useReturnPolicy($cid, 1);
+        JSFactory::getModel("statictext")->useReturnPolicy($cid, 1);
         $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictext');
     }
     
     function unpublish(){
         $cid = $this->input->getVar('cid');
-        \JSFactory::getModel("statictext")->useReturnPolicy($cid, 0);
+        JSFactory::getModel("statictext")->useReturnPolicy($cid, 0);
         $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictext');
     }
     
     function preview_pdf(){
-        $dispatcher = \JFactory::getApplication();
-		$jshopConfig = \JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
         $jshopConfig->currency_code = "USD";
         $file_generete_pdf_order = $jshopConfig->file_generete_pdf_order;		
-        $order = \JSFactory::getTable('order');
+        $order = JSFactory::getTable('order');
         $order->prepareOrderPrint = 1;
         $order->firma_name = "Firma";
         $order->f_name = "Fname";
@@ -526,9 +534,9 @@ class ConfigController extends BaseadminController{
         $order->zip = "Zip"; 
         $order->city = "City";
         $order->country = "Country";
-        $order->order_number = \JSHelper::outputDigit(1, 8);
-        $order->order_date = \JSHelper::formatdate(date('Y-m-d'));
-        $order->invoice_date = \JSHelper::formatdate(date('Y-m-d'));
+        $order->order_number = Helper::outputDigit(1, 8);
+        $order->order_date = Helper::formatdate(date('Y-m-d'));
+        $order->invoice_date = Helper::formatdate(date('Y-m-d'));
         $order->weight = 0;
         $order->products = array();
         $prod = new \stdClass();
@@ -565,13 +573,13 @@ class ConfigController extends BaseadminController{
 	}
     
 	function otherconfig(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
         $config = new \stdClass();
 		include($jshopConfig->path.'config/default_config.php');
         $tax_rule_for = array();
-        $tax_rule_for[] = \JHTML::_('select.option', 0, \JText::_('JSHOP_FIRMA_CLIENT'), 'id', 'name' );
-        $tax_rule_for[] = \JHTML::_('select.option', 1, \JText::_('JSHOP_VAT_NUMBER'), 'id', 'name' );
-        $lists['tax_rule_for'] = \JHTML::_('select.genericlist', $tax_rule_for, 'ext_tax_rule_for','class = "inputbox form-select"','id','name', $jshopConfig->ext_tax_rule_for);
+        $tax_rule_for[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_FIRMA_CLIENT'), 'id', 'name' );
+        $tax_rule_for[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_VAT_NUMBER'), 'id', 'name' );
+        $lists['tax_rule_for'] = HTMLHelper::_('select.genericlist', $tax_rule_for, 'ext_tax_rule_for','class = "inputbox form-select"','id','name', $jshopConfig->ext_tax_rule_for);
 
 		$view = $this->getView("config", 'html');
 		$view->setLayout("otherconfig");
@@ -584,7 +592,7 @@ class ConfigController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-		$dispatcher = \JFactory::getApplication();
+		$dispatcher = Factory::getApplication();
 		$dispatcher->triggerEvent('onBeforeEditConfigOtherConfig', array(&$view));
 		$view->display();
 	}

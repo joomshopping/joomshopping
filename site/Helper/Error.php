@@ -7,30 +7,31 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Helper;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class Error{
 	
 	public static function raiseWarning($code, $msg){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
 		$app->enqueueMessage($msg, 'warning');
         self::setLastErrorCode($code);
 	}
     
     public static function raiseNotice($code, $msg){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
 		$app->enqueueMessage($msg, 'notice');
         self::setLastErrorCode($code);
 	}
     
     public static function raiseError($code, $msg){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
 		$app->enqueueMessage($msg, 'error');
         self::setLastErrorCode($code);
 	}
 	
 	public static function raiseMessage($code, $msg){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
 		$app->enqueueMessage($msg, 'message');
         self::setLastErrorCode($code);
 	}
@@ -40,14 +41,14 @@ class Error{
 	}
     
     public static function getErrors(){
-        return \JFactory::getApplication()->getMessageQueue();
+        return Factory::getApplication()->getMessageQueue();
     }
     
     public static function setLastErrorCode($code) {
-        \JFactory::getSession()->set('js_error_message_code', $code);
+        Factory::getSession()->set('js_error_message_code', $code);
     }
     
     public static function getLastErrorCode() {
-        return \JFactory::getSession()->get('js_error_message_code');
+        return Factory::getSession()->get('js_error_message_code');
     }
 }

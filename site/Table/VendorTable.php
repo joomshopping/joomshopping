@@ -7,19 +7,25 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Mail\MailHelper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class VendorTable extends MultilangTable{
 
     function __construct(&$_db){
         parent::__construct('#__jshopping_vendors', 'id', $_db);
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
     }
     
     function loadMain(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT id FROM #__jshopping_vendors WHERE `main`=1";
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $id = intval($db->loadResult());
         $this->load($id);
@@ -34,16 +40,16 @@ class VendorTable extends MultilangTable{
     }
     
 	function check(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         Jimport('Joomla.mail.helper');
             
 	    if(trim($this->f_name) == '') {	    	
-		    $this->setError(\JText::_('JSHOP_REGWARN_NAME'));
+		    $this->setError(Text::_('JSHOP_REGWARN_NAME'));
 		    return false;
 	    }
         
-        if( (trim($this->email == "")) || ! \JMailHelper::isEmailAddress($this->email)) {
-            $this->setError(\JText::_('JSHOP_REGWARN_MAIL'));
+        if( (trim($this->email == "")) || ! MailHelper::isEmailAddress($this->email)) {
+            $this->setError(Text::_('JSHOP_REGWARN_MAIL'));
             return false;
         }
         if ($this->user_id){
@@ -51,7 +57,7 @@ class VendorTable extends MultilangTable{
             $db->setQuery($query);
             $xid = intval($db->loadResult());
             if ($xid){
-                $this->setError(sprintf(\JText::_('JSHOP_ERROR_SET_VENDOR_TO_MANAGER'), $this->user_id));
+                $this->setError(sprintf(Text::_('JSHOP_ERROR_SET_VENDOR_TO_MANAGER'), $this->user_id));
                 return false;
             }
         }
@@ -60,13 +66,13 @@ class VendorTable extends MultilangTable{
 	}
     
     function getAllVendors($publish=1, $limitstart=0, $limit=0, $orderby = null) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $where = "";
         if (isset($publish)){
             $where = "and `publish`='".$db->escape($publish)."'";
         }
 		if (!$orderby){
-			$orderby = \JSFactory::getConfig()->get_vendors_order_query;
+			$orderby = JSFactory::getConfig()->get_vendors_order_query;
 		}
         $query = "SELECT * FROM `#__jshopping_vendors` where 1 ".$where." ORDER BY ".$orderby;
         $db->setQuery($query, $limitstart, $limit);        
@@ -74,7 +80,7 @@ class VendorTable extends MultilangTable{
     }
     
     function getCountAllVendors($publish=1){
-        $db = \JFactory::getDBO(); 
+        $db = Factory::getDBO(); 
         $where = "";
         if (isset($publish)){
             $where = "and `publish`='".$db->escape($publish)."'";
@@ -85,9 +91,9 @@ class VendorTable extends MultilangTable{
     }
     
     function prepareViewListVendor(&$rows){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         foreach($rows as $k=>$v){
-            $rows[$k]->link = \JSHelper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=products&vendor_id=".$v->id);
+            $rows[$k]->link = Helper::SEFLink("index.php?option=com_jshopping&controller=vendor&task=products&vendor_id=".$v->id);
             if (!$v->logo){
                 $rows[$k]->logo = $JshopConfig->image_vendors_live_path."/".$JshopConfig->noimage;
             }
@@ -96,17 +102,17 @@ class VendorTable extends MultilangTable{
     }
 	
 	function getCountryName(){
-		$country = \JSFactory::getTable('country');
+		$country = JSFactory::getTable('country');
         $country->load($this->country);
         return $country->getName();
 	}
 	
 	public function getCountPerPage(){
-		return \JSFactory::getConfig()->count_products_to_page;
+		return JSFactory::getConfig()->count_products_to_page;
 	}
 	
 	public function getCountToRow(){
-		return \JSFactory::getConfig()->count_category_to_row;
+		return JSFactory::getConfig()->count_category_to_row;
 	}
     
 }

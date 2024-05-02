@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -9,5 +11,5 @@
 defined('_JEXEC') or die();
 ?>
 <div class="no_products_filter">
-    <?php print JText::_('JSHOP_NO_PRODUCTS_AFTER_FILTER')?>
+    <?php print Text::_('JSHOP_NO_PRODUCTS_AFTER_FILTER')?>
 </div>

@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Shippings;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,25 +17,25 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_LIST_SHIPPINGS'), 'generic.png' ); 
-        \JToolBarHelper::addNew();
-        \JToolBarHelper::publishList();
-        \JToolBarHelper::unpublishList();
-        \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
-        \JToolBarHelper::custom("ext_price_calc", "cog", "cog" ,\JText::_('JSHOP_SHIPPING_EXT_PRICE_CALC'), false);
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_LIST_SHIPPINGS'), 'generic.png' ); 
+        ToolbarHelper::addNew();
+        ToolbarHelper::publishList();
+        ToolbarHelper::unpublishList();
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
+        ToolbarHelper::custom("ext_price_calc", "cog", "cog" ,Text::_('JSHOP_SHIPPING_EXT_PRICE_CALC'), false);
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
     
     function displayEdit($tpl=null){
-        \JToolBarHelper::title( $temp = ($this->edit) ? (\JText::_('JSHOP_EDIT_SHIPPING').' / '.$this->shipping->{\JSFactory::getLang()->get('name')}) : (\JText::_('JSHOP_NEW_SHIPPING')), 'generic.png' ); 
-        \JToolBarHelper::save();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::apply();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::save2new();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::cancel();        
+        ToolbarHelper::title( $temp = ($this->edit) ? (Text::_('JSHOP_EDIT_SHIPPING').' / '.$this->shipping->{\JSFactory::getLang()->get('name')}) : (Text::_('JSHOP_NEW_SHIPPING')), 'generic.png' ); 
+        ToolbarHelper::save();
+        ToolbarHelper::spacer();
+        ToolbarHelper::apply();
+        ToolbarHelper::spacer();
+        ToolbarHelper::save2new();
+        ToolbarHelper::spacer();
+        ToolbarHelper::cancel();        
         parent::display($tpl);
     }
 }

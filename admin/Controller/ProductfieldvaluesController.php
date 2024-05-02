@@ -7,13 +7,19 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class ProductfieldvaluesController extends BaseadminController{
 
     function init(){
-        \JSHelperAdmin::checkAccessController("productfieldvalues");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("productfieldvalues");
+        HelperAdmin::addSubmenu("other");
     }
     
     public function getUrlListItems(){
@@ -28,8 +34,8 @@ class ProductfieldvaluesController extends BaseadminController{
 
     function display($cachable = false, $urlparams = false){
         $field_id = $this->input->getInt("field_id");
-        $_productfieldvalues = \JSFactory::getModel("productfieldvalues");
-        $app = \JFactory::getApplication();
+        $_productfieldvalues = JSFactory::getModel("productfieldvalues");
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.productfieldvalues";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
@@ -38,7 +44,7 @@ class ProductfieldvaluesController extends BaseadminController{
         $filter = array("text_search"=>$text_search);
 
         $rows = $_productfieldvalues->getList($field_id, $filter_order, $filter_order_Dir, $filter);
-        $productfield = \JSFactory::getTable('productfield');
+        $productfield = JSFactory::getTable('productfield');
         $productfield->load($field_id);
 
         $view = $this->getView("product_field_values", 'html');
@@ -54,25 +60,25 @@ class ProductfieldvaluesController extends BaseadminController{
         $view->tmp_html_filter_end = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayProductFieldValues', array(&$view));
         $view->displayList();
     }
 
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $field_id = $this->input->getInt("field_id");
         $id = $this->input->getInt("id");
 
-        $productfieldvalue = \JSFactory::getTable('productfieldvalue');
+        $productfieldvalue = JSFactory::getTable('productfieldvalue');
         $productfieldvalue->load($id);        
 
-        $languages = \JSFactory::getModel("languages")->getAllLanguages(1);
+        $languages = JSFactory::getModel("languages")->getAllLanguages(1);
         $multilang = count($languages)>1;
 
         $view = $this->getView("product_field_values", 'html');
         $view->setLayout("edit");
-        \JFilterOutput::objectHTMLSafe($productfieldvalue, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($productfieldvalue, ENT_QUOTES);
         $view->set('row', $productfieldvalue);
         $view->set('languages', $languages);
         $view->set('multilang', $multilang);
@@ -80,7 +86,7 @@ class ProductfieldvaluesController extends BaseadminController{
 		$view->tmp_html_start = "";
         $view->tmp_html_end = "";
         $view->etemplatevar = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditProductFieldValues', array(&$view));
         $view->displayEdit();
     }
@@ -111,11 +117,11 @@ class ProductfieldvaluesController extends BaseadminController{
         foreach($options as $k => $v) {
             $data['name_'.$k] = $v;
         }
-        $model = \JSFactory::getModel("productfieldvalues");
+        $model = JSFactory::getModel("productfieldvalues");
         $productfieldvalue = $model->save($data);
         $ef_val_id = $productfieldvalue->id;
 
-        $lang = \JSFactory::getLang()->getLang();
+        $lang = JSFactory::getLang()->getLang();
         $active_val_text = $options[$lang];        
         print json_encode(['id' => $ef_val_id, 'text' => $active_val_text]);
         die();
@@ -123,9 +129,9 @@ class ProductfieldvaluesController extends BaseadminController{
 
     public function clear_double() {
         $field_id = $this->input->getInt("field_id");
-        $model = \JSFactory::getModel('ProductFieldValues');
+        $model = JSFactory::getModel('ProductFieldValues');
         if ($model->clearDoubleValues($field_id)) {
-            \JSError::raiseMessage(100, \JText::_('JSHOP_DATA_SUCC_UPDATED'));
+            JSError::raiseMessage(100, Text::_('JSHOP_DATA_SUCC_UPDATED'));
         }
         $this->setRedirect("index.php?option=com_jshopping&controller=productfieldvalues&field_id=".$field_id);
     }

@@ -1,4 +1,9 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -13,7 +18,7 @@ $i = 0;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions();?>
+<?php HelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping&controller=reviews" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 
@@ -28,18 +33,18 @@ $i = 0;
     </div>
 
     <div>
-        <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+        <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
     </div>
     <div>
         <span class="input-group-append">
-            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                 <span class="icon-search" aria-hidden="true"></span>
             </button>                        
         </span>
     </div>
 
     <div>
-        <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+        <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
     </div>
     <?php print $this->tmp_html_filter_end?>
 </div>
@@ -51,42 +56,42 @@ $i = 0;
       #
     </th>
     <th width="20">
-      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     </th>
     <th width = "200" align = "left">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_NAME_PRODUCT'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_NAME_PRODUCT'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th>
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_USER'), 'pr_rew.user_name', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_USER'), 'pr_rew.user_name', $this->filter_order_Dir, $this->filter_order); ?>
     </th>        
     <th>
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_EMAIL'), 'pr_rew.user_email', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_EMAIL'), 'pr_rew.user_email', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th align = "left">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_PRODUCT_REVIEW'), 'pr_rew.review', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_PRODUCT_REVIEW'), 'pr_rew.review', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <?php if (!$this->config->hide_product_rating){?>
     <th>
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_REVIEW_MARK'), 'pr_rew.mark', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_REVIEW_MARK'), 'pr_rew.mark', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <?php }?>
     <th>
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_DATE'), 'pr_rew.time', $this->filter_order_Dir, $this->filter_order); ?> 
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_DATE'), 'pr_rew.time', $this->filter_order_Dir, $this->filter_order); ?> 
     </th>
     <th>
-        <?php echo \JHTML::_('grid.sort', 'IP', 'pr_rew.ip', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', 'IP', 'pr_rew.ip', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th width="50" class="center">
-        <?php echo JText::_('JSHOP_PUBLISH')?>       
+        <?php echo Text::_('JSHOP_PUBLISH')?>       
     </th>
     <th width="50" class="center">
-        <?php echo JText::_('JSHOP_EDIT')?>
+        <?php echo Text::_('JSHOP_EDIT')?>
     </th>
     <th width="50" class="center">
-        <?php echo JText::_('JSHOP_DELETE')?>
+        <?php echo Text::_('JSHOP_DELETE')?>
     </th>
     <th width="40" class="center">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'pr_rew.review_id', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'pr_rew.review_id', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
 	<?php print $this->_tmp_cols_14;?>
   </tr>
@@ -97,7 +102,7 @@ $i = 0;
      <?php echo $this->pagination->getRowOffset($i);?>             
    </td>
    <td>         
-     <?php echo \JHTML::_('grid.id', $i, $row->review_id);?>
+     <?php echo HTMLHelper::_('grid.id', $i, $row->review_id);?>
    </td>
    <td>
      <?php echo $row->name;?>
@@ -123,7 +128,7 @@ $i = 0;
      <?php echo $row->ip;?>
    </td>
    <td class="center">
-     <?php echo \JHTML::_('jgrid.published', $row->publish, $i);?>
+     <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
    </td> 
    <td class="center">
     <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=reviews&task=edit&cid[]=<?php print $row->review_id?>'>
@@ -131,7 +136,7 @@ $i = 0;
     </a>
    </td>
    <td class="center">
-    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=reviews&task=remove&cid[]=<?php print $row->review_id?>' onclick="return confirm('<?php print JText::_('JSHOP_DELETE')?>')">
+    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=reviews&task=remove&cid[]=<?php print $row->review_id?>' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>')">
         <i class="icon-delete"></i>
     </a>
    </td>
@@ -160,6 +165,6 @@ $i++;
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Lib;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 
 defined('_JEXEC') or die();
 
@@ -59,7 +61,7 @@ class MultiLangfield{
     
     function addNewFieldLandInTables($lang, $defaultLang = ""){
         $finish = 1;
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         foreach($this->tableFields as $table_name_end=>$table){
             $table_name = "#__jshopping_".$table_name_end;
             
@@ -97,7 +99,7 @@ class MultiLangfield{
                 $query = "ALTER TABLE `".$table_name."` ".implode(", ",$sql_array_add_field);            
                 $db->setQuery($query);
                 if (!$db->execute()){
-                    \JSError::raiseWarning(500, "Error install new language:<br>".$db->getErrorMsg());
+                    JSError::raiseWarning(500, "Error install new language:<br>".$db->getErrorMsg());
                     $finish = 0;
                 } 
                                
@@ -106,7 +108,7 @@ class MultiLangfield{
                     $query = "update `".$table_name."` set ".implode(", ",$sql_array_update_field);
                     $db->setQuery($query);
                     if (!$db->execute()){
-                        \JSError::raiseWarning(500, "Error copy new language:<br>".$db->getErrorMsg());
+                        JSError::raiseWarning(500, "Error copy new language:<br>".$db->getErrorMsg());
                         $finish = 0;
                     }
                 }
@@ -226,7 +228,7 @@ class MultiLangfield{
         $f[] = array("description","text NOT NULL");
         $this->tableFields["usergroups"] = $f;
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onLoadMultiLangTableField', array(&$obj));
+        Factory::getApplication()->triggerEvent('onLoadMultiLangTableField', array(&$obj));
     }
     
 }

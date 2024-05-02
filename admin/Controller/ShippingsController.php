@@ -7,6 +7,13 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
@@ -15,17 +22,17 @@ class ShippingsController extends BaseadminController{
     protected $urlEditParamId = 'shipping_id';
 
     function init(){
-        \JSHelperAdmin::checkAccessController("shippings");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("shippings");
+        HelperAdmin::addSubmenu("other");
     }
 
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.shippings";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
 
-		$shippings = \JSFactory::getModel("shippings");
+		$shippings = JSFactory::getModel("shippings");
 		$rows = $shippings->getAllShippings(0, $filter_order, $filter_order_Dir);
 
         $not_set_price = array();
@@ -48,7 +55,7 @@ class ShippingsController extends BaseadminController{
         }
 
         if ($not_set_price){
-            \JSError::raiseNotice("", \JText::_('JSHOP_CERTAIN_METHODS_DELIVERY_NOT_SET_PRICE').' ('.implode(', ',$not_set_price).')!');
+            JSError::raiseNotice("", Text::_('JSHOP_CERTAIN_METHODS_DELIVERY_NOT_SET_PRICE').' ('.implode(', ',$not_set_price).')!');
         }
 
 		$view = $this->getView("shippings", 'html');
@@ -60,19 +67,19 @@ class ShippingsController extends BaseadminController{
         $view->tmp_extra_column_headers = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayShippings', array(&$view));
 		$view->displayList();
 	}
 
 	function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
-		$jshopConfig = \JSFactory::getConfig();
+        Factory::getApplication()->input->set('hidemainmenu', true);
+		$jshopConfig = JSFactory::getConfig();
 		$shipping_id = $this->input->getInt("shipping_id");
-		$shipping = \JSFactory::getTable('shippingmethod');
+		$shipping = JSFactory::getTable('shippingmethod');
 		$shipping->load($shipping_id);
 		$edit = ($shipping_id)?($edit = 1):($edit = 0);
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
 		$params = $shipping->getParams();
@@ -82,11 +89,11 @@ class ShippingsController extends BaseadminController{
             $active_payments = array(0);
         }
 
-        $lists['payments'] = \JHTML::_('select.genericlist', SelectOptions::getPayments(\JText::_('JSHOP_ALL')), 'listpayments[]', 'class="inputbox form-select" size="10" multiple = "multiple"', 'payment_id', 'name', $active_payments);
-        $lists['access'] = \JHTML::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $shipping->access);
+        $lists['payments'] = HTMLHelper::_('select.genericlist', SelectOptions::getPayments(Text::_('JSHOP_ALL')), 'listpayments[]', 'class="inputbox form-select" size="10" multiple = "multiple"', 'payment_id', 'name', $active_payments);
+        $lists['access'] = HTMLHelper::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $shipping->access);
 
         $nofilter = array();
-        \JFilterOutput::objectHTMLSafe($shipping, ENT_QUOTES, $nofilter);
+        OutputFilter::objectHTMLSafe($shipping, ENT_QUOTES, $nofilter);
 
 		$view = $this->getView("shippings", 'html');
         $view->setLayout("edit");
@@ -101,7 +108,7 @@ class ShippingsController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_after_image = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditShippings', array(&$view));
 		$view->displayEdit();
 	}

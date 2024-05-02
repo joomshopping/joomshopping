@@ -7,12 +7,15 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class CheckoutFinishModel  extends CheckoutModel{
 
 	public function getFinishStaticText(){
-		$statictext = \JSFactory::getTable("statictext");
+		$statictext = JSFactory::getTable("statictext");
         $rowstatictext = $statictext->loadData("order_finish_descr");
         $text = $rowstatictext->text;
 		if (trim(strip_tags($text))==""){
@@ -22,7 +25,7 @@ class CheckoutFinishModel  extends CheckoutModel{
 	}
 	
 	public function paymentComplete($order_id, $text = ''){
-		$order = \JSFactory::getTable('order');
+		$order = JSFactory::getTable('order');
 		$order->load($order_id);
 		$pm_method = $order->getPayment();
 		$paymentsysdata = $pm_method->getPaymentSystemData();
@@ -31,17 +34,17 @@ class CheckoutFinishModel  extends CheckoutModel{
 			$pmconfigs = $pm_method->getConfigs();
 			$payment_system->complete($pmconfigs, $order, $pm_method);
 		}
-		\JFactory::getApplication()->triggerEvent('onAfterDisplayCheckoutFinish', array(&$text, &$order, &$pm_method));
+		Factory::getApplication()->triggerEvent('onAfterDisplayCheckoutFinish', array(&$text, &$order, &$pm_method));
 	}
 	
 	public function clearAllDataCheckout(){
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "before"));
-		$cart = \JSFactory::getModel('cart', 'Site');
+		extract(Helper::Js_add_trigger(get_defined_vars(), "before"));
+		$cart = JSFactory::getModel('cart', 'Site');
         $cart->load();
         $cart->getSum();
         $cart->clear();
         $this->deleteSession();
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
 	}
 	
 }

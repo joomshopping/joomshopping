@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 defined('_JEXEC') or die();
 
@@ -14,14 +18,14 @@ class CategoryTable extends MultilangTable{
     
     function __construct(&$_db){
         parent::__construct('#__jshopping_categories', 'category_id', $_db);
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
     }
     
     function getSubCategories($parentId, $order = 'id', $ordering = 'asc', $publish = 0){
-        $db = \JFactory::getDBO();
-        $jshopConfig = \JSFactory::getConfig();
-        $lang = \JSFactory::getLang();
-        $user = \JFactory::getUser();
+        $db = Factory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
+        $lang = JSFactory::getLang();
+        $user = Factory::getUser();
         $add_where = ($publish)?(" AND category_publish = '1' "):("");
         $groups = implode(',', $user->getAuthorisedViewLevels());
         $add_where .=' AND access IN ('.$groups.')';
@@ -35,11 +39,11 @@ class CategoryTable extends MultilangTable{
                    WHERE category_parent_id = '".$db->escape($parentId)."' ".$add_where."
                    ORDER BY ".$orderby." ".$ordering;
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onGetSubCategoriesCategoryTable', array(&$obj, &$query));
+        Factory::getApplication()->triggerEvent('onGetSubCategoriesCategoryTable', array(&$obj, &$query));
         $db->setQuery($query);
         $categories = $db->loadObJectList();
         foreach($categories as $key=>$value){
-            $categories[$key]->category_link = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=category&task=view&category_id='.$categories[$key]->category_id, 1);
+            $categories[$key]->category_link = Helper::SEFLink('index.php?option=com_jshopping&controller=category&task=view&category_id='.$categories[$key]->category_id, 1);
             if (!$jshopConfig->product_img_seo) {
                 if (!$categories[$key]->img_alt) {
                     $categories[$key]->img_alt = $value->name;
@@ -59,7 +63,7 @@ class CategoryTable extends MultilangTable{
             return 1; 
         }
         
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         $name = $lang->get('name');        
         $description = $lang->get('description');
         $short_description = $lang->get('short_description');
@@ -91,7 +95,7 @@ class CategoryTable extends MultilangTable{
         $list_category[$i]->name = $this->name;
         $i++;
         while($category_parent_id) {
-            $category = \JSFactory::getTable('category');
+            $category = JSFactory::getTable('category');
             $category->load($category_parent_id);
             $list_category[$i] = new \stdClass();
             $list_category[$i]->category_id = $category->category_id;
@@ -104,9 +108,9 @@ class CategoryTable extends MultilangTable{
     }
 
     function getAllCategories($publish = 1, $access = 1, $listType = 'id') {
-        $db = \JFactory::getDBO();
-        $user = \JFactory::getUser();
-		$lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $user = Factory::getUser();
+		$lang = JSFactory::getLang();
         $where = array();
         if ($publish){
             $where[] = "category_publish = '1'";
@@ -138,8 +142,8 @@ class CategoryTable extends MultilangTable{
     }
 
     function getTreeParentCategories($publish = 1, $access = 1){
-        $db = \JFactory::getDBO();
-        $user = \JFactory::getUser();
+        $db = Factory::getDBO();
+        $user = Factory::getUser();
         $cats_tree = array(); 
         $category_parent = $this->category_id;
         $where = array();
@@ -165,11 +169,11 @@ class CategoryTable extends MultilangTable{
     }
 
     function getDescriptionMainPage($preparePluginContent = 1){
-        $statictext = \JSFactory::getTable("statictext");
+        $statictext = JSFactory::getTable("statictext");
         $row = $statictext->loadData("home");
         $this->description = $row->text;
         
-        $seo = \JSFactory::getTable("seo");
+        $seo = JSFactory::getTable("seo");
         $row = $seo->loadData("category");
         $this->meta_title = $row->title;
         $this->meta_keyword = $row->keyword;
@@ -181,10 +185,10 @@ class CategoryTable extends MultilangTable{
     }
 
     function getManufacturers(){
-        $JshopConfig = \JSFactory::getConfig();
-        $user = \JFactory::getUser();
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
+        $user = Factory::getUser();
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();
         $adv_query = "";
         $groups = implode(',', $user->getAuthorisedViewLevels());
         $adv_query .=' AND prod.access IN ('.$groups.')';
@@ -202,15 +206,15 @@ class CategoryTable extends MultilangTable{
                   WHERE categ.category_id=".(int)$this->category_id." AND prod.product_publish=1 AND prod.product_manufacturer_id!=0 ".$adv_query." "
                 . "order by ".$order;
 		$obj = $this;
-        \JFactory::getApplication()->triggerEvent('onGetManufacturersCategoryTable', array(&$obj, &$query));
+        Factory::getApplication()->triggerEvent('onGetManufacturersCategoryTable', array(&$obj, &$query));
         $db->setQuery($query);
         $list = $db->loadObJectList();
         return $list;
     }
         
     function preparePluginContent(){
-        if (\JSFactory::getConfig()->use_plugin_content){
-            \JSHelper::changeDataUsePluginContent($this, "category");
+        if (JSFactory::getConfig()->use_plugin_content){
+            Helper::changeDataUsePluginContent($this, "category");
         }        
     }
     
@@ -223,12 +227,12 @@ class CategoryTable extends MultilangTable{
     }
 
     function getFieldListOrdering(){
-        $ordering = \JSFactory::getConfig()->category_sorting==1 ? "ordering" : "name";
+        $ordering = JSFactory::getConfig()->category_sorting==1 ? "ordering" : "name";
         return $ordering;
     }
 
     function getSortingDirection(){
-		$sort = \JSFactory::getConfig()->category_sorting_direction;
+		$sort = JSFactory::getConfig()->category_sorting_direction;
 		if (!$sort){
 			$sort = 'asc';
 		}
@@ -236,7 +240,7 @@ class CategoryTable extends MultilangTable{
 	}
 
     function getCountToRow(){
-		return \JSFactory::getConfig()->count_category_to_row;
+		return JSFactory::getConfig()->count_category_to_row;
 	}
 
 }

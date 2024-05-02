@@ -1,0 +1,1 @@
+ALTER TABLE `#__jshopping_order_status` ADD `ordering` int(3) NOT NULL default 0;

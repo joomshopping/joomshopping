@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -18,7 +20,7 @@ $row=$this->row;
 <table width="100%" class="admintable">
    <tr>
      <td class="key" style="width:250px;">
-       <?php echo JText::_('JSHOP_KEY')?>
+       <?php echo Text::_('JSHOP_KEY')?>
      </td>
      <td>
        <input type="text" class="inputbox form-control" name="key" value="<?php echo $row->key;?>" size="100" />

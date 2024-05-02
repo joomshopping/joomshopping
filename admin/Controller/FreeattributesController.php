@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Filter\OutputFilter;
 defined('_JEXEC') or die();
 
 class FreeAttributesController extends BaseadminController{
@@ -14,17 +18,17 @@ class FreeAttributesController extends BaseadminController{
     protected $nameModel = 'freeattribut';
     
     function init(){
-        \JSHelperAdmin::checkAccessController("freeattributes");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("freeattributes");
+        HelperAdmin::addSubmenu("other");
     }
 
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.freeattributes";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         
-    	$freeattributes = \JSFactory::getModel("freeattribut");    	
+    	$freeattributes = JSFactory::getModel("freeattribut");    	
         $rows = $freeattributes->getAll($filter_order, $filter_order_Dir);
         $view = $this->getView("freeattributes", 'html');
         $view->setLayout("list");
@@ -34,23 +38,23 @@ class FreeAttributesController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayFreeAttributes', array(&$view));
         $view->displayList();
     }
 	
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $id = $this->input->getInt("id");
 	
-        $attribut = \JSFactory::getTable('freeattribut');
+        $attribut = JSFactory::getTable('freeattribut');
         $attribut->load($id);
     
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
         
-        \JFilterOutput::objectHTMLSafe($attribut, ENT_QUOTES);		
+        OutputFilter::objectHTMLSafe($attribut, ENT_QUOTES);		
 
         $view = $this->getView("freeattributes", 'html');
         $view->setLayout("edit");
@@ -60,7 +64,7 @@ class FreeAttributesController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent( 'onBeforeEditFreeAtribut', array(&$view, &$attribut) );
         $view->displayEdit();
 	}

@@ -7,13 +7,15 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class Request{
 	
 	public static function getQuantity($key = 'quantity', $fix = 0){
-		$jshopConfig = \JSFactory::getConfig();
-		$app = \JFactory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
+		$app = Factory::getApplication();
 		if ($jshopConfig->use_decimal_qty){
             $quantity = floatval(str_replace(",", ".", $app->input->getVar($key, 1)));
             $quantity = round($quantity, $jshopConfig->cart_decimal_qty_precision);
@@ -31,7 +33,7 @@ class Request{
 	}
 	
 	public static function getAttribute($key = 'jshop_attr_id'){
-		$attribut = \JFactory::getApplication()->input->getVar($key);
+		$attribut = Factory::getApplication()->input->getVar($key);
         if (!is_array($attribut)) $attribut = array();
         foreach($attribut as $k=>$v){
 			$attribut[intval($k)] = intval($v);
@@ -40,13 +42,13 @@ class Request{
 	}
 	
 	public static function getFreeAttribute($key = 'freeattribut'){
-		$attribut = \JFactory::getApplication()->input->getVar($key);
+		$attribut = Factory::getApplication()->input->getVar($key);
         if (!is_array($attribut)) $attribut = array();
 		return $attribut;
 	}
     
     public static function getCartTo(){
-        $to = \JFactory::getApplication()->input->getCmd('to', "cart");
+        $to = Factory::getApplication()->input->getCmd('to', "cart");
         return $to;
     }
 

@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class ProductPriceTable extends ShopbaseTable{
@@ -16,11 +18,11 @@ class ProductPriceTable extends ShopbaseTable{
     }
     
     function getAddPrices($product_id){        
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_products_prices` WHERE product_id=".$db->q($product_id)." ORDER BY product_quantity_start";
         $db->setQuery($query);
         $rows = $db->loadObJectList();
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
 		return $rows;
     }
 

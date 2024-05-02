@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -8,16 +10,16 @@
 */
 defined('_JEXEC') or die;
 ?>
-<?php print JText::_('JSHOP_HI')?> <?php print $this->order->f_name;?> <?php print $this->order->l_name;?>,
-<?php printf(JText::_('JSHOP_YOUR_ORDER_STATUS_CHANGE'), $this->order->order_number);?>
+<?php print Text::_('JSHOP_HI')?> <?php print $this->order->f_name;?> <?php print $this->order->l_name;?>,
+<?php printf(Text::_('JSHOP_YOUR_ORDER_STATUS_CHANGE'), $this->order->order_number);?>
 
-<?php print JText::_('JSHOP_NEW_STATUS_IS')?>: <?php print $this->order_status?> 
+<?php print Text::_('JSHOP_NEW_STATUS_IS')?>: <?php print $this->order_status?> 
 <?php if ($this->order_detail){?>
-<?php print JText::_('JSHOP_ORDER_DETAILS')?>: <?php print $this->order_detail?>
+<?php print Text::_('JSHOP_ORDER_DETAILS')?>: <?php print $this->order_detail?>
 <?php }?>
 
 <?php if ($this->comment!=""){?>
-<?php print JText::_('JSHOP_COMMENT_YOUR_ORDER')?>: <?php print $this->comment;?>
+<?php print Text::_('JSHOP_COMMENT_YOUR_ORDER')?>: <?php print $this->comment;?>
 
 <?php }?>
 
@@ -25,5 +27,5 @@ defined('_JEXEC') or die;
 <?php print $this->vendorinfo->adress?> 
 <?php print $this->vendorinfo->zip?> <?php print $this->vendorinfo->city?> 
 <?php print $this->vendorinfo->country?> 
-<?php print JText::_('JSHOP_CONTACT_PHONE')?>: <?php print $this->vendorinfo->phone?> 
-<?php print JText::_('JSHOP_CONTACT_FAX')?>: <?php print $this->vendorinfo->fax?>
+<?php print Text::_('JSHOP_CONTACT_PHONE')?>: <?php print $this->vendorinfo->phone?> 
+<?php print Text::_('JSHOP_CONTACT_FAX')?>: <?php print $this->vendorinfo->fax?>

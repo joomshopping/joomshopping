@@ -7,9 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Lib;
+use Joomla\CMS\Uri\Uri;
 defined('_JEXEC') or die();
 
-class JSUri extends \JURI{
+class JSUri extends Uri{
 
 	public static function isInternal($url){
 		$uri = static::getInstance($url);

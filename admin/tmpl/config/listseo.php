@@ -1,4 +1,9 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -7,12 +12,12 @@
 * @license      GNU/GPL
 */
 defined('_JEXEC') or die();
-$jshopConfig=\JSFactory::getConfig();
+$jshopConfig=JSFactory::getConfig();
 $rows=$this->rows;
 $i=0;
 ?>
 <div id="j-main-container" class="j-main-container">
-<?php \JSHelperAdmin::displaySubmenuConfigs('seo');?>
+<?php HelperAdmin::displaySubmenuConfigs('seo');?>
 <form action="index.php?option=com_jshopping&controller=config" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <table class="table table-striped">
@@ -22,19 +27,19 @@ $i=0;
       #
     </th>
     <th width="20">
-      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     </th>
     <th align="left" width="35%">
-      <?php echo JText::_('JSHOP_PAGE')?>
+      <?php echo Text::_('JSHOP_PAGE')?>
     </th>
     <th align="left">
-      <?php echo JText::_('JSHOP_TITLE')?>
+      <?php echo Text::_('JSHOP_TITLE')?>
     </th>    
     <th width="50" class="center">
-        <?php echo JText::_('JSHOP_EDIT')?>
+        <?php echo Text::_('JSHOP_EDIT')?>
     </th>
     <th width="40" class="center">
-        <?php echo JText::_('JSHOP_ID')?>
+        <?php echo Text::_('JSHOP_ID')?>
     </th>
   </tr>
 </thead>  
@@ -44,11 +49,11 @@ $i=0;
      <?php echo $i+1;?>
    </td>
    <td>
-    <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+    <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
    </td>
    <td>
     <a href='index.php?option=com_jshopping&controller=config&task=seoedit&id=<?php print $row->id?>'>
-		<?php if (JText::_('JSHP_SEOPAGE_'.$row->alias) != 'JSHP_SEOPAGE_'.$row->alias) print JText::_('JSHP_SEOPAGE_'.$row->alias); else print $row->alias;?>
+		<?php if (Text::_('JSHP_SEOPAGE_'.$row->alias) != 'JSHP_SEOPAGE_'.$row->alias) print Text::_('JSHP_SEOPAGE_'.$row->alias); else print $row->alias;?>
     </a>
    </td>
    <td>

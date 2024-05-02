@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class UserGroupTable extends ShopbaseTable{
@@ -16,15 +18,15 @@ class UserGroupTable extends ShopbaseTable{
     }
      
     function getDefaultUsergroup(){
-        $db = \JFactory::getDBO(); 
+        $db = Factory::getDBO(); 
         $query = "SELECT `usergroup_id` FROM `#__jshopping_usergroups` WHERE `usergroup_is_default`= '1'";
         $db->setQuery($query);
         return $db->loadResult();
     }
     
     function getList(){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $query = "SELECT *, `".$lang->get("name")."` as name, `".$lang->get("description")."` as description FROM `#__jshopping_usergroups`";
         $db->setQuery($query);
         $list = $db->loadObjectList();
@@ -37,7 +39,7 @@ class UserGroupTable extends ShopbaseTable{
     }
 	
 	function getName(){
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         $field = $lang->get("name");
 		$name = $this->$field;
 		if ($name==''){

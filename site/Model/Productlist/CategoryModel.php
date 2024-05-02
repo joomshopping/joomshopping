@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class CategoryModel extends ListModel{
@@ -20,7 +21,7 @@ class CategoryModel extends ListModel{
     }
 
     function getProductFieldSorting($order){
-        return \JSFactory::getConfig()->sorting_products_field_select[$order];
+        return JSFactory::getConfig()->sorting_products_field_select[$order];
     }
 
     public function getContext(){

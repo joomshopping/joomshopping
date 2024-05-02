@@ -7,20 +7,22 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 
 defined('_JEXEC') or die();
 
 class AliasModel{
     
     function checkExistAlias1Group($alias, $lang, $category_id, $manufacture_id){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "select category_id as id from #__jshopping_categories where `alias_".$lang."` = '".$db->escape($alias)."' and category_id!='".$db->escape($category_id)."' 
                   union
                   select manufacturer_id as id from #__jshopping_manufacturers where `alias_".$lang."` = '".$db->escape($alias)."' and manufacturer_id!='".$db->escape($manufacture_id)."'
                   ";
         $db->setQuery($query);
         $res = $db->loadResult();
-        $reservedFirstAlias = \JSFactory::getReservedFirstAlias();
+        $reservedFirstAlias = JSFactory::getReservedFirstAlias();
         if ($res || in_array($alias, $reservedFirstAlias)){
             return 0;//error
         }else{
@@ -29,7 +31,7 @@ class AliasModel{
     }
     
     function checkExistAlias2Group($alias, $lang, $product_id){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "select product_id from #__jshopping_products where `alias_".$lang."` = '".$db->escape($alias)."' and product_id!='".$db->escape($product_id)."'";
         $db->setQuery($query);
         $res = $db->loadResult();        

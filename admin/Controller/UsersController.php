@@ -7,6 +7,13 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\User\User;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 use Joomla\Component\Jshopping\Site\Helper\Selects;
 
@@ -18,12 +25,12 @@ class UsersController extends BaseadminController{
     protected $checkToken = array('save' => 1, 'remove' => 1);
     
     public function init(){
-        \JSHelperAdmin::checkAccessController("users");
-        \JSHelperAdmin::addSubmenu("users");
+        HelperAdmin::checkAccessController("users");
+        HelperAdmin::addSubmenu("users");
     }
 
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $context = "jshopping.list.admin.users";
         $limit = $app->getUserStateFromRequest($context.'limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
@@ -39,9 +46,9 @@ class UsersController extends BaseadminController{
             $filter['usergroup_id'] = $usergroup_id;
         }
         
-        $users = \JSFactory::getModel("users");        
+        $users = JSFactory::getModel("users");        
         $total = $users->getCountAllUsers($text_search, $filter);
-        $pageNav = new \JPagination($total, $limitstart, $limit);
+        $pageNav = new Pagination($total, $limitstart, $limit);
         $rows = $users->getAllUsers($pageNav->limitstart, $pageNav->limit, $text_search, $filter_order, $filter_order_Dir, $filter);
 
         foreach ($rows as $row) {
@@ -49,7 +56,7 @@ class UsersController extends BaseadminController{
             $row->tmp_html_col_after_id = "";
         }
 
-        $select_group = \JHTML::_('select.genericlist', SelectOptions::getUserGroups(1), 'l_usergroup_id', 'class="form-select" onchange="document.adminForm.submit();"', 'usergroup_id', 'usergroup_name', $usergroup_id);
+        $select_group = HTMLHelper::_('select.genericlist', SelectOptions::getUserGroups(1), 'l_usergroup_id', 'class="form-select" onchange="document.adminForm.submit();"', 'usergroup_id', 'usergroup_name', $usergroup_id);
         
         $view=$this->getView("users", 'html');
         $view->setLayout("list");
@@ -70,37 +77,37 @@ class UsersController extends BaseadminController{
         $view->tmp_html_col_before_td_foot = "";
         $view->tmp_html_col_after_td_foot = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayUsers', array(&$view));
         $view->displayList();
     }
     
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
-        $jshopConfig = \JSFactory::getConfig();        
-        $me =  \JFactory::getUser();
+        Factory::getApplication()->input->set('hidemainmenu', true);
+        $jshopConfig = JSFactory::getConfig();        
+        $me =  Factory::getUser();
         $user_id = $this->input->getInt("user_id");
-        $user = \JSFactory::getTable('usershop');
+        $user = JSFactory::getTable('usershop');
         $user->load($user_id);
         $user->loadDataFromEdit();
 		
-        $user_site = new \JUser($user_id);
+        $user_site = new User($user_id);
 		
 		$lists['country'] = Selects::getCountry($user->country, 'class = "form-select"');
 		$lists['d_country'] = Selects::getCountry($user->d_country, 'class = "inputbox endes form-select"', 'd_country');
 		$lists['select_titles'] = Selects::getTitle($user->title, 'class = "form-select"');
 		$lists['select_d_titles'] = Selects::getTitle($user->d_title, 'class = "inputbox endes form-select"', 'd_title');
 		$lists['select_client_types'] = Selects::getClientType($user->client_type, 'class = "form-select"');
-        $lists['usergroups'] = \JHTML::_('select.genericlist', SelectOptions::getUserGroups(), 'usergroup_id', 'class = "inputbox form-select"', 'usergroup_id', 'usergroup_name', $user->usergroup_id);
-        $lists['block'] = \JHTML::_('select.booleanlist',  'block', 'class="inputbox"', $user_site->get('block') );  
+        $lists['usergroups'] = HTMLHelper::_('select.genericlist', SelectOptions::getUserGroups(), 'usergroup_id', 'class = "inputbox form-select"', 'usergroup_id', 'usergroup_name', $user->usergroup_id);
+        $lists['block'] = HTMLHelper::_('select.booleanlist',  'block', 'class="inputbox"', $user_site->get('block') );  
         
-        \JSHelper::filterHTMLSafe($user, ENT_QUOTES);
+        Helper::filterHTMLSafe($user, ENT_QUOTES);
         
         $tmp_fields = $jshopConfig->getListFieldsRegister();
         $config_fields = $tmp_fields['editaccount'];
         $count_filed_delivery = $jshopConfig->getEnableDeliveryFiledRegistration('editaccount');
         
-		//\JHTML::_('behavior.calendar');
+		//HTMLHelper::_('behavior.calendar');
 		
         $view=$this->getView("users", 'html');
         $view->setLayout("edit");
@@ -118,12 +125,12 @@ class UsersController extends BaseadminController{
         $view->etemplatevar0 = "";
         $view->etemplatevar1 = "";
         $view->etemplatevarend = "";
-        \JFactory::getApplication()->triggerEvent('onBeforeEditUsers', array(&$view));
+        Factory::getApplication()->triggerEvent('onBeforeEditUsers', array(&$view));
         $view->displayEdit();        
     }
     
     function get_userinfo(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $id = $this->input->getInt('user_id');
         if (!$id){
             print '{}';

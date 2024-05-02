@@ -7,6 +7,12 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class CheckoutModel extends BaseModel{
@@ -14,9 +20,9 @@ class CheckoutModel extends BaseModel{
 	protected $cart = null;
 	
     function __construct(){
-        \JPluginHelper::importPlugin('jshoppingorder');
+        PluginHelper::importPlugin('jshoppingorder');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshopCheckout', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshopCheckout', array(&$obj));
     }
 	
 	function setCart($cart){
@@ -28,13 +34,13 @@ class CheckoutModel extends BaseModel{
 	}
     
     function sendOrderEmail($order_id, $manuallysend = 0){
-		$model = \JSFactory::getModel('orderMail', 'Site');
+		$model = JSFactory::getModel('orderMail', 'Site');
 		$model->setData($order_id, $manuallysend);
 		return $model->send();
     }
     
     function changeStatusOrder($order_id, $status, $sendmessage = 1, $prev_order_status = null, $notify = 1){
-		$model = \JSFactory::getModel('orderChangeStatus', 'Site');
+		$model = JSFactory::getModel('orderChangeStatus', 'Site');
 		$model->setData($order_id, $status, $sendmessage, $status, $notify);
         if (isset($prev_order_status)) {
             $model->setPrevStatus($prev_order_status);
@@ -43,9 +49,9 @@ class CheckoutModel extends BaseModel{
     }
     
     function cancelPayOrder($order_id){
-        $order = \JSFactory::getTable('order');
+        $order = JSFactory::getTable('order');
         $order->load($order_id);
-        $pm_method = \JSFactory::getTable('paymentMethod');
+        $pm_method = JSFactory::getTable('paymentMethod');
         $pm_method->load($order->payment_method_id);
         $pmconfigs = $pm_method->getConfigs();
 		$paymentsysdata = $pm_method->getPaymentSystemData();
@@ -63,45 +69,45 @@ class CheckoutModel extends BaseModel{
 		else 
 			$sendmessage = 0;
         $this->changeStatusOrder($order_id, $status, $sendmessage, null, $sendmessage);
-        \JFactory::getApplication()->triggerEvent('onAfterCancelPayOrderJshopCheckout', array(&$order_id, $status, $sendmessage));
+        Factory::getApplication()->triggerEvent('onAfterCancelPayOrderJshopCheckout', array(&$order_id, $status, $sendmessage));
     }
     
     function setMaxStep($step){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $jhop_max_step = $session->get('jhop_max_step');
         if (!isset($jhop_max_step)) $session->set('jhop_max_step', 2);
         $jhop_max_step = $session->get('jhop_max_step');
         $session->set('jhop_max_step', $step);
-        \JFactory::getApplication()->triggerEvent('onAfterSetMaxStepJshopCheckout', array(&$step));
+        Factory::getApplication()->triggerEvent('onAfterSetMaxStepJshopCheckout', array(&$step));
     }
     
     function checkStep($step){
-        $mainframe = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
-        $session = \JFactory::getSession();
+        $mainframe = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        $session = Factory::getSession();
         
         if ($step<10){
             if (!$jshopConfig->shop_user_guest){
-                \JSHelper::checkUserLogin();
+                Helper::checkUserLogin();
             }
             
-            $cart = \JSFactory::getModel('cart', 'Site');
+            $cart = JSFactory::getModel('cart', 'Site');
             $cart->load();
 
             if ($cart->getCountProduct() == 0){
-                $mainframe->redirect(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view',1,1));
+                $mainframe->redirect(Helper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view',1,1));
                 exit();
             }
 
             if ($jshopConfig->min_price_order && ($cart->getPriceProducts() < ($jshopConfig->min_price_order * $jshopConfig->currency_value) )){
-                \JSError::raiseNotice("", sprintf(\JText::_('JSHOP_ERROR_MIN_SUM_ORDER'), \JSHelper::formatprice($jshopConfig->min_price_order * $jshopConfig->currency_value)));
-                $mainframe->redirect(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view',1,1));
+                JSError::raiseNotice("", sprintf(Text::_('JSHOP_ERROR_MIN_SUM_ORDER'), Helper::formatprice($jshopConfig->min_price_order * $jshopConfig->currency_value)));
+                $mainframe->redirect(Helper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view',1,1));
                 exit();
             }
             
             if ($jshopConfig->max_price_order && ($cart->getPriceProducts() > ($jshopConfig->max_price_order * $jshopConfig->currency_value) )){
-                \JSError::raiseNotice("", sprintf(\JText::_('JSHOP_ERROR_MAX_SUM_ORDER'), \JSHelper::formatprice($jshopConfig->max_price_order * $jshopConfig->currency_value)));
-                $mainframe->redirect(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view',1,1));
+                JSError::raiseNotice("", sprintf(Text::_('JSHOP_ERROR_MAX_SUM_ORDER'), Helper::formatprice($jshopConfig->max_price_order * $jshopConfig->currency_value)));
+                $mainframe->redirect(Helper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view',1,1));
                 exit();
             }
         }
@@ -114,10 +120,10 @@ class CheckoutModel extends BaseModel{
             }
             if ($step > $jhop_max_step){
                 if ($step==10){
-                    $mainframe->redirect(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view',1,1));
+                    $mainframe->redirect(Helper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view',1,1));
                 }else{
-                    \JSError::raiseWarning("", \JText::_('JHOP_ERROR_STEP'));
-                    $mainframe->redirect(\JSHelper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step2',1,1, $jshopConfig->use_ssl));
+                    JSError::raiseWarning("", Text::_('JHOP_ERROR_STEP'));
+                    $mainframe->redirect(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step2',1,1, $jshopConfig->use_ssl));
                 }
                 exit();
             }
@@ -125,14 +131,14 @@ class CheckoutModel extends BaseModel{
     }
     
     function showCheckoutNavigation($step){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if (!$jshopConfig->ext_menu_checkout_step && in_array($step, array('0', '1'))){
             return '';
         }
         if ($jshopConfig->step_4_3){
-            $array_navigation_steps = array('0'=>\JText::_('JSHOP_CART'), '1'=>\JText::_('JSHOP_LOGIN'), '2'=>\JText::_('JSHOP_STEP_ORDER_2'), '4'=>\JText::_('JSHOP_STEP_ORDER_4'), '3'=>\JText::_('JSHOP_STEP_ORDER_3'), '5'=>\JText::_('JSHOP_STEP_ORDER_5'));
+            $array_navigation_steps = array('0'=>Text::_('JSHOP_CART'), '1'=>Text::_('JSHOP_LOGIN'), '2'=>Text::_('JSHOP_STEP_ORDER_2'), '4'=>Text::_('JSHOP_STEP_ORDER_4'), '3'=>Text::_('JSHOP_STEP_ORDER_3'), '5'=>Text::_('JSHOP_STEP_ORDER_5'));
         }else{
-            $array_navigation_steps = array('0'=>\JText::_('JSHOP_CART'), '1'=>\JText::_('JSHOP_LOGIN'), '2' => \JText::_('JSHOP_STEP_ORDER_2'), '3' => \JText::_('JSHOP_STEP_ORDER_3'), '4' => \JText::_('JSHOP_STEP_ORDER_4'), '5' => \JText::_('JSHOP_STEP_ORDER_5'));
+            $array_navigation_steps = array('0'=>Text::_('JSHOP_CART'), '1'=>Text::_('JSHOP_LOGIN'), '2' => Text::_('JSHOP_STEP_ORDER_2'), '3' => Text::_('JSHOP_STEP_ORDER_3'), '4' => Text::_('JSHOP_STEP_ORDER_4'), '5' => Text::_('JSHOP_STEP_ORDER_5'));
         }
         $output = array();
         $cssclass = array();
@@ -152,11 +158,11 @@ class CheckoutModel extends BaseModel{
 
         foreach($array_navigation_steps as $key=>$value){
             if ($key=='0'){
-                $url = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart', 1, 0);
+                $url = Helper::SEFLink('index.php?option=com_jshopping&controller=cart', 1, 0);
             }elseif($key=='1'){
-                $url = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=login', 1, 0, $jshopConfig->use_ssl);
+                $url = Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=login', 1, 0, $jshopConfig->use_ssl);
             }else{
-                $url = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step'.$key,0,0,$jshopConfig->use_ssl);
+                $url = Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step'.$key,0,0,$jshopConfig->use_ssl);
             }
             if ($key < $step && !($jshopConfig->step_4_3 && $key==3 && $step==4) || ($jshopConfig->step_4_3 && $key==4 && $step==3)){
                 $output[$key] = '<span class="not_active_step"><a href="'.$url.'">'.$value.'</a></span>';
@@ -172,7 +178,7 @@ class CheckoutModel extends BaseModel{
             }
         }
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayCheckoutNavigator', array(&$output, &$array_navigation_steps, &$step));
         
         $view = $this->getView('checkout');
@@ -186,7 +192,7 @@ class CheckoutModel extends BaseModel{
     }
     
 	function loadSmallCart($step = 0){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if ($jshopConfig->show_cart_all_step_checkout || $step==5){
             $small_cart = $this->showSmallCart($step);
         }else{
@@ -196,16 +202,16 @@ class CheckoutModel extends BaseModel{
 	}
 	
     function showSmallCart($step = 0){
-        $jshopConfig = \JSFactory::getConfig();
-        $dispatcher = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
 		
-        $cart = \JSFactory::getModel('cart', 'Site')->init('cart', 0);
+        $cart = JSFactory::getModel('cart', 'Site')->init('cart', 0);
 		
-		$cartpreview = \JSFactory::getModel('cartPreview', 'Site');
+		$cartpreview = JSFactory::getModel('cartPreview', 'Site');
 		$cartpreview->setCart($cart);
 		$cartpreview->setCheckoutStep($step);
 		$price_items_show = $cartpreview->getPriceItemsShow();
-		$deliverytimes = \JSFactory::getAllDeliveryTime();
+		$deliverytimes = JSFactory::getAllDeliveryTime();
 
 		$payment_name = $cartpreview->getCartPaymentName();
 		$tax_list = $cartpreview->getTaxExt();
@@ -273,17 +279,17 @@ class CheckoutModel extends BaseModel{
     }
     
 	function removeWishlistItemToCart($number_id){
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeLoadWishlistRemoveToCart', array(&$number_id));
         
-        $wishlist = \JSFactory::getModel('cart', 'Site');
+        $wishlist = JSFactory::getModel('cart', 'Site');
         $wishlist->load("wishlist");
         $prod = $wishlist->products[$number_id];
         $attr = unserialize($prod['attributes']);
         $freeattribut = unserialize($prod['freeattributes']);
 
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->load("cart");
 		$qty = $jshopConfig->min_count_order_one_product > 0 ? $jshopConfig->min_count_order_one_product : 1;
         if ($cart->add($prod['product_id'], $qty, $attr, $freeattribut)) {
@@ -297,7 +303,7 @@ class CheckoutModel extends BaseModel{
 	}
 	
     function deleteSession(){
-        $session = \JFactory::getSession();
+        $session = Factory::getSession();
         $session->set('check_params', null);
         $session->set('cart', null);
         $session->set('jhop_max_step', null);        
@@ -315,7 +321,7 @@ class CheckoutModel extends BaseModel{
         $session->set('show_pay_without_reg', 0);
         $session->set('checkcoupon', 0);
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterDeleteDataOrder', array(&$obj));
+        Factory::getApplication()->triggerEvent('onAfterDeleteDataOrder', array(&$obj));
     }
     
 	function setEmptyCheckoutPrices(){
@@ -329,7 +335,7 @@ class CheckoutModel extends BaseModel{
 	}
 	
     function getNoReturn(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$cart = $this->getCart();
         $no_return = 0;
         if ($jshopConfig->return_policy_for_product){
@@ -338,7 +344,7 @@ class CheckoutModel extends BaseModel{
                 $cart_products[] = $products['product_id'];
             }
             $cart_products = array_unique($cart_products);
-            $_product_option = \JSFactory::getTable('productOption');
+            $_product_option = JSFactory::getTable('productOption');
             $list_no_return = $_product_option->getProductOptionList($cart_products, 'no_return');
             $no_return = intval(in_array('1', $list_no_return));
         }
@@ -349,10 +355,10 @@ class CheckoutModel extends BaseModel{
     }
 	
 	function getInvoiceInfo($adv_user){
-		$lang = \JSFactory::getLang();
+		$lang = JSFactory::getLang();
 		$field_name = $lang->get("name");
 		$info = array();
-        $country = \JSFactory::getTable('country');
+        $country = JSFactory::getTable('country');
         $country->load($adv_user->country);
         $info['f_name'] = $adv_user->f_name;
         $info['l_name'] = $adv_user->l_name;
@@ -371,11 +377,11 @@ class CheckoutModel extends BaseModel{
 	}
 	
 	function getDeliveryInfo($adv_user, $invoice_info){
-		$lang = \JSFactory::getLang();
+		$lang = JSFactory::getLang();
 		$field_name = $lang->get("name");
 		if ($adv_user->delivery_adress){
 			$info = array();
-            $country = \JSFactory::getTable('country');
+            $country = JSFactory::getTable('country');
             $country->load($adv_user->d_country);
 			$info['f_name'] = $adv_user->d_f_name;
             $info['l_name'] = $adv_user->d_l_name;
@@ -396,11 +402,11 @@ class CheckoutModel extends BaseModel{
 	
 	function getDeliveryDateShow(){
 		$cart = $this->getCart();
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if ($jshopConfig->show_delivery_date){
             $date = $cart->getDeliveryDate();
             if ($date){
-                $date = \JSHelper::formatdate($date);
+                $date = Helper::formatdate($date);
             }
         }else{
             $date = '';
@@ -410,10 +416,10 @@ class CheckoutModel extends BaseModel{
 	
 	function getDeliveryTime(){
 		$cart = $this->getCart();
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$sh_mt_pr = $this->getShippingMethodPrice();
         if ($jshopConfig->show_delivery_time_checkout){
-            $deliverytimes = \JSFactory::getAllDeliveryTime();
+            $deliverytimes = JSFactory::getAllDeliveryTime();
             $deliverytimes[0] = '';
             $delivery_time = $deliverytimes[$sh_mt_pr->delivery_times_id] ?? '';
             if (!$delivery_time && $jshopConfig->delivery_order_depends_delivery_product){
@@ -427,7 +433,7 @@ class CheckoutModel extends BaseModel{
 	
 	function getShippingMethod(){
 		$cart = $this->getCart();
-		$sh_method = \JSFactory::getTable('shippingMethod');
+		$sh_method = JSFactory::getTable('shippingMethod');
         $id = $cart->getShippingId();
         $sh_method->load($id);
 	return $sh_method;
@@ -435,33 +441,33 @@ class CheckoutModel extends BaseModel{
 	
 	function getShippingMethodPrice(){
 		$cart = $this->getCart();
-		$sh_mt_pr = \JSFactory::getTable('shippingMethodPrice');
+		$sh_mt_pr = JSFactory::getTable('shippingMethodPrice');
         $sh_mt_pr->load($cart->getShippingPrId());
 	return $sh_mt_pr;
 	}
 	
 	function getPaymentMethod(){
 		$cart = $this->getCart();
-		$pm_method = \JSFactory::getTable('paymentMethod');
+		$pm_method = JSFactory::getTable('paymentMethod');
         $id = $cart->getPaymentId();
 		$pm_method->load($id);
 	return $pm_method;
 	}
 	
 	function setEndOrderId($id){
-		\JFactory::getSession()->set("jshop_end_order_id", $id);
+		Factory::getSession()->set("jshop_end_order_id", $id);
 	}
 	
 	function getEndOrderId(){
-		return \JFactory::getSession()->get("jshop_end_order_id");
+		return Factory::getSession()->get("jshop_end_order_id");
 	}
 	
 	function setSendEndForm($val){
-		\JFactory::getSession()->set("jshop_send_end_form", $val);
+		Factory::getSession()->set("jshop_send_end_form", $val);
 	}
 	
 	function getSendEndForm(){
-		return \JFactory::getSession()->get("jshop_send_end_form");
+		return Factory::getSession()->get("jshop_send_end_form");
 	}
 	
 }

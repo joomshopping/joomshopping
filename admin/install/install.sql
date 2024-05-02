@@ -387,6 +387,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_order_status` (
 `status_code` char(1) NOT NULL default '',
 `name_en-GB` VARCHAR(100) NOT NULL default '',
 `name_de-DE` VARCHAR(100) NOT NULL default '',
+`ordering` int(3) NOT NULL default 0,
 PRIMARY KEY  (`status_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 

@@ -1,4 +1,8 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.3.0 14.12.203
 * @author       MAXXmarketing GmbH
@@ -27,16 +31,16 @@ if ($saveOrder){
             <?php print $this->tmp_html_filter?>
             <div>
                 <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($text_search);?>"
-                    class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+                    class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
             </div>
             <div>
-                <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+                <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                     <span class="icon-search" aria-hidden="true"></span>
                 </button>
             </div>
             <div>
                 <button type="button"
-                    class="btn btn-primary js-stools-btn-clear"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                    class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
             </div>
         </div>
 
@@ -44,33 +48,33 @@ if ($saveOrder){
             <thead>
                 <tr>
                     <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
-                        <?php echo \JHTML::_('grid.sort', $this->filter_order!='ordering' ? '#' : '', 'ordering', $this->filter_order_Dir, $this->filter_order); ?>
+                        <?php echo HTMLHelper::_('grid.sort', $this->filter_order!='ordering' ? '#' : '', 'ordering', $this->filter_order_Dir, $this->filter_order); ?>
                     </th>
                     <th width="20">
                         <input type="checkbox" name="checkall-toggle" value=""
-                            title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+                            title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
                     </th>
                     <th align="left">
-                        <?php echo \JHTML::_('grid.sort', 'JSHOP_TITLE', 'name', $this->filter_order_Dir, $this->filter_order); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'JSHOP_TITLE', 'name', $this->filter_order_Dir, $this->filter_order); ?>
                     </th>
                     <?php print $this->tmp_html_col_after_title?>
                     <th align="left">
-                        <?php echo \JHTML::_('grid.sort', 'JSHOP_DESCRIPTION', 'description', $this->filter_order_Dir, $this->filter_order); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'JSHOP_DESCRIPTION', 'description', $this->filter_order_Dir, $this->filter_order); ?>
                     </th>
                     <th width="80" align="left">
-                        <?php echo JText::_('JSHOP_CATEGORY_PRODUCTS')?>
+                        <?php echo Text::_('JSHOP_CATEGORY_PRODUCTS')?>
                     </th>
                     <th width="50" class="center">
-                        <?php echo JText::_('JSHOP_PUBLISH')?>
+                        <?php echo Text::_('JSHOP_PUBLISH')?>
                     </th>
                     <th width="50" class="center">
-                        <?php echo JText::_('JSHOP_EDIT')?>
+                        <?php echo Text::_('JSHOP_EDIT')?>
                     </th>
                     <th width="50" class="center">
-                        <?php echo JText::_('JSHOP_DELETE')?>
+                        <?php echo Text::_('JSHOP_DELETE')?>
                     </th>
                     <th width="50" class="center">
-                        <?php echo \JHTML::_( 'grid.sort', 'JSHOP_ID', 'id', $this->filter_order_Dir, $this->filter_order); ?>
+                        <?php echo HTMLHelper::_( 'grid.sort', 'JSHOP_ID', 'id', $this->filter_order_Dir, $this->filter_order); ?>
                     </th>
                 </tr>
             </thead>
@@ -89,7 +93,7 @@ if ($saveOrder){
                         <?php } ?>
                     </td>
                     <td>
-                        <?php echo \JHTML::_('grid.id', $i, $category->category_id);?>
+                        <?php echo HTMLHelper::_('grid.id', $i, $category->category_id);?>
                     </td>
                     <td>
                         <?php print $category->space; ?><a
@@ -111,7 +115,7 @@ if ($saveOrder){
                         <?php }?>
                     </td>
                     <td class="center">
-                        <?php echo \JHTML::_('jgrid.published', $category->category_publish, $i);?>
+                        <?php echo HTMLHelper::_('jgrid.published', $category->category_publish, $i);?>
                     </td>
                     <td class="center">
                         <a class="btn btn-micro btn-nopad"
@@ -122,7 +126,7 @@ if ($saveOrder){
                     <td class="center">
                         <a class="btn btn-micro btn-nopad"
                             href='index.php?option=com_jshopping&controller=categories&task=remove&cid[]=<?php print $category->category_id?>'
-                            onclick="return confirm('<?php print JText::_('JSHOP_DELETE')?>');">
+                            onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>');">
                             <i class="icon-delete"></i>
                         </a>
                     </td>
@@ -150,6 +154,6 @@ if ($saveOrder){
 <script>
 jQuery(function() {
     jshopAdmin.setMainMenuActive(
-        '<?php print JURI::base()?>index.php?option=com_jshopping&controller=categories&catid=0');
+        '<?php print Uri::base()?>index.php?option=com_jshopping&controller=categories&catid=0');
 });
 </script>

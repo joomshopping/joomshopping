@@ -32,9 +32,11 @@ $i=0;
                     <th width="120">
                         <?php echo Text::_('JSHOP_VERSION')?>
                     </th>
+                    <?php if ($this->config->disable_admin['addons_catalog'] == 0) {?>
                     <th width="120">
                         <?php echo Text::_('JSHOP_LATEST')?>
                     </th>
+                    <?php }?>
                     <th width="60" class="center">
                         <?php echo Text::_('JSHOP_DESCRIPTION')?>
                     </th>
@@ -74,6 +76,7 @@ $i=0;
                             src='components/com_jshopping/images/jshop_info_s.png'></a>
                     <?php }?>
                 </td>
+                <?php if ($this->config->disable_admin['addons_catalog'] == 0) {?>
                 <td>
                     <?php if (isset($row->last_version)) {?>
                         <div <?php if (isset($row->avialable_version_update)) {?>class="latest"<?php }?>>
@@ -83,6 +86,7 @@ $i=0;
                         </div>
                     <?php }?>
                 </td>
+                <?php }?>
                 <td class="center">
                     <?php if ($row->info_file_exist){?>
                     <a class="btn btn-micro"

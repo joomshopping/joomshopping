@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Session\Session;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 defined('_JEXEC') or die();
@@ -53,7 +56,7 @@ class BaseadminController extends BaseController{
 	}
     
     public function getAdminModel(){
-        return \JSFactory::getModel($this->nameModel);
+        return JSFactory::getModel($this->nameModel);
     }
     
     public function getUrlListItems(){
@@ -65,14 +68,14 @@ class BaseadminController extends BaseController{
     }
 
     public function home(){
-        \JFactory::getApplication()->redirect('index.php?option=com_jshopping');
+        Factory::getApplication()->redirect('index.php?option=com_jshopping');
     }
     
     public function save(){
         if ($this->checkToken['save']){
-            \JSession::checkToken() or die('Invalid Token');
+            Session::checkToken() or die('Invalid Token');
         }
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $model = $this->getAdminModel();
         $post = $model->getPrepareDataSave($this->input);
         if (isset($post['f-id'])){
@@ -105,7 +108,7 @@ class BaseadminController extends BaseController{
     
     public function remove(){
         if ($this->checkToken['remove']){
-            \JSession::checkToken() or die('Invalid Token');
+            Session::checkToken() or die('Invalid Token');
         }
 		$cid = $this->input->get('cid', array(), 'array');
 		$this->getAdminModel()->deleteList($cid);

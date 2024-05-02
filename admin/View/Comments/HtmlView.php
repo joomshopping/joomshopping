@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Comments;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,20 +17,20 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_LIST_PRODUCT_REVIEWS'), 'generic.png' ); 
-        \JToolBarHelper::addNew();
-        \JToolBarHelper::publishList();
-        \JToolBarHelper::unpublishList();
-        \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE')."?");
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_LIST_PRODUCT_REVIEWS'), 'generic.png' ); 
+        ToolbarHelper::addNew();
+        ToolbarHelper::publishList();
+        ToolbarHelper::unpublishList();
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE')."?");
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
     function displayEdit($tpl=null){
-        \JToolBarHelper::title( ($this->edit) ? (\JText::_('JSHOP_EDIT_REVIEW')) : (\JText::_('JSHOP_NEW_REVIEW')), 'generic.png' ); 
-        \JToolBarHelper::save();
-        \JToolBarHelper::apply();
-        \JToolBarHelper::save2new();
-        \JToolBarHelper::cancel();
+        ToolbarHelper::title( ($this->edit) ? (Text::_('JSHOP_EDIT_REVIEW')) : (Text::_('JSHOP_NEW_REVIEW')), 'generic.png' ); 
+        ToolbarHelper::save();
+        ToolbarHelper::apply();
+        ToolbarHelper::save2new();
+        ToolbarHelper::cancel();
         parent::display($tpl);
     }
 }

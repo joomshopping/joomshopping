@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -19,7 +21,7 @@ class pm_debit extends PaymentRoot{
     }
 
     function getDisplayNameParams(){
-        $names = array('acc_holder' => \JText::_('JSHOP_ACCOUNT_HOLDER'), 'bank_iban' => \JText::_('JSHOP_IBAN'), 'bank_bic' => \JText::_('JSHOP_BIC_BIC'), 'bank' => \JText::_('JSHOP_BANK'));
+        $names = array('acc_holder' => Text::_('JSHOP_ACCOUNT_HOLDER'), 'bank_iban' => Text::_('JSHOP_IBAN'), 'bank_bic' => Text::_('JSHOP_BIC_BIC'), 'bank' => Text::_('JSHOP_BANK'));
         return $names;
     }
 

@@ -1,4 +1,10 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -13,7 +19,7 @@ $i=0;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions("shippingsprices");?>
+<?php HelperAdmin::displaySubmenuOptions("shippingsprices");?>
 <form name="adminForm" id="adminForm" action="index.php?option=com_jshopping&controller=shippingsprices" method="post">
 <?php print $this->tmp_html_start?>
 <table class="table table-striped">
@@ -23,22 +29,22 @@ $i=0;
       		#
     	</th>
     	<th width="20">
-	  		<input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+	  		<input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     	</th>
     	<th align="left">
-      		<?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+      		<?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
     	</th>
         <th>
-            <?php echo JText::_('JSHOP_COUNTRIES')?>
+            <?php echo Text::_('JSHOP_COUNTRIES')?>
         </th>
         <th width="100">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_PRICE'), 'shipping_price.shipping_stand_price', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_PRICE'), 'shipping_price.shipping_stand_price', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
     	<th width="70" class="center">
-	        <?php echo JText::_('JSHOP_EDIT')?>
+	        <?php echo Text::_('JSHOP_EDIT')?>
 	    </th>
         <th width="40" class="center">
-            <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'shipping_price.sh_pr_method_id', $this->filter_order_Dir, $this->filter_order); ?>
+            <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'shipping_price.sh_pr_method_id', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
   	</tr>
 </thead>
@@ -48,7 +54,7 @@ $i=0;
 		<?php echo $i + 1;?>
 	</td>
 	<td>		
-        <?php echo \JHTML::_('grid.id', $i, $row->sh_pr_method_id);?>
+        <?php echo HTMLHelper::_('grid.id', $i, $row->sh_pr_method_id);?>
 	</td>
 	<td>
 		<a href="index.php?option=com_jshopping&controller=shippingsprices&task=edit&sh_pr_method_id=<?php echo $row->sh_pr_method_id?>&shipping_id_back=<?php print $this->shipping_id_back?>"><?php echo $row->name;?></a>
@@ -57,7 +63,7 @@ $i=0;
         <?php print $row->countries; ?>
     </td>
     <td>
-        <?php print \JSHelper::formatprice($row->shipping_stand_price);?>
+        <?php print Helper::formatprice($row->shipping_stand_price);?>
     </td>
 	<td class="center">
         <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=shippingsprices&task=edit&sh_pr_method_id=<?php echo $row->sh_pr_method_id?>&shipping_id_back=<?php print $this->shipping_id_back?>'>
@@ -82,6 +88,6 @@ $i=0;
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

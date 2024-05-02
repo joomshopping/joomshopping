@@ -7,18 +7,23 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
 class ConfigDisplayPriceController extends BaseadminController{
     
     function init(){
-        \JSHelperAdmin::checkAccessController("configdisplayprice");
-        \JSHelperAdmin::addSubmenu("config");
+        HelperAdmin::checkAccessController("configdisplayprice");
+        HelperAdmin::addSubmenu("config");
     }
     
     function display($cachable = false, $urlparams = false){		
-        $model = \JSFactory::getModel("configdisplayprice");
+        $model = JSFactory::getModel("configdisplayprice");
         $rows = $model->getList(1);
         $typedisplay = $model->getPriceType();		
         
@@ -29,7 +34,7 @@ class ConfigDisplayPriceController extends BaseadminController{
 
         $view->tmp_html_start = '';
         $view->tmp_html_end = '';
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayConfigDisplayPrice', array(&$view)); 
         $view->displayList();
     }
@@ -37,7 +42,7 @@ class ConfigDisplayPriceController extends BaseadminController{
     function edit() {        
         $id = $this->input->getInt("id");
         
-        $configdisplayprice = \JSFactory::getTable('configdisplayprice');
+        $configdisplayprice = JSFactory::getTable('configdisplayprice');
         $configdisplayprice->load($id);
         
         $list_c = $configdisplayprice->getZones();
@@ -49,11 +54,11 @@ class ConfigDisplayPriceController extends BaseadminController{
         }
         
         $display_price_list = SelectOptions::getPriceType();        
-        $lists['display_price'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price', 'class = "inputbox form-select"', 'id', 'name', $configdisplayprice->display_price);
-        $lists['display_price_firma'] = \JHTML::_('select.genericlist', $display_price_list, 'display_price_firma', 'class = "inputbox form-select"', 'id', 'name', $configdisplayprice->display_price_firma);
-        $lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'countries_id[]', 'class = "inputbox form-select" size = "10" multiple = "multiple"', 'country_id', 'name', $zone_countries);
+        $lists['display_price'] = HTMLHelper::_('select.genericlist', $display_price_list, 'display_price', 'class = "inputbox form-select"', 'id', 'name', $configdisplayprice->display_price);
+        $lists['display_price_firma'] = HTMLHelper::_('select.genericlist', $display_price_list, 'display_price_firma', 'class = "inputbox form-select"', 'id', 'name', $configdisplayprice->display_price_firma);
+        $lists['countries'] = HTMLHelper::_('select.genericlist', SelectOptions::getCountrys(0), 'countries_id[]', 'class = "inputbox form-select" size = "10" multiple = "multiple"', 'country_id', 'name', $zone_countries);
         
-        \JFilterOutput::objectHTMLSafe($configdisplayprice, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($configdisplayprice, ENT_QUOTES);
 
         $view = $this->getView("config_display_price", 'html');
         $view->setLayout("edit");
@@ -62,7 +67,7 @@ class ConfigDisplayPriceController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = '';
         $view->tmp_html_end = '';
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditConfigDisplayPrice', array(&$view));
         $view->displayEdit();
     }

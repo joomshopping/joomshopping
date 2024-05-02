@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.3.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -16,7 +19,7 @@ defined('_JEXEC') or die();
             <?php print $product->name?>
         </a>
         <?php if ($this->config->product_list_show_product_code){?>
-            <span class="jshop_code_prod">(<?php print JText::_('JSHOP_EAN_PRODUCT')?>: <span><?php print $product->product_ean;?></span>)</span>
+            <span class="jshop_code_prod">(<?php print Text::_('JSHOP_EAN_PRODUCT')?>: <span><?php print $product->product_ean;?></span>)</span>
         <?php }?>
     </div>
     
@@ -42,11 +45,11 @@ defined('_JEXEC') or die();
         <?php if ($this->allow_review){?>
             <?php if (!$this->config->hide_product_rating){?>
                 <div class="review_mark">
-                    <?php print \JSHelper::showMarkStar($product->average_rating);?>
+                    <?php print Helper::showMarkStar($product->average_rating);?>
                 </div>
             <?php }?>
             <div class="count_commentar">
-                <?php print sprintf(JText::_('JSHOP_X_COMENTAR'), $product->reviews_count);?>
+                <?php print sprintf(Text::_('JSHOP_X_COMENTAR'), $product->reviews_count);?>
             </div>
         <?php }?>
         
@@ -57,16 +60,16 @@ defined('_JEXEC') or die();
 	
 		<?php if (!$this->config->hide_text_product_not_available){?>
 			<?php if ($product->product_quantity <= 0){?>
-				<div class="block_available not_available"><?php print JText::_('JSHOP_PRODUCT_NOT_AVAILABLE')?></div>
+				<div class="block_available not_available"><?php print Text::_('JSHOP_PRODUCT_NOT_AVAILABLE')?></div>
 			<?php }elseif(!$this->config->hide_text_product_available){?>
-				<div class="block_available available"><?php print JText::_('JSHOP_PRODUCT_AVAILABLE')?></div>
+				<div class="block_available available"><?php print Text::_('JSHOP_PRODUCT_AVAILABLE')?></div>
 			<?php }?>
 		<?php }?>
         
         <?php if ($product->product_old_price > 0){?>
             <div class="old_price">
-                <?php if ($this->config->product_list_show_price_description) print JText::_('JSHOP_OLD_PRICE').': ';?>
-                <span><?php print \JSHelper::formatprice($product->product_old_price)?><?php print $product->_tmp_var_old_price_ext?></span>
+                <?php if ($this->config->product_list_show_price_description) print Text::_('JSHOP_OLD_PRICE').': ';?>
+                <span><?php print Helper::formatprice($product->product_old_price)?><?php print $product->_tmp_var_old_price_ext?></span>
             </div>
         <?php }?>
         
@@ -74,16 +77,16 @@ defined('_JEXEC') or die();
         
         <?php if ($product->product_price_default > 0 && $this->config->product_list_show_price_default){?>
             <div class="default_price">
-                <?php print JText::_('JSHOP_DEFAULT_PRICE');?>:
-                <span><?php print \JSHelper::formatprice($product->product_price_default)?></span>
+                <?php print Text::_('JSHOP_DEFAULT_PRICE');?>:
+                <span><?php print Helper::formatprice($product->product_price_default)?></span>
             </div>
         <?php }?>
         
         <?php if ($product->_display_price){?>
             <div class = "jshop_price">
-                <?php if ($this->config->product_list_show_price_description) print JText::_('JSHOP_PRICE').': ';?>
-                <?php if ($product->show_price_from) print JText::_('JSHOP_FROM');?>
-                <span><?php print \JSHelper::formatprice($product->product_price);?><?php print $product->_tmp_var_price_ext;?></span>
+                <?php if ($this->config->product_list_show_price_description) print Text::_('JSHOP_PRICE').': ';?>
+                <?php if ($product->show_price_from) print Text::_('JSHOP_FROM');?>
+                <span><?php print Helper::formatprice($product->product_price);?><?php print $product->_tmp_var_price_ext;?></span>
             </div>
         <?php }?>
         
@@ -91,52 +94,52 @@ defined('_JEXEC') or die();
         
         <div class="price_extra_info">
             <?php if ($this->config->show_tax_in_product && $product->tax > 0){?>
-                <span class="taxinfo"><?php print \JSHelper::productTaxInfo($product->tax);?></span>
+                <span class="taxinfo"><?php print Helper::productTaxInfo($product->tax);?></span>
             <?php }?>
             
             <?php if ($this->config->show_plus_shipping_in_product){?>
-                <span class="plusshippinginfo"><?php print sprintf(JText::_('JSHOP_PLUS_SHIPPING'), $this->shippinginfo);?></span>
+                <span class="plusshippinginfo"><?php print sprintf(Text::_('JSHOP_PLUS_SHIPPING'), $this->shippinginfo);?></span>
             <?php }?>
         </div>
         
         <?php if ($product->basic_price_info['price_show']){?>
             <div class="base_price">
-                <?php print JText::_('JSHOP_BASIC_PRICE')?>: 
-                <?php if ($product->show_price_from && !$this->config->hide_from_basic_price) print JText::_('JSHOP_FROM')?> 
-                <span><?php print \JSHelper::formatprice($product->basic_price_info['basic_price'])?> / <?php print $product->basic_price_info['name'];?></span>
+                <?php print Text::_('JSHOP_BASIC_PRICE')?>: 
+                <?php if ($product->show_price_from && !$this->config->hide_from_basic_price) print Text::_('JSHOP_FROM')?> 
+                <span><?php print Helper::formatprice($product->basic_price_info['basic_price'])?> / <?php print $product->basic_price_info['name'];?></span>
             </div>
         <?php }?>
         
         <?php if ($product->manufacturer->name){?>
             <div class="manufacturer_name">
-                <?php print JText::_('JSHOP_MANUFACTURER')?>: 
+                <?php print Text::_('JSHOP_MANUFACTURER')?>: 
                 <span><?php print $product->manufacturer->name?></span>
             </div>
         <?php }?>
 
         <?php if ($this->config->manufacturer_code_in_product_list && $product->manufacturer_code){?>
             <div class="manufacturer_code">
-                <?php print JText::_('JSHOP_MANUFACTURER_CODE')?>:
+                <?php print Text::_('JSHOP_MANUFACTURER_CODE')?>:
                 <span><?php print $product->manufacturer_code?></span>
             </div>
         <?php }?>
 		<?php if ($this->config->real_ean_in_product_list && $product->real_ean){?>
             <div class="real_ean">
-                <?php print JText::_('JSHOP_EAN')?>:
+                <?php print Text::_('JSHOP_EAN')?>:
                 <span><?php print $product->real_ean?></span>
             </div>
         <?php }?>
         
         <?php if ($this->config->product_list_show_weight && $product->product_weight > 0){?>
             <div class="productweight">
-                <?php print JText::_('JSHOP_WEIGHT')?>: 
-                <span><?php print \JSHelper::formatweight($product->product_weight)?></span>
+                <?php print Text::_('JSHOP_WEIGHT')?>: 
+                <span><?php print Helper::formatweight($product->product_weight)?></span>
             </div>
         <?php }?>
         
         <?php if ($product->delivery_time != ''){?>
             <div class="deliverytime">
-                <?php print JText::_('JSHOP_DELIVERY_TIME')?>: 
+                <?php print Text::_('JSHOP_DELIVERY_TIME')?>: 
                 <span><?php print $product->delivery_time?></span>
             </div>
         <?php }?>
@@ -154,15 +157,15 @@ defined('_JEXEC') or die();
         
         <?php if ($product->vendor){?>
             <div class="vendorinfo">
-                <?php print JText::_('JSHOP_VENDOR')?>: 
+                <?php print Text::_('JSHOP_VENDOR')?>: 
                 <a href="<?php print $product->vendor->products?>"><?php print $product->vendor->shop_name?></a>
             </div>
         <?php }?>
         
         <?php if ($this->config->product_list_show_qty_stock){?>
             <div class="qty_in_stock">
-                <?php print JText::_('JSHOP_QTY_IN_STOCK')?>: 
-                <span><?php print \JSHelper::sprintQtyInStock($product->qty_in_stock)?></span>
+                <?php print Text::_('JSHOP_QTY_IN_STOCK')?>: 
+                <span><?php print Helper::sprintQtyInStock($product->qty_in_stock)?></span>
             </div>
         <?php }?>
         
@@ -175,12 +178,12 @@ defined('_JEXEC') or die();
         <div class="buttons">
             <?php if ($product->buy_link){?>
                 <a class="btn btn-success button_buy" href="<?php print $product->buy_link?>">
-                    <?php print JText::_('JSHOP_BUY')?>
+                    <?php print Text::_('JSHOP_BUY')?>
                 </a>
             <?php }?>
             
             <a class="btn btn-primary button_detail" href="<?php print $product->product_link?>">
-                <?php print JText::_('JSHOP_DETAIL')?>
+                <?php print Text::_('JSHOP_DETAIL')?>
             </a>
             
             <?php print $product->_tmp_var_buttons;?>

@@ -1,4 +1,8 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -12,7 +16,7 @@ $i=0;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php \JSHelperAdmin::displaySubmenuConfigs('general');?>
+<?php HelperAdmin::displaySubmenuConfigs('general');?>
 <form action="index.php?option=com_jshopping&controller=configdisplayprice" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <table class="table table-striped">
@@ -22,22 +26,22 @@ $i=0;
       #
     </th>
     <th width="20">
-      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     </th>
     <th>
-        <?php echo JText::_('JSHOP_COUNTRY')?>
+        <?php echo Text::_('JSHOP_COUNTRY')?>
     </th>
     <th width="100">
-        <?php echo JText::_('JSHOP_DISPLAY_PRICE')?>
+        <?php echo Text::_('JSHOP_DISPLAY_PRICE')?>
     </th>
     <th width="160">
-        <?php echo JText::_('JSHOP_DISPLAY_PRICE_FOR_FIRMA')?>
+        <?php echo Text::_('JSHOP_DISPLAY_PRICE_FOR_FIRMA')?>
     </th>
     <th width="50" class="center">
-        <?php echo JText::_('JSHOP_EDIT')?>
+        <?php echo Text::_('JSHOP_EDIT')?>
     </th>
     <th width="40" class="center">
-        <?php echo JText::_('JSHOP_ID')?>
+        <?php echo Text::_('JSHOP_ID')?>
     </th>
   </tr>
 </thead>  
@@ -47,7 +51,7 @@ $i=0;
      <?php echo $i+1;?>
    </td>
    <td>
-     <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+     <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
    </td>
    <td>
     <?php echo $row->countries;?>

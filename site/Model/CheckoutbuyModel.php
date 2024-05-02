@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class CheckoutBuyModel  extends CheckoutModel{
@@ -130,23 +134,23 @@ class CheckoutBuyModel  extends CheckoutModel{
 	}
 
 	public function loadUrlParams(){
-		$pm_method = \JSFactory::getTable('paymentMethod');
+		$pm_method = JSFactory::getTable('paymentMethod');
         $pm_method->loadFromClass($this->payment_method_class);
 		$load_by_scriptname = 0;
 		if (!$pm_method->payment_id) {
 			$pm_method->loadFromClass($this->payment_method_class, 1);
 			$load_by_scriptname = 1;
-			\JSHelper::saveToLog("payment.log", "load url by scriptname ".$this->payment_method_class);
+			Helper::saveToLog("payment.log", "load url by scriptname ".$this->payment_method_class);
 		}
 
         $paymentsysdata = $pm_method->getPaymentSystemData();
         $payment_system = $paymentsysdata->paymentSystem;
         if ($paymentsysdata->paymentSystemVerySimple){
             if ($this->no_lang){
-				\JSFactory::loadLanguageFile();
+				JSFactory::loadLanguageFile();
 			}
-            \JSHelper::saveToLog("payment.log", "#001 - Error payment method file. PM ".$this->payment_method_class);
-            $this->setError(\JText::_('JSHOP_ERROR_PAYMENT'));
+            Helper::saveToLog("payment.log", "#001 - Error payment method file. PM ".$this->payment_method_class);
+            $this->setError(Text::_('JSHOP_ERROR_PAYMENT'));
             return 0;
         }
 
@@ -159,22 +163,22 @@ class CheckoutBuyModel  extends CheckoutModel{
         $checkReturnParams = $urlParamsPS['checkReturnParams'];
 		
 		if ($load_by_scriptname && $order_id) {
-			$order = \JSFactory::getTable('order');
+			$order = JSFactory::getTable('order');
 			$order->load($order_id);
 			$pm_method->load($order->payment_method_id);
 			$paymentsysdata = $pm_method->getPaymentSystemData();
 			$payment_system = $paymentsysdata->paymentSystem;
 			if ($this->payment_method_class != $pm_method->scriptname || !$order->payment_method_id) {
-				\JSHelper::saveToLog("payment.log", "#0011 - Error load by script name ".$this->payment_method_class." / order_id ".$order_id);
-				$this->setError(\JText::_('JSHOP_ERROR_PAYMENT'));
+				Helper::saveToLog("payment.log", "#0011 - Error load by script name ".$this->payment_method_class." / order_id ".$order_id);
+				$this->setError(Text::_('JSHOP_ERROR_PAYMENT'));
 				return 0;
 			}
 			$this->payment_method_class = $pm_method->payment_class;
 			$pmconfigs = $pm_method->getConfigs();
-			\JSHelper::saveToLog("payment.log", "payment alias ".$pm_method->payment_class." / order_id ".$order_id);
+			Helper::saveToLog("payment.log", "payment alias ".$pm_method->payment_class." / order_id ".$order_id);
 		}
 		if ($load_by_scriptname && !$order_id) {
-			\JSHelper::saveToLog("payment.log", "info: real payment not loaded by scriptname");
+			Helper::saveToLog("payment.log", "info: real payment not loaded by scriptname");
 		}
 
 		$this->setPmMethod($pm_method);
@@ -190,8 +194,8 @@ class CheckoutBuyModel  extends CheckoutModel{
 	}
 
 	public function buy(){
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
 		$order_id = $this->getOrderId();
 		$checkHash = $this->getCheckHash();
 		$hash = $this->getHash();
@@ -200,30 +204,30 @@ class CheckoutBuyModel  extends CheckoutModel{
 		$payment_system = $this->getPaymentSystem();
 		$pm_method = $this->getPmMethod();
 
-		$order = \JSFactory::getTable('order');
+		$order = JSFactory::getTable('order');
         $order->load($order_id);
 
-		\JSFactory::loadLanguageFile($order->getLang(), true);
-		$lang = \JSFactory::getLang($order->getLang());
+		JSFactory::loadLanguageFile($order->getLang(), true);
+		$lang = JSFactory::getLang($order->getLang());
 
         if ($checkHash && $order->order_hash != $hash){
-            \JSHelper::saveToLog("payment.log", "#003 - Error order hash. Order id ".$order_id);
-            $this->setError(\JText::_('JSHOP_ERROR_ORDER_HASH'));
+            Helper::saveToLog("payment.log", "#003 - Error order hash. Order id ".$order_id);
+            $this->setError(Text::_('JSHOP_ERROR_ORDER_HASH'));
             return 0;
         }
 
         if (!$order->payment_method_id){
-            \JSHelper::saveToLog("payment.log", "#004 - Error payment method id. Order id ".$order_id);
-            $this->setError(\JText::_('JSHOP_ERROR_PAYMENT'));
+            Helper::saveToLog("payment.log", "#004 - Error payment method id. Order id ".$order_id);
+            $this->setError(Text::_('JSHOP_ERROR_PAYMENT'));
             return 0;
         }
 
         if ($order->payment_method_id!=$pm_method->payment_id){
-            $pm_method_order = \JSFactory::getTable('paymentmethod');
+            $pm_method_order = JSFactory::getTable('paymentmethod');
             $pm_method_order->load($order->payment_method_id);
             if($pm_method_order->scriptname != $pm_method->scriptname || $pm_method_order->scriptname == '') {
-            	\JSHelper::saveToLog("payment.log", "#005 - Error payment method set url. Order id ".$order_id);
-	            $this->setError(\JText::_('JSHOP_ERROR_PAYMENT'));
+            	Helper::saveToLog("payment.log", "#005 - Error payment method set url. Order id ".$order_id);
+	            $this->setError(Text::_('JSHOP_ERROR_PAYMENT'));
 	            return 0;
             }
         }
@@ -241,16 +245,16 @@ class CheckoutBuyModel  extends CheckoutModel{
         $order->saveTransactionData($rescode, $status, $transactiondata);
 
         if ($restext!=''){
-            \JSHelper::saveToLog("payment.log", $restext);
+            Helper::saveToLog("payment.log", $restext);
         }
 
 		if ($status) {
 			$need_create_order = (!in_array($status, $jshopConfig->payment_status_no_create_order));
 			$prev_order_status_data = $order->orderCreateAndSetStatus($status, $need_create_order);
 			if (!$prev_order_status_data->order_created && $need_create_order) {
-				$order = \JSFactory::getTable('order');
+				$order = JSFactory::getTable('order');
         		$order->load($order_id);
-				\JSFactory::getModel('checkoutorder', 'Site')->couponFinished($order);
+				JSFactory::getModel('checkoutorder', 'Site')->couponFinished($order);
 				$obj = $this;
 				$dispatcher->triggerEvent('onStep7OrderCreated', array(&$order, &$res, &$obj, &$pmconfigs));
 				$order->store();
@@ -267,7 +271,7 @@ class CheckoutBuyModel  extends CheckoutModel{
 		$this->setCheckTransactionResCode($rescode);
 		$this->setCheckTransactionResText($restext);
 
-		$order = \JSFactory::getTable('order');
+		$order = JSFactory::getTable('order');
         $order->load($order_id);
 
 		$obj = $this;
@@ -293,9 +297,9 @@ class CheckoutBuyModel  extends CheckoutModel{
 	public function saveToLogPaymentData(){
 		$str = "url: ".$_SERVER['REQUEST_URI']."\n";
         foreach($_POST as $k=>$v) $str .= $k."=".$v."\n";		
-        \JSHelper::saveToLog("paymentdata.log", $str);
+        Helper::saveToLog("paymentdata.log", $str);
 		$raw = file_get_contents('php://input');
-		if ($raw) \JSHelper::saveToLog("paymentdata.log", $raw);
+		if ($raw) Helper::saveToLog("paymentdata.log", $raw);
 	}
 
     public function noCheckReturnExecute(){

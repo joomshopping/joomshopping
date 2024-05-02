@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Import_export_list;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,8 +17,8 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function display($tpl=null){
-        \JToolBarHelper::title(\JText::_('JSHOP_PANEL_IMPORT_EXPORT'), 'generic.png');
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title(Text::_('JSHOP_PANEL_IMPORT_EXPORT'), 'generic.png');
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
 }

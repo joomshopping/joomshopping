@@ -7,17 +7,21 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 defined('_JEXEC') or die;
 
 class ProductFieldGroupsController extends BaseadminController{
 
     function init(){
-        \JSHelperAdmin::checkAccessController("productfieldgroups");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("productfieldgroups");
+        HelperAdmin::addSubmenu("other");
     }
 
     function display($cachable = false, $urlparams = false){
-        $_productfieldgroups = \JSFactory::getModel("productfieldgroups");
+        $_productfieldgroups = JSFactory::getModel("productfieldgroups");
         $rows = $_productfieldgroups->getList();
 
         $view = $this->getView("product_field_groups", 'html');
@@ -26,31 +30,31 @@ class ProductFieldGroupsController extends BaseadminController{
 
         $view->tmp_html_start = '';
         $view->tmp_html_end = '';
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayProductsFieldGroups', array(&$view));
         $view->displayList();
     }
 
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $id = $this->input->getInt("id");
-        $productfieldgroup = \JSFactory::getTable('productfieldgroup');
+        $productfieldgroup = JSFactory::getTable('productfieldgroup');
         $productfieldgroup->load($id);
 
-        $_lang = \JSFactory::getModel("languages");
+        $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         $multilang = count($languages)>1;
 
         $view = $this->getView("product_field_groups", 'html');
         $view->setLayout("edit");
-        \JFilterOutput::objectHTMLSafe($productfieldgroup, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($productfieldgroup, ENT_QUOTES);
         $view->set('row', $productfieldgroup);
         $view->set('languages', $languages);
         $view->set('multilang', $multilang);
         $view->tmp_html_start = '';
         $view->tmp_html_end = '';
         $view->etemplatevar = '';
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditProductFieldGroups', array(&$view));
         $view->displayEdit();
     }

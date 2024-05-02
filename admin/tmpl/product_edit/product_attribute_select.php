@@ -1,4 +1,8 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -13,9 +17,9 @@ defined( '_JEXEC' ) or die();
 <script type="text/javascript">
     var jshopParams = jshopParams || {};
     <?php if ($this->product->product_quantity >0){?>
-    jshopParams.translate_not_available = "<?php print addslashes(JText::_('JSHOP_PRODUCT_NOT_AVAILABLE_THIS_OPTION'))?>";
+    jshopParams.translate_not_available = "<?php print addslashes(Text::_('JSHOP_PRODUCT_NOT_AVAILABLE_THIS_OPTION'))?>";
     <?php }else{?>
-    jshopParams.translate_not_available = "<?php print addslashes(JText::_('JSHOP_PRODUCT_NOT_AVAILABLE'))?>";
+    jshopParams.translate_not_available = "<?php print addslashes(Text::_('JSHOP_PRODUCT_NOT_AVAILABLE'))?>";
     <?php }?>
     jshopParams.currency_code = "<?php print $this->config->currency_code;?>";
     jshopParams.format_currency = "<?php print $this->config->format_currency[$this->config->currency_format];?>";
@@ -32,7 +36,7 @@ defined( '_JEXEC' ) or die();
         <?php } ?>
     <?php } ?>
     <?php foreach($this->all_attr_values as $attrval){ if ($attrval->image){?>jshopParams.attr_img[<?php print $attrval->value_id?>] = "<?php print $attrval->image?>";<?php } }?>
-    jshopParams.liveurl = '<?php print JURI::root()?>';
+    jshopParams.liveurl = '<?php print Uri::root()?>';
     jshopParams.liveattrpath = '<?php print $this->config->image_attributes_live_path;?>';
     jshopParams.liveproductimgpath = '<?php print $this->config->image_product_live_path;?>';
     jshopParams.liveimgpath = '<?php print $this->config->live_path."images";?>';
@@ -51,13 +55,13 @@ defined( '_JEXEC' ) or die();
     <h1><?php print $this->product->name?></h1>
     
     <div class="jshop_code_prod" style="margin-bottom:20px;">
-        <?php print JText::_('JSHOP_EAN')?>: <span id="product_code"><?php print $this->product->getEan();?></span>
+        <?php print Text::_('JSHOP_EAN')?>: <span id="product_code"><?php print $this->product->getEan();?></span>
     </div>
     
     <div class="prod_price" style="margin-bottom:20px;">
-        <?php print JText::_('JSHOP_PRICE')?>: 
+        <?php print Text::_('JSHOP_PRICE')?>: 
         <span id="block_price">
-            <?php print \JSHelper::formatprice($this->product->getPriceCalculate())?>
+            <?php print Helper::formatprice($this->product->getPriceCalculate())?>
         </span>
     </div>
     
@@ -76,6 +80,6 @@ defined( '_JEXEC' ) or die();
         <?php endforeach; ?>
     </div>
     
-    <input class="btn btn-primary" type="button" value="<?php print \JText::_('JTOOLBAR_APPLY')?>" onclick="jshopAdmin.loadProductAttributeInfoOrderItem(<?php print $this->num?>)">
+    <input class="btn btn-primary" type="button" value="<?php print Text::_('JTOOLBAR_APPLY')?>" onclick="jshopAdmin.loadProductAttributeInfoOrderItem(<?php print $this->num?>)">
     
 </div>

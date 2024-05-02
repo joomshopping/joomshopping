@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 defined('_JEXEC') or die();
@@ -31,7 +34,7 @@ class BaseadminModel extends BaseDatabaseModel{
 	}
     
     public function getDefaultTable(){
-        return \JSFactory::getTable($this->getNameTable());
+        return JSFactory::getTable($this->getNameTable());
     }
     
     public function save(array $post){
@@ -46,20 +49,20 @@ class BaseadminModel extends BaseDatabaseModel{
         }
         if (!$table->store()){
             print $table->getError();
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
         }
         return $table;
     }
     
     public function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $res = array();
 		foreach($cid as $id){
             $table = $this->getDefaultTable();
             $table->delete($id);
             if ($msg){
-                $app->enqueueMessage(\JText::_('JSHOP_ITEM_DELETED'), 'message');
+                $app->enqueueMessage(Text::_('JSHOP_ITEM_DELETED'), 'message');
             }
             $res[$id] = true;
 		}
@@ -104,7 +107,7 @@ class BaseadminModel extends BaseDatabaseModel{
         } else {
             throw new \Exception('Error get table for '.static::class);
         }
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $query->select($fields);
         $query->from($db->qn($tablename));
@@ -122,7 +125,7 @@ class BaseadminModel extends BaseDatabaseModel{
         } else {
             throw new \Exception('Error get Table for '.static::class);
         }
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $query->select('count(*)');
         $query->from($db->qn($tablename));

@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Addonkey;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -15,10 +17,10 @@ class HtmlView extends BaseHtmlView{
 
     function display($tpl=null){
         
-        \JToolBarHelper::title( \JText::_('JSHOP_ENTER_LICENSE_KEY'), 'generic.png' ); 
-        \JToolBarHelper::save();
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::cancel();
+        ToolbarHelper::title( Text::_('JSHOP_ENTER_LICENSE_KEY'), 'generic.png' ); 
+        ToolbarHelper::save();
+        ToolbarHelper::spacer();
+        ToolbarHelper::cancel();
         
         parent::display($tpl);
 	}

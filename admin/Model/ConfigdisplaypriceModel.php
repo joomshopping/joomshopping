@@ -8,13 +8,18 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Model; defined('_JEXEC') or die();
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 
 class ConfigDisplayPriceModel extends BaseadminModel{
 
     public function getList($loadCountiesInfo = 0){
-        $db = \JFactory::getDBO(); 
+        $db = Factory::getDBO(); 
         $query = "SELECT * FROM `#__jshopping_config_display_prices`";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $rows = $db->loadObjectList();
         if ($loadCountiesInfo){
@@ -24,7 +29,7 @@ class ConfigDisplayPriceModel extends BaseadminModel{
     }
     
     protected function addCountryToListConfigPrices($rows){
-        $countries = \JSFactory::getModel("countries");
+        $countries = JSFactory::getModel("countries");
         $list = $countries->getAllCountries(0);    
         $countries_name = array();
         foreach($list as $v){
@@ -47,34 +52,34 @@ class ConfigDisplayPriceModel extends BaseadminModel{
     
     public function getPriceType(){
         return array(
-            0 => \JText::_('JSHOP_PRODUCT_BRUTTO_PRICE'), 
-            1 => \JText::_('JSHOP_PRODUCT_NETTO_PRICE')
+            0 => Text::_('JSHOP_PRODUCT_BRUTTO_PRICE'), 
+            1 => Text::_('JSHOP_PRODUCT_NETTO_PRICE')
         );
     }
     
     public function save(array $post){
-        $configdisplayprice = \JSFactory::getTable('configDisplayPrice');
-        $dispatcher = \JFactory::getApplication();
+        $configdisplayprice = JSFactory::getTable('configDisplayPrice');
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveConfigDisplayPrice', array(&$post));
         if (!isset($post['countries_id'])){
-            $this->setError(\JText::_('JSHOP_ERROR_BIND'));
+            $this->setError(Text::_('JSHOP_ERROR_BIND'));
             return 0;
         }
         $configdisplayprice->bind($post);
         $configdisplayprice->setZones($post['countries_id']);
         if (!$configdisplayprice->store()){
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0; 
         }
-        \JSHelperAdmin::updateCountConfigDisplayPrice();
+        HelperAdmin::updateCountConfigDisplayPrice();
         $dispatcher->triggerEvent('onAftetSaveConfigDisplayPrice', array(&$configdisplayprice));
         return $configdisplayprice;
     }
     
     public function deleteList(array $cid, $msg = 1){
-        $db = \JFactory::getDBO();
-        $app = \JFactory::getApplication();
-        $dispatcher = \JFactory::getApplication();
+        $db = Factory::getDBO();
+        $app = Factory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDeleteConfigDisplayPrice', array(&$cid));
         $res = array();
         foreach($cid as $id){
@@ -82,11 +87,11 @@ class ConfigDisplayPriceModel extends BaseadminModel{
             $db->setQuery($query);
             $db->execute();
             if ($msg){
-                $app->enqueueMessage(\JText::_('JSHOP_ITEM_DELETED'), 'message');
+                $app->enqueueMessage(Text::_('JSHOP_ITEM_DELETED'), 'message');
             }
             $res[$id] = true;
         }
-        \JSHelperAdmin::updateCountConfigDisplayPrice();
+        HelperAdmin::updateCountConfigDisplayPrice();
         $dispatcher->triggerEvent('onAfterDeleteConfigDisplayPrice', array(&$cid));
         return $res;
     }

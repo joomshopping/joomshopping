@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class ShippingMethodTable extends MultilangTable{
@@ -16,37 +19,37 @@ class ShippingMethodTable extends MultilangTable{
     }
     
     function loadFromAlias($alias){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT shipping_id FROM `#__jshopping_shipping_method` WHERE `alias`='".$db->escape($alias)."'";
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $id = $db->loadResult();
         return $this->load($id);
     }
     
     function getAllShippingMethods($publish = 1) {
-        $db = \JFactory::getDBO();
-        $user = \JFactory::getUser();
+        $db = Factory::getDBO();
+        $user = Factory::getUser();
         $groups = implode(',', $user->getAuthorisedViewLevels());
         $query_where = 'WHERE `access` IN ('.$groups.')';
         if ($publish) {
             $query_where .= " AND published=1 ";
         }
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         $query = "SELECT shipping_id, `".$lang->get('name')."` as name, `".$lang->get("description")."` as description, published, ordering
                   FROM `#__jshopping_shipping_method` 
                   $query_where 
                   ORDER BY ordering";
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         return $db->loadObJectList();
     }
 
     function getAllShippingMethodsCountry($country_id, $payment_id, $publish = 1){
-        $db = \JFactory::getDBO(); 
-        $lang = \JSFactory::getLang();
-		$JshopConfig = \JSFactory::getConfig();        
-        $user = \JFactory::getUser();
+        $db = Factory::getDBO(); 
+        $lang = JSFactory::getLang();
+		$JshopConfig = JSFactory::getConfig();        
+        $user = Factory::getUser();
         $groups = implode(',', $user->getAuthorisedViewLevels());
         $query_where = 'AND sh_method.`access` IN ('.$groups.')';
         if ($publish) {
@@ -61,26 +64,26 @@ class ShippingMethodTable extends MultilangTable{
                   INNER JOIN `#__jshopping_countries` AS countries  ON sh_pr_method_country.country_id = countries.country_id
                   WHERE countries.country_id = '".$db->escape($country_id)."' $query_where
                   ORDER BY sh_method.ordering";
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         return $db->loadObJectList();
     }
     
     function getShippingPriceId($shipping_id, $country_id, $publish = 1){
-        $db = \JFactory::getDBO(); 
+        $db = Factory::getDBO(); 
         $query_where = ($publish) ? ("AND sh_method.published = '1'") : ("");
         $query = "SELECT sh_pr_method.sh_pr_method_id FROM `#__jshopping_shipping_method` AS sh_method
                   INNER JOIN `#__jshopping_shipping_method_price` AS sh_pr_method ON sh_method.shipping_id = sh_pr_method.shipping_method_id
                   INNER JOIN `#__jshopping_shipping_method_price_countries` AS sh_pr_method_country ON sh_pr_method_country.sh_pr_method_id = sh_pr_method.sh_pr_method_id
                   INNER JOIN `#__jshopping_countries` AS countries  ON sh_pr_method_country.country_id = countries.country_id
                   WHERE countries.country_id = '".$db->escape($country_id)."' and sh_method.shipping_id=".intval($shipping_id)."  $query_where";
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         return (int)$db->loadResult();
     }
     
     function getPayments(){
-		extract(\JSHelper::Js_add_trigger(get_defined_vars()));
+		extract(Helper::Js_add_trigger(get_defined_vars()));
         if ($this->payments==""){
             return array();
         }else{
@@ -96,7 +99,7 @@ class ShippingMethodTable extends MultilangTable{
                 break;
             }
         }
-		extract(\JSHelper::Js_add_trigger(get_defined_vars()));
+		extract(Helper::Js_add_trigger(get_defined_vars()));
         $this->payments = implode(",", $payments);
     }
 	
@@ -116,7 +119,7 @@ class ShippingMethodTable extends MultilangTable{
         if (is_null($alias)){
             $alias = $this->alias;
         }
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         $script = str_replace(array('.','/'),'', $alias ?? '');
         $patch = $JshopConfig->path.'shippingform/'.$script."/".$script.'.php';
         if ($script!='' && file_exists($patch)){

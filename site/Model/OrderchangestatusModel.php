@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class OrderChangeStatusModel  extends BaseModel{
@@ -31,8 +35,8 @@ class OrderChangeStatusModel  extends BaseModel{
 	private $admin_send_order;
 	
 	public function __construct(){
-		$this->order = \JSFactory::getTable('order');
-		$this->tbl_order_status = \JSFactory::getTable('orderStatus');
+		$this->order = JSFactory::getTable('order');
+		$this->tbl_order_status = JSFactory::getTable('orderStatus');
 	}
 	
 	public function setData($order_id, $status, $sendmessage = 1, $status_id = 0, $notify = 1, $comments = '', $include_comment = 0, $view_order = 0) {
@@ -61,8 +65,8 @@ class OrderChangeStatusModel  extends BaseModel{
 	}
 
 	public function store(){
-        $jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
 
 		$return = null;
 		if ($this->getAppAdmin()){
@@ -100,8 +104,8 @@ class OrderChangeStatusModel  extends BaseModel{
 		$this->orderStatusStore();
 		
 		if ($this->getAppAdmin()){
-			\JSFactory::loadLanguageFile($this->order->getLang(), true);
-			\JSFactory::getLang($this->order->getLang());
+			JSFactory::loadLanguageFile($this->order->getLang(), true);
+			JSFactory::getLang($this->order->getLang());
 		}
         
         $this->vendorinfo = $this->order->getVendorInfo();
@@ -179,9 +183,9 @@ class OrderChangeStatusModel  extends BaseModel{
 	
 	public function getSubjectMail($type, $order){
 		if ($type=='admin'){
-			$subject = \JText::_('JSHOP_ORDER_STATUS_CHANGE_TITLE');
+			$subject = Text::_('JSHOP_ORDER_STATUS_CHANGE_TITLE');
 		}else{
-			$subject = sprintf(\JText::_('JSHOP_ORDER_STATUS_CHANGE_SUBJECT'), $order->order_number);
+			$subject = sprintf(Text::_('JSHOP_ORDER_STATUS_CHANGE_SUBJECT'), $order->order_number);
 		}
 		return $subject;
 	}
@@ -194,14 +198,14 @@ class OrderChangeStatusModel  extends BaseModel{
         $view->set('vendorinfo', $vendorinfo);
         $view->set('order_detail', $order_details_url);
         $view->set('comment', $comments);
-        \JFactory::getApplication()->triggerEvent('onBeforeCreateMailOrderStatusView', array(&$view));
+        Factory::getApplication()->triggerEvent('onBeforeCreateMailOrderStatusView', array(&$view));
     return $view->loadTemplate();
     }
 	
 	public function sendMail($type, $recipient, $message, $order, $datavendor = null){
-		$app = \JFactory::getApplication();
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+		$app = Factory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
 		
 		$mailfrom = $app->getCfg('mailfrom');
         $fromname = $app->getCfg('fromname');
@@ -227,7 +231,7 @@ class OrderChangeStatusModel  extends BaseModel{
 		);
 		
 		try {
-			$mailer = \JFactory::getMailer();
+			$mailer = Factory::getMailer();
 			$mailer->setSender(array($mailfrom, $fromname));
 			$mailer->addRecipient($recipient);
 			$mailer->setSubject($subject);
@@ -245,7 +249,7 @@ class OrderChangeStatusModel  extends BaseModel{
 			$res = $mailer->Send();
 		} catch (\Exception $e) {
 			$res = 0;
-			\JSHelper::saveToLog('error.log', 'Orderchangestatus mail send error: '.$e->getMessage());			
+			Helper::saveToLog('error.log', 'Orderchangestatus mail send error: '.$e->getMessage());			
 		}
 		return $res;
 	}
@@ -254,19 +258,19 @@ class OrderChangeStatusModel  extends BaseModel{
 		if ($this->order->user_id==-1){
 			$url = '';
 		}else{
-			$url = \JSHelper::getFullUrlSefLink('index.php?option=com_jshopping&controller=user&task=order&order_id='.$this->order_id, 1);
+			$url = Helper::getFullUrlSefLink('index.php?option=com_jshopping&controller=user&task=order&order_id='.$this->order_id, 1);
 		}
 		return $url;
 	}
 	
 	private function orderStatusStore(){
         $this->order->order_status = $this->status;
-        $this->order->order_m_date = \JSHelper::getJsDate();
+        $this->order->order_m_date = Helper::getJsDate();
         $this->order->store();
 	}
 	
 	private function getSendMsg($type){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if (!$this->getAppAdmin()){
 			if ($type=='client'){
 				$send = $this->sendmessage;
@@ -318,7 +322,7 @@ class OrderChangeStatusModel  extends BaseModel{
 	}
 	
 	protected function getListVendors($order){
-		if (\JSFactory::getConfig()->admin_show_vendors){
+		if (JSFactory::getConfig()->admin_show_vendors){
             $listVendors = $order->getVendors();
         }else{
             $listVendors = array();
@@ -327,12 +331,12 @@ class OrderChangeStatusModel  extends BaseModel{
 	}
 	
 	protected function getVendorSendMessage($order){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		return ($jshopConfig->vendor_order_message_type==1 || ($order->vendor_type==1 && $jshopConfig->vendor_order_message_type==2));
 	}
 	
 	protected function getVendorSendOrder($order){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$vendor_send_order = ($jshopConfig->vendor_order_message_type==2 && $order->vendor_type == 0 && $order->vendor_id);
         if ($jshopConfig->vendor_order_message_type==3){
 			$vendor_send_order = 1;
@@ -342,7 +346,7 @@ class OrderChangeStatusModel  extends BaseModel{
 	
 	protected function getAdminSendOrder($order, $listVendors){		
 		$admin_send_order = 1;		
-        if (\JSFactory::getConfig()->admin_not_send_email_order_vendor_order && $this->getVendorSendOrder($order) && count($listVendors)){
+        if (JSFactory::getConfig()->admin_not_send_email_order_vendor_order && $this->getVendorSendOrder($order) && count($listVendors)){
 			$admin_send_order = 0;
 		}
 		return $admin_send_order;

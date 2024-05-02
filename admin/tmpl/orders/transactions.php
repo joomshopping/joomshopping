@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -16,21 +18,21 @@ $rows = $this->rows;
    <tr>
      <th width = "20">#</th>
      <th width = "20">
-       <?php echo JText::_('JSHOP_TRANSACTION')?>
+       <?php echo Text::_('JSHOP_TRANSACTION')?>
      </th>
      <th>
-       <?php echo JText::_('JSHOP_DATE')?>
+       <?php echo Text::_('JSHOP_DATE')?>
      </th>
      <th>
-       <?php echo JText::_('JSHOP_CODE')?>
+       <?php echo Text::_('JSHOP_CODE')?>
      </th>
      <th>
-       <?php echo JText::_('JSHOP_STATUS')?>
+       <?php echo Text::_('JSHOP_STATUS')?>
      </th>
      <th>
-       <?php echo JText::_('JSHOP_DESCRIPTION')?>
+       <?php echo Text::_('JSHOP_DESCRIPTION')?>
      </th>
-     <th width="50"><?php print JText::_('JSHOP_ID')?></th>
+     <th width="50"><?php print Text::_('JSHOP_ID')?></th>
    </tr>
 </thead>
 <?php 

@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -7,7 +9,7 @@
 * @license      GNU/GPL
 */
 defined('_JEXEC') or die();
-$menu = JSHelperAdmin::getItemsConfigPanelMenu();
+$menu = HelperAdmin::getItemsConfigPanelMenu();
 ?>
 <div class="jssubmenu">
     <div class="m">

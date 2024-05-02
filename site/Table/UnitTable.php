@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class UnitTable extends MultilangTable{
@@ -16,8 +18,8 @@ class UnitTable extends MultilangTable{
     }
     
     function getAllUnits(){
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO(); 
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO(); 
         $query = "SELECT id, `".$lang->get("name")."` as name, qty FROM `#__jshopping_unit` ORDER BY id";
         $db->setQuery($query);
         $list = $db->loadObJectList();

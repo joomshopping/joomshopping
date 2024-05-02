@@ -7,14 +7,18 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
 
 class OrdersModel extends BaseadminModel{
 
     function getCountAllOrders($filters) {
-        $jshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         $where = "";
         if ($filters['status_id']){
             $where .= " and O.order_status = '".$db->escape($filters['status_id'])."'";
@@ -26,11 +30,11 @@ class OrdersModel extends BaseadminModel{
         }
         if (!$filters['notfinished']) $where .= "and O.order_created='1' ";
         if ($filters['date_from']){
-			$date = \JSHelper::getJsDateDB($filters['date_from'], $jshopConfig->field_birthday_format);
+			$date = Helper::getJsDateDB($filters['date_from'], $jshopConfig->field_birthday_format);
 			$where .= ' and O.order_date>="'.$db->escape($date).'" ';
 		}
 		if ($filters['date_to']){
-			$date = \JSHelper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
+			$date = Helper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
 			$where .= ' and O.order_date<="'.$db->escape($date).' 23:59:59" ';
 		}        
         
@@ -43,15 +47,15 @@ class OrdersModel extends BaseadminModel{
             $query = "SELECT COUNT(O.order_id) FROM `#__jshopping_orders` as O where 1 ".$where;
         }
 		
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeQueryGetCountAllOrders', array(&$query, &$filters));
         $db->setQuery($query);
         return $db->loadResult();
     }
 
     function getAllOrders($limitstart, $limit, $filters, $filter_order, $filter_order_Dir) {
-        $jshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO(); 
+        $jshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO(); 
         $where = "";
         if ($filters['status_id']){
             $where .= " and O.order_status = '".$db->escape($filters['status_id'])."'";
@@ -63,11 +67,11 @@ class OrdersModel extends BaseadminModel{
         }
         if (!$filters['notfinished']) $where .= "and O.order_created='1' ";
         if ($filters['date_from']){
-			$date = \JSHelper::getJsDateDB($filters['date_from'], $jshopConfig->field_birthday_format);
+			$date = Helper::getJsDateDB($filters['date_from'], $jshopConfig->field_birthday_format);
 			$where .= ' and O.order_date>="'.$db->escape($date).'" ';
 		}
 		if ($filters['date_to']){
-			$date = \JSHelper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
+			$date = Helper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
 			$where .= ' and O.order_date<="'.$db->escape($date).' 23:59:59" ';
 		}
         
@@ -84,48 +88,48 @@ class OrdersModel extends BaseadminModel{
                   where 1 $where ORDER BY ".$order;
         }
         
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeQueryGetAllOrders', array(&$query, &$filters, &$filter_order, &$filter_order_Dir));
 		$db->setQuery($query, $limitstart, $limit);
         return $db->loadObjectList();
     }
 
     function getAllOrderStatus($order = null, $orderDir = null) {
-        $db = \JFactory::getDBO(); 
-        $lang = \JSFactory::getLang();
-        $ordering = "status_id";
+        $db = Factory::getDBO(); 
+        $lang = JSFactory::getLang();
+        $ordering = "ordering, status_id";
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
-        $query = "SELECT status_id, status_code, `".$lang->get('name')."` as name FROM `#__jshopping_order_status` ORDER BY ".$ordering;
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        $query = "SELECT status_id, status_code, `".$lang->get('name')."` as name, ordering FROM `#__jshopping_order_status` ORDER BY ".$ordering;
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
     }
     
     function getMinYear(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT min(order_date) FROM `#__jshopping_orders`";
         $db->setQuery($query);
         $res = substr($db->loadResult(),0, 4);
         if (intval($res)==0) $res = "2010";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         return $res;
     }
     
     function saveOrderItem($order_id, $post, $old_items){
-        $db = \JFactory::getDBO();
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+        $db = Factory::getDBO();
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
         if (!isset($post['product_name'])) $post['product_name'] = array();
 
         $edit_order_items = array();
         foreach($post['product_name'] as $k=>$v){
             $order_item_id = intval($post['order_item_id'][$k]);
             $edit_order_items[] = $order_item_id;
-            $product = \JSFactory::getTable('product');
+            $product = JSFactory::getTable('product');
             $product->load($post['product_id'][$k]);
-            $order_item = \JSFactory::getTable('orderItem');
+            $order_item = JSFactory::getTable('orderItem');
             $order_item->order_item_id = $order_item_id;
             $order_item->order_id = $order_id;
             $order_item->product_id = $post['product_id'][$k];
@@ -134,9 +138,9 @@ class OrdersModel extends BaseadminModel{
             $order_item->manufacturer_code = $post['manufacturer_code'][$k] ?? '';
             $order_item->real_ean = $post['real_ean'][$k] ?? '';
             $order_item->product_name = $post['product_name'][$k];
-            $order_item->product_quantity = \JSHelper::saveAsPrice($post['product_quantity'][$k]);
-            $order_item->product_item_price = \JSHelper::saveAsPrice($post['product_item_price'][$k]);
-            $order_item->product_tax = \JSHelper::saveAsPrice($post['product_tax'][$k] ?? 0);
+            $order_item->product_quantity = Helper::saveAsPrice($post['product_quantity'][$k]);
+            $order_item->product_item_price = Helper::saveAsPrice($post['product_item_price'][$k]);
+            $order_item->product_tax = Helper::saveAsPrice($post['product_tax'][$k] ?? 0);
             $order_item->product_attributes = $post['product_attributes'][$k] ?? '';
             if (json_decode($post['attributes'][$k])){
                 $attribute = (array)json_decode($post['attributes'][$k]);
@@ -170,11 +174,11 @@ class OrdersModel extends BaseadminModel{
 
         foreach($old_items as $k=>$v){
             if (!in_array($v->order_item_id, $edit_order_items)){
-                $order_item = \JSFactory::getTable('orderItem');
+                $order_item = JSFactory::getTable('orderItem');
                 $order_item->delete($v->order_item_id);
             }
         }
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         return 1;
     }
     
@@ -194,17 +198,17 @@ class OrdersModel extends BaseadminModel{
             $prod['price'] = $v['product_item_price'];
             $products[] = $prod;
         }
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         return $products;
     }
     
     function loadtaxorder($data_order, $products){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $jshopConfig->display_price_front_current = $data_order['display_price'];
         $display_price_front_current = $data_order['display_price'];
         $taxes = array();
         $total = 0;
-        $AllTaxes = \JSFactory::getAllTaxes();
+        $AllTaxes = JSFactory::getAllTaxes();
         $id_country = $data_order['d_country'];
         if (!$id_country){
             $id_country = $data_order['country'];
@@ -218,12 +222,12 @@ class OrdersModel extends BaseadminModel{
             $tax = (string)floatval($product['product_tax']);
             $price = $product['product_item_price'] * $product['product_quantity'];
             $SumTax = (isset($taxes[$tax]))?$taxes[$tax]:0;
-            $taxes[$tax] =  $SumTax + \JSHelper::getPriceTaxValue($price, $tax, $display_price_front_current);
+            $taxes[$tax] =  $SumTax + Helper::getPriceTaxValue($price, $tax, $display_price_front_current);
             $total += $price;
         }
         
         $cproducts = $this->getCartProductsFromOrderProducts($products);
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->products = array();
         $cart->loadProductsFromArray($cproducts);
         $cart->loadPriceAndCountProducts();
@@ -232,7 +236,7 @@ class OrdersModel extends BaseadminModel{
         if ($data_order['order_payment']!=0){
             $price = $data_order['order_payment'];
             $payment_method_id = $data_order['payment_method_id'];
-            $paym_method = \JSFactory::getTable('paymentmethod');
+            $paym_method = JSFactory::getTable('paymentmethod');
             $paym_method->load($payment_method_id);
             $paym_method->setCart($cart);
             $payment_taxes = $paym_method->calculateTaxList($price);
@@ -245,10 +249,10 @@ class OrdersModel extends BaseadminModel{
         }
         
         //shipping
-        $shipping_method = \JSFactory::getTable('shippingMethod');
+        $shipping_method = JSFactory::getTable('shippingMethod');
         $sh_pr_method_id = $shipping_method->getShippingPriceId($data_order['shipping_method_id'], $id_country);
         
-        $shipping_method_price = \JSFactory::getTable('shippingMethodPrice');
+        $shipping_method_price = JSFactory::getTable('shippingMethodPrice');
         $shipping_method_price->load($sh_pr_method_id);
         
         // tax shipping
@@ -288,14 +292,14 @@ class OrdersModel extends BaseadminModel{
             }
         }
 
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         return $taxes_array;
     }
     
     function loadshippingprice($data_order, $products){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $jshopConfig->display_price_front_current = $data_order['display_price'];
-        $all_currency = \JSFactory::getAllCurrency();
+        $all_currency = JSFactory::getAllCurrency();
         $currency_id = $data_order['currency_id'];
         if ($currency_id){
             $jshopConfig->currency_value = $all_currency[$currency_id]->currency_value;
@@ -308,8 +312,8 @@ class OrdersModel extends BaseadminModel{
         if (!$id_country){
             $id_country = $jshopConfig->default_country;
         }
-        $shipping_method = \JSFactory::getTable('shippingMethod');
-        $shipping_method_price = \JSFactory::getTable('shippingMethodPrice');
+        $shipping_method = JSFactory::getTable('shippingMethod');
+        $shipping_method_price = JSFactory::getTable('shippingMethodPrice');
         
         $shipping_price_method_id = $shipping_method->getShippingPriceId($data_order['shipping_method_id'], $id_country);
         if (!$shipping_price_method_id){
@@ -317,24 +321,24 @@ class OrdersModel extends BaseadminModel{
         }
         
         $cproducts = $this->getCartProductsFromOrderProducts($products);
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->products = array();
         $cart->loadProductsFromArray($cproducts);
         $cart->loadPriceAndCountProducts();
         
         $shipping_method_price->load($shipping_price_method_id);
         $prices = $shipping_method_price->calculateSum($cart);
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         foreach($prices as $k=>$v){
-            $prices[$k] = \JSHelper::getRoundPriceProduct($v);
+            $prices[$k] = Helper::getRoundPriceProduct($v);
         }
         return $prices; 
     }
     
     function loadpaymentprice($data_order, $products){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $jshopConfig->display_price_front_current = $data_order['display_price'];
-        $all_currency = \JSFactory::getAllCurrency();
+        $all_currency = JSFactory::getAllCurrency();
         $currency_id = $data_order['currency_id'];
         if ($currency_id){
             $jshopConfig->currency_value = $all_currency[$currency_id]->currency_value;
@@ -343,15 +347,15 @@ class OrdersModel extends BaseadminModel{
         if (!$id_country){
             $id_country = $data_order['country'];
         }
-        $AllTaxes = \JSFactory::getAllTaxes();
+        $AllTaxes = JSFactory::getAllTaxes();
 
         $cproducts = $this->getCartProductsFromOrderProducts($products);
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->products = array();
         $cart->loadProductsFromArray($cproducts);
         $cart->loadPriceAndCountProducts();
         
-        $paym_method = \JSFactory::getTable('paymentmethod');
+        $paym_method = JSFactory::getTable('paymentmethod');
         $paym_method->load($data_order['payment_method_id']);
         if ($paym_method->price_type==2){
             $total = 0;
@@ -364,9 +368,9 @@ class OrdersModel extends BaseadminModel{
                 $total += $product_price;
             }
             
-            $shipping_method = \JSFactory::getTable('shippingMethod');
+            $shipping_method = JSFactory::getTable('shippingMethod');
             $sh_pr_method_id = $shipping_method->getShippingPriceId($data_order['shipping_method_id'], $id_country);            
-            $shipping_method_price = \JSFactory::getTable('shippingMethodPrice');
+            $shipping_method_price = JSFactory::getTable('shippingMethodPrice');
             $shipping_method_price->load($sh_pr_method_id);
             
             $tax = floatval($AllTaxes[$shipping_method_price->shipping_tax_id]);
@@ -391,14 +395,14 @@ class OrdersModel extends BaseadminModel{
 
             $price = $total * $paym_method->price / 100;
             if ($data_order['display_price']){
-                $price = \JSHelper::getPriceCalcParamsTax($price, $paym_method->tax_id, $cart->products);
+                $price = Helper::getPriceCalcParamsTax($price, $paym_method->tax_id, $cart->products);
             }
         }else{
             $price = $paym_method->price * $jshopConfig->currency_value; 
-            $price = \JSHelper::getPriceCalcParamsTax($price, $paym_method->tax_id, $cart->products);
+            $price = Helper::getPriceCalcParamsTax($price, $paym_method->tax_id, $cart->products);
         }
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
-        return \JSHelper::getRoundPriceProduct($price);
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
+        return Helper::getRoundPriceProduct($price);
     }
 
     function loaddiscountprice($data_order, $products){
@@ -406,16 +410,16 @@ class OrdersModel extends BaseadminModel{
         if ($code == ''){
             return 0;
         }
-        $coupon = \JSFactory::getTable('coupon');
+        $coupon = JSFactory::getTable('coupon');
         $coupon_id = $coupon->getIdFromCode($code);
         if (!$coupon_id){
             return 0;
         }
         $coupon->load($coupon_id);
 
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $jshopConfig->display_price_front_current = $data_order['display_price'];
-        $all_currency = \JSFactory::getAllCurrency();
+        $all_currency = JSFactory::getAllCurrency();
         $currency_id = $data_order['currency_id'];
         if ($currency_id){
             $jshopConfig->currency_value = $all_currency[$currency_id]->currency_value;
@@ -426,7 +430,7 @@ class OrdersModel extends BaseadminModel{
         }
 
         $cproducts = $this->getCartProductsFromOrderProducts($products);
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->products = array();
         $cart->loadProductsFromArray($cproducts);
         $cart->loadPriceAndCountProducts();
@@ -436,10 +440,10 @@ class OrdersModel extends BaseadminModel{
         $cart->setPackagePrice($data_order['order_package']);
         $cart->setPaymentPrice($data_order['order_payment']);
         
-        $shipping_method = \JSFactory::getTable('shippingMethod');
+        $shipping_method = JSFactory::getTable('shippingMethod');
         $sh_pr_method_id = $shipping_method->getShippingPriceId($data_order['shipping_method_id'], $id_country);
         
-        $shipping_method_price = \JSFactory::getTable('shippingMethodPrice');
+        $shipping_method_price = JSFactory::getTable('shippingMethodPrice');
         $shipping_method_price->load($sh_pr_method_id);
 
         if ($data_order['order_shipping']>0){
@@ -455,7 +459,7 @@ class OrdersModel extends BaseadminModel{
         if ($data_order['order_payment']!=0){
             $price = $data_order['order_payment'];
             $payment_method_id = $data_order['payment_method_id'];
-            $paym_method = \JSFactory::getTable('paymentmethod');
+            $paym_method = JSFactory::getTable('paymentmethod');
             $paym_method->load($payment_method_id);
             $paym_method->setCart($cart);
             $cart->setPaymentTaxList($paym_method->calculateTaxList($price));
@@ -469,10 +473,10 @@ class OrdersModel extends BaseadminModel{
     }
     
     public function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();
-        $dispatcher = \JFactory::getApplication();        
+        $app = Factory::getApplication();
+        $dispatcher = Factory::getApplication();        
         $dispatcher->triggerEvent('onBeforeRemoveOrder', array(&$cid));
-		$order = \JSFactory::getTable('order');
+		$order = JSFactory::getTable('order');
         $res = array();
 		foreach($cid as $id){
 			$order->delete($id);
@@ -480,24 +484,24 @@ class OrdersModel extends BaseadminModel{
 		}
 		$dispatcher->triggerEvent('onAfterRemoveOrder', array(&$cid));
         if ($msg){
-            $msg = sprintf(\JText::_('JSHOP_ORDER_DELETED_ID'), implode(", ", $cid));
+            $msg = sprintf(Text::_('JSHOP_ORDER_DELETED_ID'), implode(", ", $cid));
             $app->enqueueMessage($msg, 'message');
         }
         return $res;
     }
 
     public function save(array $post){
-        $app = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
+        $app = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
         $file_generete_pdf_order = $jshopConfig->file_generete_pdf_order;
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $order_id = intval($post['order_id']);
 		$new_order = !$order_id;
-        $order = \JSFactory::getTable('order');
+        $order = JSFactory::getTable('order');
         $order->load($order_id);
         if (!$order_id){
             $order->user_id = -1;
-            $order->order_date = \JSHelper::getJsDate();
+            $order->order_date = Helper::getJsDate();
             $orderNumber = $jshopConfig->next_order_number;
             $jshopConfig->updateNextOrderNumber();
             $order->order_number = $order->formatOrderNumber($orderNumber);
@@ -513,10 +517,10 @@ class OrdersModel extends BaseadminModel{
         }else{
             $update_product_stock = 0;
         }
-        $order->order_m_date = \JSHelper::getJsDate();
-        if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = \JSHelper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
-        if (isset($post['d_birthday']) && $post['d_birthday']) $post['d_birthday'] = \JSHelper::getJsDateDB($post['d_birthday'], $jshopConfig->field_birthday_format);
-		if (isset($post['invoice_date']) && $post['invoice_date']) $post['invoice_date'] = \JSHelper::getJsDateDB($post['invoice_date'], $jshopConfig->store_date_format);
+        $order->order_m_date = Helper::getJsDate();
+        if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = Helper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
+        if (isset($post['d_birthday']) && $post['d_birthday']) $post['d_birthday'] = Helper::getJsDateDB($post['d_birthday'], $jshopConfig->field_birthday_format);
+		if (isset($post['invoice_date']) && $post['invoice_date']) $post['invoice_date'] = Helper::getJsDateDB($post['invoice_date'], $jshopConfig->store_date_format);
 
         if (!$jshopConfig->hide_tax){
             $post['order_tax'] = 0;
@@ -524,7 +528,7 @@ class OrdersModel extends BaseadminModel{
             if (isset($post['tax_percent'])){
                 foreach($post['tax_percent'] as $k=>$v){
                     if ($post['tax_percent'][$k]!="" || $post['tax_value'][$k]!=""){
-                        $order_tax_ext[number_format($post['tax_percent'][$k],2)] = \JSHelper::saveAsPrice($post['tax_value'][$k]);
+                        $order_tax_ext[number_format($post['tax_percent'][$k],2)] = Helper::saveAsPrice($post['tax_value'][$k]);
                     }
                 }
             }
@@ -532,7 +536,7 @@ class OrdersModel extends BaseadminModel{
             $post['order_tax'] = number_format(array_sum($order_tax_ext),2);
         }
 
-        $currency = \JSFactory::getTable('currency');
+        $currency = JSFactory::getTable('currency');
         $currency->load($post['currency_id']);
         $post['currency_code'] = $currency->currency_code;
         $post['currency_code_iso'] = $currency->currency_code_iso;
@@ -545,7 +549,7 @@ class OrdersModel extends BaseadminModel{
 		$fields_float = ['order_subtotal', 'order_discount', 'order_shipping', 'order_package', 'order_payment', 'order_total'];
 		foreach($fields_float as $v) {
 			if (isset($post[$v])) {
-				$post[$v] = \JSHelper::saveAsPrice($post[$v]);
+				$post[$v] = Helper::saveAsPrice($post[$v]);
 			}
 		}
 		
@@ -562,8 +566,8 @@ class OrdersModel extends BaseadminModel{
         $order->vendor_id = $vendor_id;
         $order->store();
 
-        \JSFactory::loadLanguageFile($order->getLang());
-		$lang = \JSFactory::getLang($order->getLang());
+        JSFactory::loadLanguageFile($order->getLang());
+		$lang = JSFactory::getLang($order->getLang());
 		$order->items = null;
 
         if ($update_product_stock){
@@ -577,7 +581,7 @@ class OrdersModel extends BaseadminModel{
         if ($order->order_created==1 && $order_created_prev==0){
 			$order->updateProductsInStock(1);
             $dispatcher->triggerEvent('onAdminSaveOrderCreated', array(&$order));
-            $checkout = \JSFactory::getModel('checkout', 'Site');
+            $checkout = JSFactory::getModel('checkout', 'Site');
             if ($jshopConfig->send_order_email){
                 $checkout->sendOrderEmail($order_id, 1);
             }
@@ -590,9 +594,9 @@ class OrdersModel extends BaseadminModel{
             $order->generatePdf($file_generete_pdf_order);
 		}
 
-        \JSFactory::loadAdminLanguageFile();
+        JSFactory::loadAdminLanguageFile();
         if ($post['coupon_code'] != '' && $applyCoupon == 0){
-            $app->enqueueMessage(\JText::_('JSHOP_ERROR_COUPON_CODE'), 'warning');
+            $app->enqueueMessage(Text::_('JSHOP_ERROR_COUPON_CODE'), 'warning');
         }
         $dispatcher->triggerEvent('onAfterSaveOrder', array(&$order, &$file_generete_pdf_order));
         return $order;

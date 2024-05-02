@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die;
 
 class ProductFieldGroupsModel extends BaseadminModel{
@@ -14,17 +18,17 @@ class ProductFieldGroupsModel extends BaseadminModel{
     protected $nameTable = 'productfieldgroup';
 
     function getList() {
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
         $query = "SELECT id, `".$lang->get("name")."` as name, ordering FROM `#__jshopping_products_extra_field_groups` order by ordering";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
     }
 
     function save(array $post) {
-        $productfieldgroup = \JSFactory::getTable('productFieldGroup');
-        $dispatcher = \JFactory::getApplication();
+        $productfieldgroup = JSFactory::getTable('productFieldGroup');
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveProductFieldGroup', array(&$post));
         $productfieldgroup->bind($post);
         if( !$post['id'] ) {
@@ -32,7 +36,7 @@ class ProductFieldGroupsModel extends BaseadminModel{
             $productfieldgroup->ordering = $productfieldgroup->getNextOrder();
         }
         if( !$productfieldgroup->store() ) {
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
         }
         $dispatcher->triggerEvent('onAfterSaveProductFieldGroup', array(&$productfieldgroup));
@@ -40,17 +44,17 @@ class ProductFieldGroupsModel extends BaseadminModel{
     }
 
     function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();
-        $db = \JFactory::getDBO();
+        $app = Factory::getApplication();
+        $db = Factory::getDBO();
         foreach($cid as $id){
             $query = "DELETE FROM `#__jshopping_products_extra_field_groups` WHERE `id` = ".(int)$id;
             $db->setQuery($query);
             $db->execute();
             if ($msg){
-                $app->enqueueMessage(\JText::_('JSHOP_ITEM_DELETED'), 'message');
+                $app->enqueueMessage(Text::_('JSHOP_ITEM_DELETED'), 'message');
             }
         }
-        \JFactory::getApplication()->triggerEvent('onAfterRemoveProductFieldGroup', array(&$cid));
+        Factory::getApplication()->triggerEvent('onAfterRemoveProductFieldGroup', array(&$cid));
     }
 
 }

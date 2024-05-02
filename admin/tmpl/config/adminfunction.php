@@ -1,4 +1,8 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -8,12 +12,12 @@
 */
 defined('_JEXEC') or die();
 
-$jshopConfig=\JSFactory::getConfig();
+$jshopConfig=JSFactory::getConfig();
 $lists=$this->lists;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php \JSHelperAdmin::displaySubmenuConfigs('adminfunction');?>
+<?php HelperAdmin::displaySubmenuConfigs('adminfunction');?>
 <div class="jshop_edit">
 <form action="index.php?option=com_jshopping&controller=config" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 <?php print $this->tmp_html_start?>
@@ -21,13 +25,13 @@ $lists=$this->lists;
 <input type="hidden" name="tab" value="8">
 
 <div class="card">
-<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_GENERAL');?></h3>
+<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_GENERAL');?></h3>
 <div class="card-body">
 <table class="admintable table-striped">
 
 <tr>
     <td class="key">
-      <?php echo JText::_('JSHOP_ENABLE_WISHLIST')?>
+      <?php echo Text::_('JSHOP_ENABLE_WISHLIST')?>
     </td>
     <td>
         <input type="hidden" name="enable_wishlist" value="0">
@@ -36,7 +40,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-      <?php echo JText::_('JSHOP_USE_RABATT_CODE')?>
+      <?php echo Text::_('JSHOP_USE_RABATT_CODE')?>
     </td>
     <td>
         <input type="hidden" name="use_rabatt_code" value="0">
@@ -45,7 +49,7 @@ $lists=$this->lists;
 </tr> 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_PURCHASE_WITHOUT_REGISTERING')?>
+        <?php echo Text::_('JSHOP_PURCHASE_WITHOUT_REGISTERING')?>
     </td>
     <td>
         <?php print $this->lists['shop_register_type'];?>
@@ -53,7 +57,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_USER_AS_CATALOG')?>
+        <?php echo Text::_('JSHOP_USER_AS_CATALOG')?>
     </td>
     <td>
         <input type="hidden" name="user_as_catalog" value="0">
@@ -62,7 +66,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_PANEL_LANGUAGES')?>
+        <?php echo Text::_('JSHOP_PANEL_LANGUAGES')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_languages" value="0">
@@ -72,7 +76,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHIPPINGS')?>
+        <?php echo Text::_('JSHOP_SHIPPINGS')?>
     </td>
     <td>
         <input type="hidden" name="without_shipping" value="0">
@@ -82,7 +86,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_PAYMENTS')?>
+        <?php echo Text::_('JSHOP_PAYMENTS')?>
     </td>
     <td>
         <input type="hidden" name="without_payment" value="0">
@@ -92,7 +96,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_USE_DIFFERENT_TEMPLATES_CATEGORIES_PRODUCTS')?>
+        <?php echo Text::_('JSHOP_USE_DIFFERENT_TEMPLATES_CATEGORIES_PRODUCTS')?>
     </td>
     <td>
         <input type="hidden" name="use_different_templates_cat_prod" value="0">
@@ -101,7 +105,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_USE_VENDORS')?>
+        <?php echo Text::_('JSHOP_USE_VENDORS')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_vendors" value="0">
@@ -110,7 +114,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_UNIT_MEASURE')?>
+        <?php echo Text::_('JSHOP_UNIT_MEASURE')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_units" value="0">
@@ -119,7 +123,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_USE_ATTRIBUTE_EXTEND_PARAMS')?>
+        <?php echo Text::_('JSHOP_USE_ATTRIBUTE_EXTEND_PARAMS')?>
     </td>
     <td>
         <input type="hidden" name="use_extend_attribute_data" value="0">
@@ -128,7 +132,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_TAX')?>
+        <?php echo Text::_('JSHOP_TAX')?>
     </td>
     <td>
         <input type="hidden" name="tax" value="0">
@@ -137,7 +141,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_STOCK')?>
+        <?php echo Text::_('JSHOP_STOCK')?>
     </td>
     <td>
         <input type="hidden" name="stock" value="0">
@@ -146,7 +150,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOP_MODE')?>
+        <?php echo Text::_('JSHOP_SHOP_MODE')?>
     </td>
     <td>
         <?php print $this->lists['shop_mode'];?>
@@ -157,12 +161,12 @@ $lists=$this->lists;
 </div>
 
 <div class="card">
-<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_PRODUCTS')?></h3>
+<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_PRODUCTS')?></h3>
 <div class="card-body">
 <table class="admintable table-striped">
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_ATTRIBUTES')?>
+        <?php echo Text::_('JSHOP_ATTRIBUTES')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_attributes" value="0">
@@ -171,7 +175,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_FREE_ATTRIBUTES')?>
+        <?php echo Text::_('JSHOP_FREE_ATTRIBUTES')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_freeattributes" value="0">
@@ -180,7 +184,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_DELIVERY_TIME')?>
+        <?php echo Text::_('JSHOP_DELIVERY_TIME')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_delivery_time" value="0">
@@ -189,7 +193,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_PRODUCT_VIDEOS')?>
+        <?php echo Text::_('JSHOP_PRODUCT_VIDEOS')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_product_video" value="0">
@@ -199,7 +203,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_PRODUCT_RELATED')?>
+        <?php echo Text::_('JSHOP_PRODUCT_RELATED')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_product_related" value="0">
@@ -208,7 +212,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_FILES')?>
+        <?php echo Text::_('JSHOP_FILES')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_product_files" value="0">
@@ -218,7 +222,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_LABEL')?>
+        <?php echo Text::_('JSHOP_LABEL')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_product_labels" value="0">
@@ -228,7 +232,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_PRODUCT_BUY_PRICE')?>
+        <?php echo Text::_('JSHOP_PRODUCT_BUY_PRICE')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_product_bay_price" value="0">
@@ -238,7 +242,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_BASIC_PRICE')?>
+        <?php echo Text::_('JSHOP_BASIC_PRICE')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_product_basic_price" value="0">
@@ -248,7 +252,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_EXTRA_FIELDS')?>
+        <?php echo Text::_('JSHOP_EXTRA_FIELDS')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_product_extra_field" value="0">
@@ -257,7 +261,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_PRODUCT_WEIGHT')?>
+        <?php echo Text::_('JSHOP_PRODUCT_WEIGHT')?>
     </td>
     <td>
         <input type="hidden" name="admin_show_weight" value="0">

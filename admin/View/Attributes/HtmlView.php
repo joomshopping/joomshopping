@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Attributes;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,21 +17,21 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
 
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_LIST_ATTRIBUTES'), 'generic.png' ); 
-        \JToolBarHelper::addNew();        
-        \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
-        \JToolBarHelper::spacer();        
-        \JToolBarHelper::custom("addgroup", "folder", "folder", \JText::_('JSHOP_GROUP'), false);
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_LIST_ATTRIBUTES'), 'generic.png' ); 
+        ToolbarHelper::addNew();        
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
+        ToolbarHelper::spacer();        
+        ToolbarHelper::custom("addgroup", "folder", "folder", Text::_('JSHOP_GROUP'), false);
+        HelperAdmin::btnHome();
         parent::display($tpl);	
     }
 
     function displayEdit($tpl=null){
-        \JToolBarHelper::title( $temp = ($this->attribut->attr_id) ? (\JText::_('JSHOP_EDIT_ATTRIBUT').' / '.$this->attribut->{\JSFactory::getLang()->get('name')}) : (\JText::_('JSHOP_NEW_ATTRIBUT')), 'generic.png' );
-        \JToolBarHelper::save();
-        \JToolBarHelper::apply();
-        \JToolBarHelper::save2new();
-        \JToolBarHelper::cancel();
+        ToolbarHelper::title( $temp = ($this->attribut->attr_id) ? (Text::_('JSHOP_EDIT_ATTRIBUT').' / '.$this->attribut->{\JSFactory::getLang()->get('name')}) : (Text::_('JSHOP_NEW_ATTRIBUT')), 'generic.png' );
+        ToolbarHelper::save();
+        ToolbarHelper::apply();
+        ToolbarHelper::save2new();
+        ToolbarHelper::cancel();
         parent::display($tpl);
     }
 }

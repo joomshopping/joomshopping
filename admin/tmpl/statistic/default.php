@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.1.3 18.02.2023
 * @author       MAXXmarketing GmbH
@@ -13,59 +18,59 @@ $paid_status=$this->paid_status;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions();?>
+<?php HelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <div class="jshop_edit" style="width:100%; ">
 <div>
 <fieldset class="adminform" >
-<legend><?php echo JText::_('JSHOP_ORDERS_STATISTICS')?></legend>
+<legend><?php echo Text::_('JSHOP_ORDERS_STATISTICS')?></legend>
 
 <table class="table table-striped">
 <thead>
   <tr>
 
     <th width="140" align="left" rowspan="2">
-      <?php echo JText::_('JSHOP_STATUS')?>
+      <?php echo Text::_('JSHOP_STATUS')?>
     </th>
     <th width="115" colspan="2">
-      <?php echo JText::_('JSHOP_THIS_DAY')?>
+      <?php echo Text::_('JSHOP_THIS_DAY')?>
     </th>
     <th width="115" colspan="2">
-        <?php echo JText::_('JSHOP_THIS_WEEK')?>
+        <?php echo Text::_('JSHOP_THIS_WEEK')?>
     </th>
     <th width="115" colspan="2">
-        <?php echo JText::_('JSHOP_THIS_MONTH')?>
+        <?php echo Text::_('JSHOP_THIS_MONTH')?>
     </th>
     <th width="115" colspan="2">
-        <?php echo JText::_('JSHOP_THIS_YEAR')?>
+        <?php echo Text::_('JSHOP_THIS_YEAR')?>
     </th>    
   </tr>
     <tr>
 
     <th width="30">
-      <?php echo JText::_('JSHOP_COUNT')?>
+      <?php echo Text::_('JSHOP_COUNT')?>
     </th>
     <th width="85">
-      <?php echo JText::_('JSHOP_PRICE')?>
+      <?php echo Text::_('JSHOP_PRICE')?>
     </th>    
     <th width="30">
-      <?php echo JText::_('JSHOP_COUNT')?>
+      <?php echo Text::_('JSHOP_COUNT')?>
     </th>
     <th width="85">
-      <?php echo JText::_('JSHOP_PRICE')?>
+      <?php echo Text::_('JSHOP_PRICE')?>
     </th> 
     <th width="30">
-      <?php echo JText::_('JSHOP_COUNT')?>
+      <?php echo Text::_('JSHOP_COUNT')?>
     </th>
     <th width="85">
-      <?php echo JText::_('JSHOP_PRICE')?>
+      <?php echo Text::_('JSHOP_PRICE')?>
     </th> 
     <th width="30">
-      <?php echo JText::_('JSHOP_COUNT')?>
+      <?php echo Text::_('JSHOP_COUNT')?>
     </th>
     <th width="85">
-      <?php echo JText::_('JSHOP_PRICE')?>
+      <?php echo Text::_('JSHOP_PRICE')?>
     </th>   
   </tr>
 </thead> 
@@ -97,7 +102,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
    </td>
    <td style="text-align:right;">
 
-     <?php  echo \JSHelper::formatprice( $dsum); ?>
+     <?php  echo Helper::formatprice( $dsum); ?>
 
    </td>   
 	<td style="text-align:right;">
@@ -114,7 +119,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
      ?> 
    	</td>
     <td style="text-align:right;">
-          <?php  echo \JSHelper::formatprice( $dsum) ; ?>   
+          <?php  echo Helper::formatprice( $dsum) ; ?>   
     </td>
     <td style="text-align:right;">
      <?php $k=0; foreach($this->month as $res)
@@ -130,7 +135,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
      ?>         
     </td>
     <td style="text-align:right;">
-     <?php  echo \JSHelper::formatprice( $dsum); ?>  
+     <?php  echo Helper::formatprice( $dsum); ?>  
     </td>
     <td style="text-align:right;">
      <?php $k=0; foreach($this->year as $res)
@@ -146,7 +151,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
      ?>         
     </td>  
     <td style="text-align:right;">
-    <?php  echo \JSHelper::formatprice( $dsum); ?>
+    <?php  echo Helper::formatprice( $dsum); ?>
     </td>  
   </tr>
   <?php
@@ -161,64 +166,64 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
   </tr>
   <tr >
    <th>
-     <?php echo JText::_('JSHOP_TOTAL_PAID')?>
+     <?php echo Text::_('JSHOP_TOTAL_PAID')?>
    </th>
    <th style="text-align:right;">
      <?php   echo   $ptotal_d; ?> 
    </th>
    <th style="text-align:right;">
 
-     <?php  echo \JSHelper::formatprice( $ptotal_sum_d); ?>
+     <?php  echo Helper::formatprice( $ptotal_sum_d); ?>
 
    </th>   
     <th style="text-align:right;">
       <?php   echo   $ptotal_w; ?>  
     </th>
     <th style="text-align:right;">
-      <?php  echo \JSHelper::formatprice( $ptotal_sum_w); ?>  
+      <?php  echo Helper::formatprice( $ptotal_sum_w); ?>  
     </th>
     <th style="text-align:right;">
        <?php   echo   $ptotal_m; ?> 
     </th>
     <th style="text-align:right;">
-       <?php  echo \JSHelper::formatprice( $ptotal_sum_m); ?>  
+       <?php  echo Helper::formatprice( $ptotal_sum_m); ?>  
     </th>
     <th style="text-align:right;">
        <?php   echo   $ptotal_y; ?>  
     </th>  
     <th style="text-align:right;">
-        <?php  echo \JSHelper::formatprice( $ptotal_sum_y); ?>  
+        <?php  echo Helper::formatprice( $ptotal_sum_y); ?>  
     </th>  
   </tr>
   <tr >
    <th>
-     <?php echo JText::_('JSHOP_TOTAL')?>
+     <?php echo Text::_('JSHOP_TOTAL')?>
    </th>
    <th style="text-align:right;">
      <?php   echo   $total_d; ?> 
    </th>
    <th style="text-align:right;">
 
-     <?php  echo \JSHelper::formatprice( $total_sum_d); ?>
+     <?php  echo Helper::formatprice( $total_sum_d); ?>
 
    </th>   
     <th style="text-align:right;">
      <?php   echo   $total_w; ?>  
     </th>
     <th style="text-align:right;">
-     <?php  echo \JSHelper::formatprice( $total_sum_w); ?>  
+     <?php  echo Helper::formatprice( $total_sum_w); ?>  
     </th>
     <th style="text-align:right;">
       <?php   echo   $total_m; ?>  
     </th>
     <th style="text-align:right;">
-      <?php  echo \JSHelper::formatprice( $total_sum_m); ?> 
+      <?php  echo Helper::formatprice( $total_sum_m); ?> 
     </th>
     <th style="text-align:right;">
       <?php   echo   $total_y; ?>  
     </th>  
     <th style="text-align:right;">
-       <?php  echo \JSHelper::formatprice( $total_sum_y); ?>   
+       <?php  echo Helper::formatprice( $total_sum_y); ?>   
     </th>  
   </tr>
 </table>
@@ -233,15 +238,15 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
         <table style="width:100%;">
         <tr>
             <th colspan="2" >
-            <?php echo JText::_('JSHOP_CUSTOMERS')?>:
+            <?php echo Text::_('JSHOP_CUSTOMERS')?>:
             </th>
             <!--<th colspan="2" >
-            <?php echo JText::_('JSHOP_STAFF')?>:
+            <?php echo Text::_('JSHOP_STAFF')?>:
             </th>-->
         </tr>
         <tr>
             <td style="width:100px;">
-            <?php echo JText::_('JSHOP_TOTAL')?>:
+            <?php echo Text::_('JSHOP_TOTAL')?>:
             </td>
             <td style="width:100px;">
             <?php echo $this->customer;?>
@@ -255,7 +260,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
         </tr>
         <tr>
             <td>
-            <?php echo JText::_('JSHOP_ENABLED')?>:
+            <?php echo Text::_('JSHOP_ENABLED')?>:
             </td>
             <td>
             <?php if (isset($this->customer_enabled)) echo $this->customer_enabled;?>
@@ -269,7 +274,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
         </tr>
         <tr>
             <td>
-            <?php echo JText::_('JSHOP_LOGGEDIN')?>:
+            <?php echo Text::_('JSHOP_LOGGEDIN')?>:
             </td>
             <td>
             <?php echo $this->customer_loggedin;?>
@@ -285,7 +290,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
             <th colspan="4"> </th>
         </tr>
         <tr>
-            <th colspan="4"><?php echo JText::_('JSHOP_USERGROUPS')?>:  </th>
+            <th colspan="4"><?php echo Text::_('JSHOP_USERGROUPS')?>:  </th>
         </tr>
         <?php foreach($this->usergroups as $res):?>
         <tr>
@@ -302,9 +307,9 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
     </div>
 
     <div class="col-md-3">
-        <div><b><?php echo JText::_('JSHOP_CATEGORY_INVENTORY')?>:</b></div>
+        <div><b><?php echo Text::_('JSHOP_CATEGORY_INVENTORY')?>:</b></div>
         <div>
-            <?php echo JText::_('JSHOP_TOTAL')?>:
+            <?php echo Text::_('JSHOP_TOTAL')?>:
             <?php $active_c=$nonactive_c=0; foreach($this->category as $res)
             {
              if ($res['category_publish']=='1')   $active_c=$res['amount'];
@@ -315,16 +320,16 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
             <?php echo $active_c+$nonactive_c;?>
         </div>
         <div>
-            <?php echo JText::_('JSHOP_ACTIVE')?>:
+            <?php echo Text::_('JSHOP_ACTIVE')?>:
 
             <?php echo $active_c;?>
         </div>
         
     </div>
     <div class="col-md-3">
-        <div><b><?php echo JText::_('JSHOP_MANUFACTURE_INVENTORY')?>:</b></div>
+        <div><b><?php echo Text::_('JSHOP_MANUFACTURE_INVENTORY')?>:</b></div>
         <div>
-        <?php echo JText::_('JSHOP_TOTAL')?>:
+        <?php echo Text::_('JSHOP_TOTAL')?>:
         
          <?php $active_m=$nonactive_m=0; foreach($this->manufacture as $res)
          {
@@ -336,17 +341,17 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
         <?php echo $active_m+$nonactive_m;?>
         </div>
         <div>
-            <?php echo JText::_('JSHOP_ACTIVE')?>:
+            <?php echo Text::_('JSHOP_ACTIVE')?>:
 
             <?php echo $active_m;?>
         </div>
     </div>
 	<div class="col-md-3">
 		<div>
-			<b><?php echo JText::_('JSHOP_PRODUCT_INVENTORY');?></b>
+			<b><?php echo Text::_('JSHOP_PRODUCT_INVENTORY');?></b>
 		</div>
 		<div>
-			<?php echo JText::_('JSHOP_TOTAL');?>:
+			<?php echo Text::_('JSHOP_TOTAL');?>:
 			<?php $active_p=$nonactive_p=0; foreach($this->product as $res)
 			{
 			if ($res['product_publish']=='1') $active_p=$res['amount'];
@@ -357,7 +362,7 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
 			<?php echo $active_p+$nonactive_p;?>
 		</div>
 		<div>
-			<?php echo JText::_('JSHOP_ACTIVE')?>:
+			<?php echo Text::_('JSHOP_ACTIVE')?>:
 			<?php echo $active_p;?>
 		</div>
 	</div>
@@ -375,6 +380,6 @@ $ptotal_d=$ptotal_sum_d=$ptotal_w=$ptotal_sum_w=$ptotal_m=$ptotal_sum_m=$ptotal_
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

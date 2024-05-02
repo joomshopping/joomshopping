@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class FiltersearchModel{
@@ -14,8 +18,8 @@ class FiltersearchModel{
 	public $request;
 
     function getFilter($contextfilter, $no_filter = array()){
-        $app = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
+        $app = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
         $this->loadData();
 
         $date_to = $this->getDateTo();
@@ -43,14 +47,14 @@ class FiltersearchModel{
 		$filters['date_from'] = $date_from;
 		$filters['date_to'] = $date_to;
 		$filters['search_type'] = $search_type;
-		\JPluginHelper::importPlugin('jshoppingproducts');        
+		PluginHelper::importPlugin('jshoppingproducts');        
 		$app->triggerEvent('onAfterGetBuildFilterListProduct', array(&$filters, &$no_filter));
 		return $filters;
     }
 	
 	public function loadData(){
-		$session = \JFactory::getSession();
-		$post = \JFactory::getApplication()->input->getArray();
+		$session = Factory::getSession();
+		$post = Factory::getApplication()->input->getArray();
         if (isset($post['setsearchdata']) && $post['setsearchdata']==1){
             $session->set("jshop_end_form_data", $post);
         }else{
@@ -78,7 +82,7 @@ class FiltersearchModel{
         $manufacturers = [];
         if (isset($this->request['manufacturers'])){
             $manufacturers = $this->request['manufacturers'];
-            $manufacturers = \JSHelper::filterAllowValue($manufacturers, "int+");
+            $manufacturers = Helper::filterAllowValue($manufacturers, "int+");
         }elseif(isset($this->request['manufacturer_id']) && $this->request['manufacturer_id']){
             $manufacturers[] = $this->getManufacturerId();
         }
@@ -103,22 +107,22 @@ class FiltersearchModel{
     
     public function getPriceTo(){
 		if (isset($this->request['price_to'])) 
-            $price_to = \JSHelper::saveAsPrice($this->request['price_to']);
+            $price_to = Helper::saveAsPrice($this->request['price_to']);
         else 
             $price_to = null;
         if (isset($this->request['fprice_to'])){
-            $price_to = \JSHelper::saveAsPrice($this->request['fprice_to']);
+            $price_to = Helper::saveAsPrice($this->request['fprice_to']);
         }
         return $price_to;        
 	}
 	
 	public function getPriceFrom(){		        
         if (isset($this->request['price_from'])) 
-            $price_from = \JSHelper::saveAsPrice($this->request['price_from']);
+            $price_from = Helper::saveAsPrice($this->request['price_from']);
         else 
             $price_from = null;
         if (isset($this->request['fprice_from'])){
-            $price_from = \JSHelper::saveAsPrice($this->request['fprice_from']);
+            $price_from = Helper::saveAsPrice($this->request['fprice_from']);
         }
 		return $price_from;
 	}
@@ -142,13 +146,13 @@ class FiltersearchModel{
 	}
 	
 	public function getExtraFields(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if ($jshopConfig->admin_show_product_extra_field){
             if (isset($this->request['extra_fields'])) 
                 $extra_fields = $this->request['extra_fields'];
             else
                 $extra_fields = array();
-            $extra_fields = \JSHelper::filterAllowValue($extra_fields, "array_int_k_v+");
+            $extra_fields = Helper::filterAllowValue($extra_fields, "array_int_k_v+");
         }else{
 			$extra_fields = array();
 		}
@@ -161,10 +165,10 @@ class FiltersearchModel{
 		$include_subcat = $this->getIncludeSubcat();
         if ($category_id) {
             if ($include_subcat){
-                $_category = \JSFactory::getTable('category');
+                $_category = JSFactory::getTable('category');
                 $all_categories = $_category->getAllCategories();
                 $cat_search[] = $category_id;
-                \JSHelper::searchChildCategories($category_id, $all_categories, $cat_search);
+                Helper::searchChildCategories($category_id, $all_categories, $cat_search);
                 foreach($cat_search as $key=>$value) {
                     $categorys[] = $value;
                 }
@@ -180,7 +184,7 @@ class FiltersearchModel{
             $labels = $this->request['labels'];
         else
             $labels = array();
-        return \JSHelper::filterAllowValue($labels, "int+");
+        return Helper::filterAllowValue($labels, "int+");
     }
 	
 }

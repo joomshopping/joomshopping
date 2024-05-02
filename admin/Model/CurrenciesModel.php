@@ -8,6 +8,10 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class CurrenciesModel extends BaseadminModel{
@@ -17,32 +21,32 @@ class CurrenciesModel extends BaseadminModel{
     protected $tableFieldPublish = 'currency_publish';
 
     function getAllCurrencies($publish = 1, $order = null, $orderDir = null) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query_where = ($publish)?("WHERE currency_publish = '1'"):("");
         $ordering = 'currency_ordering';
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
         $query = "SELECT * FROM `#__jshopping_currencies` $query_where ORDER BY ".$ordering;
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
     }
     
     function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();
-        $dispatcher = \JFactory::getApplication();
+        $app = Factory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeRemoveCurrencie', array(&$cid));
         $res = array();
         foreach($cid as $id){
             if ($this->delete($id)){
                 if ($msg){
-                    $app->enqueueMessage(\JText::_('JSHOP_CURRENCY_DELETED'), 'message');
+                    $app->enqueueMessage(Text::_('JSHOP_CURRENCY_DELETED'), 'message');
                 }
                 $res[$id] = true;
             }else{
                 if ($msg){
-                    $app->enqueueMessage(\JText::_('JSHOP_CURRENCY_ERROR_DELETED'), 'error');
+                    $app->enqueueMessage(Text::_('JSHOP_CURRENCY_ERROR_DELETED'), 'error');
                 }
                 $res[$id] = false;
             }
@@ -52,7 +56,7 @@ class CurrenciesModel extends BaseadminModel{
     }
     
     function getCountProduct($id){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "select count(*) from #__jshopping_products where currency_id=".intval($id);
         $db->setQuery($query);
         return $db->loadResult();
@@ -64,20 +68,20 @@ class CurrenciesModel extends BaseadminModel{
                 return 0;
             }
         }
-        $row = \JSFactory::getTable('currency');
+        $row = JSFactory::getTable('currency');
         return $row->delete($id);
     }
     
     public function getPrepareDataSave($input){
         $post = $input->post->getArray();
         $post['currency_publish'] = $post['currency_publish'] ?? 0;
-        $post['currency_value'] = \JSHelper::saveAsPrice($post['currency_value']);
+        $post['currency_value'] = Helper::saveAsPrice($post['currency_value']);
         return $post;
     }
     
     public function save(array $post){
-        $dispatcher = \JFactory::getApplication();
-        $currency = \JSFactory::getTable('currency');
+        $dispatcher = Factory::getApplication();
+        $currency = JSFactory::getTable('currency');
         $dispatcher->triggerEvent('onBeforeSaveCurrencie', array(&$post));
         $currency->bind($post);
         if ($currency->currency_value==0){
@@ -85,7 +89,7 @@ class CurrenciesModel extends BaseadminModel{
         }
         $this->_reorderCurrency($currency);
         if (!$currency->store()){
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
         }
         $dispatcher->triggerEvent('onAfterSaveCurrencie', array(&$currency));
@@ -93,14 +97,14 @@ class CurrenciesModel extends BaseadminModel{
     }
     
     public function publish(array $cid, $flag){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforePublishCurrencie', array(&$cid, &$flag));
         parent::publish($cid, $flag);
         $dispatcher->triggerEvent('onAfterPublishCurrencie', array(&$cid, &$flag));
     }
     
     protected function _reorderCurrency(&$currency) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "UPDATE `#__jshopping_currencies`
                     SET `currency_ordering` = currency_ordering + 1
                     WHERE `currency_ordering` > '" . $currency->currency_ordering . "'";

@@ -8,22 +8,25 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Model; defined('_JEXEC') or die();
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 class SeoModel extends BaseadminModel{ 
 
     public function getList(){
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();         
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();         
         $query = "SELECT id, alias, `".$lang->get('title')."` as title, `".$lang->get('keyword')."` as keyword, `".$lang->get('description')."` as description FROM `#__jshopping_config_seo` ORDER BY ordering";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
     }
     
     public function save(array $post){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveConfigSeo', array(&$post));        
-        $seo = \JSFactory::getTable("seo");
+        $seo = JSFactory::getTable("seo");
         if (isset($post['f-id'])){
             $post['id'] = $post['f-id'];
             unset($post['f-id']);

@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -181,7 +183,7 @@ class PaymentRoot{
     */
     function getErrorMessage(){
         if ($this->_errormessage==""){
-            $this->_errormessage = \JText::_('JSHOP_ERROR_PAYMENT_DATA');
+            $this->_errormessage = Text::_('JSHOP_ERROR_PAYMENT_DATA');
         }
     return $this->_errormessage;
     }

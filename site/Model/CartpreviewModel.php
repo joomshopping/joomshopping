@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class CartPreviewModel extends BaseModel{
@@ -50,15 +55,15 @@ class CartPreviewModel extends BaseModel{
     }
 	
     public function getBackUrlShop(){
-        $jshopConfig = \JSFactory::getConfig();
-        $modelproduct = \JSFactory::getModel('productShop', 'Site');
-		$shopurl = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=category', 1);
+        $jshopConfig = JSFactory::getConfig();
+        $modelproduct = JSFactory::getModel('productShop', 'Site');
+		$shopurl = Helper::SEFLink('index.php?option=com_jshopping&controller=category', 1);
         if ($jshopConfig->cart_back_to_shop=="product") {
-            $endpagebuyproduct = \JSHelper::xhtmlUrl($modelproduct->getEndPageBuy());
+            $endpagebuyproduct = Helper::xhtmlUrl($modelproduct->getEndPageBuy());
         } elseif ($jshopConfig->cart_back_to_shop=="list") {
-            $endpagebuyproduct =  \JSHelper::xhtmlUrl($modelproduct->getEndPageList());
+            $endpagebuyproduct =  Helper::xhtmlUrl($modelproduct->getEndPageList());
         } elseif ($jshopConfig->cart_back_to_shop=="home") {
-			$endpagebuyproduct = \JURI::base();
+			$endpagebuyproduct = Uri::base();
 		}
         if (isset($endpagebuyproduct) && $endpagebuyproduct){
             $shopurl = $endpagebuyproduct;
@@ -67,23 +72,23 @@ class CartPreviewModel extends BaseModel{
     }
     
     public function getCartStaticText(){
-        $statictext = \JSFactory::getTable("statictext");
+        $statictext = JSFactory::getTable("statictext");
         $tmp = $statictext->loadData("cart");
         return $tmp->text;
     }
     
     public function getUrlCheckout(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if ($jshopConfig->shop_user_guest==1){
-            $href_checkout = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step2&check_login=1',1, 0, $jshopConfig->use_ssl);
+            $href_checkout = Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step2&check_login=1',1, 0, $jshopConfig->use_ssl);
         }else{
-            $href_checkout = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step2',1, 0, $jshopConfig->use_ssl);
+            $href_checkout = Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step2',1, 0, $jshopConfig->use_ssl);
         }
         return $href_checkout;
     }
     
     protected function prepareView(){
-		$dispatcher = \JFactory::getApplication();
+		$dispatcher = Factory::getApplication();
 		$cart = $this->getCart();
 		if ($this->checkout_step>0){
 			$cart->updateDiscountData();
@@ -164,7 +169,7 @@ class CartPreviewModel extends BaseModel{
 	}
 	
 	public function getShowPercentTax(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$show = 0;
         if (count($this->tax_ext_list)>1 || $jshopConfig->show_tax_in_product){
 			$show = 1;
@@ -176,7 +181,7 @@ class CartPreviewModel extends BaseModel{
 	}
 	
 	public function getHideSubtotal(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$step = $this->getCheckoutStep();
 		$cart = $this->getCart();
 		$tax_list = $this->getTaxExt();
@@ -204,7 +209,7 @@ class CartPreviewModel extends BaseModel{
 	public function getCartPayment(){
 		$payment_id = $this->getCart()->getPaymentId();
 		if ($payment_id){
-			$pm_method = \JSFactory::getTable('paymentMethod');            
+			$pm_method = JSFactory::getTable('paymentMethod');            
             $pm_method->load($payment_id);
 		}else{
 			$pm_method = null;
@@ -224,7 +229,7 @@ class CartPreviewModel extends BaseModel{
 	public function getCartShipping(){
 		$id = $this->getCart()->getShippingId();
 		if ($id){
-			$sh_method = \JSFactory::getTable('shippingMethod');            
+			$sh_method = JSFactory::getTable('shippingMethod');            
             $sh_method->load($id);
 		}else{
 			$sh_method = null;
@@ -242,7 +247,7 @@ class CartPreviewModel extends BaseModel{
 	}
 	
 	public function getPriceItemsShow(){
-		$jshopConfig = \JSFactory::getConfig();		
+		$jshopConfig = JSFactory::getConfig();		
 		$cart = $this->getCart();
 		$items = array(
 			'shipping_price'=>0,
@@ -262,23 +267,23 @@ class CartPreviewModel extends BaseModel{
 	}
 	
 	public function getTextTotalPrice(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$step = $this->getCheckoutStep();
 		$cart = $this->getCart();
 		$tax_list = $this->getTaxExt();
 		
-		$text_total = \JText::_('JSHOP_PRICE_TOTAL');
+		$text_total = Text::_('JSHOP_PRICE_TOTAL');
         if ($step == 5){
-            $text_total = \JText::_('JSHOP_ENDTOTAL');
+            $text_total = Text::_('JSHOP_ENDTOTAL');
             if (($jshopConfig->show_tax_in_product || $jshopConfig->show_tax_product_in_cart) && (count($tax_list)>0)){
-                $text_total = \JText::_('JSHOP_ENDTOTAL_INKL_TAX');
+                $text_total = Text::_('JSHOP_ENDTOTAL_INKL_TAX');
             }
         }
 		return $text_total;
 	}
 	
 	protected function loadConfigShowWeightOrder(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$this->loadWeight();
         if ($this->weight==0 && $jshopConfig->hide_weight_in_cart_weight0){
             $jshopConfig->show_weight_order = 0;
@@ -286,7 +291,7 @@ class CartPreviewModel extends BaseModel{
 	}
 	
 	protected function loadDisplayItem(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		$step = $this->getCheckoutStep();		
 		if ($step == 5){		
 			$shipping = 1;

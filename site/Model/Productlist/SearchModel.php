@@ -7,23 +7,24 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class SearchModel extends ListModel{
 
     function getCountProductsPerPage(){
-        return \JSFactory::getConfig()->count_products_to_page_search;
+        return JSFactory::getConfig()->count_products_to_page_search;
     }
 
     function getCountProductsToRow(){
-        return \JSFactory::getConfig()->count_products_to_row_search;
+        return JSFactory::getConfig()->count_products_to_row_search;
     }
 
     function getProductFieldSorting($order){
         if ($order==4){
             $order = 1;
         }
-        return \JSFactory::getConfig()->sorting_products_field_s_select[$order];
+        return JSFactory::getConfig()->sorting_products_field_s_select[$order];
     }
 
     public function getContext(){
@@ -39,7 +40,7 @@ class SearchModel extends ListModel{
     }
 
 	public function getFilterListProduct(){
-		return \JSFactory::getModel('filtersearch', 'Site\\Productlist')->getFilter($this->getContextFilter(), $this->getNoFilterListProduct());
+		return JSFactory::getModel('filtersearch', 'Site\\Productlist')->getFilter($this->getContextFilter(), $this->getNoFilterListProduct());
 	}
 
 }

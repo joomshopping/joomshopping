@@ -1,4 +1,9 @@
 <?php
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -8,38 +13,38 @@
 */
 use Joomla\Component\Jshopping\Site\Lib\Csv;
 use Joomla\Component\Jshopping\Site\Lib\UploadFile;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 defined('_JEXEC') or die();
-jimport('joomla.filesystem.folder');
 
 class IeSimpleImport extends IeController{
     
     function view(){
-        $app = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
+        $app = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
         $ie_id = $this->ie_id;
-        $_importexport = \JSFactory::getTable('ImportExport'); 
+        $_importexport = JSFactory::getTable('ImportExport'); 
         $_importexport->load($ie_id);
         $name = $_importexport->get('name');                        
             
-        JToolBarHelper::title(\JText::_('JSHOP_IMPORT'). ' "'.$name.'"', 'generic.png' ); 
-        JToolBarHelper::custom("backtolistie", "arrow-left", 'arrow-left', \JText::_('JSHOP_BACK_TO').' "'.\JText::_('JSHOP_PANEL_IMPORT_EXPORT').'"', false );        
-        JToolBarHelper::spacer();
-        JToolBarHelper::save("save", \JText::_('JSHOP_IMPORT'));    
+        ToolbarHelper::title(Text::_('JSHOP_IMPORT'). ' "'.$name.'"', 'generic.png' ); 
+        ToolbarHelper::custom("backtolistie", "arrow-left", 'arrow-left', Text::_('JSHOP_BACK_TO').' "'.Text::_('JSHOP_PANEL_IMPORT_EXPORT').'"', false );        
+        ToolbarHelper::spacer();
+        ToolbarHelper::save("save", Text::_('JSHOP_IMPORT'));    
         
         include(dirname(__FILE__)."/form.php");  
     }
 
     function save(){
-        $app = \JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
+        $app = Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
         
         $ie_id = $app->input->getInt("ie_id");
         if (!$ie_id) $ie_id = $this->get('ie_id');
         
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();
         
-        $_importexport = \JSFactory::getTable('ImportExport'); 
+        $_importexport = JSFactory::getTable('ImportExport'); 
         $_importexport->load($ie_id);
         $alias = $_importexport->get('alias');
         $_importexport->set('endstart', time());
@@ -63,7 +68,7 @@ class IeSimpleImport extends IeController{
             $listCat[$row->name] = $row->id;
         }
         
-        $_products = \JSFactory::getModel('products');
+        $_products = JSFactory::getModel('products');
         
         $dir = $jshopConfig->importexport_path.$alias."/";
         
@@ -81,7 +86,7 @@ class IeSimpleImport extends IeController{
                                         
                     $tax_value = intval($row[5]);                    
                     if (!isset($listTax[$tax_value])){
-                        $tax = \JSFactory::getTable('tax');
+                        $tax = JSFactory::getTable('tax');
                         $tax->set('tax_name', $tax_value);
                         $tax->set('tax_value', $tax_value);
                         $tax->store();
@@ -90,7 +95,7 @@ class IeSimpleImport extends IeController{
                     
                     $category_name = $row['6'];
                     if (!isset($listCat[$category_name]) && $category_name!=""){
-                        $cat = \JSFactory::getTable("category");
+                        $cat = JSFactory::getTable("category");
                         $query = "SELECT max(ordering) FROM `#__jshopping_categories`";
                         $db->setQuery($query);        
                         $ordering = $db->loadResult() + 1;
@@ -104,7 +109,7 @@ class IeSimpleImport extends IeController{
                     }
                     
                     
-                    $product = \JSFactory::getTable('product');
+                    $product = JSFactory::getTable('product');
                     $product->set("product_ean", $row[1]);
                     $product->set("product_quantity", $row[2]);
                     $product->set("product_date_added", $row[3]);
@@ -127,7 +132,7 @@ class IeSimpleImport extends IeController{
             }
             @unlink($filename);
         }else{            
-            \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_UPLOADING'));
+            JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING'));
         }
                 
         if (!$app->input->getInt("noredirect")){

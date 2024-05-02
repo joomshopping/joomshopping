@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class ProductToFieldTable extends ShopbaseTable{
@@ -16,7 +17,7 @@ class ProductToFieldTable extends ShopbaseTable{
     }
 	
 	public function store($updateNulls = false){
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$this->delete();
 		$db->insertObject($this->_tbl, $this, $this->_tbl_keys[0]);
 	}

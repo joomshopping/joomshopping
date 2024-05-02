@@ -7,6 +7,11 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 
 defined( '_JEXEC' ) or die();
@@ -14,8 +19,8 @@ defined( '_JEXEC' ) or die();
 class ExtTaxesController extends BaseadminController{
     
     function init(){
-        \JSHelperAdmin::checkAccessController("exttaxes");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("exttaxes");
+        HelperAdmin::addSubmenu("other");
     }
     
     public function getUrlListItems(){
@@ -29,17 +34,17 @@ class ExtTaxesController extends BaseadminController{
     }
 
     function display($cachable = false, $urlparams = false){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $back_tax_id = $this->input->getInt("back_tax_id");
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.exttaxes";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ET.id", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         
-        $taxes = \JSFactory::getModel("taxes");
+        $taxes = JSFactory::getModel("taxes");
         $rows = $taxes->getExtTaxes($back_tax_id, $filter_order, $filter_order_Dir);
         
-        $countries = \JSFactory::getModel("countries");
+        $countries = JSFactory::getModel("countries");
         $list = $countries->getAllCountries(0);
         $countries_name = array();
         foreach($list as $v){
@@ -70,18 +75,18 @@ class ExtTaxesController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforedisplayExtTax', array(&$view)); 
         $view->displayList();
     }
 
     function edit(){
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
-        $jshopConfig = \JSFactory::getConfig();
+        Factory::getApplication()->input->set('hidemainmenu', true);
+        $jshopConfig = JSFactory::getConfig();
         $back_tax_id = $this->input->getInt("back_tax_id");
         $id = $this->input->getInt("id");
         
-        $tax = \JSFactory::getTable('taxext');
+        $tax = JSFactory::getTable('taxext');
         $tax->load($id);
         
         if (!$tax->tax_id && $back_tax_id){
@@ -96,12 +101,12 @@ class ExtTaxesController extends BaseadminController{
             $zone_countries[] = $obj;
         }
 
-        $lists['taxes'] = \JHTML::_('select.genericlist', SelectOptions::getTaxs(), 'tax_id', 'class="form-select"', 'tax_id', 'tax_name', $tax->tax_id);
-        $lists['countries'] = \JHTML::_('select.genericlist', SelectOptions::getCountrys(0), 'countries_id[]', 'size = "10" class="form-select" multiple="multiple"', 'country_id', 'name', $zone_countries);        
+        $lists['taxes'] = HTMLHelper::_('select.genericlist', SelectOptions::getTaxs(), 'tax_id', 'class="form-select"', 'tax_id', 'tax_name', $tax->tax_id);
+        $lists['countries'] = HTMLHelper::_('select.genericlist', SelectOptions::getCountrys(0), 'countries_id[]', 'size = "10" class="form-select" multiple="multiple"', 'country_id', 'name', $zone_countries);        
 
         $view = $this->getView("taxes_ext", 'html');
         $view->setLayout("edit");
-        \JFilterOutput::objectHTMLSafe($tax, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($tax, ENT_QUOTES);
         $view->set('tax', $tax);
         $view->set('back_tax_id', $back_tax_id);
         $view->set('lists', $lists);
@@ -109,7 +114,7 @@ class ExtTaxesController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditExtTax', array(&$view));
         $view->displayEdit();
     }

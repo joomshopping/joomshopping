@@ -8,12 +8,13 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Model; 
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class LogsModel extends BaseadminModel{
 
     public function getList(){        
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $list = array();
         $dir = $jshopConfig->log_path;
         $dh = opendir($dir);
@@ -29,7 +30,7 @@ class LogsModel extends BaseadminModel{
     }
     
     public function read($file){
-        $jshopConfig = \JSFactory::getConfig();        
+        $jshopConfig = JSFactory::getConfig();        
         $dir = $jshopConfig->log_path;
         if (file_exists($dir.$file)) {
 			return file_get_contents($dir.$file);
@@ -39,7 +40,7 @@ class LogsModel extends BaseadminModel{
     }
 
     public function download($file){
-        $jshopConfig = \JSFactory::getConfig();        
+        $jshopConfig = JSFactory::getConfig();        
         $dir = $jshopConfig->log_path;
         $file_name = $dir.$file;
 		if (!file_exists($file_name)){

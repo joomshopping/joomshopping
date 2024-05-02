@@ -8,14 +8,16 @@
 */
 
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class ImportExportModel extends BaseadminModel{
     
     function getList() {
-        $db = \JFactory::getDBO();                
+        $db = Factory::getDBO();                
         $query = "SELECT * FROM `#__jshopping_import_export` ORDER BY name";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);        
         return $db->loadObjectList();
     }

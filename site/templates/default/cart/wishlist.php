@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
  * @version      5.0.0 15.09.2018
  * @author       MAXXmarketing GmbH
@@ -17,13 +20,13 @@ $countprod = count($this->products);
     <table class="jshop cart cartwishlist" id="comjshop">
         <tr>
             <th class="jshop_img_description_center">
-                <?php print JText::_('JSHOP_IMAGE')?>
+                <?php print Text::_('JSHOP_IMAGE')?>
             </th>
             <th class="product_name">
-                <?php print JText::_('JSHOP_ITEM')?>
+                <?php print Text::_('JSHOP_ITEM')?>
             </th>
             <th class="single_price">
-                <?php print JText::_('JSHOP_SINGLEPRICE')?>
+                <?php print Text::_('JSHOP_SINGLEPRICE')?>
             </th>
             <th class="remove_to_cart">
             </th>
@@ -54,34 +57,34 @@ $countprod = count($this->products);
     				<?php print $prod['_ext_product_name'] ?>
                     <?php if ($prod['manufacturer']!=''){?>
                         <div class="manufacturer">
-                            <?php print JText::_('JSHOP_MANUFACTURER')?>:
+                            <?php print Text::_('JSHOP_MANUFACTURER')?>:
                             <span><?php print $prod['manufacturer']?></span>
                         </div>
                     <?php }?>
                     <?php if ($this->config->manufacturer_code_in_cart && $prod['manufacturer_code']){?>
-                        <div class="manufacturer_code"><?php print JText::_('JSHOP_MANUFACTURER_CODE')?>: <span><?php print $prod['manufacturer_code'] ?></span></div>
+                        <div class="manufacturer_code"><?php print Text::_('JSHOP_MANUFACTURER_CODE')?>: <span><?php print $prod['manufacturer_code'] ?></span></div>
                     <?php }?>
                     <?php if ($this->config->real_ean_in_cart && $prod['real_ean']){?>
-                        <div class="real_ean"><?php print JText::_('JSHOP_EAN')?>: <span><?php print $prod['real_ean'] ?></span></div>
+                        <div class="real_ean"><?php print Text::_('JSHOP_EAN')?>: <span><?php print $prod['real_ean'] ?></span></div>
                     <?php }?>
-                    <?php print \JSHelper::sprintAtributeInCart($prod['attributes_value']);?>
-                    <?php print \JSHelper::sprintFreeAtributeInCart($prod['free_attributes_value']);?>
-                    <?php print \JSHelper::sprintFreeExtraFiledsInCart($prod['extra_fields']);?>
+                    <?php print Helper::sprintAtributeInCart($prod['attributes_value']);?>
+                    <?php print Helper::sprintFreeAtributeInCart($prod['free_attributes_value']);?>
+                    <?php print Helper::sprintFreeExtraFiledsInCart($prod['extra_fields']);?>
                     <?php print $prod['_ext_attribute_html']?>
                 </div>
             </td>
             <td class="single_price">
                 <div class="data">
                     <span class="price">
-    					<?php print \JSHelper::formatprice($prod['price'])?>
+    					<?php print Helper::formatprice($prod['price'])?>
     				</span>
                     <?php print $prod['_ext_price_html']?>
                     <?php if ($this->config->show_tax_product_in_cart && $prod['tax']>0){?>
-                        <span class="taxinfo"><?php print \JSHelper::productTaxInfo($prod['tax']);?></span>
+                        <span class="taxinfo"><?php print Helper::productTaxInfo($prod['tax']);?></span>
                     <?php }?>
                     <?php if ($this->config->cart_basic_price_show && $prod['basicprice']>0){?>
                         <div class="basic_price">
-                            <?php print JText::_('JSHOP_BASIC_PRICE')?>: <span><?php print \JSHelper::sprintBasicPrice($prod);?></span>
+                            <?php print Text::_('JSHOP_BASIC_PRICE')?>: <span><?php print Helper::sprintBasicPrice($prod);?></span>
                         </div>
                     <?php }?>
                 </div>
@@ -89,10 +92,10 @@ $countprod = count($this->products);
             <td class="remove_to_cart">
                 <div class="data">
                     <a class="btn btn-success" href="<?php print $prod['remove_to_cart'] ?>" >
-                        <?php print JText::_('JSHOP_REMOVE_TO_CART')?>
+                        <?php print Text::_('JSHOP_REMOVE_TO_CART')?>
                     </a>
-                    <a class="button-img btn-danger btn" href="<?php print $prod['href_delete']?>" onclick="return confirm('<?php print JText::_('JSHOP_CONFIRM_REMOVE')?>')">
-                        <?php print JText::_('JSHOP_DELETE')?>
+                    <a class="button-img btn-danger btn" href="<?php print $prod['href_delete']?>" onclick="return confirm('<?php print Text::_('JSHOP_CONFIRM_REMOVE')?>')">
+                        <?php print Text::_('JSHOP_DELETE')?>
                     </a>
                 </div>
             </td>
@@ -104,7 +107,7 @@ $countprod = count($this->products);
         ?>
     </table>
 <?php else : ?>
-    <div class="wishlist_empty_text"><?php print JText::_('JSHOP_WISHLIST_EMPTY') ?></div>
+    <div class="wishlist_empty_text"><?php print Text::_('JSHOP_WISHLIST_EMPTY') ?></div>
 <?php endif; ?>
 
 <?php print $this->_tmp_html_before_buttons?>
@@ -114,13 +117,13 @@ $countprod = count($this->products);
 
         <div class="pull-left">
             <a href="<?php print $this->href_shop ?>" class="btn btn-arrow-left btn-secondary">
-                <?php print JText::_('JSHOP_BACK_TO_SHOP')?>
+                <?php print Text::_('JSHOP_BACK_TO_SHOP')?>
             </a>
         </div>
 
         <div class="pull-right">
             <a href="<?php print $this->href_checkout ?>" class="btn btn-arrow-right btn-secondary">
-                <?php print JText::_('JSHOP_GO_TO_CART')?>
+                <?php print Text::_('JSHOP_GO_TO_CART')?>
             </a>
         </div>
     </div>

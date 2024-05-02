@@ -1,4 +1,8 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -11,17 +15,17 @@ $rows = $this->rows;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-    <?php JSHelperAdmin::displaySubmenuOptions();?>
+    <?php HelperAdmin::displaySubmenuOptions();?>
     <form action="index.php?option=com_jshopping&controller=logs" method="post" name="adminForm">
         <?php print $this->tmp_html_start?>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th class="title" width="10"> # </th>
-                    <th align="left"><?php echo JText::_('JSHOP_TITLE')?></th>
-                    <th align="left"><?php echo JText::_('JSHOP_DATE')?></th>
-                    <th align="left"><?php echo JText::_('JSHOP_SIZE')?></th>
-                    <th class="center"><?php echo JText::_('JSHOP_DOWNLOAD')?></th>
+                    <th align="left"><?php echo Text::_('JSHOP_TITLE')?></th>
+                    <th align="left"><?php echo Text::_('JSHOP_DATE')?></th>
+                    <th align="left"><?php echo Text::_('JSHOP_SIZE')?></th>
+                    <th class="center"><?php echo Text::_('JSHOP_DOWNLOAD')?></th>
                 </tr>
             </thead>
             <?php $i = 0; ?>
@@ -56,6 +60,6 @@ $rows = $this->rows;
 </div>
 <script>
 jQuery(function() {
-    jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+    jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Dispatcher;
+use Joomla\CMS\Factory;
 
 defined('JPATH_PLATFORM') or die;
 
@@ -26,7 +27,7 @@ class Dispatcher extends ComponentDispatcher {
                 $name = 'category';
             }
         }
-        \JFactory::getApplication()->triggerEvent('onAfterGetJsFrontRequestController', array(&$name));
+        Factory::getApplication()->triggerEvent('onAfterGetJsFrontRequestController', array(&$name));
 
 		return parent::getController($name, $client, $config);
 	}

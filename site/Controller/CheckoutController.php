@@ -7,6 +7,13 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 use Joomla\Component\Jshopping\Site\Helper\Selects;
 defined('_JEXEC') or die();
@@ -14,10 +21,10 @@ defined('_JEXEC') or die();
 class CheckoutController extends BaseController{
 
     public function init(){
-        \JPluginHelper::importPlugin('jshoppingcheckout');
-        \JPluginHelper::importPlugin('jshoppingorder');
+        PluginHelper::importPlugin('jshoppingcheckout');
+        PluginHelper::importPlugin('jshoppingorder');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerCheckout', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerCheckout', array(&$obj));
     }
 
     function display($cachable = false, $urlparams = false){
@@ -25,22 +32,22 @@ class CheckoutController extends BaseController{
     }
 
     function step2(){
-        $checkout = \JSFactory::getModel('checkout', 'Site');
+        $checkout = JSFactory::getModel('checkout', 'Site');
         $checkout->checkStep(2);
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onLoadCheckoutStep2', array());
 
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
 
         $checkLogin = $this->input->getInt('check_login');
         if ($checkLogin){
-            \JSFactory::getModel('userlogin', 'Site')->setPayWithoutReg();
-            \JSHelper::checkUserLogin();
+            JSFactory::getModel('userlogin', 'Site')->setPayWithoutReg();
+            Helper::checkUserLogin();
         }
 
 		Metadata::checkoutAddress();
 
-        $adv_user = \JSFactory::getUser()->loadDataFromEdit();
+        $adv_user = JSFactory::getUser()->loadDataFromEdit();
 
         $config_fields = $jshopConfig->getListFieldsRegisterType('address');
         $cssreq_fields = $jshopConfig->getListFieldsRegisterTypeClassRequired('address', $config_fields);
@@ -55,7 +62,7 @@ class CheckoutController extends BaseController{
 		$select_d_titles = Selects::getTitle($adv_user->d_title, null, 'd_title');
 		$select_client_types = Selects::getClientType($adv_user->client_type);
 
-        \JSHelper::filterHTMLSafe($adv_user, ENT_QUOTES);
+        Helper::filterHTMLSafe($adv_user, ENT_QUOTES);
 
         $view = $this->getView("checkout");
         $view->setLayout("adress");
@@ -66,7 +73,7 @@ class CheckoutController extends BaseController{
         $view->set('select_titles', $select_titles);
         $view->set('select_d_titles', $select_d_titles);
         $view->set('select_client_types', $select_client_types);
-        $view->set('live_path', \JURI::base());
+        $view->set('live_path', Uri::base());
         $view->set('config_fields', $config_fields);
         $view->set('cssreq_fields', $cssreq_fields);
         $view->set('count_filed_delivery', $count_filed_delivery);
@@ -84,19 +91,19 @@ class CheckoutController extends BaseController{
         $view->_tmp_ext_html_address_end = "";
         $view->_tmpl_address_html_8 = "";
         $view->_tmpl_address_html_9 = "";
-        $view->set('action', \JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl('step2save', 0, 0));
+        $view->set('action', JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl('step2save', 0, 0));
         $dispatcher->triggerEvent('onBeforeDisplayCheckoutStep2View', array(&$view));
         $view->display();
     }
 
     function step2save(){
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
-		$model = \JSFactory::getModel('useredit', 'Site');
-		$adv_user = \JSFactory::getUser();
-		$user = \JFactory::getUser();
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
-		$checkout = \JSFactory::getModel('checkout', 'Site');
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
+		$model = JSFactory::getModel('useredit', 'Site');
+		$adv_user = JSFactory::getUser();
+		$user = Factory::getUser();
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
+		$checkout = JSFactory::getModel('checkout', 'Site');
         $checkout->checkStep(2);
 
 		$post = $this->input->post->getArray();
@@ -104,13 +111,13 @@ class CheckoutController extends BaseController{
 
         $dispatcher->triggerEvent('onLoadCheckoutStep2save', array(&$post));
 
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->load();
 
 		$model->setUser($adv_user);
 		$model->setData($post);
 		if (!$model->check("address")){
-            \JSError::raiseWarning('', $model->getError());
+            JSError::raiseWarning('', $model->getError());
             $this->setRedirect($back_url );
             return 0;
         }
@@ -118,12 +125,12 @@ class CheckoutController extends BaseController{
         $dispatcher->triggerEvent('onBeforeSaveCheckoutStep2', array(&$adv_user, &$user, &$cart, &$model));
 
 		if (!$model->save()){
-            \JSError::raiseWarning('500', $model->getError());
+            JSError::raiseWarning('500', $model->getError());
             $this->setRedirect($back_url);
             return 0;
         }
 
-        \JSHelper::setNextUpdatePrices();
+        Helper::setNextUpdatePrices();
 		$checkout->setCart($cart);
 		$checkout->setEmptyCheckoutPrices();
 
@@ -135,12 +142,12 @@ class CheckoutController extends BaseController{
     }
 
     function step3(){
-		$jshopConfig = \JSFactory::getConfig();
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
-        $checkout = \JSFactory::getModel('checkoutPayment', 'Site');
+		$jshopConfig = JSFactory::getConfig();
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
+        $checkout = JSFactory::getModel('checkoutPayment', 'Site');
     	$checkout->checkStep(3);
 
-		$dispatcher = \JFactory::getApplication();
+		$dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onLoadCheckoutStep3', array() );
 
 		if ($jshopConfig->without_payment){
@@ -150,11 +157,11 @@ class CheckoutController extends BaseController{
             return 0;
         }
 
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->load();
 		$checkout->setCart($cart);
 
-        $adv_user = \JSFactory::getUser();
+        $adv_user = JSFactory::getUser();
 
         Metadata::checkoutPayment();
 
@@ -167,7 +174,7 @@ class CheckoutController extends BaseController{
 
         if ($jshopConfig->hide_payment_step){
             if (!$first_payment_class){
-                \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_PAYMENT'));
+                JSError::raiseWarning("", Text::_('JSHOP_ERROR_PAYMENT'));
                 return 0;
             }
             $this->setRedirect($checkoutStep->getCheckoutUrl('step3save&payment_method='.$first_payment_class));
@@ -188,26 +195,26 @@ class CheckoutController extends BaseController{
     }
 
     function step3save(){
-        $checkout = \JSFactory::getModel('checkoutPayment', 'Site');
+        $checkout = JSFactory::getModel('checkoutPayment', 'Site');
         $checkout->checkStep(3);
 
-		$dispatcher = \JFactory::getApplication();
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
+		$dispatcher = Factory::getApplication();
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
         $post = $this->input->post->getArray();
 
         $dispatcher->triggerEvent('onBeforeSaveCheckoutStep3save', array(&$post) );
 
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->load();
 		$checkout->setCart($cart);
 
-        $adv_user = \JSFactory::getUser();
+        $adv_user = JSFactory::getUser();
 
         $payment_method = $this->input->getVar('payment_method'); //class payment method
         $params = $this->input->getVar('params');
 
 		if (!$checkout->savePaymentData($payment_method, $params, $adv_user)){
-			\JSError::raiseWarning('', $checkout->getError());
+			JSError::raiseWarning('', $checkout->getError());
             $this->setRedirect($checkoutStep->getCheckoutUrl('3'));
             return 0;
 		}
@@ -221,16 +228,16 @@ class CheckoutController extends BaseController{
     }
 
     function step4(){
-		$dispatcher = \JFactory::getApplication();
-        $checkout = \JSFactory::getModel('checkoutShipping', 'Site');
+		$dispatcher = Factory::getApplication();
+        $checkout = JSFactory::getModel('checkoutShipping', 'Site');
         $checkout->checkStep(4);
-        $jshopConfig = \JSFactory::getConfig();
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
+        $jshopConfig = JSFactory::getConfig();
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
 
 		$dispatcher->triggerEvent('onLoadCheckoutStep4', array());
 
 		if ($jshopConfig->without_shipping){
-			$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
+			$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
 			$next_step = $checkoutStep->getNextStep(4);
 			$checkout->setMaxStep($next_step);
 			$this->setRedirect($checkoutStep->getCheckoutUrl($next_step));
@@ -239,28 +246,28 @@ class CheckoutController extends BaseController{
 
         Metadata::checkoutShipping();
 
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->load();
 		$checkout->setCart($cart);
-        $adv_user = \JSFactory::getUser();
+        $adv_user = JSFactory::getUser();
 
         $checkout_navigator = $checkout->showCheckoutNavigation(4);
         $small_cart = $checkout->loadSmallCart(4);
 
 		$shippings = $checkout->getCheckoutListShippings($adv_user);
 		if ($shippings===false){
-			\JSError::raiseWarning("", $checkout->getError());
+			JSError::raiseWarning("", $checkout->getError());
 			return 0;
 		}
 		if (count($shippings)==0 && $jshopConfig->checkout_step4_show_error_shipping_config){
-			\JSError::raiseWarning("", \JText::_('JSHOP_ERROR_SHIPPING'));
+			JSError::raiseWarning("", Text::_('JSHOP_ERROR_SHIPPING'));
 		}
 		$active_shipping = $checkout->getCheckoutActiveShipping($shippings, $adv_user);
 
         if ($jshopConfig->hide_shipping_step){
             $first_shipping = $checkout->getCheckoutFirstShipping($shippings);
             if (!$first_shipping){
-                \JSError::raiseWarning("", \JText::_('JSHOP_ERROR_SHIPPING'));
+                JSError::raiseWarning("", Text::_('JSHOP_ERROR_SHIPPING'));
                 return 0;
             }
             $this->setRedirect($checkoutStep->getCheckoutUrl('step4save&sh_pr_method_id='.$first_shipping));
@@ -282,23 +289,23 @@ class CheckoutController extends BaseController{
     }
 
     function step4save(){
-        $checkout = \JSFactory::getModel('checkoutShipping', 'Site');
+        $checkout = JSFactory::getModel('checkoutShipping', 'Site');
     	$checkout->checkStep(4);
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
 
-		$dispatcher = \JFactory::getApplication();
+		$dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveCheckoutStep4save', array());
 
 		$sh_pr_method_id = $this->input->getInt('sh_pr_method_id');
 		$allparams = $this->input->getVar('params');
 
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->load();
 		$checkout->setCart($cart);
-        $adv_user = \JSFactory::getUser();
+        $adv_user = JSFactory::getUser();
 
 		if (!$checkout->saveShippingData($sh_pr_method_id, $allparams, $adv_user)){
-			\JSError::raiseWarning('', $checkout->getError());
+			JSError::raiseWarning('', $checkout->getError());
             $this->setRedirect($checkoutStep->getCheckoutUrl('4'));
             return 0;
 		}
@@ -317,19 +324,19 @@ class CheckoutController extends BaseController{
     }
 
     function step5(){
-        $checkout = \JSFactory::getModel('checkout', 'Site');
+        $checkout = JSFactory::getModel('checkout', 'Site');
         $checkout->checkStep(5);
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onLoadCheckoutStep5', array());
 
         Metadata::checkoutPreview();
 
-        $cart = \JSFactory::getModel('cart', 'Site');
+        $cart = JSFactory::getModel('cart', 'Site');
         $cart->load();
 		$checkout->setCart($cart);
 
-        $jshopConfig = \JSFactory::getConfig();
-        $adv_user = \JSFactory::getUser();
+        $jshopConfig = JSFactory::getConfig();
+        $adv_user = JSFactory::getUser();
         $sh_method = $checkout->getShippingMethod();
 		$delivery_time = $checkout->getDeliveryTime();
 		$delivery_date = $checkout->getDeliveryDateShow();
@@ -351,7 +358,7 @@ class CheckoutController extends BaseController{
 		$view->set('payment_name', $pm_method->getName());
         $view->set('delivery_info', $delivery_info);
 		$view->set('invoice_info', $invoice_info);
-        $view->set('action', \JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl('step5save', 0, 0));
+        $view->set('action', JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl('step5save', 0, 0));
         $view->set('config', $jshopConfig);
         $view->set('delivery_time', $delivery_time);
         $view->set('delivery_date', $delivery_date);
@@ -367,28 +374,28 @@ class CheckoutController extends BaseController{
     }
 
     function step5save(){
-		$session = \JFactory::getSession();
-        $jshopConfig = \JSFactory::getConfig();
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
-        $checkout = \JSFactory::getModel('checkoutOrder', 'Site');
+		$session = Factory::getSession();
+        $jshopConfig = JSFactory::getConfig();
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
+        $checkout = JSFactory::getModel('checkoutOrder', 'Site');
         $checkout->checkStep(5);
 
 		$checkagb = $this->input->getVar('agb');
 		$post = $this->input->post->getArray();
 		$back_url = $checkoutStep->getCheckoutUrl('5');
-		$cart_url = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view', 1, 1);
+		$cart_url = Helper::SEFLink('index.php?option=com_jshopping&controller=cart&task=view', 1, 1);
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
 		$dispatcher->triggerEvent('onLoadStep5save', array(&$checkagb));
 
-        $adv_user = \JSFactory::getUser();
-        $cart = \JSFactory::getModel('cart', 'Site')->init();
+        $adv_user = JSFactory::getUser();
+        $cart = JSFactory::getModel('cart', 'Site')->init();
         $cart->setDisplayItem(1, 1);
 
 		$checkout->setCart($cart);
 
 		if (!$checkout->checkAgb($checkagb)){
-			\JSError::raiseWarning("", $checkout->getError());
+			JSError::raiseWarning("", $checkout->getError());
             $this->setRedirect($back_url);
             return 0;
 		}
@@ -397,7 +404,7 @@ class CheckoutController extends BaseController{
             return 0;
         }
 		if ($jshopConfig->step5_check_coupon && !$checkout->checkCoupon()){
-			\JSError::raiseWarning("", $checkout->getError());
+			JSError::raiseWarning("", $checkout->getError());
             $this->setRedirect($cart_url);
             return 0;
 		}
@@ -427,10 +434,10 @@ class CheckoutController extends BaseController{
     }
 
     function step6iframe(){
-        $checkout = \JSFactory::getModel('checkout', 'Site');
+        $checkout = JSFactory::getModel('checkout', 'Site');
         $checkout->checkStep(6);
-        $session = \JFactory::getSession();
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
+        $session = Factory::getSession();
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
 
         $width = $session->get("jsps_iframe_width");
         $height = $session->get("jsps_iframe_height");
@@ -438,7 +445,7 @@ class CheckoutController extends BaseController{
         if (!$height) $height = 600;
 		$url = $checkoutStep->getCheckoutUrl('step6&wmiframe=1');
 
-        \JFactory::getApplication()->triggerEvent('onBeforeStep6Iframe', array(&$width, &$height, &$url));
+        Factory::getApplication()->triggerEvent('onBeforeStep6Iframe', array(&$width, &$height, &$url));
 
 		$view = $this->getView("checkout");
         $view->setLayout("step6iframe");
@@ -449,17 +456,17 @@ class CheckoutController extends BaseController{
     }
 
     function step6(){
-        $checkout = \JSFactory::getModel('checkoutOrder', 'Site');
+        $checkout = JSFactory::getModel('checkoutOrder', 'Site');
         $checkout->checkStep(6);
-        $jshopConfig = \JSFactory::getConfig();
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
+        $jshopConfig = JSFactory::getConfig();
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
 
         header("Cache-Control: no-cache, must-revalidate");
         $order_id = $checkout->getEndOrderId();
         $wmiframe = $this->input->getInt("wmiframe");
 
         if (!$order_id){
-            \JSError::raiseWarning("", \JText::_('JSHOP_SESSION_FINISH'));
+            JSError::raiseWarning("", Text::_('JSHOP_SESSION_FINISH'));
             if (!$wmiframe){
                 $this->setRedirect($checkoutStep->getCheckoutUrl('5'));
             }else{
@@ -485,11 +492,11 @@ class CheckoutController extends BaseController{
     }
 
     function step7(){
-        $checkout = \JSFactory::getModel('checkoutBuy', 'Site');
+        $checkout = JSFactory::getModel('checkoutBuy', 'Site');
         $wmiframe = $this->input->getInt("wmiframe");
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
 
-        \JFactory::getApplication()->triggerEvent('onLoadStep7', array());
+        Factory::getApplication()->triggerEvent('onLoadStep7', array());
 
 		$act = $this->input->getVar("act");
         $payment_method = $this->input->getVar("js_paymentclass");
@@ -502,7 +509,7 @@ class CheckoutController extends BaseController{
 		$checkout->setPaymentMethodClass($payment_method);
 		$checkout->setNoLang($no_lang);
 		if (!$checkout->loadUrlParams()){
-			\JSError::raiseWarning('', $checkout->getError());
+			JSError::raiseWarning('', $checkout->getError());
             return 0;
 		}
 
@@ -525,7 +532,7 @@ class CheckoutController extends BaseController{
 		$codebuy = $checkout->buy();
 
 		if ($codebuy==0){
-			\JSError::raiseWarning('', $checkout->getError());
+			JSError::raiseWarning('', $checkout->getError());
             return 0;
 		}
 		if ($codebuy==2){
@@ -533,7 +540,7 @@ class CheckoutController extends BaseController{
 		}
 
         if ($checkout->checkTransactionNoBuyCode()){
-            \JSError::raiseWarning(500, $checkout->getCheckTransactionResText());
+            JSError::raiseWarning(500, $checkout->getCheckTransactionResText());
             if (!$wmiframe){
                 $this->setRedirect($checkoutStep->getCheckoutUrl('5'));
             }else{
@@ -552,16 +559,16 @@ class CheckoutController extends BaseController{
     }
 
     function finish(){
-        $checkout = \JSFactory::getModel('checkoutFinish', 'Site');
+        $checkout = JSFactory::getModel('checkoutFinish', 'Site');
         $checkout->checkStep(10);
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $order_id = $checkout->getEndOrderId();
 		$text = $checkout->getFinishStaticText();
 		$text_end = '';
 		
         Metadata::checkoutFinish();
 
-        \JFactory::getApplication()->triggerEvent('onBeforeDisplayCheckoutFinish', array(&$text, &$order_id, &$text_end));
+        Factory::getApplication()->triggerEvent('onBeforeDisplayCheckoutFinish', array(&$text, &$order_id, &$text_end));
 
         $view = $this->getView("checkout");
         $view->setLayout("finish");
@@ -577,16 +584,16 @@ class CheckoutController extends BaseController{
     }
 
     function cancelPayOrder($order_id=""){
-        $jshopConfig = \JSFactory::getConfig();
-        $checkout = \JSFactory::getModel('checkout', 'Site');
-		$checkoutStep = \JSFactory::getModel('checkoutStep', 'Site');
+        $jshopConfig = JSFactory::getConfig();
+        $checkout = JSFactory::getModel('checkout', 'Site');
+		$checkoutStep = JSFactory::getModel('checkoutStep', 'Site');
         $wmiframe = $this->input->getInt("wmiframe");
 
         if (!$order_id){
 			$order_id = $checkout->getEndOrderId();
 		}
         if (!$order_id){
-            \JSError::raiseWarning("", \JText::_('JSHOP_SESSION_FINISH'));
+            JSError::raiseWarning("", Text::_('JSHOP_SESSION_FINISH'));
             if (!$wmiframe){
                 $this->setRedirect($checkoutStep->getCheckoutUrl('5'));
             }else{
@@ -597,7 +604,7 @@ class CheckoutController extends BaseController{
 
         $checkout->cancelPayOrder($order_id);
 
-        \JSError::raiseWarning("", \JText::_('JSHOP_PAYMENT_CANCELED'));
+        JSError::raiseWarning("", Text::_('JSHOP_PAYMENT_CANCELED'));
         if (!$wmiframe){
             $this->setRedirect($checkoutStep->getCheckoutUrl('5'));
         }else{
@@ -608,7 +615,7 @@ class CheckoutController extends BaseController{
 
     function iframeRedirect($url){
         echo "<script>parent.location.href='$url';</script>\n";
-        $mainframe = \JFactory::getApplication();
+        $mainframe = Factory::getApplication();
         $mainframe->close();
     }
 

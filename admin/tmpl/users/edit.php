@@ -1,4 +1,8 @@
 <?php
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -14,14 +18,14 @@ $config_fields=$this->config_fields;
 ?>
 <div class="jshop_edit">
 <form action="index.php?option=com_jshopping&controller=users" method="post" name="adminForm" id="adminForm" autocomplete="off">
-<?php echo \JHTML::_('form.token');?>
+<?php echo HTMLHelper::_('form.token');?>
 <input type="password" name="fkpswd" style="display:none">
 <?php print $this->tmp_html_start?>
 <ul class="joomla-tabs nav nav-tabs">    
-    <li class="nav-item"><a href="#firstpage1" class="nav-link active" data-toggle="tab"><?php echo JText::_('JSHOP_GENERAL')?></a></li>
-    <li class="nav-item"><a href="#secondpage2" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_BILL_TO')?></a></li>
+    <li class="nav-item"><a href="#firstpage1" class="nav-link active" data-toggle="tab"><?php echo Text::_('JSHOP_GENERAL')?></a></li>
+    <li class="nav-item"><a href="#secondpage2" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_BILL_TO')?></a></li>
     <?php if ($this->count_filed_delivery > 0){?>
-        <li class="nav-item"><a href="#thirdpage3" class="nav-link" data-toggle="tab"><?php echo JText::_('JSHOP_SHIP_TO')?></a></li>
+        <li class="nav-item"><a href="#thirdpage3" class="nav-link" data-toggle="tab"><?php echo Text::_('JSHOP_SHIP_TO')?></a></li>
     <?php }?>
 </ul>
 
@@ -32,7 +36,7 @@ $config_fields=$this->config_fields;
     <table class="admintable">
         <tr>
             <td class="key">
-                <?php echo JText::_('JSHOP_USERNAME')?>*
+                <?php echo Text::_('JSHOP_USERNAME')?>*
             </td>
             <td>
                 <input type="text" class="inputbox form-control" name="u_name" value="<?php echo $user->u_name ?>" />
@@ -40,7 +44,7 @@ $config_fields=$this->config_fields;
         </tr>
         <tr>
           <td class="key">
-            <?php echo JText::_('JSHOP_EMAIL')?>*
+            <?php echo Text::_('JSHOP_EMAIL')?>*
           </td>
           <td>
             <input type="text" class="inputbox form-control" name="email" value="<?php echo $user->email ?>" />
@@ -48,7 +52,7 @@ $config_fields=$this->config_fields;
         </tr>
 		<tr>
 		  <td class="key">
-			<?php echo JText::_('JSHOP_NUMBER')?>
+			<?php echo Text::_('JSHOP_NUMBER')?>
 		  </td>
 		  <td>
 			<input type="text" class="inputbox form-control" name="number" value="<?php echo $user->number?>" />
@@ -56,7 +60,7 @@ $config_fields=$this->config_fields;
 		</tr>
         <tr>
             <td class="key">
-                <?php echo JText::_('JSHOP_NEW_PASSWORD')?>
+                <?php echo Text::_('JSHOP_NEW_PASSWORD')?>
             </td>
             <td>
                 <input class="inputbox form-control" type="password" name="password"/>
@@ -64,16 +68,16 @@ $config_fields=$this->config_fields;
         </tr>
         <tr>
             <td class="key">
-                <?php echo JText::_('JSHOP_PASSWORD_2')?>
+                <?php echo Text::_('JSHOP_PASSWORD_2')?>
             </td>
             <td>
                 <input class="inputbox form-control" type="password" name="password2"/>
             </td>
         </tr>
-        <?php if (\JFactory::getUser()->authorise('core.admin', 'com_jshopping')){?>
+        <?php if (Factory::getUser()->authorise('core.admin', 'com_jshopping')){?>
         <tr>
             <td class="key">
-                <?php echo JText::_('JSHOP_BLOCK_USER')?>
+                <?php echo Text::_('JSHOP_BLOCK_USER')?>
             </td>
             <td>
                 <?php echo $this->lists['block']; ?>
@@ -82,7 +86,7 @@ $config_fields=$this->config_fields;
         <?php } ?>
         <tr>
           <td class="key">
-            <?php echo JText::_('JSHOP_USERGROUP_NAME')?>*
+            <?php echo Text::_('JSHOP_USERGROUP_NAME')?>*
           </td>
           <td>
             <?php echo $lists['usergroups'];?>
@@ -102,7 +106,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['title']['display']){?>
     <tr>
         <td class="key">
-            <?php echo JText::_('JSHOP_USER_TITLE')?>
+            <?php echo Text::_('JSHOP_USER_TITLE')?>
         </td>
         <td>
             <?php echo $lists['select_titles'];?>
@@ -112,7 +116,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['f_name']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_USER_FIRSTNAME')?>
+        <?php echo Text::_('JSHOP_USER_FIRSTNAME')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="f_name" value="<?php echo $user->f_name ?>" />
@@ -122,7 +126,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['l_name']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_USER_LASTNAME')?>
+        <?php echo Text::_('JSHOP_USER_LASTNAME')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="l_name" value="<?php echo $user->l_name ?>" />
@@ -132,7 +136,7 @@ $config_fields=$this->config_fields;
 	<?php if ($config_fields['m_name']['display']){?>
 	<tr>
 	  <td class="key">
-		<?php print JText::_('JSHOP_M_NAME')?>
+		<?php print Text::_('JSHOP_M_NAME')?>
 	  </td>
 	  <td>
 		<input type = "text" name = "m_name" id = "m_name" value = "<?php print $user->m_name ?>" class = "inputbox form-control" />
@@ -142,7 +146,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['firma_name']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_FIRMA_NAME')?>
+        <?php echo Text::_('JSHOP_FIRMA_NAME')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="firma_name" value="<?php echo $user->firma_name ?>" />
@@ -152,7 +156,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['client_type']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_CLIENT_TYPE')?>
+        <?php echo Text::_('JSHOP_CLIENT_TYPE')?>
       </td>
       <td>
         <?php print $lists['select_client_types'];?>
@@ -163,7 +167,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['firma_code']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_FIRMA_CODE')?> 
+        <?php print Text::_('JSHOP_FIRMA_CODE')?> 
       </td>
       <td>
         <input type="text" name="firma_code" id="firma_code" value="<?php print $user->firma_code ?>" class="inputbox form-control" />
@@ -173,7 +177,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['tax_number']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_VAT_NUMBER')?>
+        <?php print Text::_('JSHOP_VAT_NUMBER')?>
       </td>
       <td>
         <input type="text" name="tax_number" id="tax_number" value="<?php print $user->tax_number ?>" class="inputbox form-control" />
@@ -183,17 +187,17 @@ $config_fields=$this->config_fields;
 	<?php if ($config_fields['birthday']['display']){?>
 	<tr>
 	  <td class="key">
-		<?php print JText::_('JSHOP_BIRTHDAY')?>
+		<?php print Text::_('JSHOP_BIRTHDAY')?>
 	  </td>
 	  <td>
-		<?php echo \JHTML::_('calendar', $user->birthday, 'birthday', 'birthday', $this->config->field_birthday_format, array('class'=>'inputbox', 'size'=>'25', 'maxlength'=>'19'));?>
+		<?php echo HTMLHelper::_('calendar', $user->birthday, 'birthday', 'birthday', $this->config->field_birthday_format, array('class'=>'inputbox', 'size'=>'25', 'maxlength'=>'19'));?>
 	  </td>
 	</tr>
 <?php } ?>
     <?php if ($config_fields['home']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_FIELD_HOME')?>
+        <?php echo Text::_('JSHOP_FIELD_HOME')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="home" value="<?php echo $user->home ?>" />
@@ -203,7 +207,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['apartment']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_FIELD_APARTMENT')?>
+        <?php echo Text::_('JSHOP_FIELD_APARTMENT')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="apartment" value="<?php echo $user->apartment ?>" />
@@ -213,7 +217,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['street']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_STREET_NR')?>
+        <?php echo Text::_('JSHOP_STREET_NR')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="street" value="<?php echo $user->street ?>" />
@@ -226,7 +230,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['city']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_CITY')?>
+        <?php echo Text::_('JSHOP_CITY')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="city" value="<?php echo $user->city ?>" />
@@ -236,7 +240,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['zip']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_ZIP')?>
+        <?php echo Text::_('JSHOP_ZIP')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="zip" value="<?php echo $user->zip ?>" />
@@ -246,7 +250,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['state']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_STATE')?>
+        <?php echo Text::_('JSHOP_STATE')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="state" value="<?php echo $user->state ?>" />
@@ -256,7 +260,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['country']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_COUNTRY')?>
+        <?php echo Text::_('JSHOP_COUNTRY')?>
       </td>
       <td>
         <?php echo $lists['country'];?>
@@ -266,7 +270,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['phone']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_TELEFON')?>
+        <?php echo Text::_('JSHOP_TELEFON')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="phone" value="<?php echo $user->phone ?>" />
@@ -276,7 +280,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['mobil_phone']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_MOBIL_PHONE')?>
+        <?php print Text::_('JSHOP_MOBIL_PHONE')?>
       </td>
       <td>
         <input type="text" name="mobil_phone" class = "form-control" id="mobil_phone" value="<?php print $user->mobil_phone ?>" class="inputbox" />
@@ -286,7 +290,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['fax']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_FAX')?>
+        <?php echo Text::_('JSHOP_FAX')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control" name="fax" value="<?php echo $user->fax ?>" />
@@ -296,7 +300,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['ext_field_1']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_EXT_FIELD_1')?>
+        <?php print Text::_('JSHOP_EXT_FIELD_1')?>
       </td>
       <td>
         <input type="text" class="form-control" name="ext_field_1" id="ext_field_1" value="<?php print $user->ext_field_1 ?>" class="inputbox" />
@@ -306,7 +310,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['ext_field_2']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_EXT_FIELD_2')?>
+        <?php print Text::_('JSHOP_EXT_FIELD_2')?>
       </td>
       <td>
         <input type="text" class="form-control" name="ext_field_2" id="ext_field_2" value="<?php print $user->ext_field_2 ?>" class="inputbox" />
@@ -316,7 +320,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['ext_field_3']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_EXT_FIELD_3')?>
+        <?php print Text::_('JSHOP_EXT_FIELD_3')?>
       </td>
       <td>
         <input type="text" class="form-control" name="ext_field_3" id="ext_field_3" value="<?php print $user->ext_field_3 ?>" class="inputbox" />
@@ -337,18 +341,18 @@ $config_fields=$this->config_fields;
     <table class="admintable">
     <tr>
         <td class="key">
-            <?php echo JText::_('JSHOP_DELIVERY_ADRESS')?>
+            <?php echo Text::_('JSHOP_DELIVERY_ADRESS')?>
         </td>
         <td>
-            <input type="radio" name="delivery_adress" <?php if ($user->delivery_adress==0) {?> checked="checked" <?php } ?> value="0" onchange="jshopAdmin.userEditenableFields(this.value)"> <?php echo JText::_('JSHOP_NO')?>
+            <input type="radio" name="delivery_adress" <?php if ($user->delivery_adress==0) {?> checked="checked" <?php } ?> value="0" onchange="jshopAdmin.userEditenableFields(this.value)"> <?php echo Text::_('JSHOP_NO')?>
             &nbsp;
-            <input type="radio" name="delivery_adress" <?php if ($user->delivery_adress==1) {?> checked="checked" <?php } ?> value="1" onchange="jshopAdmin.userEditenableFields(this.value)"> <?php echo JText::_('JSHOP_YES')?>
+            <input type="radio" name="delivery_adress" <?php if ($user->delivery_adress==1) {?> checked="checked" <?php } ?> value="1" onchange="jshopAdmin.userEditenableFields(this.value)"> <?php echo Text::_('JSHOP_YES')?>
         </td>
     </tr>
     <?php if ($config_fields['d_title']['display']){?>
     <tr>
         <td class="key">
-            <?php echo JText::_('JSHOP_USER_TITLE')?>
+            <?php echo Text::_('JSHOP_USER_TITLE')?>
         </td>
         <td>
             <?php echo $lists['select_d_titles'];?>
@@ -358,7 +362,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_f_name']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_USER_FIRSTNAME')?>
+        <?php echo Text::_('JSHOP_USER_FIRSTNAME')?>
       </td>
       <td>
         <input type="text" class="form-control inputbox endes" name="d_f_name" value="<?php echo $user->d_f_name ?>" />
@@ -368,7 +372,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_l_name']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_USER_LASTNAME')?>
+        <?php echo Text::_('JSHOP_USER_LASTNAME')?>
       </td>
       <td>
         <input type="text" class="form-control inputbox endes" name="d_l_name" value="<?php echo $user->d_l_name ?>" />
@@ -378,7 +382,7 @@ $config_fields=$this->config_fields;
 	<?php if ($config_fields['d_m_name']['display']){?>
 	<tr>
 	  <td class="key">
-		<?php print JText::_('JSHOP_M_NAME')?>
+		<?php print Text::_('JSHOP_M_NAME')?>
 	  </td>
 	  <td>
 		<input type = "text" class="form-control endes" name = "d_m_name" id = "d_m_name" value = "<?php print $user->d_m_name ?>" class = "inputbox endes" />
@@ -388,7 +392,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_firma_name']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_FIRMA_NAME')?>
+        <?php echo Text::_('JSHOP_FIRMA_NAME')?>
       </td>
       <td>
         <input type="text" class="form-control inputbox endes" name="d_firma_name" value="<?php echo $user->d_firma_name ?>" />
@@ -398,7 +402,7 @@ $config_fields=$this->config_fields;
 	<?php if ($config_fields['d_email']['display']){ ?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_EMAIL');?>
+        <?php echo Text::_('JSHOP_EMAIL');?>
       </td>
       <td>
         <input type="text" class="form-control inputbox endes" name="d_email" value="<?php echo $user->d_email ?>" />
@@ -408,17 +412,17 @@ $config_fields=$this->config_fields;
 	<?php if ($config_fields['d_birthday']['display']){?>
 	<tr>
 	  <td class="key">
-		<?php print JText::_('JSHOP_BIRTHDAY')?>
+		<?php print Text::_('JSHOP_BIRTHDAY')?>
 	  </td>
 	  <td>
-		<?php echo \JHTML::_('calendar', $user->d_birthday, 'd_birthday', 'd_birthday', $this->config->field_birthday_format, array('class'=>'inputbox endes', 'size'=>'25', 'maxlength'=>'19'));?>
+		<?php echo HTMLHelper::_('calendar', $user->d_birthday, 'd_birthday', 'd_birthday', $this->config->field_birthday_format, array('class'=>'inputbox endes', 'size'=>'25', 'maxlength'=>'19'));?>
 	  </td>
 	</tr>
 	<?php } ?>
     <?php if ($config_fields['d_home']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_FIELD_HOME')?>
+        <?php echo Text::_('JSHOP_FIELD_HOME')?>
       </td>
       <td>
         <input type="text"  class="inputbox form-control endes" name="d_home" value="<?php echo $user->d_home ?>" />
@@ -428,7 +432,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_apartment']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_FIELD_APARTMENT')?>
+        <?php echo Text::_('JSHOP_FIELD_APARTMENT')?>
       </td>
       <td>
         <input type="text" class="inputbox form-control endes" name="d_apartment" value="<?php echo $user->d_apartment ?>" />
@@ -438,7 +442,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_street']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_STREET_NR')?>
+        <?php echo Text::_('JSHOP_STREET_NR')?>
       </td>
       <td>
         <input type="text" class="inputbox endes form-control" name="d_street" value="<?php echo $user->d_street ?>" />
@@ -451,7 +455,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_city']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_CITY')?>
+        <?php echo Text::_('JSHOP_CITY')?>
       </td>
       <td>
         <input type="text" class="inputbox endes form-control" name="d_city" value="<?php echo $user->d_city ?>" />
@@ -461,7 +465,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_zip']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_ZIP')?>
+        <?php echo Text::_('JSHOP_ZIP')?>
       </td>
       <td>
         <input type="text" class="inputbox endes form-control" name="d_zip" value="<?php echo $user->d_zip ?>" />
@@ -471,7 +475,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_state']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_STATE')?>
+        <?php echo Text::_('JSHOP_STATE')?>
       </td>
       <td>
         <input type="text" class="inputbox endes form-control" name="d_state" value="<?php echo $user->d_state ?>" />
@@ -481,7 +485,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_country']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_COUNTRY')?>
+        <?php echo Text::_('JSHOP_COUNTRY')?>
       </td>
       <td>
         <?php echo $lists['d_country'];?>
@@ -491,7 +495,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_phone']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_TELEFON')?>
+        <?php echo Text::_('JSHOP_TELEFON')?>
       </td>
       <td>
         <input type="text" class="inputbox endes form-control" name="d_phone" value="<?php echo $user->d_phone ?>" />
@@ -501,7 +505,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_mobil_phone']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_MOBIL_PHONE')?>
+        <?php print Text::_('JSHOP_MOBIL_PHONE')?>
       </td>
       <td>
         <input type="text" class="form-control" name="d_mobil_phone" id="d_mobil_phone" value="<?php print $user->d_mobil_phone ?>" class="inputbox endes" />
@@ -511,7 +515,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_fax']['display']){?>
     <tr>
       <td class="key">
-        <?php echo JText::_('JSHOP_FAX')?>
+        <?php echo Text::_('JSHOP_FAX')?>
       </td>
       <td>
         <input type="text" class="inputbox endes form-control" name="d_fax" value="<?php echo $user->d_fax ?>" />
@@ -521,7 +525,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_ext_field_1']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_EXT_FIELD_1')?>
+        <?php print Text::_('JSHOP_EXT_FIELD_1')?>
       </td>
       <td>
         <input type="text" class="inputbox endes form-control" name="d_ext_field_1" id="d_ext_field_1" value="<?php print $user->d_ext_field_1 ?>" class="inputbox endes" />
@@ -531,7 +535,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_ext_field_2']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_EXT_FIELD_2')?>
+        <?php print Text::_('JSHOP_EXT_FIELD_2')?>
       </td>
       <td>
         <input type="text" class="inputbox endes form-control" name="d_ext_field_2" id="d_ext_field_2" value="<?php print $user->d_ext_field_2 ?>" class="inputbox endes" />
@@ -541,7 +545,7 @@ $config_fields=$this->config_fields;
     <?php if ($config_fields['d_ext_field_3']['display']){?>
     <tr>
       <td class="key">
-        <?php print JText::_('JSHOP_EXT_FIELD_3')?>
+        <?php print Text::_('JSHOP_EXT_FIELD_3')?>
       </td>
       <td>
         <input type="text" class="inputbox endes form-control" name="d_ext_field_3" id="d_ext_field_3" value="<?php print $user->d_ext_field_3 ?>" class="inputbox endes" />

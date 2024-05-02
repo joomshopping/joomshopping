@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.3.0 06.08.2022
 * @author       MAXXmarketing GmbH
@@ -11,8 +14,8 @@ defined('_JEXEC') or die();
 <div id="attribs-page" class="tab-pane">
 <?php if ( (count($lists['all_independent_attributes'])+count($lists['all_attributes']))>0 ){?>
     <script type="text/javascript">
-        jshopAdmin.lang_error_attribute="<?php print JText::_('JSHOP_ERROR_ADD_ATTRIBUTE')?>";
-        jshopAdmin.lang_attribute_exist="<?php print JText::_('JSHOP_ATTRIBUTE_EXIST')?>";
+        jshopAdmin.lang_error_attribute="<?php print Text::_('JSHOP_ERROR_ADD_ATTRIBUTE')?>";
+        jshopAdmin.lang_attribute_exist="<?php print Text::_('JSHOP_ATTRIBUTE_EXIST')?>";
         jshopAdmin.folder_image_attrib="<?php print $jshopConfig->image_attributes_live_path?>";
         jshopAdmin.use_basic_price="<?php print $jshopConfig->admin_show_product_basic_price?>";
         jshopAdmin.use_bay_price="<?php print $jshopConfig->admin_show_product_bay_price?>";
@@ -64,31 +67,31 @@ defined('_JEXEC') or die();
                 <th class="atr"><?php echo $value->name?></th>
             <?php } ?>
         <?php } ?>
-            <th><?php print JText::_('JSHOP_PRICE')?></th>
+            <th><?php print Text::_('JSHOP_PRICE')?></th>
             <?php print $this->dep_attr_td_header?>
 			<?php if ($jshopConfig->stock){?>
-                <th><?php print JText::_('JSHOP_QUANTITY_PRODUCT')?></th>
+                <th><?php print Text::_('JSHOP_QUANTITY_PRODUCT')?></th>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['product_ean'] == 0){?>
-                <th><?php print JText::_('JSHOP_EAN_PRODUCT')?></th>
+                <th><?php print Text::_('JSHOP_EAN_PRODUCT')?></th>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['manufacturer_code'] == 0){?>
-                <th><?php print JText::_('JSHOP_MANUFACTURER_CODE')?></th>
+                <th><?php print Text::_('JSHOP_MANUFACTURER_CODE')?></th>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['real_ean'] == 0){?>
-                <th><?php print JText::_('JSHOP_EAN')?></th>
+                <th><?php print Text::_('JSHOP_EAN')?></th>
             <?php }?>
 			<?php if ($jshopConfig->admin_show_weight){?>
-                <th><?php print JText::_('JSHOP_PRODUCT_WEIGHT')?> (<?php print \JSHelper::sprintUnitWeight()?>)</th>
+                <th><?php print Text::_('JSHOP_PRODUCT_WEIGHT')?> (<?php print Helper::sprintUnitWeight()?>)</th>
 			<?php }?>
             <?php if ($jshopConfig->admin_show_product_basic_price){?>
-                <th><?php print JText::_('JSHOP_WEIGHT_VOLUME_UNITS')?></th>
+                <th><?php print Text::_('JSHOP_WEIGHT_VOLUME_UNITS')?></th>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['product_old_price'] == 0){?>
-                <th><?php print JText::_('JSHOP_OLD_PRICE')?></th>
+                <th><?php print Text::_('JSHOP_OLD_PRICE')?></th>
             <?php }?>
             <?php if ($jshopConfig->admin_show_product_bay_price){?>
-                <th><?php print JText::_('JSHOP_PRODUCT_BUY_PRICE')?></th>
+                <th><?php print Text::_('JSHOP_PRODUCT_BUY_PRICE')?></th>
             <?php }?>
             <th class="attr_adt_val"></th>
             <th class="center attr_td_del">
@@ -144,7 +147,7 @@ defined('_JEXEC') or die();
                 }
                 print "<td>";
                 if ($jshopConfig->use_extend_attribute_data){
-                    print "<a class='btn btn-sm btn-secondary' target='_blank' href='index.php?option=com_jshopping&controller=products&task=edit&product_attr_id=".$v->product_attr_id."' onclick='jshopAdmin.editAttributeExtendParams(".$v->product_attr_id.");return false;'>".JText::_('JSHOP_ATTRIBUTE_EXTEND_PARAMS')."</a>";
+                    print "<a class='btn btn-sm btn-secondary' target='_blank' href='index.php?option=com_jshopping&controller=products&task=edit&product_attr_id=".$v->product_attr_id."' onclick='jshopAdmin.editAttributeExtendParams(".$v->product_attr_id.");return false;'>".Text::_('JSHOP_ATTRIBUTE_EXTEND_PARAMS')."</a>";
                 }
                 print "</td>";
                 print "<td class='center'><input type='hidden' name='product_attr_id[]' value='".$v->product_attr_id."'><input type='checkbox' class='ch_attr_delete' value='".$attr_tmp_row_num."'></td>";
@@ -155,13 +158,13 @@ defined('_JEXEC') or die();
         </tbody>
         </table>
         <div class="text-end">
-            <input type='button' class='btn btn-danger' value='<?php echo JText::_('JSHOP_DELETE')?>' onclick='jshopAdmin.deleteListAttr()'>
+            <input type='button' class='btn btn-danger' value='<?php echo Text::_('JSHOP_DELETE')?>' onclick='jshopAdmin.deleteListAttr()'>
         </div>
         <br/>
 
         <div class="col width-55">
         <fieldset class="adminform" style="margin-left:0px;">
-        <legend><b><?php echo JText::_('JSHOP_ADD_ATTRIBUT')?></b></legend>
+        <legend><b><?php echo Text::_('JSHOP_ADD_ATTRIBUT')?></b></legend>
             <table class="admintable">
             <?php 
             foreach($lists['all_attributes'] as $key => $value){
@@ -175,55 +178,55 @@ defined('_JEXEC') or die();
             }
             ?>
             <tr>
-                <td class="key"><?php print JText::_('JSHOP_PRICE')?>*</td>
+                <td class="key"><?php print Text::_('JSHOP_PRICE')?>*</td>
                 <td><input type="text" class = "form-control middle2" id="attr_price" value="<?php echo $row->product_price?>"></td>
             </tr>
 			<?php print $this->dep_attr_td_footer;?>
             <?php if ($jshopConfig->stock){?>
             <tr>
-                <td class="key"><?php print JText::_('JSHOP_QUANTITY_PRODUCT')?>*</td>
+                <td class="key"><?php print Text::_('JSHOP_QUANTITY_PRODUCT')?>*</td>
                 <td><input type="text" class = "form-control middle2" id="attr_count" value="1"></td> 
             </tr>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['product_ean'] == 0){?>
             <tr>
-                <td class="key"><?php print JText::_('JSHOP_EAN_PRODUCT')?></td>
+                <td class="key"><?php print Text::_('JSHOP_EAN_PRODUCT')?></td>
                 <td><input type="text" class = "form-control middle2" id="attr_ean" value="<?php echo $row->product_ean?>"></td>
             </tr>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['manufacturer_code'] == 0){?>
             <tr>
-                <td class="key"><?php print JText::_('JSHOP_MANUFACTURER_CODE')?></td>
+                <td class="key"><?php print Text::_('JSHOP_MANUFACTURER_CODE')?></td>
                 <td><input type="text" class = "form-control middle2" id="attr_manufacturer_code" value="<?php echo $row->manufacturer_code?>"></td>
             </tr>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['real_ean'] == 0){?>
             <tr>
-                <td class="key"><?php print JText::_('JSHOP_EAN')?></td>
+                <td class="key"><?php print Text::_('JSHOP_EAN')?></td>
                 <td><input type="text" class="form-control middle2" id="attr_real_ean" value="<?php echo $row->real_ean?>"></td>
             </tr>
             <?php }?>
 			<?php if ($jshopConfig->admin_show_weight){?>
             <tr>
-                <td class="key"><?php print JText::_('JSHOP_PRODUCT_WEIGHT')?></td>
-                <td><input type="text" class = "form-control middle2" id="attr_weight" value="<?php echo $row->product_weight?>"> <?php print \JSHelper::sprintUnitWeight();?></td>
+                <td class="key"><?php print Text::_('JSHOP_PRODUCT_WEIGHT')?></td>
+                <td><input type="text" class = "form-control middle2" id="attr_weight" value="<?php echo $row->product_weight?>"> <?php print Helper::sprintUnitWeight();?></td>
             </tr>
 			<?php }?>
             <?php if ($jshopConfig->admin_show_product_basic_price){?>
             <tr>
-                <td class="key"><?php print JText::_('JSHOP_WEIGHT_VOLUME_UNITS')?></td>
+                <td class="key"><?php print Text::_('JSHOP_WEIGHT_VOLUME_UNITS')?></td>
                 <td><input type="text" class = "form-control middle2" id="attr_weight_volume_units" value="<?php echo $row->weight_volume_units?>"></td>
             </tr>
             <?php }?>
             <?php if ($jshopConfig->disable_admin['product_old_price'] == 0){?>
             <tr>
-                <td class="key"><?php print JText::_('JSHOP_OLD_PRICE')?></td>
+                <td class="key"><?php print Text::_('JSHOP_OLD_PRICE')?></td>
                 <td><input type="text" class = "form-control middle2" id="attr_old_price" value="<?php echo $row->product_old_price?>"></td>
             </tr>
             <?php }?>
             <?php if ($jshopConfig->admin_show_product_bay_price){?>
             <tr>
-                <td class="key"><?php print JText::_('JSHOP_PRODUCT_BUY_PRICE')?></td>
+                <td class="key"><?php print Text::_('JSHOP_PRODUCT_BUY_PRICE')?></td>
                 <td><input type="text" class = "form-control middle2" id="attr_buy_price" value="<?php echo $row->product_buy_price?>"> </td>
             </tr>
             <?php }?>
@@ -254,10 +257,10 @@ defined('_JEXEC') or die();
         <thead>
         <tr>
             <th width="150"><?php print $ind_attr->name?></th>
-            <th width="120"><?php print JText::_('JSHOP_PRICE_MODIFICATION')?></th>
-            <th width="120"><?php print JText::_('JSHOP_PRICE')?></th>
+            <th width="120"><?php print Text::_('JSHOP_PRICE_MODIFICATION')?></th>
+            <th width="120"><?php print Text::_('JSHOP_PRICE')?></th>
 			<?php print $this->ind_attr_td_header?>
-            <th><?php print JText::_('JSHOP_DELETE')?></th>
+            <th><?php print Text::_('JSHOP_DELETE')?></th>
         </tr>
         </thead>
         <?php 
@@ -303,5 +306,5 @@ defined('_JEXEC') or die();
    }   
    ?>
    <?php $pkey='plugin_template_attribute'; if ($this->$pkey){ print $this->$pkey;}?>
-   <a href="index.php?option=com_jshopping&controller=attributes" target="_blank"><img src="components/com_jshopping/images/jshop_attributes_s.png" border='0' align="left" style="margin-right:5px"><?php print JText::_('JSHOP_LIST_ATTRIBUTES')?></a>
+   <a href="index.php?option=com_jshopping&controller=attributes" target="_blank"><img src="components/com_jshopping/images/jshop_attributes_s.png" border='0' align="left" style="margin-right:5px"><?php print Text::_('JSHOP_LIST_ATTRIBUTES')?></a>
 </div>

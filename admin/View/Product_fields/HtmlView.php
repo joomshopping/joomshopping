@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Product_fields;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,20 +17,20 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_PRODUCT_EXTRA_FIELDS'), 'generic.png' );
-        \JToolBarHelper::addNew();
-        \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
-        \JToolBarHelper::spacer();
-        \JToolBarHelper::custom("addgroup", "folder", "folder", \JText::_('JSHOP_GROUP'), false);
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_PRODUCT_EXTRA_FIELDS'), 'generic.png' );
+        ToolbarHelper::addNew();
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
+        ToolbarHelper::spacer();
+        ToolbarHelper::custom("addgroup", "folder", "folder", Text::_('JSHOP_GROUP'), false);
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
     function displayEdit($tpl=null){
-        \JToolBarHelper::title( $temp = ($this->row->id) ? (\JText::_('JSHOP_EDIT').' / '.$this->row->{\JSFactory::getLang()->get('name')}) : (\JText::_('JSHOP_NEW')), 'generic.png' );
-        \JToolBarHelper::save();
-        \JToolBarHelper::apply();
-        \JToolBarHelper::save2new();
-        \JToolBarHelper::cancel();        
+        ToolbarHelper::title( $temp = ($this->row->id) ? (Text::_('JSHOP_EDIT').' / '.$this->row->{\JSFactory::getLang()->get('name')}) : (Text::_('JSHOP_NEW')), 'generic.png' );
+        ToolbarHelper::save();
+        ToolbarHelper::apply();
+        ToolbarHelper::save2new();
+        ToolbarHelper::cancel();        
         parent::display($tpl);
     }
 }

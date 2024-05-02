@@ -1,4 +1,10 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.2.1 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -8,9 +14,9 @@
 */
 defined('_JEXEC') or die();
 
-$jshopConfig=\JSFactory::getConfig();
-\JSHelperAdmin::displaySubmenuConfigs('statictext');
-$editor=\JEditor::getInstance(\JFactory::getConfig()->get('editor'));
+$jshopConfig=JSFactory::getConfig();
+HelperAdmin::displaySubmenuConfigs('statictext');
+$editor=Editor::getInstance(Factory::getConfig()->get('editor'));
 ?>
 <div class="jshop_edit">
 <form action="index.php?option=com_jshopping&controller=config" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
@@ -20,13 +26,13 @@ $editor=\JEditor::getInstance(\JFactory::getConfig()->get('editor'));
 
 <div class="col100">
 <fieldset class="adminform">
-    <legend><?php if (JText::_('JSHP_STPAGE_'.$this->row->alias) != 'JSHP_STPAGE_'.$this->row->alias) print JText::_('JSHP_STPAGE_'.$this->row->alias); else print $this->row->alias;?></legend>
+    <legend><?php if (Text::_('JSHP_STPAGE_'.$this->row->alias) != 'JSHP_STPAGE_'.$this->row->alias) print Text::_('JSHP_STPAGE_'.$this->row->alias); else print $this->row->alias;?></legend>
 <table class="admintable" width="100%">
 <?php $pkey="etemplatevarstart";if (isset($this->$pkey)){print $this->$pkey;}?>
 <?php if (!$this->row->id){?>
 <tr>
    <td class="key" style="width:220px;">
-     <?php echo JText::_('JSHOP_ALIAS')?>
+     <?php echo Text::_('JSHOP_ALIAS')?>
    </td>
    <td>
      <input type="text" class="inputbox form-control" name="alias" size="40" value="<?php echo $this->row->alias?>" />
@@ -38,8 +44,8 @@ $field="text_".$lang->language;
 ?>
 <tr>
    <td class="key" >
-     <?php echo JText::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
-     <div style="font-size:10px;"><?php if (JText::_('JSHP_STPAGE_'.$this->row->alias) != 'JSHP_STPAGE_'.$this->row->alias) print JText::_('JSHP_STPAGE_'.$this->row->alias); else print $this->row->alias;?></div>
+     <?php echo Text::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
+     <div style="font-size:10px;"><?php if (Text::_('JSHP_STPAGE_'.$this->row->alias) != 'JSHP_STPAGE_'.$this->row->alias) print Text::_('JSHP_STPAGE_'.$this->row->alias); else print $this->row->alias;?></div>
    </td>
    <td>
      <?php print $editor->display( 'text'.$lang->id,  $this->row->$field , '100%', '350', '75', '20' ); ?>
@@ -49,7 +55,7 @@ $field="text_".$lang->language;
 <?php } ?>
 <tr>
    <td class="key">
-     <?php echo JText::_('JSHOP_USE_FOR_RETURN_POLICY')?>
+     <?php echo Text::_('JSHOP_USE_FOR_RETURN_POLICY')?>
    </td>
    <td>
      <input type = "checkbox"  name = "use_for_return_policy" size="40" value = "1"  <?php if($this->row->use_for_return_policy) echo 'checked = "checked"';?> />

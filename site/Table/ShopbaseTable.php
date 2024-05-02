@@ -7,13 +7,15 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
 
 defined('_JEXEC') or die();
 
-abstract class ShopbaseTable extends \JTable{
+abstract class ShopbaseTable extends Table{
     
     public function move($delta, $where = '', $field = 'ordering'){
-    	$db = \JFactory::getDBO();
+    	$db = Factory::getDBO();
 		if (empty($delta)){
 			return true;
 		}
@@ -64,7 +66,7 @@ abstract class ShopbaseTable extends \JTable{
 	}
     
     public function reorder($where = '', $fieldordering = 'ordering'){
-    	$db = \JFactory::getDBO();
+    	$db = Factory::getDBO();
 		$k = $this->_tbl_key;
 		$query = $db->getQuery(true)
 			->select(implode(',', $this->_tbl_keys) . ', '.$fieldordering)

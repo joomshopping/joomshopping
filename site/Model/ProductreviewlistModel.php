@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
 defined('_JEXEC') or die();
 
 class ProductReviewListModel  extends BaseModel{
@@ -20,13 +24,13 @@ class ProductReviewListModel  extends BaseModel{
 	protected $count_per_page = 20;
 	
 	public function __construct(){
-		$model = \JSFactory::getTable('product');
+		$model = JSFactory::getTable('product');
 		$this->setModel($model);
 	}
 	
 	public function setModel($model){
 		$this->model = $model;
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
 	}
 	
 	public function getModel(){
@@ -75,7 +79,7 @@ class ProductReviewListModel  extends BaseModel{
 	}
 	
 	protected function loadRequestData(){
-		$app = \JFactory::getApplication();
+		$app = Factory::getApplication();
 		$context = $this->getContext();		
 		$this->limitstart = $app->input->getInt('limitstart');
         $this->limit = $app->getUserStateFromRequest($context.'limit', 'limit', $this->getCountPerPage(), 'int');
@@ -85,7 +89,7 @@ class ProductReviewListModel  extends BaseModel{
 		$this->loadRequestData();
 		$model = $this->getModel();		
 		$this->total =  $model->getReviewsCount();
-		$this->pagination = new \JPagination($this->total, $this->limitstart, $this->limit);
+		$this->pagination = new Pagination($this->total, $this->limitstart, $this->limit);
 		$this->list = $model->getReviews($this->limitstart, $this->limit);
 		return 1;
 	}

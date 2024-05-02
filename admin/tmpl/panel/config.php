@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -13,7 +15,7 @@ defined('_JEXEC') or die();
     <form action="index.php?option=com_jshopping" method="post" name="adminForm" id="adminForm">
     <?php print $this->tmp_html_start?>
     <div id="cpanel">
-        <?php JSHelperAdmin::displayConfigPanelIco();?>
+        <?php HelperAdmin::displayConfigPanelIco();?>
         </div>
     <?php print $this->tmp_html_end?>
     <input type="hidden" name="task">

@@ -7,14 +7,19 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 defined('_JEXEC') or die();
 include_once(JPATH_COMPONENT_ADMINISTRATOR."/importexport/iecontroller.php");
 
 class ImportExportController extends BaseadminController{
     
     function init(){
-        \JSHelperAdmin::checkAccessController("importexport");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("importexport");
+        HelperAdmin::addSubmenu("other");
     }
 
     function display($cachable = false, $urlparams = false){
@@ -22,7 +27,7 @@ class ImportExportController extends BaseadminController{
             $this->view();
             return 1;
         }
-    	$importexport = \JSFactory::getModel("importexport");    	
+    	$importexport = JSFactory::getModel("importexport");    	
         
 		$rows = $importexport->getList();		
         $view = $this->getView("import_export_list", 'html');
@@ -30,22 +35,22 @@ class ImportExportController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayImportExport', array(&$view));
         $view->display();
     }
     
     function remove() {        
         $cid = $this->input->getInt("cid");        
-        $_importexport = \JSFactory::getTable('Importexport');
+        $_importexport = JSFactory::getTable('Importexport');
         $_importexport->load($cid);        
         $_importexport->delete();        
-        $this->setRedirect('index.php?option=com_jshopping&controller=importexport', \JText::_('JSHOP_ITEM_DELETED'));
+        $this->setRedirect('index.php?option=com_jshopping&controller=importexport', Text::_('JSHOP_ITEM_DELETED'));
     }
     
     function setautomaticexecution(){
         $cid = $this->input->getInt("cid");        
-        $_importexport = \JSFactory::getTable('Importexport');
+        $_importexport = JSFactory::getTable('Importexport');
         $_importexport->load($cid);
         if ($_importexport->steptime > 0){
             $_importexport->steptime = 0;
@@ -58,11 +63,11 @@ class ImportExportController extends BaseadminController{
     
     function view(){
         $ie_id = $this->input->getInt("ie_id");
-        $_importexport = \JSFactory::getTable('Importexport');
+        $_importexport = JSFactory::getTable('Importexport');
         $_importexport->load($ie_id);
         $alias = $_importexport->get('alias');
         if (!file_exists(JPATH_COMPONENT_ADMINISTRATOR."/importexport/".$alias."/".$alias.".php")){
-            \JSError::raiseWarning("", sprintf(\JText::_('JSHOP_ERROR_FILE_NOT_EXIST'), "/importexport/".$alias."/".$alias.".php"));
+            JSError::raiseWarning("", sprintf(Text::_('JSHOP_ERROR_FILE_NOT_EXIST'), "/importexport/".$alias."/".$alias.".php"));
             return 0;
         }
         

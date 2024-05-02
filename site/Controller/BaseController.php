@@ -9,6 +9,8 @@
  */
 
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 defined('_JEXEC') or die();
 
@@ -23,9 +25,9 @@ class BaseController extends \Joomla\CMS\MVC\Controller\BaseController {
     }
 
     public function getView($name = '', $type = '', $prefix = '', $config = array()) {
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         if ($type == '') {
-            $type = \JSHelper::getDocumentType();
+            $type = Helper::getDocumentType();
         }
         if (empty($config)) {
             $config = array("template_path" => $jshopConfig->template_path . $jshopConfig->template . "/" . $name);
@@ -34,13 +36,13 @@ class BaseController extends \Joomla\CMS\MVC\Controller\BaseController {
     }
 
     public function getViewAddon($name = '', $type = '', $prefix = '', $viewName = 'addons') {
-        $config = array("template_path" => \JSFactory::getConfig()->template_path . 'addons/' . $name);
+        $config = array("template_path" => JSFactory::getConfig()->template_path . 'addons/' . $name);
         return $this->getView($viewName, $type, $prefix, $config);
     }
     
     public function execute($task){
         $res = parent::execute($task);
-        \JSHelper::displayTextJSC();
+        Helper::displayTextJSC();
         return $res;
     }
 

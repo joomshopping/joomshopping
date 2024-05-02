@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class TophitsModel extends ListModel{
@@ -20,11 +21,11 @@ class TophitsModel extends ListModel{
     }
     
     function getCountProductsPerPage(){       
-        return \JSFactory::getConfig()->count_products_to_page_tophits;
+        return JSFactory::getConfig()->count_products_to_page_tophits;
     }
     
     function getCountProductsToRow(){
-        return \JSFactory::getConfig()->count_products_to_row_tophits;
+        return JSFactory::getConfig()->count_products_to_row_tophits;
     }
     
     function getProductFieldSorting($order){

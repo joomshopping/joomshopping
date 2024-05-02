@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -11,7 +16,7 @@ $rows=$this->rows;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions("shippings");?>
+<?php HelperAdmin::displaySubmenuOptions("shippings");?>
 <form action="index.php?option=com_jshopping&controller=shippingextprice" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <table class="table table-striped">
@@ -21,28 +26,28 @@ $rows=$this->rows;
       #
     </th>
     <th width="20">
-	  <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+	  <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     </th>
     <th align="left" width="300">
-      <?php echo JText::_('JSHOP_TITLE')?>
+      <?php echo Text::_('JSHOP_TITLE')?>
     </th>
     <th>
-        <?php echo JText::_('JSHOP_DESCRIPTION')?>
+        <?php echo Text::_('JSHOP_DESCRIPTION')?>
     </th>
     <th>
-      <?php echo JText::_('JSHOP_ORDERING')?>
+      <?php echo Text::_('JSHOP_ORDERING')?>
     </th>
     <th width="30">
-      <?php echo JText::_('JSHOP_PUBLISH')?>
+      <?php echo Text::_('JSHOP_PUBLISH')?>
     </th>
     <th width="50">
-        <?php echo JText::_('JSHOP_CONFIG')?>
+        <?php echo Text::_('JSHOP_CONFIG')?>
     </th>
     <th width="50">
-        <?php echo JText::_('JSHOP_DELETE')?>
+        <?php echo Text::_('JSHOP_DELETE')?>
     </th>
     <th width="40">
-        <?php echo JText::_('JSHOP_ID')?>
+        <?php echo Text::_('JSHOP_ID')?>
     </th>
   </tr>
 </thead>  
@@ -54,7 +59,7 @@ foreach($rows as $i=>$row){?>
      <?php echo $i+1;?>
    </td>
    <td>     
-     <?php echo \JHTML::_('grid.id', $i, $row->id); ?>
+     <?php echo HTMLHelper::_('grid.id', $i, $row->id); ?>
    </td>
    <td>     
         <?php echo $row->name;?>     
@@ -63,11 +68,11 @@ foreach($rows as $i=>$row){?>
         <?php echo $row->description;?>
    </td>
    <td class="order" style="width:80px;">
-    <span><?php if ($i != 0) echo \JHTML::_('jgrid.orderUp', $i, "orderup");?></span>
-    <span><?php if ($i != $count - 1) echo \JHTML::_('jgrid.orderDown', $i, "orderdown");?></span>
+    <span><?php if ($i != 0) echo HTMLHelper::_('jgrid.orderUp', $i, "orderup");?></span>
+    <span><?php if ($i != $count - 1) echo HTMLHelper::_('jgrid.orderDown', $i, "orderdown");?></span>
    </td>
    <td class="center">     
-     <?php echo \JHTML::_('jgrid.published', $row->published, $i);?>
+     <?php echo HTMLHelper::_('jgrid.published', $row->published, $i);?>
    </td>
    <td class="center">
         <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=shippingextprice&task=edit&id=<?php print $row->id;?>'>
@@ -75,7 +80,7 @@ foreach($rows as $i=>$row){?>
         </a>
    </td>
    <td class="center">
-    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=shippingextprice&task=remove&id=<?php print $row->id?>' onclick="return confirm('<?php print JText::_('JSHOP_DELETE')?>')">
+    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=shippingextprice&task=remove&id=<?php print $row->id?>' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>')">
         <i class="icon-delete"></i>
     </a>
    </td>
@@ -94,6 +99,6 @@ foreach($rows as $i=>$row){?>
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

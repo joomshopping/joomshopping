@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Component\ComponentHelper;
 defined('_JEXEC') or die();
 
 abstract class UserbaseModel  extends BaseModel{
@@ -18,7 +19,7 @@ abstract class UserbaseModel  extends BaseModel{
     }
 	
 	protected function loadUserParams(){	
-		$this->userparams = \JComponentHelper::getParams('com_users');
+		$this->userparams = ComponentHelper::getParams('com_users');
 	}
 	
 }

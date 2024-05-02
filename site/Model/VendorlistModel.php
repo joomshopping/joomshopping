@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
 defined('_JEXEC') or die();
 
 class VendorListModel  extends BaseModel{
@@ -19,13 +23,13 @@ class VendorListModel  extends BaseModel{
 	protected $pagination = null;
 	
 	public function __construct(){
-		$model = \JSFactory::getTable('vendor');
+		$model = JSFactory::getTable('vendor');
 		$this->setModel($model);
 	}
 	
 	public function setModel($model){
 		$this->model = $model;
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
 	}
 	
 	public function getModel(){
@@ -66,11 +70,11 @@ class VendorListModel  extends BaseModel{
     }
 	
 	protected function loadRequestData(){
-		$app = \JFactory::getApplication();
+		$app = Factory::getApplication();
 		$model = $this->getModel();
 		$context = $this->getContext();
 		
-		$this->limitstart = \JFactory::getApplication()->input->getInt('limitstart');
+		$this->limitstart = Factory::getApplication()->input->getInt('limitstart');
         $this->limit = $app->getUserStateFromRequest($context.'limit', 'limit', $this->getCountPerPage(), 'int');
 	}
 	
@@ -85,9 +89,9 @@ class VendorListModel  extends BaseModel{
 		
         $this->list = $vendor->getAllVendors(1, $this->limitstart, $this->limit);
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onBeforeDisplayListVendors', array(&$this->list, &$obj));
+        Factory::getApplication()->triggerEvent('onBeforeDisplayListVendors', array(&$this->list, &$obj));
         
-        $this->pagination = new \JPagination($this->total, $this->limitstart, $this->limit);
+        $this->pagination = new Pagination($this->total, $this->limitstart, $this->limit);
         
         $this->list = $vendor->prepareViewListVendor($this->list);
 		

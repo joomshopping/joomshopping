@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Logs;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -14,14 +17,14 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl = null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_LOGS'), 'generic.png');
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_LOGS'), 'generic.png');
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
     
     function displayEdit($tpl = null){
-        \JToolBarHelper::title(\JText::_('JSHOP_LOGS')." / ".$this->filename, 'generic.png');
-        \JToolBarHelper::back();
+        ToolbarHelper::title(Text::_('JSHOP_LOGS')." / ".$this->filename, 'generic.png');
+        ToolbarHelper::back();
         parent::display($tpl);
     }
 }

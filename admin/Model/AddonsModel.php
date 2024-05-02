@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.4.1 15.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -19,14 +19,17 @@ defined('_JEXEC') or die();
 class AddonsModel extends BaseadminModel{
 
     function getList($details = 0){
-        $db = Factory::getDBO(); 
+        $db = Factory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
         $query = "SELECT * FROM `#__jshopping_addons`";
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $rows = $db->loadObjectList();
         
         if ($details){
-            $versions = $this->getListWebLastVersions();
+            if ($jshopConfig->disable_admin['addons_catalog'] == 0) {
+                $versions = $this->getListWebLastVersions();
+            }
 
             foreach($rows as $k=>$v){
                 if (file_exists(JPATH_COMPONENT_SITE."/addons/".$v->alias."/config.tmpl.php")){
@@ -166,7 +169,7 @@ class AddonsModel extends BaseadminModel{
             if (isset($v->last_file->download)) {
                 $rows[$k]->download_url = $config->url . $config->download_folder . '/' . $v->last_file->download;                
             }
-            if (isset($v->last_file->download) && $v->type_install == 1) {
+            if (isset($v->last_file->download)) {
                 $instalurl = 'index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm2:'.$v->last_file->download.'&back='.urlencode($back_url);
                 $rows[$k]->install_url = $instalurl;
             }

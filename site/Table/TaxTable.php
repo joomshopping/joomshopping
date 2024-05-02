@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class TaxTable extends ShopbaseTable{
@@ -16,14 +17,14 @@ class TaxTable extends ShopbaseTable{
     }
     
     function getAllTaxes(){
-        $db = \JFactory::getDBO();                
+        $db = Factory::getDBO();                
         $query = "SELECT tax_id, tax_name, tax_value FROM `#__jshopping_taxes`";
         $db->setQuery($query);
         return $db->loadObJectList();
     }
     
     function getExtTaxes($tax_id = 0){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $where = "";
         if ($tax_id) $where = " where tax_id=".(int)$tax_id;
         $query = "SELECT * FROM `#__jshopping_taxes_ext` ".$where;

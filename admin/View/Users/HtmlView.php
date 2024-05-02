@@ -7,31 +7,34 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Users;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 defined('_JEXEC') or die();
 
 class HtmlView extends BaseHtmlView{
 	
     function displayList($tpl=null){        
-        \JToolBarHelper::title( \JText::_('JSHOP_USER_LIST'), 'generic.png' );
-        \JToolBarHelper::addNew(); 
-        \JToolBarHelper::deleteList(\JText::_('JSHOP_DELETE')."?");
-        \JSHelperAdmin::btnHome();
+        ToolbarHelper::title( Text::_('JSHOP_USER_LIST'), 'generic.png' );
+        ToolbarHelper::addNew(); 
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE')."?");
+        HelperAdmin::btnHome();
         parent::display($tpl);
 	}
     
     function displayEdit($tpl=null){
-        $title = \JText::_('JSHOP_USERS')." / ";
+        $title = Text::_('JSHOP_USERS')." / ";
         if ($this->user->user_id){
             $title.=$this->user->u_name;
         }else{
-            $title.=\JText::_('JSHOP_NEW');
+            $title.=Text::_('JSHOP_NEW');
         }
-        \JToolBarHelper::title($title, 'generic.png');
-        \JToolBarHelper::save();
-        \JToolBarHelper::apply();
-        \JToolBarHelper::save2new();
-        \JToolBarHelper::cancel();
+        ToolbarHelper::title($title, 'generic.png');
+        ToolbarHelper::save();
+        ToolbarHelper::apply();
+        ToolbarHelper::save2new();
+        ToolbarHelper::cancel();
         parent::display($tpl);
     }
 }

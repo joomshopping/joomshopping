@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.0.0 14.09.2018
 * @author       MAXXmarketing GmbH
@@ -12,7 +15,7 @@ use Joomla\Component\Menus\Administrator\Helper\MenusHelper;
 abstract class JshoppingHelperAssociation{
 
 	public static function getAssociations($id = 0, $view = null, $layout = null){
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
 		$component = $jinput->getCmd('option');
 		if ($component!='com_jshopping'){
             return [];
@@ -25,7 +28,7 @@ abstract class JshoppingHelperAssociation{
         }
         $languages = JLanguageHelper::getLanguages();
         
-        $app = JFactory::getApplication();
+        $app = Factory::getApplication();
         $menu = $app->getMenu();
         $active = $menu->getActive();        
         $associations = MenusHelper::getAssociations($active->id);
@@ -63,7 +66,7 @@ abstract class JshoppingHelperAssociation{
                 if (isset($associations[$lang->lang_code])){
                     $return[$lang->lang_code] .= '&Itemid='.$associations[$lang->lang_code];
                 }
-				$return[$lang->lang_code] = \JSHelper::SEFLink($return[$lang->lang_code], 1);
+				$return[$lang->lang_code] = Helper::SEFLink($return[$lang->lang_code], 1);
             }
         }
         return $return;
@@ -83,7 +86,7 @@ abstract class JshoppingHelperAssociation{
         $pages[] = array('url'=>array('view'=>'wishlist'));
         $pages[] = array('url'=>array('view'=>'search'));
         
-        \JFactory::getApplication()->triggerEvent('onAfterAssociationPagesEnable', array(&$pages));
+        Factory::getApplication()->triggerEvent('onAfterAssociationPagesEnable', array(&$pages));
         return $pages;
     }
     

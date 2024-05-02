@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.1.0 15.09.2022
 * @author       MAXXmarketing GmbH
@@ -17,7 +19,7 @@ defined('_JEXEC') or die();
         <img id = "main_image_<?php print $image->image_id?>" src="<?php print $this->image_product_path?>/<?php print $image->image_name;?>" alt="<?php print htmlspecialchars($image->img_alt)?>" title="<?php print htmlspecialchars($image->img_title)?>" />
         <div class="text_zoom">
             <span class="icon-zoom-in"></span>
-			<?php print JText::_('JSHOP_ZOOM_IMAGE')?>
+			<?php print Text::_('JSHOP_ZOOM_IMAGE')?>
         </div>
     </a>
 <?php }?>

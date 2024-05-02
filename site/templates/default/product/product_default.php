@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.3.0 15.09.2022
 * @author       MAXXmarketing GmbH
@@ -13,11 +16,11 @@ include(dirname(__FILE__)."/load.js.php");
 <div class="jshop productfull" id="comjshop">
     <form name="product" method="post" action="<?php print $this->action?>" enctype="multipart/form-data" autocomplete="off">
     
-        <h1><?php print $this->product->name?><?php if ($this->config->show_product_code){?> <span class="jshop_code_prod">(<?php print JText::_('JSHOP_EAN_PRODUCT')?>: <span id="product_code"><?php print $this->product->getEan();?></span>)</span><?php }?></h1>
+        <h1><?php print $this->product->name?><?php if ($this->config->show_product_code){?> <span class="jshop_code_prod">(<?php print Text::_('JSHOP_EAN_PRODUCT')?>: <span id="product_code"><?php print $this->product->getEan();?></span>)</span><?php }?></h1>
         
         <?php print $this->_tmp_product_html_start;?>
 
-        <?php if ($this->config->display_button_print) print \JSHelper::printContent();?>
+        <?php if ($this->config->display_button_print) print Helper::printContent();?>
         <?php include(dirname(__FILE__)."/ratingandhits.php");?>
 
         <div class="row jshop">
@@ -57,7 +60,7 @@ include(dirname(__FILE__)."/load.js.php");
 								<img id="main_image_<?php print $image->image_id?>" class="image" src="<?php print $this->image_product_path?>/<?php print $image->image_name;?>" alt="<?php print htmlspecialchars($image->img_alt)?>" title="<?php print htmlspecialchars($image->img_title)?>" />
 								<div class="text_zoom">
 									<span class="icon-zoom-in"></span>
-									<?php print JText::_('JSHOP_ZOOM_IMAGE')?>
+									<?php print Text::_('JSHOP_ZOOM_IMAGE')?>
 								</div>
 							</a>
 						<?php }?>
@@ -96,7 +99,7 @@ include(dirname(__FILE__)."/load.js.php");
 
                 <?php if ($this->config->product_show_manufacturer_logo && $this->product->manufacturer_info->manufacturer_logo!=""){?>
                 <div class="manufacturer_logo">
-                    <a href="<?php print \JSHelper::SEFLink('index.php?option=com_jshopping&controller=manufacturer&task=view&manufacturer_id='.$this->product->product_manufacturer_id, 2);?>">
+                    <a href="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=manufacturer&task=view&manufacturer_id='.$this->product->product_manufacturer_id, 2);?>">
                         <img src="<?php print $this->config->image_manufs_live_path."/".$this->product->manufacturer_info->manufacturer_logo?>" alt="<?php print htmlspecialchars($this->product->manufacturer_info->name);?>" title="<?php print htmlspecialchars($this->product->manufacturer_info->name);?>" border="0" />
                     </a>
                 </div>
@@ -107,24 +110,24 @@ include(dirname(__FILE__)."/load.js.php");
 
                 <?php if ($this->product->product_url!=""){?>
                     <div class="prod_url">
-                        <a target="_blank" href="<?php print $this->product->product_url;?>"><?php print JText::_('JSHOP_READ_MORE')?></a>
+                        <a target="_blank" href="<?php print $this->product->product_url;?>"><?php print Text::_('JSHOP_READ_MORE')?></a>
                     </div>
                 <?php }?>
 
                 <?php if ($this->config->product_show_manufacturer && $this->product->manufacturer_info->name!=""){?>
                     <div class="manufacturer_name">
-                        <?php print JText::_('JSHOP_MANUFACTURER')?>: <span><?php print $this->product->manufacturer_info->name?></span>
+                        <?php print Text::_('JSHOP_MANUFACTURER')?>: <span><?php print $this->product->manufacturer_info->name?></span>
                     </div>
                 <?php }?>
 
                 <?php if ($this->config->manufacturer_code_in_product_detail && $this->product->getManufacturerCode()!=""){?>
                     <div class="manufacturer_code">
-                        <?php print JText::_('JSHOP_MANUFACTURER_CODE')?>: <span id="manufacturer_code"><?php print $this->product->getManufacturerCode()?></span>
+                        <?php print Text::_('JSHOP_MANUFACTURER_CODE')?>: <span id="manufacturer_code"><?php print $this->product->getManufacturerCode()?></span>
                     </div>
                 <?php }?>
 				<?php if ($this->config->real_ean_in_product_detail && $this->product->getRealEan()!=""){?>
                     <div class="real_ean">
-                        <?php print JText::_('JSHOP_EAN')?>: <span id="real_ean"><?php print $this->product->getRealEan()?></span>
+                        <?php print Text::_('JSHOP_EAN')?>: <span id="real_ean"><?php print $this->product->getRealEan()?></span>
                     </div>
                 <?php }?>
 
@@ -170,7 +173,7 @@ include(dirname(__FILE__)."/load.js.php");
                             </div>
                         <?php }?>
                         <?php if ($this->product->freeattribrequire) {?>
-                            <div class="requiredtext">* <?php print JText::_('JSHOP_REQUIRED')?></div>
+                            <div class="requiredtext">* <?php print Text::_('JSHOP_REQUIRED')?></div>
                         <?php }?>
                     </div>
                 <?php }?>
@@ -178,12 +181,12 @@ include(dirname(__FILE__)."/load.js.php");
                 <?php print $this->_tmp_product_html_after_freeatributes;?>
 
                 <?php if ($this->product->product_is_add_price){?>
-                    <div class="price_prod_qty_list_head"><?php print JText::_('JSHOP_PRICE_FOR_QTY')?></div>
+                    <div class="price_prod_qty_list_head"><?php print Text::_('JSHOP_PRICE_FOR_QTY')?></div>
                     <table class="price_prod_qty_list">
                         <?php foreach($this->product->product_add_prices as $k=>$add_price){?>
                             <tr>
                                 <td class="qty_from" <?php if ($add_price->product_quantity_finish==0){?>colspan="3"<?php } ?>>
-                                    <?php if ($add_price->product_quantity_finish==0) print JText::_('JSHOP_FROM')?>
+                                    <?php if ($add_price->product_quantity_finish==0) print Text::_('JSHOP_FROM')?>
                                     <?php print $add_price->product_quantity_start?>
                                     <?php print $this->product->product_add_price_unit?>
                                 </td>
@@ -200,11 +203,11 @@ include(dirname(__FILE__)."/load.js.php");
 
                                 <td class="qty_price" id="pricelist_f_<?php print $add_price->product_quantity_start?>">
                                     <span class="price" id="pricelist_from_<?php print $add_price->product_quantity_start?>">
-                                        <?php print \JSHelper::formatprice($add_price->price)?><?php print $add_price->ext_price?>
+                                        <?php print Helper::formatprice($add_price->price)?><?php print $add_price->ext_price?>
                                     </span>
                                     <span class="per_piece">/ <?php print $this->product->product_add_price_unit?></span>
                                     <?php if ($this->product->product_basic_price_show){?>
-                                        <span class="base">(<span class="price"><?php print \JSHelper::formatprice($add_price->basic_price)?></span> / <span class="bp_name"><?php print $this->product->product_basic_price_unit_name;?></span>)</span>
+                                        <span class="base">(<span class="price"><?php print Helper::formatprice($add_price->basic_price)?></span> / <span class="bp_name"><?php print $this->product->product_basic_price_unit_name;?></span>)</span>
                                     <?php }?>
                                 </td>
                                 <?php print $add_price->_tmp_var?>
@@ -214,24 +217,24 @@ include(dirname(__FILE__)."/load.js.php");
                 <?php }?>
 
                 <div class="old_price" <?php if ($this->product->product_old_price == 0){?>style="display:none"<?php }?>>
-                    <?php print JText::_('JSHOP_OLD_PRICE')?>:
+                    <?php print Text::_('JSHOP_OLD_PRICE')?>:
                     <span class="old_price" id="old_price">
-                        <?php print \JSHelper::formatprice($this->product->product_old_price)?>
+                        <?php print Helper::formatprice($this->product->product_old_price)?>
                         <?php print $this->product->_tmp_var_old_price_ext;?>
                     </span>
                 </div>
 
                 <?php if ($this->product->product_price_default > 0 && $this->config->product_list_show_price_default){?>
-                    <div class="default_price"><?php print JText::_('JSHOP_DEFAULT_PRICE')?>: <span id="pricedefault"><?php print \JSHelper::formatprice($this->product->product_price_default)?></span></div>
+                    <div class="default_price"><?php print Text::_('JSHOP_DEFAULT_PRICE')?>: <span id="pricedefault"><?php print Helper::formatprice($this->product->product_price_default)?></span></div>
                 <?php }?>
 
                 <?php print $this->_tmp_product_html_before_price;?>
 
                 <?php if ($this->product->_display_price){?>
                     <div class="prod_price">
-                        <?php print JText::_('JSHOP_PRICE')?>:
+                        <?php print Text::_('JSHOP_PRICE')?>:
                         <span id="block_price">
-                            <?php print \JSHelper::formatprice($this->product->getPriceCalculate())?>
+                            <?php print Helper::formatprice($this->product->getPriceCalculate())?>
                             <?php print $this->product->_tmp_var_price_ext;?>
                         </span>
                     </div>
@@ -240,23 +243,23 @@ include(dirname(__FILE__)."/load.js.php");
                 <?php print $this->product->_tmp_var_bottom_price;?>
 
                 <?php if ($this->config->show_tax_in_product && $this->product->product_tax > 0){?>
-                    <span class="taxinfo"><?php print \JSHelper::productTaxInfo($this->product->product_tax);?></span>
+                    <span class="taxinfo"><?php print Helper::productTaxInfo($this->product->product_tax);?></span>
                 <?php }?>
 
                 <?php if ($this->config->show_plus_shipping_in_product){?>
-                    <span class="plusshippinginfo"><?php print sprintf(JText::_('JSHOP_PLUS_SHIPPING'), $this->shippinginfo);?></span>
+                    <span class="plusshippinginfo"><?php print sprintf(Text::_('JSHOP_PLUS_SHIPPING'), $this->shippinginfo);?></span>
                 <?php }?>
 
                 <?php if ($this->product->delivery_time != ''){?>
-                    <div class="deliverytime" <?php if ($product->hide_delivery_time){?>style="display:none"<?php }?>><?php print JText::_('JSHOP_DELIVERY_TIME')?>: <?php print $this->product->delivery_time?></div>
+                    <div class="deliverytime" <?php if ($product->hide_delivery_time){?>style="display:none"<?php }?>><?php print Text::_('JSHOP_DELIVERY_TIME')?>: <?php print $this->product->delivery_time?></div>
                 <?php }?>
 
                 <?php if ($this->config->product_show_weight && $this->product->product_weight > 0){?>
-                    <div class="productweight"><?php print JText::_('JSHOP_WEIGHT')?>: <span id="block_weight"><?php print \JSHelper::formatweight($this->product->getWeight())?></span></div>
+                    <div class="productweight"><?php print Text::_('JSHOP_WEIGHT')?>: <span id="block_weight"><?php print Helper::formatweight($this->product->getWeight())?></span></div>
                 <?php }?>
 
                 <?php if ($this->product->product_basic_price_show){?>
-                    <div class="prod_base_price"><?php print JText::_('JSHOP_BASIC_PRICE')?>: <span id="block_basic_price"><?php print \JSHelper::formatprice($this->product->product_basic_price_calculate)?></span> / <?php print $this->product->product_basic_price_unit_name;?></div>
+                    <div class="prod_base_price"><?php print Text::_('JSHOP_BASIC_PRICE')?>: <span id="block_basic_price"><?php print Helper::formatprice($this->product->product_basic_price_calculate)?></span> / <?php print $this->product->product_basic_price_unit_name;?></div>
                 <?php }?>
 
                 <?php print $this->product->_tmp_var_bottom_allprices;?>
@@ -290,10 +293,10 @@ include(dirname(__FILE__)."/load.js.php");
 
                 <?php if ($this->product->vendor_info){?>
                     <div class="vendorinfo">
-                        <?php print JText::_('JSHOP_VENDOR')?>: <?php print $this->product->vendor_info->shop_name?> (<?php print $this->product->vendor_info->l_name." ".$this->product->vendor_info->f_name;?>),
+                        <?php print Text::_('JSHOP_VENDOR')?>: <?php print $this->product->vendor_info->shop_name?> (<?php print $this->product->vendor_info->l_name." ".$this->product->vendor_info->f_name;?>),
                         (
-                        <?php if ($this->config->product_show_vendor_detail){?><a href="<?php print $this->product->vendor_info->urlinfo?>"><?php print JText::_('JSHOP_ABOUT_VENDOR')?></a>,<?php }?>
-                        <a href="<?php print $this->product->vendor_info->urllistproducts?>"><?php print JText::_('JSHOP_VIEW_OTHER_VENDOR_PRODUCTS')?></a> )
+                        <?php if ($this->config->product_show_vendor_detail){?><a href="<?php print $this->product->vendor_info->urlinfo?>"><?php print Text::_('JSHOP_ABOUT_VENDOR')?></a>,<?php }?>
+                        <a href="<?php print $this->product->vendor_info->urllistproducts?>"><?php print Text::_('JSHOP_VIEW_OTHER_VENDOR_PRODUCTS')?></a> )
                     </div>
                 <?php }?>
 
@@ -304,15 +307,15 @@ include(dirname(__FILE__)."/load.js.php");
                         </div>
                     <?php } else { ?>
                         <div class="block_available available" id="not_available">
-                            <?php print JText::_('JSHOP_PRODUCT_AVAILABLE')?>
+                            <?php print Text::_('JSHOP_PRODUCT_AVAILABLE')?>
                         </div>
                     <?php } ?>
                 <?php } ?>
 
                 <?php if ($this->config->product_show_qty_stock){?>
                     <div class="qty_in_stock">
-                        <?php print JText::_('JSHOP_QTY_IN_STOCK')?>:
-                        <span id="product_qty"><?php print \JSHelper::sprintQtyInStock($this->product->qty_in_stock);?></span>
+                        <?php print Text::_('JSHOP_QTY_IN_STOCK')?>:
+                        <span id="product_qty"><?php print Helper::sprintQtyInStock($this->product->qty_in_stock);?></span>
                     </div>
                 <?php }?>
 
@@ -322,7 +325,7 @@ include(dirname(__FILE__)."/load.js.php");
                     <div class="prod_buttons" style="<?php print $this->displaybuttons?>">
 
                         <div class="prod_qty">
-                            <?php print JText::_('JSHOP_QUANTITY')?>:
+                            <?php print Text::_('JSHOP_QUANTITY')?>:
                         </div>
 
                         <div class="prod_qty_input">
@@ -330,10 +333,10 @@ include(dirname(__FILE__)."/load.js.php");
                         </div>
 
                         <div class="buttons product-buttons">
-                            <input type="submit" class="btn btn-success button btn-buy" value="<?php print JText::_('JSHOP_ADD_TO_CART')?>" onclick="jQuery('#to').val('cart');" >
+                            <input type="submit" class="btn btn-success button btn-buy" value="<?php print Text::_('JSHOP_ADD_TO_CART')?>" onclick="jQuery('#to').val('cart');" >
 
                             <?php if ($this->enable_wishlist){?>
-                                <input type="submit" class="btn button btn-wishlist btn-secondary" value="<?php print JText::_('JSHOP_ADD_TO_WISHLIST')?>" onclick="jQuery('#to').val('wishlist');" >
+                                <input type="submit" class="btn button btn-wishlist btn-secondary" value="<?php print Text::_('JSHOP_ADD_TO_WISHLIST')?>" onclick="jQuery('#to').val('wishlist');" >
                             <?php }?>
 
                             <?php print $this->_tmp_product_html_buttons;?>
@@ -362,7 +365,7 @@ include(dirname(__FILE__)."/load.js.php");
     
     <?php if ($this->config->product_show_button_back){?>
         <div class="button_back">
-            <input type="button" class="btn button btn-secondary" value="<?php print JText::_('JSHOP_BACK')?>" onclick="<?php print $this->product->button_back_js_click;?>" />
+            <input type="button" class="btn button btn-secondary" value="<?php print Text::_('JSHOP_BACK')?>" onclick="<?php print $this->product->button_back_js_click;?>" />
         </div>
     <?php }?>
     

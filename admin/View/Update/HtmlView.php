@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\View\Update;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 defined('_JEXEC') or die();
@@ -15,7 +17,7 @@ class HtmlView extends BaseHtmlView{
     
     function display($tpl=null){
         
-        \JToolBarHelper::title( \JText::_('JSHOP_INSTALL_AND_UPDATE'), 'generic.png' );         
+        ToolbarHelper::title( Text::_('JSHOP_INSTALL_AND_UPDATE'), 'generic.png' );         
         
         parent::display($tpl);
 	}

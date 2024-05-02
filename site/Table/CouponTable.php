@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class CouponTable extends ShopbaseTable{
@@ -16,56 +20,56 @@ class CouponTable extends ShopbaseTable{
     }
     
     function getExistCode(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT `coupon_id` FROM `#__jshopping_coupons`
                   WHERE `coupon_code` = '" . $db->escape($this->coupon_code) . "' AND `coupon_id` <> '" . $db->escape($this->coupon_id) . "'";
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $db->execute();
         return $db->getNumRows();
     }
     
     function getEnableCode($code){
-        $JshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         if(!$JshopConfig->use_rabatt_code) {
-            $this->error = \JText::_('JSHOP_RABATT_NON_SUPPORT');
+            $this->error = Text::_('JSHOP_RABATT_NON_SUPPORT');
             return 0;
         }
-        $date = \JSHelper::getJsDate('now', 'Y-m-d');
+        $date = Helper::getJsDate('now', 'Y-m-d');
         $query = "SELECT * FROM `#__jshopping_coupons` WHERE coupon_code = '".$db->escape($code)."' AND coupon_publish = '1'";
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $row = $db->loadObJect();
         
         if(!isset($row->coupon_id)) {
-            $this->error = \JText::_('JSHOP_RABATT_NON_CORRECT');
+            $this->error = Text::_('JSHOP_RABATT_NON_CORRECT');
             return 0;
         }
         
         if ($row->coupon_expire_date < $date && $row->coupon_expire_date!="0000-00-00"){
-            $this->error = \JText::_('JSHOP_RABATT_NON_CORRECT');
+            $this->error = Text::_('JSHOP_RABATT_NON_CORRECT');
             return 0;
         }
         
         if ($row->coupon_start_date > $date){
-            $this->error = \JText::_('JSHOP_RABATT_NON_CORRECT');
+            $this->error = Text::_('JSHOP_RABATT_NON_CORRECT');
             return 0;
         }
         
         if($row->used) {
-            $this->error = \JText::_('JSHOP_RABATT_USED');
+            $this->error = Text::_('JSHOP_RABATT_USED');
             return 0;
         }
         
         if ($row->for_user_id){
-            $user = \JFactory::getUser();
+            $user = Factory::getUser();
             if (!$user->id){
-                $this->error = \JText::_('JSHOP_FOR_USE_COUPON_PLEASE_LOGIN');
+                $this->error = Text::_('JSHOP_FOR_USE_COUPON_PLEASE_LOGIN');
                 return 0;
             }
             if ($row->for_user_id!=$user->id){
-                $this->error = \JText::_('JSHOP_RABATT_NON_CORRECT');
+                $this->error = Text::_('JSHOP_RABATT_NON_CORRECT');
                 return 0;    
             }
         }
@@ -75,9 +79,9 @@ class CouponTable extends ShopbaseTable{
     }
 
     public function getIdFromCode($code){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT coupon_id FROM `#__jshopping_coupons` WHERE coupon_code = '".$db->escape($code)."'";
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         return $db->loadResult();
     }
@@ -88,7 +92,7 @@ class CouponTable extends ShopbaseTable{
             if ($free_discount > 0){
                 $this->coupon_value = $free_discount;
             }
-            extract(\JSHelper::Js_add_trigger(get_defined_vars(), "before"));
+            extract(Helper::Js_add_trigger(get_defined_vars(), "before"));
             $this->store();
         }
     }

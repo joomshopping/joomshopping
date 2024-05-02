@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.2.1 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -20,7 +22,7 @@ defined('_JEXEC') or die();
     ?>
      <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>* 
+         <?php echo Text::_('JSHOP_TITLE')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>* 
        </td>
        <td>
          <input type="text" class="inputbox form-control" name="<?php print $name?>" value="<?php echo $this->attribut->$name?>" />
@@ -33,7 +35,7 @@ defined('_JEXEC') or die();
     ?>
      <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
+         <?php echo Text::_('JSHOP_DESCRIPTION')?> <?php if ($this->multilang) print "(".$lang->lang.")";?>
        </td>
        <td>
 		 <textarea class="inputbox form-control" name="<?php print $description?>"><?php echo $this->attribut->$description?></textarea>
@@ -42,7 +44,7 @@ defined('_JEXEC') or die();
     <?php } ?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_REQUIRED')?>
+         <?php echo Text::_('JSHOP_REQUIRED')?>
        </td>
        <td>
            <input type="hidden" name="required" value="0">

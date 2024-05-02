@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class UserOrdersModel{
@@ -23,7 +25,7 @@ class UserOrdersModel{
 	}
 	
 	public function getListOrders(){
-		$order = \JSFactory::getTable('order');
+		$order = JSFactory::getTable('order');
 		$this->list = $order->getOrdersForUser($this->user_id);
 		$this->loadOrderLink();
 		foreach ($this->list as $k => $v) {
@@ -47,9 +49,9 @@ class UserOrdersModel{
 	}
 	
 	private function loadOrderLink(){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		foreach($this->list as $key=>$value){
-            $this->list[$key]->order_href = \JSHelper::SEFLink('index.php?option=com_jshopping&controller=user&task=order&order_id='.$value->order_id,1,0,$jshopConfig->use_ssl);
+            $this->list[$key]->order_href = Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=order&order_id='.$value->order_id,1,0,$jshopConfig->use_ssl);
         }
 	}
 	

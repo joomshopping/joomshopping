@@ -31,6 +31,7 @@ class AddonsController extends BaseadminController{
         $view->setLayout("list");
         $view->set('rows', $rows); 
         $view->set('back64', $back64);
+        $view->set('config', JSFactory::getConfig());
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 

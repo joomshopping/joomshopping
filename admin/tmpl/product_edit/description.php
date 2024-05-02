@@ -1,4 +1,8 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Editor\Editor;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -24,7 +28,7 @@ foreach($this->languages as $lang){
      <table class="admintable" >
        <tr>
          <td class="key" style="width:180px;">
-           <?php echo JText::_('JSHOP_TITLE')?>*
+           <?php echo Text::_('JSHOP_TITLE')?>*
          </td>
          <td>
            <input type="text" class="inputbox form-control wide" name="<?php echo $name?>" value="<?php echo $row->$name?>" />
@@ -32,7 +36,7 @@ foreach($this->languages as $lang){
        </tr>
        <tr>
          <td class="key">
-           <?php echo JText::_('JSHOP_ALIAS')?>
+           <?php echo Text::_('JSHOP_ALIAS')?>
          </td>
          <td>
            <input type="text" class="inputbox form-control wide" name="<?php echo $alias?>" value="<?php echo $row->$alias?>" />
@@ -40,7 +44,7 @@ foreach($this->languages as $lang){
        </tr>
        <tr>
          <td  class="key">
-           <?php echo JText::_('JSHOP_SHORT_DESCRIPTION')?>
+           <?php echo Text::_('JSHOP_SHORT_DESCRIPTION')?>
          </td>
          <td>
            <textarea name="<?php print $short_description;?>" class="form-control wide" rows="5"><?php echo $row->$short_description ?></textarea>
@@ -48,18 +52,18 @@ foreach($this->languages as $lang){
        </tr>
        <tr>
          <td  class="key">
-           <?php echo JText::_('JSHOP_DESCRIPTION')?>
+           <?php echo Text::_('JSHOP_DESCRIPTION')?>
          </td>
          <td>
            <?php
-              $editor=\JEditor::getInstance(\JFactory::getConfig()->get('editor'));
+              $editor=Editor::getInstance(Factory::getConfig()->get('editor'));
               print $editor->display('description'.$lang->id,  $row->$description , '100%', '350', '75', '20' ) ;
            ?>
          </td>
        </tr>
        <tr>
          <td  class="key">
-           <?php echo JText::_('JSHOP_META_TITLE')?>
+           <?php echo Text::_('JSHOP_META_TITLE')?>
          </td>
          <td>
            <input type="text" class="inputbox form-control w100" name="<?php print $meta_title; ?>" value="<?php echo $row->$meta_title;?>" />
@@ -67,7 +71,7 @@ foreach($this->languages as $lang){
        </tr>
        <tr>
          <td  class="key">
-           <?php echo JText::_('JSHOP_META_DESCRIPTION')?>
+           <?php echo Text::_('JSHOP_META_DESCRIPTION')?>
          </td>
          <td>
            <input type="text" class="inputbox form-control w100" name="<?php print $meta_description?>" value="<?php echo $row->$meta_description?>" />
@@ -75,7 +79,7 @@ foreach($this->languages as $lang){
        </tr>
        <tr>
          <td  class="key">
-           <?php echo JText::_('JSHOP_META_KEYWORDS')?>
+           <?php echo Text::_('JSHOP_META_KEYWORDS')?>
          </td>
          <td>
            <input type="text" class="inputbox form-control w100" name="<?php print $meta_keyword?>" value="<?php print $row->$meta_keyword?>" />

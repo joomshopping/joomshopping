@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class AttributTable extends MultilangTable{
@@ -16,8 +18,8 @@ class AttributTable extends MultilangTable{
     }
 
     function getAllAttributes($groupordering = 1){
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();
         $ordering = "A.attr_ordering";
         if ($groupordering){
             $ordering = "G.ordering, A.attr_ordering";
@@ -38,7 +40,7 @@ class AttributTable extends MultilangTable{
     }
     
     function getTypeAttribut($attr_id){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "select attr_type from #__jshopping_attr where `attr_id`='".$db->escape($attr_id)."'";
         $db->setQuery($query);
         return $db->loadResult();
@@ -57,7 +59,7 @@ class AttributTable extends MultilangTable{
     }
     
     public function getNextOrder($where = ''){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
 		$query = $db->getQuery(true)
 			->select('MAX(attr_ordering)')
 			->from($this->_tbl);
@@ -71,7 +73,7 @@ class AttributTable extends MultilangTable{
 	}
     
     public function addNewFieldProductsAttr(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $table = "#__jshopping_products_attr";
         $field = "attr_".$this->attr_id;
         $listfields = $db->getTableColumns($table);

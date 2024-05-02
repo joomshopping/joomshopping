@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 defined('_JEXEC') or die();
 
@@ -15,11 +18,11 @@ class LanguagesModel extends BaseadminModel{
     protected $nameTable = 'language';
 
     public function getAllLanguages($publish = 1) {
-        $jshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         $where_add = $publish ? "where `publish`='1'": ""; 
         $query = "SELECT * FROM `#__jshopping_languages` ".$where_add." order by `ordering`";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $rowssort = array();
         $rows = $db->loadObjectList();

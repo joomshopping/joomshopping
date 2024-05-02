@@ -7,16 +7,18 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Helper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class Category{
 	
 	public static function getListSubCatsId($ids = array()){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         if (!count($ids)){
             return array();
         }
-        $ids = \JSHelper::filterAllowValue($ids, 'int+');
+        $ids = Helper::filterAllowValue($ids, 'int+');
         $query = "select category_id from `#__jshopping_categories` where category_parent_id in (".implode(',', $ids).")";
         $db->setQuery($query);
         $list = $db->loadObjectList();

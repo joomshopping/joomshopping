@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class ConfigdisplaypriceTable extends ShopbaseTable{
@@ -28,7 +29,7 @@ class ConfigdisplaypriceTable extends ShopbaseTable{
     }
     
     function getList(){
-        $db = \JFactory::getDBO();        
+        $db = Factory::getDBO();        
         $query = "SELECT * FROM `#__jshopping_config_display_prices`";
         $db->setQuery($query);
         $list = $db->loadObJectList();

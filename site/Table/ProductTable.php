@@ -7,24 +7,30 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 defined('_JEXEC') or die();
 
 class ProductTable extends MultilangTable{
 
     function __construct(&$_db){
         parent::__construct('#__jshopping_products', 'product_id', $_db);
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
     }
 
     function setAttributeActive($attribs){
-		$db = \JFactory::getDBO();
-        $dispatcher = \JFactory::getApplication();
-        $JshopConfig = \JSFactory::getConfig();
+		$db = Factory::getDBO();
+        $dispatcher = Factory::getApplication();
+        $JshopConfig = JSFactory::getConfig();
 		$this->setAttributeSubmitted($attribs, 1);
         $this->attribute_active = $attribs;
         if (is_array($this->attribute_active) && count($this->attribute_active)){
             $this->attribute_active_data = new \stdClass();
-            $allattribs = \JSFactory::getAllAttributes(1);
+            $allattribs = JSFactory::getAllAttributes(1);
             $dependent_attr = array();
             $independent_attr = array();
             foreach($attribs as $k=>$v){
@@ -127,11 +133,11 @@ class ProductTable extends MultilangTable{
     //get require attribute
     function getRequireAttribute(){
         $require = array();
-        if (!\JSFactory::getConfig()->admin_show_attributes){
+        if (!JSFactory::getConfig()->admin_show_attributes){
 			return $require;
 		}
 
-        $allattribs = \JSFactory::getAllAttributes(2);
+        $allattribs = JSFactory::getAllAttributes(2);
         $dependent_attr = $allattribs['dependent'];
         $independent_attr = $allattribs['independent'];
 
@@ -160,7 +166,7 @@ class ProductTable extends MultilangTable{
 
     //get dependent attributs
     function getAttributes(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_products_attr` WHERE product_id=".(int)$this->product_id." ORDER BY product_attr_id";
         $db->setQuery($query);
         return $db->loadObJectList();
@@ -168,9 +174,9 @@ class ProductTable extends MultilangTable{
 
     //get independent attributs
     function getAttributes2(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_products_attr2` WHERE product_id=".(int)$this->product_id." ORDER BY id";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onAfterQueryGetAttributes2', array(&$query));
         $db->setQuery($query);
         return $db->loadObJectList();
@@ -178,10 +184,10 @@ class ProductTable extends MultilangTable{
 
     //get attrib values
 	function getAttribValue($attr_id, $other_attr = array(), $onlyExistProduct = 0){
-        $db = \JFactory::getDBO();
-        $JshopConfig = \JSFactory::getConfig();
-        $allattribs = \JSFactory::getAllAttributes(1);
-        $lang = \JSFactory::getLang();
+        $db = Factory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
+        $allattribs = JSFactory::getAllAttributes(1);
+        $lang = JSFactory::getLang();
         if ($allattribs[$attr_id]->independent==0){
             $where = "";
             foreach($other_attr as $k=>$v){
@@ -207,13 +213,13 @@ class ProductTable extends MultilangTable{
                       WHERE PA.product_id=".(int)$this->product_id." and PA.attr_id=".(int)$attr_id."
                       ORDER BY ".$sorting;
         }
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
         $db->setQuery($query);
         return $db->loadObJectList();
     }
 
     function getAttributesDatas($selected = array()){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         $data = array('attributeValues'=>array());
         $requireAttribute = $this->getRequireAttribute();
         $actived = array();
@@ -237,7 +243,7 @@ class ProductTable extends MultilangTable{
             $data['attributeActive'] = array();
         }
         $data['attributeSelected'] = $actived;
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
     return $data;
     }
 
@@ -259,8 +265,8 @@ class ProductTable extends MultilangTable{
     }
 
     function getListFreeAttributes(){
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();
         $query = "SELECT FA.id, FA.required, FA.`".$lang->get("name")."` as name, FA.`".$lang->get("description")."` as description, FA.type
 				  FROM `#__jshopping_products_free_attr` as PFA
 				  left Join `#__jshopping_free_attr` as FA on FA.id=PFA.attr_id
@@ -287,7 +293,7 @@ class ProductTable extends MultilangTable{
 
     function getCategories($type_result = 0){
         if (!isset($this->product_categories)){
-            $db = \JFactory::getDBO();
+            $db = Factory::getDBO();
             $query = "SELECT * FROM `#__jshopping_products_to_categories` WHERE product_id=".(int)$this->product_id;
             $db->setQuery($query);
             $this->product_categories = $db->loadObJectList();
@@ -376,8 +382,8 @@ class ProductTable extends MultilangTable{
     }
 
     function getImages(){
-        $db = \JFactory::getDBO();
-        $jshopConfig = \JSFactory::getConfig();
+        $db = Factory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
         if (isset($this->attribute_active_data->ext_data) && $this->attribute_active_data->ext_data){
             $list = $this->attribute_active_data->ext_data->getImages();
             if (count($list)){
@@ -404,15 +410,15 @@ class ProductTable extends MultilangTable{
                 }
                 $list[$k]->img_title = $list[$k]->img_alt;
             }
-            $list[$k]->image_thumb = \JSHelper::getPatchProductImage($v->image_name, 'thumb');
-            $list[$k]->image_full = \JSHelper::getPatchProductImage($v->image_name, 'full');
+            $list[$k]->image_thumb = Helper::getPatchProductImage($v->image_name, 'thumb');
+            $list[$k]->image_full = Helper::getPatchProductImage($v->image_name, 'full');
         }
     return $list;
     }
 
     function getVideos(){
-        $db = \JFactory::getDBO();
-        $JshopConfig = \JSFactory::getConfig();
+        $db = Factory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
         if (!$JshopConfig->admin_show_product_video){
 			return array();
 		}
@@ -422,8 +428,8 @@ class ProductTable extends MultilangTable{
     }
 
     function getFiles(){
-        $db = \JFactory::getDBO();
-        $JshopConfig = \JSFactory::getConfig();
+        $db = Factory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
         if (!$JshopConfig->admin_show_product_files) return array();
 		if (isset($this->attribute_active_data->ext_data) && $this->attribute_active_data->ext_data){
 			$list = $this->attribute_active_data->ext_data->getFiles();
@@ -432,29 +438,29 @@ class ProductTable extends MultilangTable{
             }
 		}
 		$query = "SELECT * FROM `#__jshopping_products_files` WHERE product_id=".(int)$this->product_id." order by `ordering`";
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "beforeQuery"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "beforeQuery"));
 		$db->setQuery($query);
 		return $db->loadObJectList();
     }
 
     function getDemoFiles(){
-        $db = \JFactory::getDBO();
-        $JshopConfig = \JSFactory::getConfig();
+        $db = Factory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
         if (!$JshopConfig->admin_show_product_files) return array();
 		$list = array();
         if (isset($this->attribute_active_data) && isset($this->attribute_active_data->ext_data) && $this->attribute_active_data->ext_data){
 			$list = $this->attribute_active_data->ext_data->getDemoFiles();
 		}
         $query = "SELECT * FROM `#__jshopping_products_files` WHERE product_id=".(int)$this->product_id." and demo!='' order by `ordering`";
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "beforeQuery"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "beforeQuery"));
         $db->setQuery($query);
 		$list0 = $db->loadObJectList();
         return array_merge($list0, $list);
     }
 
     function getSaleFiles(){
-        $db = \JFactory::getDBO();
-        $JshopConfig = \JSFactory::getConfig();
+        $db = Factory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
         if (!$JshopConfig->admin_show_product_files) return array();
 		$list = array();
         if (isset($this->attribute_active_data->ext_data) && $this->attribute_active_data->ext_data){
@@ -462,14 +468,14 @@ class ProductTable extends MultilangTable{
 		}
         $query = "SELECT id, file, file_descr FROM `#__jshopping_products_files`
 				  WHERE product_id=".(int)$this->product_id." and file!='' order by `ordering`";
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "beforeQuery"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "beforeQuery"));
         $db->setQuery($query);
 		$list0 = $db->loadObJectList();
         return array_merge($list0, $list);
     }
 
     function getManufacturerInfo(){
-        $manufacturers = \JSFactory::getAllManufacturer();
+        $manufacturers = JSFactory::getAllManufacturer();
         if ($this->product_manufacturer_id && isset($manufacturers[$this->product_manufacturer_id])){
             return $manufacturers[$this->product_manufacturer_id];
         }else{
@@ -478,7 +484,7 @@ class ProductTable extends MultilangTable{
     }
 
     function getVendorInfo(){
-        $vendors = \JSFactory::getAllVendor();
+        $vendors = JSFactory::getAllVendor();
         if (isset($vendors[$this->vendor_id])){
             return $vendors[$this->vendor_id];
         }else{
@@ -490,8 +496,8 @@ class ProductTable extends MultilangTable{
     * get first catagory for product
     */
     function getCategory() {
-        $db = \JFactory::getDBO();
-        $user = \JFactory::getUser();
+        $db = Factory::getDBO();
+        $user = Factory::getUser();
         $groups = implode(',', $user->getAuthorisedViewLevels());
         $adv_query =' AND cat.access IN ('.$groups.')';
         $main_category_id = 0;
@@ -512,13 +518,13 @@ class ProductTable extends MultilangTable{
             $this->category_id = $db->loadResult();
         }
 		$obj = $this;
-        \JFactory::getApplication()->triggerEvent('onBeforeProductGetCategory', array(&$obj));
+        Factory::getApplication()->triggerEvent('onBeforeProductGetCategory', array(&$obj));
         return $this->category_id;
     }
 
     function getFullQty(){
         if ($this->unlimited) return 1;
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "select count(*) as countattr, SUM(count) AS qty from `#__jshopping_products_attr` where product_id=".(int)$this->product_id;
         $db->setQuery($query);
         $tmp = $db->loadObJect();
@@ -530,8 +536,8 @@ class ProductTable extends MultilangTable{
     }
 
     function getMinimumPrice(){
-        $JshopConfig = \JSFactory::getConfig();
-        $db = \JFactory::getDBO();
+        $JshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         $min_price = $this->product_price;
 
         $query = "select count(*) as countattr, MIN(price) AS min_price from `#__jshopping_products_attr` where product_id=".(int)$this->product_id;
@@ -593,7 +599,7 @@ class ProductTable extends MultilangTable{
     }
 
     function getExtraFieldsData(){
-        $table = \JSFactory::getTable('producttofield');
+        $table = JSFactory::getTable('producttofield');
         $table->load($this->product_id);
         $properties = $table->getProperties();
         $data = [];
@@ -606,7 +612,7 @@ class ProductTable extends MultilangTable{
     }
 
     function getDeliveryTimeId($globqty = 0){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($globqty){
             $qty = $this->product_quantity;
         }else{
@@ -619,10 +625,10 @@ class ProductTable extends MultilangTable{
     }
 
     function getDeliveryTime($globqty = 0){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         $dti = $this->getDeliveryTimeId($globqty);
         if ($JshopConfig->show_delivery_time && $dti){
-            $deliveryTimes = \JSFactory::getTable('deliveryTimes');
+            $deliveryTimes = JSFactory::getTable('deliveryTimes');
             $deliveryTimes->load($dti);
             $this->delivery_time = $deliveryTimes->getName();
         }else{
@@ -632,7 +638,7 @@ class ProductTable extends MultilangTable{
     }
 
     function getDescription() {
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         $name = $lang->get('name');
         $short_description = $lang->get('short_description');
         $description = $lang->get('description');
@@ -661,7 +667,7 @@ class ProductTable extends MultilangTable{
     }
 
 	function getUseUserDiscount(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($JshopConfig->user_discount_not_apply_prod_old_price && $this->product_old_price>0){
             return 0;
         }else{
@@ -670,11 +676,11 @@ class ProductTable extends MultilangTable{
     }
 	
 	function getPrice($quantity=1, $enableCurrency=1, $enableUserDiscount=1, $enableParamsTax=1, $cartProduct=array()){
-        $dispatcher = \JFactory::getApplication();
-        $JshopConfig = \JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
+        $JshopConfig = JSFactory::getConfig();
 		$this->product_price_wp = $this->product_price;
         $this->product_price_calculate = $this->getPriceWithParams();
-		$this->product_user_percent_discount = \JSFactory::getUserShop()->percent_discount;
+		$this->product_user_percent_discount = JSFactory::getUserShop()->percent_discount;
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeCalculatePriceProduct', array(&$quantity, &$enableCurrency, &$enableUserDiscount, &$enableParamsTax, &$obj, &$cartProduct));
 
@@ -689,20 +695,20 @@ class ProductTable extends MultilangTable{
         }
 
         if ($enableCurrency){
-            $this->product_price_calculate = \JSHelper::getPriceFromCurrency($this->product_price_calculate, $this->currency_id);
-			$this->product_price_wp = \JSHelper::getPriceFromCurrency($this->product_price_wp, $this->currency_id);
+            $this->product_price_calculate = Helper::getPriceFromCurrency($this->product_price_calculate, $this->currency_id);
+			$this->product_price_wp = Helper::getPriceFromCurrency($this->product_price_wp, $this->currency_id);
 
         }
 
         if ($enableParamsTax){
-            $this->product_price_calculate = \JSHelper::getPriceCalcParamsTax($this->product_price_calculate, $this->product_tax_id);
-			$this->product_price_wp = \JSHelper::getPriceCalcParamsTax($this->product_price_wp, $this->product_tax_id);
+            $this->product_price_calculate = Helper::getPriceCalcParamsTax($this->product_price_calculate, $this->product_tax_id);
+			$this->product_price_wp = Helper::getPriceCalcParamsTax($this->product_price_wp, $this->product_tax_id);
         }
 
         if ($enableUserDiscount && $this->product_user_percent_discount && $this->getUseUserDiscount()){            
 			$this->product_price_default = $this->product_price_calculate;
-			$this->product_price_calculate = \JSHelper::getPriceDiscount($this->product_price_calculate, $this->product_user_percent_discount);
-			$this->product_price_wp = \JSHelper::getPriceDiscount($this->product_price_wp, $this->product_user_percent_discount);
+			$this->product_price_calculate = Helper::getPriceDiscount($this->product_price_calculate, $this->product_user_percent_discount);
+			$this->product_price_wp = Helper::getPriceDiscount($this->product_price_wp, $this->product_user_percent_discount);
         }
         $this->product_price_calculate1 = $this->product_price_calculate;
         $obj = $this;
@@ -721,8 +727,8 @@ class ProductTable extends MultilangTable{
     function getBasicPriceInfo(){
         $this->product_basic_price_show = $this->weight_volume_units!=0;
         if (!$this->product_basic_price_show) return 0;
-        $JshopConfig = \JSFactory::getConfig();
-        $units = \JSFactory::getAllUnits();
+        $JshopConfig = JSFactory::getConfig();
+        $units = JSFactory::getAllUnits();
         $unit = $units[$this->basic_price_unit_id];
         if ($JshopConfig->calc_basic_price_from_product_price){
             $this->product_basic_price_wvu = $this->weight_volume_units;
@@ -757,7 +763,7 @@ class ProductTable extends MultilangTable{
         }
 
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterGetBasicPriceInfoProduct', array(&$obj));
+        Factory::getApplication()->triggerEvent('onAfterGetBasicPriceInfoProduct', array(&$obj));
         return 1;
     }
 
@@ -779,8 +785,8 @@ class ProductTable extends MultilangTable{
     function getAddPrices(){
         $this->product_add_prices = [];
         if ($this->product_is_add_price) {
-            $JshopConfig = \JSFactory::getConfig();
-            $productprice = \JSFactory::getTable('productprice');
+            $JshopConfig = JSFactory::getConfig();
+            $productprice = JSFactory::getTable('productprice');
             $this->product_add_prices = $productprice->getAddPrices($this->product_id);
 
             $price = $this->getPriceWithParams();
@@ -796,46 +802,46 @@ class ProductTable extends MultilangTable{
             }
 
             if (!$this->add_price_unit_id) $this->add_price_unit_id = $JshopConfig->product_add_price_default_unit;
-            $units = \JSFactory::getAllUnits();
+            $units = JSFactory::getAllUnits();
             $unit = $units[$this->add_price_unit_id];
             $this->product_add_price_unit = $unit->name;
-            if ($this->product_add_price_unit=="") $this->product_add_price_unit = \JText::_('JSHP_ST_');
+            if ($this->product_add_price_unit=="") $this->product_add_price_unit = Text::_('JSHP_ST_');
         }
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterGetAddPricesProduct', array(&$obj));
+        Factory::getApplication()->triggerEvent('onAfterGetAddPricesProduct', array(&$obj));
         return $this->product_add_prices;
     }
 
     function getTax(){
-        $taxes = \JSFactory::getAllTaxes();
+        $taxes = JSFactory::getAllTaxes();
 		$this->product_tax = isset($taxes[$this->product_tax_id]) ? $taxes[$this->product_tax_id] : 0;
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeGetTaxProduct', array(&$obj));
         return $this->product_tax;
     }
 
     function updateOtherPricesIncludeAllFactors(){
-        $JshopConfig = \JSFactory::getConfig();
-        $userShop = \JSFactory::getUserShop();
+        $JshopConfig = JSFactory::getConfig();
+        $userShop = JSFactory::getUserShop();
 
         $this->product_old_price = $this->getOldPrice();
-        $this->product_old_price = \JSHelper::getPriceFromCurrency($this->product_old_price, $this->currency_id);
-        $this->product_old_price = \JSHelper::getPriceCalcParamsTax($this->product_old_price, $this->product_tax_id);
+        $this->product_old_price = Helper::getPriceFromCurrency($this->product_old_price, $this->currency_id);
+        $this->product_old_price = Helper::getPriceCalcParamsTax($this->product_old_price, $this->product_tax_id);
         if ($this->getUseUserDiscount()){
-			$this->product_old_price = \JSHelper::getPriceDiscount($this->product_old_price, $userShop->percent_discount);
+			$this->product_old_price = Helper::getPriceDiscount($this->product_old_price, $userShop->percent_discount);
 		}
 
         if (is_array($this->product_add_prices)){
             foreach ($this->product_add_prices as $key=>$value){
-                $this->product_add_prices[$key]->price = \JSHelper::getPriceFromCurrency($this->product_add_prices[$key]->price, $this->currency_id);
-                $this->product_add_prices[$key]->price = \JSHelper::getPriceCalcParamsTax($this->product_add_prices[$key]->price, $this->product_tax_id);
+                $this->product_add_prices[$key]->price = Helper::getPriceFromCurrency($this->product_add_prices[$key]->price, $this->currency_id);
+                $this->product_add_prices[$key]->price = Helper::getPriceCalcParamsTax($this->product_add_prices[$key]->price, $this->product_tax_id);
 				if ($this->getUseUserDiscount()){
-					$this->product_add_prices[$key]->price = \JSHelper::getPriceDiscount($this->product_add_prices[$key]->price, $userShop->percent_discount);
+					$this->product_add_prices[$key]->price = Helper::getPriceDiscount($this->product_add_prices[$key]->price, $userShop->percent_discount);
 				}
             }
         }
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onUpdateOtherPricesIncludeAllFactors', array(&$obj) );
     }
@@ -849,11 +855,11 @@ class ProductTable extends MultilangTable{
         $productExtraField = $this->getExtraFieldsData();
 
         $fields = array();
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         $hide_fields = $JshopConfig->getProductHideExtraFields();
         $cart_fields = $JshopConfig->getCartDisplayExtraFields();
-        $fieldvalues = \JSFactory::getAllProductExtraFieldValue();
-        $listfield = \JSFactory::getAllProductExtraField();
+        $fieldvalues = JSFactory::getAllProductExtraFieldValue();
+        $listfield = JSFactory::getAllProductExtraField();
         foreach($listfield as $val){
             if ($type==1 && in_array($val->id, $hide_fields)) continue;
             if ($type==2 && !in_array($val->id, $cart_fields)) continue;
@@ -922,32 +928,32 @@ class ProductTable extends MultilangTable{
     }
 
     function getReviews($limitstart = 0, $limit = 20) {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_products_reviews` WHERE product_id=".(int)$this->product_id." and publish=1 order by review_id desc";
         $db->setQuery($query, $limitstart, $limit);
         $rows = $db->loadObJectList();
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterGetReviewsProduct', array(&$obj, &$rows, &$limitstart, &$limit));
+        Factory::getApplication()->triggerEvent('onAfterGetReviewsProduct', array(&$obj, &$rows, &$limitstart, &$limit));
         return $rows;
     }
 
     function getReviewsCount(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT count(review_id) FROM `#__jshopping_products_reviews` WHERE product_id=".(int)$this->product_id." and publish=1";
         $db->setQuery($query);
         $row = $db->loadResult();
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterGetReviewsCountProduct', array(&$obj, &$row));
+        Factory::getApplication()->triggerEvent('onAfterGetReviewsCountProduct', array(&$obj, &$row));
         return $row;
     }
 
     function getAverageRating() {
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT ROUND(AVG(mark),2) FROM `#__jshopping_products_reviews` WHERE product_id=".(int)$this->product_id." and mark > 0 and publish=1";
         $db->setQuery($query);
         $row = $db->loadResult();
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onAfterGetAverageRatingProduct', array(&$obj, &$row));
+        Factory::getApplication()->triggerEvent('onAfterGetAverageRatingProduct', array(&$obj, &$row));
         return $row;
     }
 
@@ -961,92 +967,42 @@ class ProductTable extends MultilangTable{
     }
 
     function getExtAttributeData($pid){
-        $product = \JSFactory::getTable('product');
+        $product = JSFactory::getTable('product');
         $product->load($pid);
     return $product;
     }
 
     function getBuildSelectAttributes($attributeValues, $attributeActive, $displayonlyattrtype = null){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if (!$JshopConfig->admin_show_attributes) return array();
-        $dispatcher = \JFactory::getApplication();
-        $attrib = \JSFactory::getAllAttributes();
-		$userShop = \JSFactory::getUserShop();
-        $productShop = \JSFactory::getModel('productshop', 'Site');
-        $selects = array();
+        $app = Factory::getApplication();
+        $attribs = JSFactory::getAllAttributes();
+        $selects = [];
 		$obj = $this;
-        $dispatcher->triggerEvent('onBeforeBuildSelectAttribute', array(&$attributeValues, &$attributeActive, &$selects, &$attrib, &$obj));
+        $app->triggerEvent('onBeforeBuildSelectAttribute', array(&$attributeValues, &$attributeActive, &$selects, &$attribs, &$obj));
 
-        foreach($attrib as $k=>$v){
-            $attr_id = $v->attr_id;
+        foreach($attribs as $attr){
+            $attr_id = $attr->attr_id;
             if ($displayonlyattrtype){
-                $v->attr_type = $displayonlyattrtype;
+                $attr->attr_type = $displayonlyattrtype;
             }
-            if (isset($attributeValues[$attr_id]) && $attributeValues[$attr_id]){
-                if (isset($attributeActive[$attr_id])){
-                    $_firstval = $attributeActive[$attr_id];
-                }else{
-                    $_firstval = 0;
-                }
-                $selects[$attr_id] = new \stdClass();
-                $selects[$attr_id]->attr_id = $attr_id;
-                $selects[$attr_id]->attr_name = $v->name;
-                $selects[$attr_id]->attr_description = $v->description;
-                $selects[$attr_id]->groupname = $v->groupname;
-                $selects[$attr_id]->firstval = $_firstval;
-                $options = $attributeValues[$attr_id];
-                $attrimage = array();
-                foreach($options as $k2=>$v2){
-                    $attrimage[$v2->val_id] = $v2->image;
-					$addPrice = isset($v2->addprice) ? $v2->addprice : 0;
-                    $addPrice = \JSHelper::getPriceFromCurrency($addPrice, $this->currency_id);
-                    $addPrice = \JSHelper::getPriceCalcParamsTax($addPrice, $this->product_tax_id);
-                    if ($userShop->percent_discount){
-                        $addPrice = \JSHelper::getPriceDiscount($addPrice, $userShop->percent_discount);
-                    }
-                    $options[$k2]->addprice = $addPrice;
-                    $options[$k2]->price_mod = isset($v2->price_mod) ? $v2->price_mod : "";
-                }
-                
-                if ($JshopConfig->attr_display_addprice){
-                    foreach($options as $k2=>$v2){
-                        if (($v2->price_mod=="+" || $v2->price_mod=="-" || $JshopConfig->attr_display_addprice_all_sign) && $v2->addprice>0){
-                            $ext_price_info = " (".$v2->price_mod.\JSHelper::formatprice($v2->addprice, null, 0, -1).")";
-                            $options[$k2]->value_name .=$ext_price_info;
-                        }
-                    }
-                }
-                if (isset($attributeActive[$attr_id]) && isset($attrimage[$attributeActive[$attr_id]])){
-                    $_active_image = $attrimage[$attributeActive[$attr_id]];
-                }else{
-                    $_active_image = '';
-                }
-                if (isset($attributeActive[$attr_id])){
-                    $_select_active = $attributeActive[$attr_id];
-                }else{
-                    $_select_active = '';
-                }
-
-                if ($v->attr_type==1){
-                    if ($JshopConfig->product_attribut_first_value_empty){
-                        $first = array();
-                        $first[] = \JHTML::_('select.option', '0', \JText::_('JSHOP_SELECT'), 'val_id','value_name');
-                        $options = array_merge($first, $options);
-                    }
-                }
-
-                $view = $productShop->getView("product");
-                $view->setLayout($JshopConfig->product_attribute_type_template[$v->attr_type]);                
-                $view->set('attr_id', $attr_id);
-                $view->set('options', $options);                    
-                $view->set('config', $JshopConfig);
-                $view->set('active', $_select_active);
-                $view->set('url_attr_img', $this->getUrlProdAttrImg($_active_image));
-                $view->set('attribute', $v);
-                $dispatcher->triggerEvent('onBuildSelectAttributeView', array(&$view));                    
-                $selects[$attr_id]->selects = $view->loadTemplate();
-
-                $dispatcher->triggerEvent('onBuildSelectAttribute', array(&$attributeValues, &$attributeActive, &$selects, &$options, &$attr_id, &$v));
+            if (isset($attributeValues[$attr_id]) && $attributeValues[$attr_id]) {
+                $item = new \stdClass();
+                $item->attr_id = $attr_id;
+                $item->attr_name = $attr->name;
+                $item->attr_description = $attr->description;
+                $item->groupname = $attr->groupname;
+                $item->firstval = $attributeActive[$attr_id] ?? 0;
+                $item->attr_type = $attr->attr_type;
+                $item->attr_values = $attributeValues[$attr_id];
+                $options = $this->getBuildSelectAttributesOptions($item->attr_values);
+                $attrimage = $this->getBuildSelectAttributesOptionsImages($item->attr_values);
+                $item->select_options = $options;
+                $item->select_active = $attributeActive[$attr_id] ?? '';
+                $item->select_active_image = $attrimage[$item->select_active] ?? '';
+                $item->selects = $this->getBuildSelectAttributesHtml($attr, $item);
+                $selects[$attr_id] = $item;
+                $app->triggerEvent('onBuildSelectAttribute', array(&$attributeValues, &$attributeActive, &$selects, &$options, &$attr_id, &$attr));
             }
         }
         $grname = '';
@@ -1060,9 +1016,71 @@ class ProductTable extends MultilangTable{
         }
     return $selects;
     }
+
+    function getBuildSelectAttributesOptions($attr_values){
+        $userShop = JSFactory::getUserShop();
+        $JshopConfig = JSFactory::getConfig();
+        $options = [];
+        foreach($attr_values as $k2=>$v2){
+            $options[$k2] = clone $v2;
+            $attrimage[$v2->val_id] = $v2->image;
+            $addPrice = isset($v2->addprice) ? $v2->addprice : 0;
+            $addPrice = Helper::getPriceFromCurrency($addPrice, $this->currency_id);
+            $addPrice = Helper::getPriceCalcParamsTax($addPrice, $this->product_tax_id);
+            if ($userShop->percent_discount){
+                $addPrice = Helper::getPriceDiscount($addPrice, $userShop->percent_discount);
+            }
+            $options[$k2]->addprice = $addPrice;
+            $options[$k2]->price_mod = isset($v2->price_mod) ? $v2->price_mod : "";
+        }
+        
+        if ($JshopConfig->attr_display_addprice){
+            foreach($options as $k2=>$v2){
+                if (($v2->price_mod=="+" || $v2->price_mod=="-" || $JshopConfig->attr_display_addprice_all_sign) && $v2->addprice>0){
+                    $ext_price_info = " (".$v2->price_mod.Helper::formatprice($v2->addprice, null, 0, -1).")";
+                    $options[$k2]->value_name .= $ext_price_info;
+                }
+            }
+        }
+        return $options;
+    }
+
+    function getBuildSelectAttributesOptionsImages($attr_values) {
+        $imgs = array();
+        foreach($attr_values as $v){
+            $imgs[$v->val_id] = $v->image;
+        }
+        return $imgs;
+    }
+
+    function getBuildSelectAttributesHtml($attr, $item){
+        $app = Factory::getApplication();
+        $JshopConfig = JSFactory::getConfig();
+        $model = JSFactory::getModel('productshop', 'Site');
+
+        $options = $item->select_options;
+        if ($attr->attr_type==1 && $JshopConfig->product_attribut_first_value_empty){
+            $first = array();
+            $first[] = HTMLHelper::_('select.option', '0', Text::_('JSHOP_SELECT'), 'val_id', 'value_name');
+            $options = array_merge($first, $options);
+        }
+
+        $view = $model->getView("product");
+        $layout = $JshopConfig->product_attribute_type_template[$attr->attr_type] ?? 'attribute_input_select';
+        $view->setLayout($layout);
+        $view->set('attr_id', $attr->attr_id);
+        $view->set('options', $options);
+        $view->set('config', $JshopConfig);
+        $view->set('active', $item->select_active);
+        $view->set('url_attr_img', $this->getUrlProdAttrImg($item->select_active_image));
+        $view->set('attribute', $attr);
+        $view->set('item', $item);
+        $app->triggerEvent('onBuildSelectAttributeView', array(&$view));
+        return $view->loadTemplate();
+    }
     
     function getUrlProdAttrImg($img){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if ($img){
             $path = $JshopConfig->image_attributes_live_path;
         }else{
@@ -1074,7 +1092,7 @@ class ProductTable extends MultilangTable{
 
 	function checkView(&$category, &$user, &$category_id, &$listcategory){
         $obj = $this;
-		\JFactory::getApplication()->triggerEvent('onBeforeCheckProductPublish', array(&$obj, &$category, &$category_id, &$listcategory));
+		Factory::getApplication()->triggerEvent('onBeforeCheckProductPublish', array(&$obj, &$category, &$category_id, &$listcategory));
 		if ($category->category_publish==0 || $this->product_publish==0 || !in_array($this->access, $user->getAuthorisedViewLevels()) || !in_array($category_id, $listcategory)){
 			return 0;
 		}else{

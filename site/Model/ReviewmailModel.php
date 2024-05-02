@@ -7,18 +7,22 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class ReviewMailModel  extends MailModel{
 	
     public function getSubjectMail(){
-		$subject = \JText::_('JSHOP_NEW_COMMENT');
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "before"));
+		$subject = Text::_('JSHOP_NEW_COMMENT');
+		extract(Helper::Js_add_trigger(get_defined_vars(), "before"));
         return $subject;
     }
     
     public function getMessageMail(){
-		$product = \JSFactory::getTable('product');
+		$product = JSFactory::getTable('product');
         $product->load($this->getProductId());
 		$review = $this->getReview();
 		
@@ -29,29 +33,29 @@ class ReviewMailModel  extends MailModel{
         $view->set('user_email', $review->user_email);
         $view->set('mark', $review->mark);
         $view->set('review', $review->review);
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "before"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "before"));
         return $view->loadTemplate();
     }
     
     public function send(){
-		$mainframe =\JFactory::getApplication();
-        $jshopConfig = \JSFactory::getConfig();
+		$mainframe =Factory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
 		
 		$mailfrom = $mainframe->getCfg('mailfrom');
         $fromname = $mainframe->getCfg('fromname');
 		
         try {
-            $mailer = \JFactory::getMailer();
+            $mailer = Factory::getMailer();
             $mailer->setSender(array($mailfrom, $fromname));
             $mailer->addRecipient($jshopConfig->getAdminContactEmails());
             $mailer->setSubject($this->getSubjectMail());
             $mailer->setBody($this->getMessageMail());
             $mailer->isHTML(true);
-            extract(\JSHelper::Js_add_trigger(get_defined_vars(), "before"));
+            extract(Helper::Js_add_trigger(get_defined_vars(), "before"));
             $res = $mailer->Send();
         } catch (\Exception $e) {
             $res = 0;
-            \JSHelper::saveToLog('error.log', 'Reviewmail mail send error: '.$e->getMessage());			
+            Helper::saveToLog('error.log', 'Reviewmail mail send error: '.$e->getMessage());			
         }
         return $res;
     }

@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Lib;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class ShopItemMenu{
@@ -34,7 +36,7 @@ class ShopItemMenu{
 
     static function getInstance($lang = ''){
 		if (!$lang){
-			$lang = \JSFactory::getConfig()->getLang();
+			$lang = JSFactory::getConfig()->getLang();
 		}
         if (!isset(self::$instance[$lang])){
             self::$instance[$lang] = new ShopItemMenu();
@@ -130,9 +132,9 @@ class ShopItemMenu{
     }
 
     public function getIdByUrl($url) {
-        $user = \JFactory::getUser();
+        $user = Factory::getUser();
         $groups = implode(',', $user->getAuthorisedViewLevels());
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT id FROM #__menu 
                   WHERE published=1 and link like ".$db->q($url)." and client_id=0 
                   and (language='*' or language=".$db->q($this->lang).") and access IN (".$groups.")";
@@ -142,10 +144,10 @@ class ShopItemMenu{
 
     public function getList(){
         if (!is_array($this->list)){
-            $jshopConfig = \JSFactory::getConfig();
-            $user = \JFactory::getUser();
+            $jshopConfig = JSFactory::getConfig();
+            $user = Factory::getUser();
             $groups = implode(',', $user->getAuthorisedViewLevels());
-            $db = \JFactory::getDBO();
+            $db = Factory::getDBO();
             $query = "select id,link from #__menu 
 			          where `type`='component' and published=1 and link like '%option=com_jshopping%' and client_id=0 
 					  and (language='*' or language=".$db->q($this->lang).") and access IN (".$groups.")";
@@ -260,7 +262,7 @@ class ShopItemMenu{
             }
             if (!$Itemid) {
                 $categoryitemidlist = $this->getListCategory();
-                $prodalias = \JSFactory::getAliasProduct($this->lang);
+                $prodalias = JSFactory::getAliasProduct($this->lang);
                 if (isset($categoryitemidlist[$query['category_id']]) && isset($prodalias[$query['product_id']])){
                     $Itemid = $categoryitemidlist[$query['category_id']];
                 }

@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -15,9 +17,9 @@ defined('_JEXEC') or die();
 
             <div class="btn-group mr-2">
                 <div class="input-group">
-                    <input name="filter" value="<?php echo htmlspecialchars($this->filter);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+                    <input name="filter" value="<?php echo htmlspecialchars($this->filter);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
                     <span class="input-group-append">
-                        <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+                        <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                             <span class="icon-search" aria-hidden="true"></span>
                         </button>
                     </span>

@@ -7,6 +7,12 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
@@ -15,12 +21,12 @@ class CouponsController extends BaseadminController{
     protected $urlEditParamId = 'coupon_id';
     
     function init(){
-        \JSHelperAdmin::checkAccessController("coupons");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("coupons");
+        HelperAdmin::addSubmenu("other");
     }
 
     function display($cachable = false, $urlparams = false){
-        $app = \JFactory::getApplication();
+        $app = Factory::getApplication();
         $context = "jshoping.list.admin.coupons";
         $limit = $app->getUserStateFromRequest( $context.'limit', 'limit', $app->getCfg('list_limit'), 'int' );
         $limitstart = $app->getUserStateFromRequest( $context.'limitstart', 'limitstart', 0, 'int' );
@@ -28,19 +34,19 @@ class CouponsController extends BaseadminController{
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         $text_search = $app->getUserStateFromRequest( $context.'text_search', 'text_search', '' );
         
-        $jshopConfig = \JSFactory::getConfig();
-        $coupons = \JSFactory::getModel("coupons");
+        $jshopConfig = JSFactory::getConfig();
+        $coupons = JSFactory::getModel("coupons");
         $total = $coupons->getCountCoupons($text_search);
         
         jimport('joomla.html.pagination');
-        $pageNav = new \JPagination($total, $limitstart, $limit);        
+        $pageNav = new Pagination($total, $limitstart, $limit);        
         $rows = $coupons->getAllCoupons($pageNav->limitstart, $pageNav->limit, $filter_order, $filter_order_Dir, $text_search);
 
         foreach ($rows as $row) {
             $row->tmp_extra_column_cells = "";
         }
         
-        $currency = \JSFactory::getTable('currency');
+        $currency = JSFactory::getTable('currency');
         $currency->load($jshopConfig->mainCurrency);
                         
 		$view = $this->getView("coupons", 'html');
@@ -58,15 +64,15 @@ class CouponsController extends BaseadminController{
         $view->tmp_html_end = "";
         $view->deltaColspan  = 0;
 
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayCoupons', array(&$view));		
 		$view->displayList(); 
     }
     
     function edit() {
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
         $coupon_id = $this->input->getInt('coupon_id');
-        $coupon = \JSFactory::getTable('coupon'); 
+        $coupon = JSFactory::getTable('coupon'); 
         $coupon->load($coupon_id);
         $edit = $coupon_id ? 1 : 0;
         
@@ -75,15 +81,15 @@ class CouponsController extends BaseadminController{
           $coupon->finished_after_used = 1;
           $coupon->for_user_id = 0;
         }
-        if (\JSHelper::datenull($coupon->coupon_start_date)){
+        if (Helper::datenull($coupon->coupon_start_date)){
             $coupon->coupon_start_date = '';
         }
-        if (\JSHelper::datenull($coupon->coupon_expire_date)){
+        if (Helper::datenull($coupon->coupon_expire_date)){
             $coupon->coupon_expire_date = '';
         }
-        $currency_code = \JSHelper::getMainCurrencyCode();
-        $lists['coupon_type'] = \JHTML::_('select.radiolist', SelectOptions::getCouponType(), 'coupon_type', 'onchange="jshopAdmin.changeCouponType()"', 'id', 'name', $coupon->coupon_type);
-        $lists['tax'] = \JHTML::_('select.genericlist', SelectOptions::getTaxs(), 'tax_id', 'class = "inputbox form-select"', 'tax_id', 'tax_name', $coupon->tax_id);        
+        $currency_code = Helper::getMainCurrencyCode();
+        $lists['coupon_type'] = HTMLHelper::_('select.radiolist', SelectOptions::getCouponType(), 'coupon_type', 'onchange="jshopAdmin.changeCouponType()"', 'id', 'name', $coupon->coupon_type);
+        $lists['tax'] = HTMLHelper::_('select.genericlist', SelectOptions::getTaxs(), 'tax_id', 'class = "inputbox form-select"', 'tax_id', 'tax_name', $coupon->tax_id);        
         
         $view = $this->getView("coupons", 'html');
         $view->setLayout("edit");        
@@ -94,7 +100,7 @@ class CouponsController extends BaseadminController{
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditCoupons', array(&$view));
         $view->displayEdit();
     }

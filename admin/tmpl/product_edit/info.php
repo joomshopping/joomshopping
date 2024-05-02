@@ -1,4 +1,8 @@
 <?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -13,7 +17,7 @@ defined('_JEXEC') or die();
     <table class="admintable" width="90%">
     <tr>
        <td class="key" style="width:180px;">
-         <?php echo JText::_('JSHOP_PUBLISH')?>
+         <?php echo Text::_('JSHOP_PUBLISH')?>
        </td>
        <td>
          <input type="checkbox" name="product_publish" id="product_publish" value="1" <?php if ($row->product_publish) echo 'checked="checked"'?> />
@@ -21,7 +25,7 @@ defined('_JEXEC') or die();
     </tr>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_ACCESS')?>*
+         <?php echo Text::_('JSHOP_ACCESS')?>*
        </td>
        <td>
          <?php print $this->lists['access'];?>
@@ -29,7 +33,7 @@ defined('_JEXEC') or die();
     </tr>     
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_PRODUCT_PRICE')?>*
+         <?php echo Text::_('JSHOP_PRODUCT_PRICE')?>*
        </td>
        <td>
          <input type="text" name="product_price" class = "form-control" id="product_price" value="<?php echo $row->product_price?>" <?php if (!$this->withouttax){?> onkeyup="jshopAdmin.updatePrice2(<?php print $jshopConfig->display_price_admin;?>)" <?php }?> />
@@ -39,7 +43,7 @@ defined('_JEXEC') or die();
     <?php if (!$this->withouttax){?>
     <tr>
        <td class="key">
-         <?php if ($jshopConfig->display_price_admin==0) echo JText::_('JSHOP_PRODUCT_NETTO_PRICE'); else echo JText::_('JSHOP_PRODUCT_BRUTTO_PRICE');?>
+         <?php if ($jshopConfig->display_price_admin==0) echo Text::_('JSHOP_PRODUCT_NETTO_PRICE'); else echo Text::_('JSHOP_PRODUCT_BRUTTO_PRICE');?>
        </td>
        <td>
          <input type="text" class = "form-control" id="product_price2" value="<?php echo $row->product_price2;?>" onkeyup="jshopAdmin.updatePrice(<?php print $jshopConfig->display_price_admin;?>)" />
@@ -50,35 +54,35 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->disable_admin['product_price_per_consignment'] == 0){?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_PRODUCT_ADD_PRICE')?>
+         <?php echo Text::_('JSHOP_PRODUCT_ADD_PRICE')?>
        </td>
        <td>
          <input type="checkbox" name="product_is_add_price"  id="product_is_add_price" value="1" <?php if ($row->product_is_add_price) echo 'checked="checked"';?>  onclick="jshopAdmin.showHideAddPrice()" />
        </td>
     </tr>
     <tr id="tr_add_price">
-        <td class="key"><?php echo JText::_('JSHOP_PRODUCT_ADD_PRICE')?></td>
+        <td class="key"><?php echo Text::_('JSHOP_PRODUCT_ADD_PRICE')?></td>
          <td>
             <table style="margin-bottom:0" id="table_add_price" class="table table-striped">
             <thead>
                 <tr>
                     <th>
-                        <?php echo JText::_('JSHOP_PRODUCT_QUANTITY_START')?>    
+                        <?php echo Text::_('JSHOP_PRODUCT_QUANTITY_START')?>    
                     </th>
                     <th>
-                        <?php echo JText::_('JSHOP_PRODUCT_QUANTITY_FINISH')?>    
+                        <?php echo Text::_('JSHOP_PRODUCT_QUANTITY_FINISH')?>    
                     </th>
                     <th>
-                        <?php echo JText::_('JSHOP_DISCOUNT')?>
+                        <?php echo Text::_('JSHOP_DISCOUNT')?>
                         <?php if ($jshopConfig->product_price_qty_discount==2){?>
                             (%)
                         <?php }?>
                     </th>
                     <th>
-                        <?php echo JText::_('JSHOP_PRODUCT_PRICE')?>
+                        <?php echo Text::_('JSHOP_PRODUCT_PRICE')?>
                     </th>                    
                     <th>
-                        <?php echo JText::_('JSHOP_DELETE')?>    
+                        <?php echo Text::_('JSHOP_DELETE')?>    
                     </th>
                 </tr>
                 </thead>  
@@ -92,7 +96,7 @@ defined('_JEXEC') or die();
                     }else{
                         $_add_price=$row->product_price - ($row->product_price * $add_prices[$i]->discount / 100);
                     }
-                    $_add_price = \JSHelper::formatEPrice($_add_price);
+                    $_add_price = Helper::formatEPrice($_add_price);
                     ?>
                     <tr id="add_price_<?php print $i?>">
                         <td>
@@ -120,9 +124,9 @@ defined('_JEXEC') or die();
             </table>
             <table class="table table-striped">
             <tr>
-                <td><?php echo $lists['add_price_units'];?> - <?php echo JText::_('JSHOP_UNIT_MEASURE')?></td>
+                <td><?php echo $lists['add_price_units'];?> - <?php echo Text::_('JSHOP_UNIT_MEASURE')?></td>
                 <td align="right" width="100">
-                    <input class="btn button btn-primary" type="button" name="add_new_price" onclick="jshopAdmin.addNewPrice()" value="<?php echo JText::_('JSHOP_PRODUCT_ADD_PRICE_ADD')?>" />
+                    <input class="btn button btn-primary" type="button" name="add_new_price" onclick="jshopAdmin.addNewPrice()" value="<?php echo Text::_('JSHOP_PRODUCT_ADD_PRICE_ADD')?>" />
                 </td>
             </tr>
             </table>
@@ -138,7 +142,7 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->disable_admin['product_old_price'] == 0){?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_OLD_PRICE')?>
+         <?php echo Text::_('JSHOP_OLD_PRICE')?>
        </td>
        <td>
          <input type="text" name="product_old_price" class = "form-control" id="product_old_price" value="<?php echo $row->product_old_price?>" />
@@ -148,7 +152,7 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->admin_show_product_bay_price) { ?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_PRODUCT_BUY_PRICE')?>
+         <?php echo Text::_('JSHOP_PRODUCT_BUY_PRICE')?>
        </td>
        <td>
          <input type="text" name="product_buy_price" class = "form-control" id="product_buy_price" value="<?php echo $row->product_buy_price?>" />
@@ -158,17 +162,17 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->admin_show_weight){?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_PRODUCT_WEIGHT')?>
+         <?php echo Text::_('JSHOP_PRODUCT_WEIGHT')?>
        </td>
        <td>
-         <input type="text" name="product_weight" class = "form-control" id="product_weight" value="<?php echo $row->product_weight?>" /> <?php print \JSHelper::sprintUnitWeight();?>
+         <input type="text" name="product_weight" class = "form-control" id="product_weight" value="<?php echo $row->product_weight?>" /> <?php print Helper::sprintUnitWeight();?>
        </td>
     </tr>
 	<?php }?>
     <?php if ($jshopConfig->disable_admin['product_ean'] == 0){?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_EAN_PRODUCT')?>
+         <?php echo Text::_('JSHOP_EAN_PRODUCT')?>
        </td>
        <td>
          <input type="text" name="product_ean" class = "form-control" id="product_ean" value="<?php echo $row->product_ean?>" onkeyup="jshopAdmin.updateEanForAttrib()"; />
@@ -178,7 +182,7 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->disable_admin['manufacturer_code'] == 0){?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_MANUFACTURER_CODE')?>
+         <?php echo Text::_('JSHOP_MANUFACTURER_CODE')?>
        </td>
        <td>
          <input type="text" name="manufacturer_code" class = "form-control" value="<?php echo $row->manufacturer_code?>" />
@@ -188,7 +192,7 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->disable_admin['real_ean'] == 0){?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_EAN')?>
+         <?php echo Text::_('JSHOP_EAN')?>
        </td>
        <td>
          <input type="text" name="real_ean" class="form-control" value="<?php echo $row->real_ean?>">
@@ -198,22 +202,22 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->stock){?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_QUANTITY_PRODUCT')?>*
+         <?php echo Text::_('JSHOP_QUANTITY_PRODUCT')?>*
        </td>
        <td>
          <div id="block_enter_prod_qty" style="padding-bottom:2px;<?php if ($row->unlimited) print "display:none;";?>">
              <input type="text" name="product_quantity" class = "form-control" id="product_quantity" value="<?php echo $row->product_quantity?>" <?php if ($this->product_with_attribute){?><?php }?> />
-             <?php if ($this->product_with_attribute){ echo \JSHelperAdmin::tooltip(JText::_('JSHOP_INFO_PLEASE_EDIT_AMOUNT_FOR_ATTRIBUTE')); } ?>
+             <?php if ($this->product_with_attribute){ echo HelperAdmin::tooltip(Text::_('JSHOP_INFO_PLEASE_EDIT_AMOUNT_FOR_ATTRIBUTE')); } ?>
          </div>
          <div>         
-            <input type="checkbox" name="unlimited"  value="1" onclick="jshopAdmin.ShowHideEnterProdQty(this.checked)" <?php if ($row->unlimited) print "checked";?> /> <?php print JText::_('JSHOP_UNLIMITED')?>
+            <input type="checkbox" name="unlimited"  value="1" onclick="jshopAdmin.ShowHideEnterProdQty(this.checked)" <?php if ($row->unlimited) print "checked";?> /> <?php print Text::_('JSHOP_UNLIMITED')?>
          </div>         
        </td>
     </tr>
     <?php }?>
     <?php if ($jshopConfig->disable_admin['product_url'] == 0){?>
     <tr>
-       <td class="key"><?php echo JText::_('JSHOP_URL')?></td>
+       <td class="key"><?php echo Text::_('JSHOP_URL')?></td>
        <td>
          <input type="text" name="product_url" class = "form-control" id="product_url" value="<?php echo $row->product_url?>" size="80" />
        </td>
@@ -222,7 +226,7 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->use_different_templates_cat_prod) { ?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_TEMPLATE_PRODUCT')?>
+         <?php echo Text::_('JSHOP_TEMPLATE_PRODUCT')?>
        </td>
        <td>
          <?php echo $lists['templates'];?>
@@ -233,7 +237,7 @@ defined('_JEXEC') or die();
     <?php if (!$this->withouttax){?>
     <tr>     
        <td class="key">
-         <?php echo JText::_('JSHOP_TAX')?>*
+         <?php echo Text::_('JSHOP_TAX')?>*
        </td>
        <td>
          <?php echo $lists['tax'];?>
@@ -243,7 +247,7 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->disable_admin['product_manufacturer'] == 0){?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_NAME_MANUFACTURER')?>
+         <?php echo Text::_('JSHOP_NAME_MANUFACTURER')?>
        </td>
        <td>
          <?php echo $lists['manufacturers'];?>
@@ -252,7 +256,7 @@ defined('_JEXEC') or die();
     <?php }?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_CATEGORIES')?>*
+         <?php echo Text::_('JSHOP_CATEGORIES')?>*
        </td>
        <td>
           <?php echo $lists['categories'];?>
@@ -260,14 +264,14 @@ defined('_JEXEC') or die();
     </tr>
     <tr style="display: none">
        <td class="key">
-        <?php echo JText::_('JSHOP_MAIN_CATEGORY')?>
+        <?php echo Text::_('JSHOP_MAIN_CATEGORY')?>
        </td>
        <td class="main_category_select" val="<?php echo $row->main_category_id?>"></td>
     </tr>
     <?php if ($jshopConfig->admin_show_vendors && $this->display_vendor_select) { ?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_VENDOR')?>
+         <?php echo Text::_('JSHOP_VENDOR')?>
        </td>
        <td>
          <?php echo $lists['vendors'];?>
@@ -278,7 +282,7 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->admin_show_delivery_time) { ?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_DELIVERY_TIME')?>
+         <?php echo Text::_('JSHOP_DELIVERY_TIME')?>
        </td>
        <td>
          <?php echo $lists['deliverytimes'];?>
@@ -289,7 +293,7 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->admin_show_product_labels) { ?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_LABEL')?>
+         <?php echo Text::_('JSHOP_LABEL')?>
        </td>
        <td>
          <?php echo $lists['labels'];?>
@@ -299,11 +303,11 @@ defined('_JEXEC') or die();
      
     <?php if ($jshopConfig->admin_show_product_basic_price) { ?>
     <tr>
-       <td class="key"><br/><?php echo JText::_('JSHOP_BASIC_PRICE')?></td>
+       <td class="key"><br/><?php echo Text::_('JSHOP_BASIC_PRICE')?></td>
     </tr>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_WEIGHT_VOLUME_UNITS')?>
+         <?php echo Text::_('JSHOP_WEIGHT_VOLUME_UNITS')?>
        </td>
        <td>
          <input type="text" name="weight_volume_units" class = "form-control" value="<?php echo $row->weight_volume_units?>" />
@@ -311,7 +315,7 @@ defined('_JEXEC') or die();
     </tr>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_UNIT_MEASURE')?>
+         <?php echo Text::_('JSHOP_UNIT_MEASURE')?>
        </td>
        <td>
          <?php echo $lists['basic_price_units'];?>
@@ -321,7 +325,7 @@ defined('_JEXEC') or die();
     <?php if ($jshopConfig->return_policy_for_product){?>
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_RETURN_POLICY_FOR_PRODUCT')?>
+         <?php echo Text::_('JSHOP_RETURN_POLICY_FOR_PRODUCT')?>
        </td>
        <td>
          <?php echo $lists['return_policy'];?>
@@ -330,7 +334,7 @@ defined('_JEXEC') or die();
     <?php if (!$jshopConfig->no_return_all){?>  
     <tr>
        <td class="key">
-         <?php echo JText::_('JSHOP_NO_RETURN')?>
+         <?php echo Text::_('JSHOP_NO_RETURN')?>
        </td>
        <td>
          <input type="hidden" name="options[no_return]"  value="0" />

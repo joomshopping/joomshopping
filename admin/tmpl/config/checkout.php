@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -8,13 +13,13 @@
 */
 defined('_JEXEC') or die();
 
-$jshopConfig=\JSFactory::getConfig();
-\JHTML::_('bootstrap.tooltip');
+$jshopConfig=JSFactory::getConfig();
+HTMLHelper::_('bootstrap.tooltip');
 $lists=$this->lists;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php \JSHelperAdmin::displaySubmenuConfigs('checkout');?>
+<?php HelperAdmin::displaySubmenuConfigs('checkout');?>
 <div class="jshop_edit">
 <form action="index.php?option=com_jshopping&controller=config" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 <?php print $this->tmp_html_start?>
@@ -22,13 +27,13 @@ $lists=$this->lists;
 <input type="hidden" name="tab" value="7">
 
 <div class="card">
-<h3 class="card-header bg-primary text-white"><?php echo JText::_('JSHOP_CHECKOUT')?></h3>
+<h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_CHECKOUT')?></h3>
 <div class="card-body">
 <table class="admintable table-striped">
 
 <tr>
     <td class="key" style="width:280px!important;">
-        <?php echo JText::_('JSHOP_DEFAULT_ORDER_STATUS')?>
+        <?php echo Text::_('JSHOP_DEFAULT_ORDER_STATUS')?>
     </td>
     <td>
         <?php echo $lists['status']; ?>
@@ -36,7 +41,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-      <?php echo JText::_('JSHOP_NEXT_ORDER_NUMBER')?>
+      <?php echo Text::_('JSHOP_NEXT_ORDER_NUMBER')?>
     </td>
     <td>
       <input type="text" name="next_order_number" class = "form-control" value="" /> (<?php echo $jshopConfig->next_order_number?>)
@@ -45,7 +50,7 @@ $lists=$this->lists;
 <?php if (!$jshopConfig->without_shipping){?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_HIDE_SHIPPING_STEP')?>
+        <?php echo Text::_('JSHOP_HIDE_SHIPPING_STEP')?>
     </td>
     <td>
         <input type="hidden" name="hide_shipping_step" value="0">
@@ -56,7 +61,7 @@ $lists=$this->lists;
 <?php if (!$jshopConfig->without_payment){?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_HIDE_PAYMENT_STEP')?>
+        <?php echo Text::_('JSHOP_HIDE_PAYMENT_STEP')?>
     </td>
     <td>
         <input type="hidden" name="hide_payment_step" value="0">
@@ -67,17 +72,17 @@ $lists=$this->lists;
 <?php if (!$jshopConfig->without_shipping){?>
 <tr>
     <td class="key">
-      <?php echo JText::_('JSHOP_NULL_SIHPPING')?>
+      <?php echo Text::_('JSHOP_NULL_SIHPPING')?>
     </td>
     <td>
       <input type="text" name="summ_null_shipping" class = "form-control" value="<?php echo $jshopConfig->summ_null_shipping;?>" /> <?php print $this->currency_code;?>
-      <?php echo \JSHelperAdmin::tooltip(JText::_('JSHOP_NULL_SIHPPING_INFO'));?>
+      <?php echo HelperAdmin::tooltip(Text::_('JSHOP_NULL_SIHPPING_INFO'));?>
     </td>
 </tr>
 <?php }?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_ORDER_SEND_PDF_CLIENT')?>
+        <?php echo Text::_('JSHOP_ORDER_SEND_PDF_CLIENT')?>
     </td>
     <td>
         <input type="hidden" name="order_send_pdf_client" value="0">
@@ -86,7 +91,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_ORDER_SEND_PDF_ADMIN')?>
+        <?php echo Text::_('JSHOP_ORDER_SEND_PDF_ADMIN')?>
     </td>
     <td>
         <input type="hidden" name="order_send_pdf_admin" value="0">
@@ -95,7 +100,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SENT_INVOICE_MANUALLY')?>
+        <?php echo Text::_('JSHOP_SENT_INVOICE_MANUALLY')?>
     </td>
     <td>
         <input type="hidden" name="send_invoice_manually" value="0">
@@ -105,7 +110,7 @@ $lists=$this->lists;
 <?php if ($jshopConfig->tax){?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_HIDE_TAX')?>
+        <?php echo Text::_('JSHOP_HIDE_TAX')?>
     </td>
     <td>
         <input type="hidden" name="hide_tax" value="0">
@@ -115,7 +120,7 @@ $lists=$this->lists;
 <?php }?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_DISPLAY_REGISTRATION_FORM_ON_LOGIN_PAGE')?>
+        <?php echo Text::_('JSHOP_DISPLAY_REGISTRATION_FORM_ON_LOGIN_PAGE')?>
     </td>
     <td>
         <input type="hidden" name="show_registerform_in_logintemplate" value="0">
@@ -124,7 +129,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_EXT_MENU_CHECKOUT_STEP')?>
+        <?php echo Text::_('JSHOP_EXT_MENU_CHECKOUT_STEP')?>
     </td>
     <td>
         <input type="hidden" name="ext_menu_checkout_step" value="0">
@@ -134,7 +139,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SORTING_COUNTRY_IN_ALPHABET')?>
+        <?php echo Text::_('JSHOP_SORTING_COUNTRY_IN_ALPHABET')?>
     </td>
     <td>
         <input type="hidden" name="sorting_country_in_alphabet" value="0">
@@ -143,7 +148,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_DEFAULT_COUNTRY')?>
+        <?php echo Text::_('JSHOP_DEFAULT_COUNTRY')?>
     </td>
     <td>
         <?php echo $lists['default_country']; ?>
@@ -151,7 +156,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SEQUENCE_STEP')?>
+        <?php echo Text::_('JSHOP_SEQUENCE_STEP')?>
     </td>
     <td>
         <?php echo $lists['step_4_3']; ?>
@@ -160,7 +165,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_WEIGHT_PRODUCT')?>
+        <?php echo Text::_('JSHOP_SHOW_WEIGHT_PRODUCT')?>
     </td>
     <td>
         <input type="hidden" name="show_weight_order" value="0">
@@ -169,7 +174,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_MANUFACTURER')?>
+        <?php echo Text::_('JSHOP_SHOW_MANUFACTURER')?>
     </td>
     <td>
         <input type="hidden" name="show_manufacturer_in_cart" value="0" />
@@ -178,7 +183,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_EAN_PRODUCT')?>
+        <?php echo Text::_('JSHOP_SHOW_EAN_PRODUCT')?>
     </td>
     <td>
         <input type="hidden" name="show_product_code_in_cart" value="0">
@@ -187,7 +192,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_MANUFACTURER_CODE')?>
+        <?php echo Text::_('JSHOP_MANUFACTURER_CODE')?>
     </td>
     <td>
         <input type="hidden" name="manufacturer_code_in_cart" value="0" />
@@ -197,7 +202,7 @@ $lists=$this->lists;
 <?php if ($jshopConfig->admin_show_product_basic_price){?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_BASIC_PRICE')?>
+        <?php echo Text::_('JSHOP_BASIC_PRICE')?>
     </td>
     <td>
         <input type="hidden" name="cart_basic_price_show" value="0" />
@@ -207,7 +212,7 @@ $lists=$this->lists;
 <?php }?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_DISCOUNT_USE_FULL_SUM')?>
+        <?php echo Text::_('JSHOP_DISCOUNT_USE_FULL_SUM')?>
     </td>
     <td>
         <input type="hidden" name="discount_use_full_sum" value="0">
@@ -217,7 +222,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_CALCULE_TAX_AFTER_DISCOUNT')?>
+        <?php echo Text::_('JSHOP_CALCULE_TAX_AFTER_DISCOUNT')?>
     </td>
     <td>
         <input type="hidden" name="calcule_tax_after_discount" value="0">
@@ -227,7 +232,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_CART_ALL_STEP_CHECKOUT')?>
+        <?php echo Text::_('JSHOP_SHOW_CART_ALL_STEP_CHECKOUT')?>
     </td>
     <td>
         <input type="hidden" name="show_cart_all_step_checkout" value="0">
@@ -236,7 +241,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_NOT_REDIRECT_IN_CART_AFTER_BUY')?>
+        <?php echo Text::_('JSHOP_NOT_REDIRECT_IN_CART_AFTER_BUY')?>
     </td>
     <td>
         <input type="hidden" name="not_redirect_in_cart_after_buy" value="0">
@@ -245,7 +250,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_NOT_REDIRECT_IN_WISHLIST_AFTER_BUY')?>
+        <?php echo Text::_('JSHOP_NOT_REDIRECT_IN_WISHLIST_AFTER_BUY')?>
     </td>
     <td>
         <input type="hidden" name="not_redirect_in_wishlist_after_buy" value="0" />
@@ -254,7 +259,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_CLIENT_ALLOW_CANCEL_ORDER')?>
+        <?php echo Text::_('JSHOP_CLIENT_ALLOW_CANCEL_ORDER')?>
     </td>
     <td>
         <input type="hidden" name="client_allow_cancel_order" value="0">
@@ -265,7 +270,7 @@ $lists=$this->lists;
 <?php if ($jshopConfig->admin_show_vendors){?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_MESSAGE_OF_ORDER_VENDOR')?>
+        <?php echo Text::_('JSHOP_MESSAGE_OF_ORDER_VENDOR')?>
     </td>
     <td>
         <?php echo $lists['vendor_order_message_type']; ?>
@@ -273,7 +278,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_ADMIN_NOT_SEND_EMAIL_ORDER_IF_SEND_VENDOR')?>
+        <?php echo Text::_('JSHOP_ADMIN_NOT_SEND_EMAIL_ORDER_IF_SEND_VENDOR')?>
     </td>
     <td>
         <input type="hidden" name="admin_not_send_email_order_vendor_order" value="0">
@@ -284,7 +289,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_USE_DECIMAL_QTY')?>
+        <?php echo Text::_('JSHOP_USE_DECIMAL_QTY')?>
     </td>
     <td>
         <input type="hidden" name="use_decimal_qty" value="0" />
@@ -294,7 +299,7 @@ $lists=$this->lists;
 <?php if ($jshopConfig->admin_show_delivery_time){?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_DELIVERY_ORDER_DEPENDS_DELIVERY_PRODUCT')?>
+        <?php echo Text::_('JSHOP_DELIVERY_ORDER_DEPENDS_DELIVERY_PRODUCT')?>
     </td>
     <td>
         <input type="hidden" name="delivery_order_depends_delivery_product" value="0" />
@@ -303,7 +308,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_DELIVERY_TIME')?>
+        <?php echo Text::_('JSHOP_SHOW_DELIVERY_TIME')?>
     </td>
     <td>
         <input type="hidden" name="show_delivery_time_checkout" value="0" />
@@ -312,7 +317,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_DELIVERY_TIME')." (".JText::_('JSHOP_PRODUCT').")"?>
+        <?php echo Text::_('JSHOP_SHOW_DELIVERY_TIME')." (".Text::_('JSHOP_PRODUCT').")"?>
     </td>
     <td>
         <input type="hidden" name="show_delivery_time_step5" value="0" />
@@ -321,7 +326,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_OC_display_delivery_time_for_product_in_order_mail')?>
+        <?php echo Text::_('JSHOP_OC_display_delivery_time_for_product_in_order_mail')?>
     </td>
     <td>
         <input type="hidden" name="display_delivery_time_for_product_in_order_mail" value="0" />
@@ -330,7 +335,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_DELIVERY_DATE')?>
+        <?php echo Text::_('JSHOP_SHOW_DELIVERY_DATE')?>
     </td>
     <td>
         <input type="hidden" name="show_delivery_date" value="0" />
@@ -340,7 +345,7 @@ $lists=$this->lists;
 <?php }?>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_INVOICE_DATE')?>
+        <?php echo Text::_('JSHOP_INVOICE_DATE')?>
     </td>
     <td>
         <input type="hidden" name="date_invoice_in_invoice" value="0" />
@@ -349,7 +354,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_WEIGHT_IN_INVOICE')?>
+        <?php echo Text::_('JSHOP_SHOW_WEIGHT_IN_INVOICE')?>
     </td>
     <td>
         <input type="hidden" name="weight_in_invoice" value="0" />
@@ -358,7 +363,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_SHIPPING_IN_INVOICE')?>
+        <?php echo Text::_('JSHOP_SHOW_SHIPPING_IN_INVOICE')?>
     </td>
     <td>
         <input type="hidden" name="shipping_in_invoice" value="0" />
@@ -367,7 +372,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_PAYMENT_IN_INVOICE')?>
+        <?php echo Text::_('JSHOP_SHOW_PAYMENT_IN_INVOICE')?>
     </td>
     <td>
         <input type="hidden" name="payment_in_invoice" value="0" />
@@ -376,7 +381,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_USER_NUMBER_IN_INVOICE')?>
+        <?php echo Text::_('JSHOP_SHOW_USER_NUMBER_IN_INVOICE')?>
     </td>
     <td>
         <input type="hidden" name="user_number_in_invoice" value="0" />
@@ -385,7 +390,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_AGB')?>
+        <?php echo Text::_('JSHOP_AGB')?>
     </td>
     <td>
         <input type="hidden" name="display_agb" value="0" />
@@ -394,7 +399,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_RETURN_POLICY_IN_EMAIL_ORDER')?> (<?php print JText::_('JSHOP_URL')?>)
+        <?php echo Text::_('JSHOP_SHOW_RETURN_POLICY_IN_EMAIL_ORDER')?> (<?php print Text::_('JSHOP_URL')?>)
     </td>
     <td>
         <input type="hidden" name="show_return_policy_in_email_order" value="0">
@@ -403,7 +408,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_RETURN_POLICY_IN_EMAIL_ORDER')?> (<?php print JText::_('JSHOP_TEXT')?>)
+        <?php echo Text::_('JSHOP_SHOW_RETURN_POLICY_IN_EMAIL_ORDER')?> (<?php print Text::_('JSHOP_TEXT')?>)
     </td>
     <td>
         <input type="hidden" name="show_return_policy_text_in_email_order" value="0" />
@@ -412,7 +417,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_SHOW_RETURN_POLICY_IN_PDF')?>
+        <?php echo Text::_('JSHOP_SHOW_RETURN_POLICY_IN_PDF')?>
     </td>
     <td>
         <input type="hidden" name="show_return_policy_text_in_pdf" value="0" />
@@ -421,7 +426,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_RETURN_POLICY_FOR_PRODUCT')?>
+        <?php echo Text::_('JSHOP_RETURN_POLICY_FOR_PRODUCT')?>
     </td>
     <td>
         <input type="hidden" name="return_policy_for_product" value="0" />
@@ -430,7 +435,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-        <?php echo JText::_('JSHOP_NORETURN_ALL_PRODUCT')?>
+        <?php echo Text::_('JSHOP_NORETURN_ALL_PRODUCT')?>
     </td>
     <td>
         <input type="hidden" name="no_return_all" value="0" />
@@ -439,7 +444,7 @@ $lists=$this->lists;
 </tr>
 <tr>
     <td class="key">
-      <?php echo JText::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT')?>
+      <?php echo Text::_('JSHOP_ERROR_MAX_COUNT_ORDER_ONE_PRODUCT')?>
     </td>
     <td>
       <input type="text" name="max_count_order_one_product" class = "form-control" value="<?php echo $jshopConfig->max_count_order_one_product;?>" />
@@ -448,7 +453,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-      <?php echo JText::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT')?>
+      <?php echo Text::_('JSHOP_ERROR_MIN_COUNT_ORDER_ONE_PRODUCT')?>
     </td>
     <td>
       <input type="text" name="min_count_order_one_product" class = "form-control" value="<?php echo $jshopConfig->min_count_order_one_product;?>" />
@@ -457,7 +462,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-      <?php echo JText::_('JSHOP_ERROR_MAX_SUM_ORDER')?>
+      <?php echo Text::_('JSHOP_ERROR_MAX_SUM_ORDER')?>
     </td>
     <td>
       <input type="text" name="max_price_order" class = "form-control" value="<?php echo $jshopConfig->max_price_order;?>" />
@@ -466,7 +471,7 @@ $lists=$this->lists;
 
 <tr>
     <td class="key">
-      <?php echo JText::_('JSHOP_ERROR_MIN_SUM_ORDER')?>
+      <?php echo Text::_('JSHOP_ERROR_MIN_SUM_ORDER')?>
     </td>
     <td>
       <input type="text" name="min_price_order" class = "form-control" value="<?php echo $jshopConfig->min_price_order;?>" />

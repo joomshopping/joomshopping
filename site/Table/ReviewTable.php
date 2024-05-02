@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class ReviewTable extends ShopbaseTable{
@@ -16,8 +20,8 @@ class ReviewTable extends ShopbaseTable{
     }
     
     function getAllowReview(){
-        $JshopConfig = \JSFactory::getConfig();
-        $user = \JFactory::getUser();
+        $JshopConfig = JSFactory::getConfig();
+        $user = Factory::getUser();
 		$res = 1;		
         if (!$JshopConfig->allow_reviews_prod){
             $res = 0;            
@@ -25,23 +29,23 @@ class ReviewTable extends ShopbaseTable{
         if ($res==1 && $JshopConfig->allow_reviews_only_registered && !$user->id){
             $res = -1;
         }		
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
         return $res;
     }
 
     function getText(){
 		$allow_review = $this->getAllowReview();		
         if ($allow_review == -1){
-            $res = \JText::_('JSHOP_REVIEW_NOT_LOGGED');
+            $res = Text::_('JSHOP_REVIEW_NOT_LOGGED');
         } else {
             $res = '';
         }
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
 		return $res;
     }
 	
 	function check(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
 		$res = 1;
         if (!$this->product_id){
             $res = 0;
@@ -61,7 +65,7 @@ class ReviewTable extends ShopbaseTable{
         if (!$pid){
             $res = 0;
         }
-		extract(\JSHelper::Js_add_trigger(get_defined_vars(), "after"));
+		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
         return $res;
     }
 

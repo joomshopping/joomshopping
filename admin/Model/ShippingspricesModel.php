@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die;
 
@@ -15,11 +19,11 @@ class ShippingsPricesModel extends BaseadminModel{
     protected $nameTable = 'shippingmethodprice';
 
     function save(array $post){
-        $dispatcher = \JFactory::getApplication();
-        $shippings = \JSFactory::getModel('shippings');
-		$shipping_pr = \JSFactory::getTable('shippingMethodPrice');
-        $post['shipping_stand_price'] = \JSHelper::saveAsPrice($post['shipping_stand_price']);
-        $post['package_stand_price'] = \JSHelper::saveAsPrice($post['package_stand_price']);
+        $dispatcher = Factory::getApplication();
+        $shippings = JSFactory::getModel('shippings');
+		$shipping_pr = JSFactory::getTable('shippingMethodPrice');
+        $post['shipping_stand_price'] = Helper::saveAsPrice($post['shipping_stand_price']);
+        $post['package_stand_price'] = Helper::saveAsPrice($post['package_stand_price']);
         $dispatcher->triggerEvent('onBeforeSaveShippingPrice', array(&$post));
         $countries = $post['shipping_countries_id'] ?? [];
 		$shipping_pr->bind($post);
@@ -29,7 +33,7 @@ class ShippingsPricesModel extends BaseadminModel{
             $shipping_pr->setParams(array());
 		}
 		if (!$shipping_pr->store()) {
-            $this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE').' '.$shipping_pr->getError());
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE').' '.$shipping_pr->getError());
 			return 0;
 		}
 		$shippings->savePrices($shipping_pr->sh_pr_method_id, $post);
@@ -39,9 +43,9 @@ class ShippingsPricesModel extends BaseadminModel{
     }
 
     function deleteList(array $cid, $msg = 1){
-        $app = \JFactory::getApplication();
-		$db = \JFactory::getDBO();
-        $dispatcher = \JFactory::getApplication();
+        $app = Factory::getApplication();
+		$db = Factory::getDBO();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeRemoveShippingPrice', array(&$cid));
 		foreach($cid as $value) {
 			$query = "DELETE FROM `#__jshopping_shipping_method_price`
@@ -58,7 +62,7 @@ class ShippingsPricesModel extends BaseadminModel{
 				$db->execute();
                 
                 if ($msg){
-                    $app->enqueueMessage(\JText::_('JSHOP_SHIPPING_DELETED'), 'message');
+                    $app->enqueueMessage(Text::_('JSHOP_SHIPPING_DELETED'), 'message');
                 }
 			}
 		}

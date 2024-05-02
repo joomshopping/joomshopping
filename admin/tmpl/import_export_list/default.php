@@ -1,4 +1,9 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -12,7 +17,7 @@ $i=0;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions();?>
+<?php HelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping&controller=importexport" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <table class="table table-striped">
@@ -22,22 +27,22 @@ $i=0;
       #
     </th>
     <th width="20">
-	  <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+	  <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     </th>
     <th align="left" width="25%">
-      <?php echo JText::_('JSHOP_TITLE')?>
+      <?php echo Text::_('JSHOP_TITLE')?>
     </th>    
     <th align="left">
-      <?php echo JText::_('JSHOP_DESCRIPTION')?>
+      <?php echo Text::_('JSHOP_DESCRIPTION')?>
     </th>
     <th width="150" class="center">
-        <?php echo JText::_('JSHOP_AUTOMATIC_EXECUTION')?>
+        <?php echo Text::_('JSHOP_AUTOMATIC_EXECUTION')?>
     </th>
     <th width="50" class="center">
-        <?php echo JText::_('JSHOP_DELETE')?>
+        <?php echo Text::_('JSHOP_DELETE')?>
     </th>
     <th width="40" class="center">
-        <?php echo JText::_('JSHOP_ID')?>
+        <?php echo Text::_('JSHOP_ID')?>
     </th>
   </tr>
 </thead>
@@ -50,7 +55,7 @@ foreach($rows as $row){
         <?php echo $i+1;?>
     </td>
     <td>
-        <?php echo \JHTML::_('grid.id', $i, $row->id);?>
+        <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
     </td>
     <td>
         <a href="index.php?option=com_jshopping&controller=importexport&task=view&ie_id=<?php echo $row->id; ?>"><?php echo $row->name;?></a>
@@ -68,7 +73,7 @@ foreach($rows as $row){
         </a>
     </td>
     <td class="center">
-        <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=importexport&task=remove&cid=<?php print $row->id?>' onclick="return confirm('<?php print JText::_('JSHOP_DELETE')?>');">
+        <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=importexport&task=remove&cid=<?php print $row->id?>' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>');">
             <i class="icon-delete"></i>
         </a>
     </td>    
@@ -90,6 +95,6 @@ $i++;
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

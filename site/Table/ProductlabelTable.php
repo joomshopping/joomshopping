@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class ProductLabelTable extends MultilangTable{
@@ -16,8 +18,8 @@ class ProductLabelTable extends MultilangTable{
     }
     
 	function getListLabels(){
-		$lang = \JSFactory::getLang();
-		$db = \JFactory::getDBO();
+		$lang = JSFactory::getLang();
+		$db = Factory::getDBO();
 		$query = "SELECT id, image, `".$lang->get("name")."` as name FROM `#__jshopping_product_labels` ORDER BY name";
 		$db->setQuery($query);
 		$list = $db->loadObJectList();

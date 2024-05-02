@@ -7,15 +7,20 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die('');
 
 abstract class UsershopbaseTable extends ShopbaseTable{
 
     function __construct(&$_db){
         parent::__construct('#__jshopping_users', 'user_id', $_db);
-        \JPluginHelper::importPlugin('jshoppingcheckout');
+        PluginHelper::importPlugin('jshoppingcheckout');
         $obj = $this;
-		\JFactory::getApplication()->triggerEvent('onConstruct'.ucfirst(\JSHelper::get_class_base(get_class($this))), array(&$obj));
+		Factory::getApplication()->triggerEvent('onConstruct'.ucfirst(Helper::get_class_base(get_class($this))), array(&$obj));
     }
 	
 	function check($type = ''){
@@ -23,9 +28,9 @@ abstract class UsershopbaseTable extends ShopbaseTable{
 	}
     
 	function checkData($type, $check_exist_email){
-        $db = \JFactory::getDBO();
-		$JshopConfig = \JSFactory::getConfig();
-        $checkfield = \JSFactory::getModel('usercheckfield', 'Site');
+        $db = Factory::getDBO();
+		$JshopConfig = JSFactory::getConfig();
+        $checkfield = JSFactory::getModel('usercheckfield', 'Site');
         $return = true;
 
         $types = explode(".", $type);
@@ -39,7 +44,7 @@ abstract class UsershopbaseTable extends ShopbaseTable{
 		$config_fields = $JshopConfig->getListFieldsRegisterType($type);
         $fields_client_check = $JshopConfig->fields_client_check;
 		$obj = $this;		
-        \JFactory::getApplication()->triggerEvent('onBeforeCheck'.ucfirst(\JSHelper::get_class_base(get_class($this))), array(&$obj, &$type, &$config_fields, &$type2, &$return, &$fields_client_check));
+        Factory::getApplication()->triggerEvent('onBeforeCheck'.ucfirst(Helper::get_class_base(get_class($this))), array(&$obj, &$type, &$config_fields, &$type2, &$return, &$fields_client_check));
 
         foreach ($config_fields as $field => $v) {
             if ($field == 'password_2') {
@@ -56,7 +61,7 @@ abstract class UsershopbaseTable extends ShopbaseTable{
 				
 				try {
 					if ($typecheck && !$checkfield->$typecheck($this->$field)) {
-						$this->_error = \JText::_($fields_client_check[$field][1]);
+						$this->_error = Text::_($fields_client_check[$field][1]);
 						return false;
 					}
 				} catch (\Exception $e) {
@@ -68,16 +73,16 @@ abstract class UsershopbaseTable extends ShopbaseTable{
 		
 		if ($this->u_name!=''){
 			if (preg_match("#[<>\"'%;()&]#i", $this->u_name) || strlen($this->u_name) < 2) {
-				$this->_error = sprintf((\JText::_('JSHOP_VALID_AZ09')),(\JText::_('JSHOP_USERNAME')),2);
+				$this->_error = sprintf((Text::_('JSHOP_VALID_AZ09')),(Text::_('JSHOP_USERNAME')),2);
 				return false;
 			}
 			$query = "SELECT id FROM #__users WHERE username = '".$db->escape($this->u_name)."' AND id != ".(int)$this->user_id;
             $obj = $this;
-			\JFactory::getApplication()->triggerEvent('onBeforeCheckUserNameExistJshopUserShop', array(&$obj, &$type, &$config_fields, &$type2, &$query));
+			Factory::getApplication()->triggerEvent('onBeforeCheckUserNameExistJshopUserShop', array(&$obj, &$type, &$config_fields, &$type2, &$query));
 			$db->setQuery($query);
 			$xid = intval($db->loadResult());
 			if ($xid && $xid != intval($this->user_id)){
-				$this->_error = (\JText::_('JSHOP_REGWARN_INUSE'));
+				$this->_error = (Text::_('JSHOP_REGWARN_INUSE'));
 				return false;
 			}
 		}
@@ -91,22 +96,22 @@ abstract class UsershopbaseTable extends ShopbaseTable{
 		}
 
 		if (isset($config_fields['password_2']['display']) && $config_fields['password_2']['display'] && ($this->password || $this->password2) && $this->password!=$this->password2){
-			$this->_error = \JText::_('JSHOP_REGWARN_PASSWORD_NOT_MATCH');
+			$this->_error = Text::_('JSHOP_REGWARN_PASSWORD_NOT_MATCH');
 			return false;
 		}
 
 		if (isset($config_fields['email2']['display']) && $config_fields['email2']['display'] && ($this->email && $this->email2) && $this->email != $this->email2){
-			$this->_error = \JText::_('JSHOP_REGWARN_EMAIL_NOT_MATCH');
+			$this->_error = Text::_('JSHOP_REGWARN_EMAIL_NOT_MATCH');
 			return false;
 		}
 
 		if ($this->email!='' && $check_exist_email){
 			$query = "SELECT id FROM #__users WHERE email='".$db->escape($this->email)."' AND id != ".(int)$this->user_id;
             $obj = $this;
-            \JFactory::getApplication()->triggerEvent('onBeforeCheckUserEmailExistJshopUserShop', array(&$obj, &$type, &$config_fields, &$type2, &$query));
+            Factory::getApplication()->triggerEvent('onBeforeCheckUserEmailExistJshopUserShop', array(&$obj, &$type, &$config_fields, &$type2, &$query));
 			$db->setQuery($query);
 			if (intval($db->loadResult())){
-				$this->_error = (\JText::_('JSHOP_REGWARN_EMAIL_INUSE'));
+				$this->_error = (Text::_('JSHOP_REGWARN_EMAIL_INUSE'));
 				return false;
 			}
 		}
@@ -141,15 +146,15 @@ abstract class UsershopbaseTable extends ShopbaseTable{
 	}
 	
     function updateCountryToDefault(){
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         if (!$this->country) $this->country = $JshopConfig->default_country;
         if (!$this->d_country) $this->d_country = $JshopConfig->default_country;
     }
 
     function prepareBirthdayFormat(){
-        $JshopConfig = \JSFactory::getConfig();        
-        $this->birthday = \JSHelper::getDisplayDate($this->birthday, $JshopConfig->field_birthday_format);
-        $this->d_birthday = \JSHelper::getDisplayDate($this->d_birthday, $JshopConfig->field_birthday_format);
+        $JshopConfig = JSFactory::getConfig();        
+        $this->birthday = Helper::getDisplayDate($this->birthday, $JshopConfig->field_birthday_format);
+        $this->d_birthday = Helper::getDisplayDate($this->d_birthday, $JshopConfig->field_birthday_format);
     }
 	
 }

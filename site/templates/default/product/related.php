@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -12,7 +14,7 @@ $in_row=$this->config->product_count_related_in_row;
 ?>
 <?php if (count($this->related_prod)){?>    
     <div class="related_header">
-        <?php print JText::_('JSHOP_RELATED_PRODUCTS')?>
+        <?php print Text::_('JSHOP_RELATED_PRODUCTS')?>
     </div>
     <div class="jshop_list_product">
         <div class="jshop list_related">

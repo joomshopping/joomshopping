@@ -7,23 +7,28 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 defined('_JEXEC') or die();
 
 class ContentController extends BaseController{
     
     public function init(){
-        \JPluginHelper::importPlugin('content');
+        PluginHelper::importPlugin('content');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerContent', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerContent', array(&$obj));
     }
     
     function display($cachable = false, $urlparams = false){
-        throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+        throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
     }
 
     function view(){        
-		$model = \JSFactory::getModel('contentPage', 'Site');
+		$model = JSFactory::getModel('contentPage', 'Site');
 
         $page = $this->input->getVar('page');
 		$order_id = $this->input->getInt('order_id');
@@ -34,14 +39,14 @@ class ContentController extends BaseController{
         
         $text = $model->load($page, $order_id, $cartp);
 		if ($text===false){
-			\JSError::raiseError(404, $model->getError());
+			JSError::raiseError(404, $model->getError());
 			return 0;
 		}		
 
         $view = $this->getView("content");
         $view->setLayout("content");
         $view->set('text', $text);
-        \JFactory::getApplication()->triggerEvent('onBeforeDisplayContentView', array(&$view));
+        Factory::getApplication()->triggerEvent('onBeforeDisplayContentView', array(&$view));
         $view->display();
     }
 }

@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class ProductOptionTable extends ShopbaseTable{
@@ -16,14 +17,14 @@ class ProductOptionTable extends ShopbaseTable{
     }
     
     function getProductOption($product_id, $key){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT `value` FROM `#__jshopping_products_option` WHERE product_id = '".$db->escape($product_id)."' AND `key`='".$db->escape($key)."' ";
         $db->setQuery($query);
         return $db->loadResult();
     }
     
     function getProductOptions($product_id){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT `key`, `value` FROM `#__jshopping_products_option` WHERE product_id='".$db->escape($product_id)."'";
         $db->setQuery($query);
         $list = $db->loadObJectList();
@@ -35,7 +36,7 @@ class ProductOptionTable extends ShopbaseTable{
     }
     
     function getProductOptionList($array_product_id, $key, $setforallproducts = 1){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         if (!count($array_product_id) || !is_array($array_product_id)){
             return array();
         }

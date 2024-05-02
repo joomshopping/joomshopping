@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class SeoTable extends ShopbaseTable{
@@ -16,8 +18,8 @@ class SeoTable extends ShopbaseTable{
     }
     
     function loadData($alias){
-        $lang = \JSFactory::getLang();
-        $db = \JFactory::getDBO();
+        $lang = JSFactory::getLang();
+        $db = Factory::getDBO();
         $query = "SELECT id, alias, `".$lang->get('title')."` as title, `".$lang->get('keyword')."` as keyword, `".$lang->get('description')."` as description FROM `#__jshopping_config_seo` where alias='".$db->escape($alias)."'";
         $db->setQuery($query);
 		$data = $db->loadObJect();

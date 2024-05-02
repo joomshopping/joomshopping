@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+
 /**
 * @version      5.0.7 02.09.2022
 * @author       MAXXmarketing GmbH
@@ -13,7 +15,7 @@ defined('_JEXEC') or die;
 <tr>
  <td width="40%" style="vertical-align:top">
     <div id="cpanel">
-        <?php \JSHelperAdmin::displayMainPanelIco(); ?>
+        <?php HelperAdmin::displayMainPanelIco(); ?>
     </div>
  </td>
  <td width="60%" style="vertical-align:top">

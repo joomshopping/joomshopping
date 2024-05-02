@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Model;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class CountriesModel extends BaseadminModel{
@@ -24,8 +28,8 @@ class CountriesModel extends BaseadminModel{
     * @return array
     */
     function getAllCountries($publish = 1, $limitstart = null, $limit = null, $orderConfig = 1, $order = null, $orderDir = null){
-        $db = \JFactory::getDBO();
-        $jshopConfig = \JSFactory::getConfig();
+        $db = Factory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
                 
         if ($publish == 0) {
             $where = " ";
@@ -43,9 +47,9 @@ class CountriesModel extends BaseadminModel{
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
-        $lang = \JSFactory::getLang();
+        $lang = JSFactory::getLang();
         $query = "SELECT country_id, country_publish, ordering, country_code, country_code_2, `".$lang->get("name")."` as name FROM `#__jshopping_countries` ".$where." ORDER BY ".$ordering;
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query, $limitstart, $limit);
         return $db->loadObjectList();
     }
@@ -55,9 +59,9 @@ class CountriesModel extends BaseadminModel{
     * @return int
     */
     function getCountAllCountries() {
-        $db = \JFactory::getDBO(); 
+        $db = Factory::getDBO(); 
         $query = "SELECT COUNT(country_id) FROM `#__jshopping_countries`";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadResult();
     }
@@ -68,24 +72,24 @@ class CountriesModel extends BaseadminModel{
     * @return int
     */
     function getCountPublishCountries($publish = 1) {
-        $db = \JFactory::getDBO(); 
+        $db = Factory::getDBO(); 
         $query = "SELECT COUNT(country_id) FROM `#__jshopping_countries` WHERE country_publish = '".intval($publish)."'";
-        extract(\JSHelper::js_add_trigger(get_defined_vars(), "before"));
+        extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadResult();
     }
     
     public function save(array $post){
-        $dispatcher = \JFactory::getApplication();		
+        $dispatcher = Factory::getApplication();		
         $dispatcher->triggerEvent('onBeforeSaveCountry', array(&$post));
-		$country = \JSFactory::getTable('country');
+		$country = JSFactory::getTable('country');
 		$country->bind($post);	
 		if (!$country->country_publish){
 			$country->country_publish = 0;
 	    }    
 		$this->_reorderCountry($country);
 		if (!$country->store()) {
-			$this->setError(\JText::_('JSHOP_ERROR_SAVE_DATABASE').' '.$country->getError());
+			$this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE').' '.$country->getError());
 			return 0;
 		}
         $dispatcher->triggerEvent('onAfterSaveCountry', array(&$country));
@@ -93,9 +97,9 @@ class CountriesModel extends BaseadminModel{
     }
     
     public function deleteList(array $cid, $msg = 1){
-        $db = \JFactory::getDBO();
-		$app = \JFactory::getApplication();
-        $dispatcher = \JFactory::getApplication();
+        $db = Factory::getDBO();
+		$app = Factory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeRemoveCountry', array(&$cid));
         $res = array();
 		foreach($cid as $id){
@@ -103,7 +107,7 @@ class CountriesModel extends BaseadminModel{
 			$db->setQuery($query);
 			$db->execute();
             if ($msg){
-                $app->enqueueMessage(\JText::_('JSHOP_COUNTRY_DELETED'), 'message');
+                $app->enqueueMessage(Text::_('JSHOP_COUNTRY_DELETED'), 'message');
             }
             $res[$id] = true;
 		}
@@ -112,7 +116,7 @@ class CountriesModel extends BaseadminModel{
     }
     
     protected function _reorderCountry(&$country) {
-		$db = \JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = "UPDATE `#__jshopping_countries` SET `ordering` = ordering + 1 WHERE `ordering` > '".$country->ordering."'";		
 		$db->setQuery($query);
 		$db->execute();
@@ -120,7 +124,7 @@ class CountriesModel extends BaseadminModel{
 	}
     
     public function publish(array $cid, $flag){
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforePublishCountry', array(&$cid, &$flag));
         parent::publish($cid, $flag);
         $dispatcher->triggerEvent('onAfterPublishCountry', array(&$cid, &$flag));

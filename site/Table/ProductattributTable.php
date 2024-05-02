@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class ProductAttributTable extends ShopbaseTable{
@@ -20,18 +22,18 @@ class ProductAttributTable extends ShopbaseTable{
     }
     
     function deleteAttributeForProduct(){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "DELETE FROM `#__jshopping_products_attr` WHERE `product_id`=".(int)$this->product_id;
         $db->setQuery($query);
         $db->execute();    
     }
     
     function deleteAttribute($id){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         
         $this->load($id);
         if ($this->ext_attribute_product_id){
-			\JSFactory::getModel("products")->delete($this->ext_attribute_product_id);
+			JSFactory::getModel("products")->delete($this->ext_attribute_product_id);
         }
         
         $query = "DELETE FROM `#__jshopping_products_attr` WHERE `product_attr_id`=".(int)$id;

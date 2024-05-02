@@ -7,23 +7,28 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 defined('_JEXEC') or die();
 
 class VendorController extends BaseController{
     
     public function init(){
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerVendor', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerVendor', array(&$obj));
     }
 
     function display($cachable = false, $urlparams = false){
-        $mainframe = \JFactory::getApplication();
+        $mainframe = Factory::getApplication();
         $params = $mainframe->getParams();        
-        $jshopConfig = \JSFactory::getConfig();
-        $dispatcher = \JFactory::getApplication();
-		$model = \JSFactory::getModel('vendorList', 'Site');
+        $jshopConfig = JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
+		$model = JSFactory::getModel('vendorList', 'Site');
         
         Metadata::listVendors();
 		
@@ -44,19 +49,19 @@ class VendorController extends BaseController{
     }  
 
     function info(){
-        $jshopConfig = \JSFactory::getConfig();
-        $dispatcher = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
 		$vendor_id = $this->input->getInt("vendor_id");
 		
         if (!$jshopConfig->product_show_vendor_detail){
-            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+            throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
 
-        $vendor = \JSFactory::getTable('vendor');
+        $vendor = JSFactory::getTable('vendor');
         $vendor->load($vendor_id);
         if (!$vendor->id){
-            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+            throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
         
@@ -77,16 +82,16 @@ class VendorController extends BaseController{
     }
     
     function products(){
-        $jshopConfig = \JSFactory::getConfig();
-        $dispatcher = \JFactory::getApplication();
+        $jshopConfig = JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
         $vendor_id = $this->input->getInt("vendor_id");
 
-		\JSFactory::getModel('productShop', 'Site')->storeEndPages();
+		JSFactory::getModel('productShop', 'Site')->storeEndPages();
         
-        $vendor = \JSFactory::getTable('vendor');
+        $vendor = JSFactory::getTable('vendor');
         $vendor->load($vendor_id);
         if (!$vendor->id){
-            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+            throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
 
@@ -94,7 +99,7 @@ class VendorController extends BaseController{
         
         Metadata::vendorProducts($vendor);
 
-        $productlist = \JSFactory::getModel('vendor', 'Site\\Productlist');
+        $productlist = JSFactory::getModel('vendor', 'Site\\Productlist');
         $productlist->setTable($vendor);
         $productlist->load();
         
@@ -140,7 +145,7 @@ class VendorController extends BaseController{
         $view->set('filters', $filters);
         $view->set('willBeUseFilter', $willBeUseFilter);
         $view->set('display_list_products', $display_list_products);
-        $view->set('shippinginfo', \JSHelper::SEFLink($jshopConfig->shippinginfourl,1));
+        $view->set('shippinginfo', Helper::SEFLink($jshopConfig->shippinginfourl,1));
         $view->set('total', $productlist->getTotal());
         $view->_tmp_ext_filter_box = "";
         $view->_tmp_ext_filter = "";

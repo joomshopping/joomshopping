@@ -7,14 +7,18 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class CheckoutOrderModel  extends CheckoutModel{
 
 	public function orderDataSave(&$adv_user, &$post){
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
-		$session = \JFactory::getSession();
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
+		$session = Factory::getSession();
 		$cart = $this->getCart();
 
 		$order = $this->createOrder($adv_user, $post);
@@ -43,8 +47,8 @@ class CheckoutOrderModel  extends CheckoutModel{
 	}
 
 	public function createOrder(&$adv_user, &$post){
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();
 		$cart = $this->getCart();
 
 		$orderNumber = $jshopConfig->getNextOrderNumber(1);
@@ -63,7 +67,7 @@ class CheckoutOrderModel  extends CheckoutModel{
             }
         }
 
-		$order = \JSFactory::getTable('orderTable');
+		$order = JSFactory::getTable('orderTable');
 		$arr_property = $order->getListFieldCopyUserToOrder();
         foreach($adv_user as $key => $value){
             if (in_array($key, $arr_property)){
@@ -73,7 +77,7 @@ class CheckoutOrderModel  extends CheckoutModel{
 
         $sh_mt_pr = $this->getShippingMethodPrice();
 
-        $order->order_date = $order->order_m_date = \JSHelper::getJsDate();
+        $order->order_date = $order->order_m_date = Helper::getJsDate();
         $order->order_tax = $cart->getTax(1, 1, 1);
         $order->setTaxExt($cart->getTaxExt(1, 1, 1));
         $order->order_subtotal = $cart->getPriceProducts();
@@ -109,7 +113,7 @@ class CheckoutOrderModel  extends CheckoutModel{
             $payment_system->setParams($pm_params);
             $payment_params_names = $payment_system->getDisplayNameParams();
 			$pm_params_data = $payment_system->getPaymentParamsData($pm_params);
-            $order->payment_params = \JSHelper::getTextNameArrayValue($payment_params_names, $pm_params_data);
+            $order->payment_params = Helper::getTextNameArrayValue($payment_params_names, $pm_params_data);
             if ($payment_system->getSavePaymentParams()){
                 $order->setPaymentParamsData($pm_params);
             }
@@ -122,7 +126,7 @@ class CheckoutOrderModel  extends CheckoutModel{
             if ($shippingForm){
 				$shippingForm->setParams($sh_params);
                 $shipping_params_names = $shippingForm->getDisplayNameParams();
-                $order->shipping_params = \JSHelper::getTextNameArrayValue($shipping_params_names, $sh_params);
+                $order->shipping_params = Helper::getTextNameArrayValue($shipping_params_names, $sh_params);
             }
             $order->setShippingParamsData($sh_params);
         }
@@ -164,12 +168,12 @@ class CheckoutOrderModel  extends CheckoutModel{
 	}
 
 	public function checkCoupon(){
-		$session = \JFactory::getSession();
+		$session = Factory::getSession();
 		$cart = $this->getCart();
 		if (!$session->get('checkcoupon')){
             if (!$cart->checkCoupon()){
                 $cart->setRabatt(0,0,0);
-				$this->setError(\JText::_('JSHOP_RABATT_NON_CORRECT'));
+				$this->setError(Text::_('JSHOP_RABATT_NON_CORRECT'));
                 return 0;
             }
             $session->set('checkcoupon', 1);
@@ -178,9 +182,9 @@ class CheckoutOrderModel  extends CheckoutModel{
 	}
 
 	public function couponFinished($order){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if ($order->coupon_id){
-            $coupon = \JSFactory::getTable('coupon');
+            $coupon = JSFactory::getTable('coupon');
             $coupon->load($order->coupon_id);
             if ($coupon->finished_after_used){
                 $free_discount = $order->coupon_free_discount;
@@ -191,7 +195,7 @@ class CheckoutOrderModel  extends CheckoutModel{
                 }
 				$cart = $this->getCart();
                 $user_id = $order->user_id;
-				\JFactory::getApplication()->triggerEvent('onBeforeCouponFinished', array(&$coupon, &$cart, &$user_id, &$order));
+				Factory::getApplication()->triggerEvent('onBeforeCouponFinished', array(&$coupon, &$cart, &$user_id, &$order));
                 return $coupon->store();
             }
         }
@@ -199,16 +203,16 @@ class CheckoutOrderModel  extends CheckoutModel{
 	}
 
 	public function checkAgb($checkagb){
-		$jshopConfig = \JSFactory::getConfig();
+		$jshopConfig = JSFactory::getConfig();
 		if ($jshopConfig->check_php_agb && $checkagb!='on'){
-            $this->setError(\JText::_('JSHOP_ERROR_AGB'));
+            $this->setError(Text::_('JSHOP_ERROR_AGB'));
             return 0;
         }
 		return 1;
 	}
 
 	public function showEndFormPaymentSystem($order_id){
-        $order = \JSFactory::getTable('order');
+        $order = JSFactory::getTable('order');
         $order->load($order_id);
 
         $pm_method = $order->getPayment();
@@ -226,10 +230,10 @@ class CheckoutOrderModel  extends CheckoutModel{
             return 0;
         }
 
-		$cart = \JSFactory::getModel('cart', 'Site');
+		$cart = JSFactory::getModel('cart', 'Site');
         $cart->load();
 
-        \JFactory::getApplication()->triggerEvent('onBeforeShowEndFormStep6', array(&$order, &$cart, $pm_method));
+        Factory::getApplication()->triggerEvent('onBeforeShowEndFormStep6', array(&$order, &$cart, $pm_method));
 
 		$this->setSendEndForm(1);
 

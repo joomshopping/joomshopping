@@ -7,6 +7,10 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 defined('_JEXEC') or die();
 
 Jimport('Joomla.filesystem.folder');
@@ -19,9 +23,9 @@ class ShippingExtTable extends ShopbaseTable{
     }
     
     function loadFromAlias($alias){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = "SELECT id FROM `#__jshopping_shipping_ext_calc` WHERE `alias`='".$db->escape($alias)."'";
-        extract(\JSHelper::Js_add_trigger(get_defined_vars(), "query"));
+        extract(Helper::Js_add_trigger(get_defined_vars(), "query"));
         $db->setQuery($query);
         $id = $db->loadResult();
         return $this->load($id);
@@ -29,7 +33,7 @@ class ShippingExtTable extends ShopbaseTable{
     
     function load($id = null, $reset = true){
         $return = parent::load($id, $reset);
-        $JshopConfig = \JSFactory::getConfig();
+        $JshopConfig = JSFactory::getConfig();
         $path = $JshopConfig->path."shippings";
         $extname = $this->alias;
         $filepatch = $path."/".$extname."/".$extname.".php";
@@ -37,14 +41,14 @@ class ShippingExtTable extends ShopbaseTable{
             include_once($filepatch);
             $this->exec = new $extname();
         }else{
-            \JSError::raiseWarning("","Load ShippingExt ".$extname." error.");
+            JSError::raiseWarning("","Load ShippingExt ".$extname." error.");
         }
         
         return $return;
     }
     
     function getList($active = 0){
-        $db = \JFactory::getDBO();
+        $db = Factory::getDBO();
         $adv_query = "";
         if ($active==1){
             $adv_query = "where `published`='1'";

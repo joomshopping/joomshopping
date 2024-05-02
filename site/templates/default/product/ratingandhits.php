@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -13,7 +16,7 @@ defined('_JEXEC') or die();
     <table>
         <tr>
             <?php if ($this->config->show_hits){?>
-                <td><?php print JText::_('JSHOP_HITS')?>: </td>
+                <td><?php print Text::_('JSHOP_HITS')?>: </td>
                 <td><?php print $this->product->hits;?></td>
             <?php } ?>
             
@@ -23,10 +26,10 @@ defined('_JEXEC') or die();
             
             <?php if ($this->allow_review && !$this->config->hide_product_rating){?>
                 <td>
-                    <?php print JText::_('JSHOP_RATING')?>: 
+                    <?php print Text::_('JSHOP_RATING')?>: 
                 </td>
                 <td>
-                    <?php print \JSHelper::showMarkStar($this->product->average_rating);?>                    
+                    <?php print Helper::showMarkStar($this->product->average_rating);?>                    
                 </td>
             <?php } ?>
         </tr>

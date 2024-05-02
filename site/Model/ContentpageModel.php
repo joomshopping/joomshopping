@@ -7,6 +7,9 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class ContentPageModel  extends BaseModel{
@@ -18,17 +21,17 @@ class ContentPageModel  extends BaseModel{
 	}
 	
 	public function load($page, $order_id = 0, $cartp = 0){
-		$jshopConfig = \JSFactory::getConfig();
-		$dispatcher = \JFactory::getApplication();		
-		$statictext = \JSFactory::getTable("statictext");
+		$jshopConfig = JSFactory::getConfig();
+		$dispatcher = Factory::getApplication();		
+		$statictext = JSFactory::getTable("statictext");
         
         if ($jshopConfig->return_policy_for_product && $page=='return_policy' && ($cartp || $order_id)){
             if ($cartp){
-                $cart = \JSFactory::getModel('cart', 'Site');
+                $cart = JSFactory::getModel('cart', 'Site');
                 $cart->load();
                 $list = $cart->getReturnPolicy();
             }else{
-                $order = \JSFactory::getTable('order');
+                $order = JSFactory::getTable('order');
                 $order->load($order_id);
                 $list = $order->getReturnPolicy();
             }
@@ -44,12 +47,12 @@ class ContentPageModel  extends BaseModel{
         }
                 
         if (!$row->id){
-			$this->setError(\JText::_('JSHOP_PAGE_NOT_FOUND'));           
+			$this->setError(Text::_('JSHOP_PAGE_NOT_FOUND'));           
             return false;
         }		
 		if ($jshopConfig->use_plugin_content){
             $obj = new \stdClass();
-            $params = \JFactory::getApplication()->getParams('com_content');
+            $params = Factory::getApplication()->getParams('com_content');
             $obj->text = $row->text;
             $obj->title = $this->seodata->title;
             $dispatcher->triggerEvent('onContentPrepare', array('com_content.article', &$obj, &$params, 0));

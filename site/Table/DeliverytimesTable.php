@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class DeliveryTimesTable extends MultilangTable{
@@ -16,8 +18,8 @@ class DeliveryTimesTable extends MultilangTable{
     }
     
     function getDeliveryTimes(){
-        $db = \JFactory::getDBO();    
-        $lang = \JSFactory::getLang();     
+        $db = Factory::getDBO();    
+        $lang = JSFactory::getLang();     
         $query = "SELECT id, `".$lang->get('name')."` as name FROM `#__jshopping_delivery_times` ORDER BY name";
         $db->setQuery($query);
         return $db->loadObJectList();

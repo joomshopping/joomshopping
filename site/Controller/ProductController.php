@@ -7,6 +7,14 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Controller;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Site\Helper\Metadata;
 use Joomla\Component\Jshopping\Site\Helper\Request;
 defined('_JEXEC') or die();
@@ -14,16 +22,16 @@ defined('_JEXEC') or die();
 class ProductController extends BaseController{
     
     public function init(){
-        \JPluginHelper::importPlugin('jshoppingproducts');
+        PluginHelper::importPlugin('jshoppingproducts');
         $obj = $this;
-        \JFactory::getApplication()->triggerEvent('onConstructJshoppingControllerProduct', array(&$obj));
+        Factory::getApplication()->triggerEvent('onConstructJshoppingControllerProduct', array(&$obj));
     }
 
     function display($cachable = false, $urlparams = false){
-        $jshopConfig = \JSFactory::getConfig();
-        $user = \JFactory::getUser();
-		$dispatcher = \JFactory::getApplication();
-		$model = \JSFactory::getModel('productShop', 'Site');
+        $jshopConfig = JSFactory::getConfig();
+        $user = Factory::getUser();
+		$dispatcher = Factory::getApplication();
+		$model = JSFactory::getModel('productShop', 'Site');
 		
 		$ajax = $this->input->getInt('ajax');
         $tmpl = $this->input->getVar("tmpl");
@@ -31,7 +39,7 @@ class ProductController extends BaseController{
         $category_id = (int)$this->input->getInt('category_id');
         $attr = $this->input->getVar("attr");
 		
-		\JSFactory::loadJsFilesLightBox();
+		JSFactory::loadJsFilesLightBox();
 		
         if ($tmpl!="component"){
 			$model->storeEndPageBuy();
@@ -42,14 +50,14 @@ class ProductController extends BaseController{
         $dispatcher->triggerEvent('onBeforeLoadProduct', array(&$product_id, &$category_id, &$back_value));
         $dispatcher->triggerEvent('onBeforeLoadProductList', array());
 
-        $product = \JSFactory::getTable('product');
+        $product = JSFactory::getTable('product');
         $product->load($product_id);
         $product->_tmp_var_price_ext = "";
         $product->_tmp_var_old_price_ext = "";
         $product->_tmp_var_bottom_price = "";
         $product->_tmp_var_bottom_allprices = "";
 		
-		$category = \JSFactory::getTable('category');
+		$category = JSFactory::getTable('category');
         $category->load($category_id);
         $category->name = $category->getName();
 		
@@ -64,7 +72,7 @@ class ProductController extends BaseController{
         $all_attr_values = $model->getAllAttrValues();
 
 		if (!$product->checkView($category, $user, $category_id, $listcategory)){
-            throw new \Exception(\JText::_('JSHOP_PAGE_NOT_FOUND'), 404);
+            throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
             return;
         }
         
@@ -83,7 +91,7 @@ class ProductController extends BaseController{
         $product_videos = $product->getVideos();
         $product_demofiles = $product->getDemoFiles();
         if ($jshopConfig->admin_show_product_related){
-            $productlist = \JSFactory::getModel('related', 'Site\\Productlist');
+            $productlist = JSFactory::getModel('related', 'Site\\Productlist');
             $productlist->setTable($product);
             $listProductRelated = $productlist->getLoadProducts();
         }else{
@@ -131,13 +139,13 @@ class ProductController extends BaseController{
         $view->set('all_attr_values', $all_attr_values);
         $view->set('related_prod', $listProductRelated);
         $view->set('path_to_image', $jshopConfig->live_path . 'images/');
-        $view->set('live_path', \JURI::root());
+        $view->set('live_path', Uri::root());
         $view->set('enable_wishlist', $jshopConfig->enable_wishlist);
-        $view->set('action', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=cart&task=add',1));
-        $view->set('urlupdateprice', \JSHelper::SEFLink('index.php?option=com_jshopping&controller=product&task=ajax_attrib_select_and_price&product_id='.$product_id.'&ajax=1',1,1));
+        $view->set('action', Helper::SEFLink('index.php?option=com_jshopping&controller=cart&task=add',1));
+        $view->set('urlupdateprice', Helper::SEFLink('index.php?option=com_jshopping&controller=product&task=ajax_attrib_select_and_price&product_id='.$product_id.'&ajax=1',1,1));
         if ($allow_review){
-			\JSFactory::loadJsFilesRating();
-			$modelreviewlist = \JSFactory::getModel('productReviewList', 'Site');
+			JSFactory::loadJsFilesRating();
+			$modelreviewlist = JSFactory::getModel('productReviewList', 'Site');
 			$modelreviewlist->setModel($product);
 			$modelreviewlist->load();
 			$review_list = $modelreviewlist->getList();
@@ -153,7 +161,7 @@ class ProductController extends BaseController{
         $view->set('stars_count', floor($jshopConfig->max_mark / $jshopConfig->rating_starparts));
         $view->set('parts_count', $jshopConfig->rating_starparts);
         $view->set('user', $user);
-        $view->set('shippinginfo', \JSHelper::SEFLink($jshopConfig->shippinginfourl,1));
+        $view->set('shippinginfo', Helper::SEFLink($jshopConfig->shippinginfourl,1));
         $view->set('hide_buy', $hide_buy);
         $view->set('available', $available);
         $view->set('default_count_product', $default_count_product);
@@ -174,7 +182,7 @@ class ProductController extends BaseController{
         $hash = $this->input->getVar('hash');
         $rl = $this->input->getInt('rl');
 		
-		$model = \JSFactory::getModel('productDownload', 'Site');
+		$model = JSFactory::getModel('productDownload', 'Site');
 		$model->setId($id);
 		$model->setOid($oid);
 		$model->setHash($hash);
@@ -186,32 +194,32 @@ class ProductController extends BaseController{
         }
 		
 		if (!$model->checkHash()){
-			\JSError::raiseError(500, "Error download file");
+			JSError::raiseError(500, "Error download file");
             return 0;
 		}
 		if (!$model->checkOrderStatusPaid()){
-            \JSError::raiseWarning(500, \JText::_('JSHOP_FOR_DOWNLOAD_ORDER_MUST_BE_PAID'));
+            JSError::raiseWarning(500, Text::_('JSHOP_FOR_DOWNLOAD_ORDER_MUST_BE_PAID'));
             return 0;
         }
 		if (!$model->checkUser()){
-            \JSHelper::checkUserLogin();
+            Helper::checkUserLogin();
         }
 		if (!$model->checkTimeDownload()){
-            \JSError::raiseWarning(500, \JText::_('JSHOP_TIME_DOWNLOADS_FILE_RESTRICTED'));
+            JSError::raiseWarning(500, Text::_('JSHOP_TIME_DOWNLOADS_FILE_RESTRICTED'));
             return 0; 
         }
 		if (!$model->checkFileId()){
-			\JSError::raiseError(500, "Error download file");
+			JSError::raiseError(500, "Error download file");
             return 0;
 		}
 		if (!$model->checkNumberDownload()){
-			\JSError::raiseWarning(500, \JText::_('JSHOP_NUMBER_DOWNLOADS_FILE_RESTRICTED'));
+			JSError::raiseWarning(500, Text::_('JSHOP_NUMBER_DOWNLOADS_FILE_RESTRICTED'));
             return 0;
 		}
 
         $name = $model->getFileName();
         if ($name==""){
-            \JSError::raiseWarning('', "Error download file");
+            JSError::raiseWarning('', "Error download file");
             return 0;
         }
         $file_name = $model->getFile($name);
@@ -221,25 +229,25 @@ class ProductController extends BaseController{
         ob_end_clean();
         @set_time_limit(0);		
 		$model->downloadFile($file_name);
-        \JFactory::getApplication()->triggerEvent('onAfterDownloadProductFile', array($file_name, $id, $oid, $hash, $model));
+        Factory::getApplication()->triggerEvent('onAfterDownloadProductFile', array($file_name, $id, $oid, $hash, $model));
         die();
     }
     
     function reviewsave(){
-        \JSession::checkToken() or die('Invalid Token');
+        Session::checkToken() or die('Invalid Token');
 
         $post = $this->input->post->getArray();
         $backlink = $this->input->getVar('back_link');
 		
-		$model = \JSFactory::getModel('productReview', 'Site');
+		$model = JSFactory::getModel('productReview', 'Site');
 		$model->setData($post);
 		if (!$model->checkAllow()){
-			\JSError::raiseWarning('', $model->getError());
+			JSError::raiseWarning('', $model->getError());
             $this->setRedirect($backlink);
             return 0;
 		}
 		if (!$model->check()){
-			\JSError::raiseWarning('', $model->getError());
+			JSError::raiseWarning('', $model->getError());
             $this->setRedirect($backlink);
             return 0;
 		}
@@ -247,10 +255,10 @@ class ProductController extends BaseController{
 		
 		$model->mailSend();
 		
-		if (\JSFactory::getConfig()->display_reviews_without_confirm){
-            $this->setRedirect($backlink, \JText::_('JSHOP_YOUR_REVIEW_SAVE_DISPLAY'));
+		if (JSFactory::getConfig()->display_reviews_without_confirm){
+            $this->setRedirect($backlink, Text::_('JSHOP_YOUR_REVIEW_SAVE_DISPLAY'));
         }else{
-            $this->setRedirect($backlink, \JText::_('JSHOP_YOUR_REVIEW_SAVE'));
+            $this->setRedirect($backlink, Text::_('JSHOP_YOUR_REVIEW_SAVE'));
         }
     }
 
@@ -262,7 +270,7 @@ class ProductController extends BaseController{
 		$attribs = Request::getAttribute('attr');
         $freeattr = Request::getFreeAttribute('freeattr');
 		
-		$model = \JSFactory::getModel('productAjaxRequest', 'Site');
+		$model = JSFactory::getModel('productAjaxRequest', 'Site');
 		$model->setData($product_id, $change_attr, $qty, $attribs, $freeattr, $request);
 		
 		header("Content-type: application/json; charset=utf-8");
@@ -271,9 +279,9 @@ class ProductController extends BaseController{
 	}
 
     function showmedia(){
-        $jshopConfig = \JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $media_id = $this->input->getInt('media_id');
-        $file = \JSFactory::getTable('productfiles');
+        $file = JSFactory::getTable('productfiles');
         $file->load($media_id);
 		$scripts_load = '';
         
@@ -285,7 +293,7 @@ class ProductController extends BaseController{
         $view->set('scripts_load', $scripts_load);
         $view->set('file_is_video', $file->fileDemoIsVideo());
 		$view->set('file_is_audio', $file->fileDemoIsAudio());
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayProductShowMediaView', array(&$view) );
         $view->display(); 
         die();

@@ -1,4 +1,10 @@
-<?php 
+<?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -14,7 +20,7 @@ $i=0;
 ?>
 
 <div id="j-main-container" class="j-main-container">
-<?php JSHelperAdmin::displaySubmenuOptions();?>
+<?php HelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping&controller=coupons" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 
@@ -23,18 +29,18 @@ $i=0;
     <?php print $this->tmp_html_filter?>
 
     <div>
-        <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+        <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
     </div>
     <div>
         <span class="input-group-append">
-            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                 <span class="icon-search" aria-hidden="true"></span>
             </button>                        
         </span>
     </div>
 
     <div>
-        <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+        <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
     </div>
     <?php print $this->tmp_html_filter_end?>
 
@@ -53,38 +59,38 @@ if (isset($this->ext_coupon_html_befor_list)){
       #
     </th>
     <th width="20">
-      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+      <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
     </th>
     <th align = "left">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_CODE'), 'C.coupon_code', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_CODE'), 'C.coupon_code', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th width = "200" align = "left">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_VALUE'), 'C.coupon_value', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_VALUE'), 'C.coupon_value', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th width = "80">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_START_DATE_COUPON'), 'C.coupon_start_date', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_START_DATE_COUPON'), 'C.coupon_start_date', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th width = "80">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_EXPIRE_DATE_COUPON'), 'C.coupon_expire_date', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_EXPIRE_DATE_COUPON'), 'C.coupon_expire_date', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th width = "80" class="center">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_FINISHED_AFTER_USED'), 'C.finished_after_used', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_FINISHED_AFTER_USED'), 'C.finished_after_used', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th width = "80" class="center">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_FOR_USER'), 'C.for_user_id', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_FOR_USER'), 'C.for_user_id', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
     <th width = "80" class="center">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_COUPON_USED'), 'C.used', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_COUPON_USED'), 'C.used', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
 	<?php echo $this->tmp_extra_column_headers?>
     <th width = "50" class="center">
-        <?php echo JText::_('JSHOP_PUBLISH')?>
+        <?php echo Text::_('JSHOP_PUBLISH')?>
     </th>
     <th width = "50" class="center">
-        <?php echo JText::_('JSHOP_EDIT')?>
+        <?php echo Text::_('JSHOP_EDIT')?>
     </th>
     <th width = "40" class="center">
-        <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'C.coupon_id', $this->filter_order_Dir, $this->filter_order); ?>
+        <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'C.coupon_id', $this->filter_order_Dir, $this->filter_order); ?>
     </th>
   </tr>
 </thead>  
@@ -99,7 +105,7 @@ foreach($rows as $row){
      <?php echo $pageNav->getRowOffset($i);?>
    </td>
    <td>
-    <?php echo \JHTML::_('grid.id', $i, $row->coupon_id);?>
+    <?php echo HTMLHelper::_('grid.id', $i, $row->coupon_id);?>
    </td>
    <td>
      <a href="index.php?option=com_jshopping&controller=coupons&task=edit&coupon_id=<?php echo $row->coupon_id; ?>"><?php echo $row->coupon_code;?></a>
@@ -109,23 +115,23 @@ foreach($rows as $row){
      <?php if ($row->coupon_type==0) print "%"; else print $this->currency;?>
    </td>
    <td>
-    <?php if ($row->coupon_start_date!='0000-00-00') print JSHelper::formatdate($row->coupon_start_date);?>
+    <?php if ($row->coupon_start_date!='0000-00-00') print Helper::formatdate($row->coupon_start_date);?>
    </td>
    <td>
-    <?php if ($row->coupon_expire_date!='0000-00-00')  print JSHelper::formatdate($row->coupon_expire_date);?>
+    <?php if ($row->coupon_expire_date!='0000-00-00')  print Helper::formatdate($row->coupon_expire_date);?>
    </td>
    <td class="center">
-    <?php if ($row->finished_after_used) print JText::_('JSHOP_YES'); else print JText::_('JSHOP_NO')?>
+    <?php if ($row->finished_after_used) print Text::_('JSHOP_YES'); else print Text::_('JSHOP_NO')?>
    </td>
    <td class="center">
-    <?php if ($row->for_user_id) print $row->f_name." ".$row->l_name; else print JText::_('JSHOP_ALL')?>
+    <?php if ($row->for_user_id) print $row->f_name." ".$row->l_name; else print Text::_('JSHOP_ALL')?>
    </td>
    <td class="center">
-    <?php if ($row->used) print JText::_('JSHOP_YES'); else print JText::_('JSHOP_NO')?>
+    <?php if ($row->used) print Text::_('JSHOP_YES'); else print Text::_('JSHOP_NO')?>
    </td>
    <?php echo $row->tmp_extra_column_cells?>
    <td class="center">     
-     <?php echo \JHTML::_('jgrid.published', $row->coupon_publish, $i);?>
+     <?php echo HTMLHelper::_('jgrid.published', $row->coupon_publish, $i);?>
    </td>
    <td class="center">
         <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=coupons&task=edit&coupon_id=<?php print $row->coupon_id?>'>
@@ -157,6 +163,6 @@ $i++;
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

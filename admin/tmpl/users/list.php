@@ -1,4 +1,7 @@
 <?php
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -15,7 +18,7 @@ $select_user = $this->select_user;
 
 <div id="j-main-container" class="j-main-container">  
 <form name="adminForm" id="adminForm" method="post" action="index.php?option=com_jshopping&controller=users<?php if($select_user) {?>&tmpl=component&select_user=1<?php }?>">
-<?php echo \JHTML::_('form.token');?>
+<?php echo HTMLHelper::_('form.token');?>
 <?php print $this->tmp_html_start?>
 
 <div class="js-filters">
@@ -27,11 +30,11 @@ $select_user = $this->select_user;
     </div>
 
     <div>
-        <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print JText::_('JSHOP_SEARCH')?>" type="text">
+        <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
     </div>
     <div>
         <span class="input-group-append">
-            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print JText::_('JSHOP_SEARCH')?>">
+            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                 <span class="icon-search" aria-hidden="true"></span>
             </button>                        
         </span>
@@ -39,7 +42,7 @@ $select_user = $this->select_user;
 
 
     <div>
-        <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+        <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
     </div>
 
     <?php print $this->tmp_html_filter_end?>
@@ -55,44 +58,44 @@ $select_user = $this->select_user;
  </th>
  <?php if(!$select_user) {?> 
  <th width="20">
-   <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+   <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
  </th>
  <?php }?>
  <th align="left">
-   <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_NUMBER'), 'number', $this->filter_order_Dir, $this->filter_order)?>
+   <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_NUMBER'), 'number', $this->filter_order_Dir, $this->filter_order)?>
  </th>
  <th align="left">
-   <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_USERNAME'), 'u_name', $this->filter_order_Dir, $this->filter_order)?>
+   <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_USERNAME'), 'u_name', $this->filter_order_Dir, $this->filter_order)?>
  </th>
  <th width="150" align="left">
-   <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_USER_FIRSTNAME'), 'f_name', $this->filter_order_Dir, $this->filter_order)?>
+   <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_USER_FIRSTNAME'), 'f_name', $this->filter_order_Dir, $this->filter_order)?>
  </th>
  <th width="150" align="left">
-   <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_USER_LASTNAME'), 'l_name', $this->filter_order_Dir, $this->filter_order)?>
+   <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_USER_LASTNAME'), 'l_name', $this->filter_order_Dir, $this->filter_order)?>
  </th>
  <th align="left">
-   <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_FIRMA'), 'firma_name', $this->filter_order_Dir, $this->filter_order)?>
+   <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_FIRMA'), 'firma_name', $this->filter_order_Dir, $this->filter_order)?>
  </th>
  <th>
-    <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_EMAIL'), 'U.email', $this->filter_order_Dir, $this->filter_order)?>
+    <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_EMAIL'), 'U.email', $this->filter_order_Dir, $this->filter_order)?>
  </th>
  <?php print $this->tmp_html_col_after_email?>
  <th>
-    <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_USERGROUP_NAME'), 'usergroup_name', $this->filter_order_Dir, $this->filter_order)?>
+    <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_USERGROUP_NAME'), 'usergroup_name', $this->filter_order_Dir, $this->filter_order)?>
  </th>
  <?php if(!$select_user) {?> 
  <th class="center">
-    <?php print JText::_('JSHOP_ORDERS')?>
+    <?php print Text::_('JSHOP_ORDERS')?>
  </th>
  <th class="center">
-    <?php print JText::_('JSHOP_ENABLED')?>
+    <?php print Text::_('JSHOP_ENABLED')?>
  </th>
  <th width="50" class="center">
-    <?php echo JText::_('JSHOP_EDIT')?>
+    <?php echo Text::_('JSHOP_EDIT')?>
 </th>
  <?php }?>
 <th width="40" class="center">
-    <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'user_id', $this->filter_order_Dir, $this->filter_order)?>
+    <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'user_id', $this->filter_order_Dir, $this->filter_order)?>
 </th>
 <?php print $this->tmp_html_col_after_id?>
 </tr>
@@ -106,7 +109,7 @@ $select_user = $this->select_user;
  </td>
  <?php if(!$select_user) {?> 
  <td>
-   <?php echo \JHTML::_('grid.id', $i, $row->user_id);?>
+   <?php echo HTMLHelper::_('grid.id', $i, $row->user_id);?>
  </td>
  <?php }?>
  <td>
@@ -144,11 +147,11 @@ $select_user = $this->select_user;
  <?php if(!$select_user) {?> 
  <td class="center">
    <a class="btn btn-mini btn-info" href='index.php?option=com_jshopping&controller=orders&client_id=<?php print $row->user_id?>' target='_blank'>
-    <?php print JText::_('JSHOP_ORDERS')?>
+    <?php print Text::_('JSHOP_ORDERS')?>
    </a>
  </td>
  <td class="center">
-   <?php echo \JHTML::_('jgrid.published', !$row->block, $i);?>
+   <?php echo HTMLHelper::_('jgrid.published', !$row->block, $i);?>
  </td>
  <td class="center">
     <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=users&task=edit&user_id=<?php print $row->user_id?>'>

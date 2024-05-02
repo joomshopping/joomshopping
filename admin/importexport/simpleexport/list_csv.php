@@ -1,4 +1,6 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -14,7 +16,7 @@ defined('_JEXEC') or die();
 <input type="hidden" name="boxchecked" value="0" />
 <input type="hidden" name="ie_id" value="<?php print $ie_id;?>" />
 
-<?php print \JText::_('JSHOP_FILE_NAME')?>: <input type="text" name="params[filename]" class = "form-control" value="<?php print $ie_params['filename']?>" size="45"><br/>
+<?php print Text::_('JSHOP_FILE_NAME')?>: <input type="text" name="params[filename]" class = "form-control" value="<?php print $ie_params['filename']?>" size="45"><br/>
 <br/>
 <table class="table table-striped">
 <thead>
@@ -23,13 +25,13 @@ defined('_JEXEC') or die();
       #
     </th>    
     <th align="left">
-      <?php echo \JText::_('JSHOP_NAME')?>
+      <?php echo Text::_('JSHOP_NAME')?>
     </th>
     <th width="150">
-        <?php echo \JText::_('JSHOP_DATE')?>
+        <?php echo Text::_('JSHOP_DATE')?>
     </th>    
     <th width="50" class="center">
-        <?php echo \JText::_('JSHOP_DELETE')?>
+        <?php echo Text::_('JSHOP_DELETE')?>
     </th>
   </tr>
 </thead>
@@ -48,7 +50,7 @@ foreach($files as $row){
         <?php print date("d.m.Y H:i:s", filemtime($jshopConfig->importexport_path.$_importexport->get('alias')."/".$row)); ?>
     </td>    
     <td class="center">
-        <a class="btn btn-micro" href='index.php?option=com_jshopping&controller=importexport&task=filedelete&ie_id=<?php print $ie_id;?>&file=<?php print $row?>' onclick="return confirm('<?php print \JText::_('JSHOP_DELETE')?>');">
+        <a class="btn btn-micro" href='index.php?option=com_jshopping&controller=importexport&task=filedelete&ie_id=<?php print $ie_id;?>&file=<?php print $row?>' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>');">
             <i class="icon-delete"></i>
         </a>
     </td>

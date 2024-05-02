@@ -7,17 +7,23 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class ShippingExtPriceController extends BaseadminController{
 
     function init(){
-        \JSHelperAdmin::checkAccessController("shippingextprice");
-        \JSHelperAdmin::addSubmenu("other");
+        HelperAdmin::checkAccessController("shippingextprice");
+        HelperAdmin::addSubmenu("other");
     }
 
     function display($cachable = false, $urlparams = false){
-		$shippings = \JSFactory::getModel("shippingextprice");
+		$shippings = JSFactory::getModel("shippingextprice");
 		$rows = $shippings->getList();
 
 		$view = $this->getView("shippingext", 'html');
@@ -26,28 +32,28 @@ class ShippingExtPriceController extends BaseadminController{
 
 		$view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayShippingExtPrices', array(&$view));
 		$view->displayList();
 	}
 
 	function edit() {
-        \JFactory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
 		$id = $this->input->getInt("id");
-        $row = \JSFactory::getTable('shippingext');
+        $row = JSFactory::getTable('shippingext');
         $row->load($id);
 
         if (!$row->exec) {
-            \JSError::raiseError( 404, "Error load ShippingExt");
+            JSError::raiseError( 404, "Error load ShippingExt");
         }
 
         $shippings_conects = $row->getShippingMethod();
 
-        $shippings = \JSFactory::getModel("shippings");
+        $shippings = JSFactory::getModel("shippings");
         $list_shippings = $shippings->getAllShippings(0);
 
         $nofilter = array("params", "shipping_method");
-        \JFilterOutput::objectHTMLSafe($row, ENT_QUOTES, $nofilter);
+        OutputFilter::objectHTMLSafe($row, ENT_QUOTES, $nofilter);
 
         $view = $this->getView("shippingext", 'html');
         $view->setLayout("edit");
@@ -57,15 +63,15 @@ class ShippingExtPriceController extends BaseadminController{
 		$view->tmp_html_start = "";
         $view->tmp_html_end = "";
         $view->etemplatevar = "";
-        $dispatcher = \JFactory::getApplication();
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditShippingExtPrice', array(&$view));
         $view->displayEdit();
 	}
 
     function remove(){
         $id = $this->input->getInt("id");
-        \JSFactory::getModel("shippingextprice")->delete($id);
-        $this->setRedirect("index.php?option=com_jshopping&controller=shippingextprice", \JText::_('JSHOP_ITEM_DELETED'));
+        JSFactory::getModel("shippingextprice")->delete($id);
+        $this->setRedirect("index.php?option=com_jshopping&controller=shippingextprice", Text::_('JSHOP_ITEM_DELETED'));
     }
 
     function back(){

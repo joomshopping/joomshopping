@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class ProductFieldGroupTable extends MultilangTable{
@@ -16,8 +18,8 @@ class ProductFieldGroupTable extends MultilangTable{
     }
     
     function getList(){
-        $db = \JFactory::getDBO();
-        $lang = \JSFactory::getLang(); 
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang(); 
         $query = "SELECT id, `".$lang->get("name")."` as name, ordering FROM `#__jshopping_products_extra_field_groups` order by ordering";
         $db->setQuery($query);
         return $db->loadObJectList();

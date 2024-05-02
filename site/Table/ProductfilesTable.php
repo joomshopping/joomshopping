@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class ProductFilesTable extends ShopbaseTable{
@@ -18,7 +19,7 @@ class ProductFilesTable extends ShopbaseTable{
     function fileDemoIsVideo(){
         $video = 0;
         $info = pathinfo($this->demo);
-        if (in_array($info['extension'], \JSFactory::getConfig()->file_extension_video)){
+        if (in_array($info['extension'], JSFactory::getConfig()->file_extension_video)){
             $video = 1;
         }        
         return $video;
@@ -27,7 +28,7 @@ class ProductFilesTable extends ShopbaseTable{
 	function fileDemoIsAudio(){
         $audio = 0;
         $info = pathinfo($this->demo);
-        if (in_array($info['extension'], \JSFactory::getConfig()->file_extension_audio)){
+        if (in_array($info['extension'], JSFactory::getConfig()->file_extension_audio)){
             $audio = 1;
         }        
         return $audio;

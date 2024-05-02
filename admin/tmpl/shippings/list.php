@@ -1,4 +1,9 @@
 <?php
+use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -18,33 +23,33 @@ if ($saveOrder){
 ?>
 
 <div id="j-main-container" class="j-main-container">
-    <?php JSHelperAdmin::displaySubmenuOptions();?>
+    <?php HelperAdmin::displaySubmenuOptions();?>
     <form action="index.php?option=com_jshopping&controller=shippings" method="post" name="adminForm" id="adminForm">
     <?php print $this->tmp_html_start?>
     <table class="table table-striped">
     <thead>
         <tr>
             <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
-                <?php echo \JHTML::_('grid.sort', $this->filter_order!='ordering' ? '#' : '', 'ordering', $this->filter_order_Dir, $this->filter_order); ?>
+                <?php echo HTMLHelper::_('grid.sort', $this->filter_order!='ordering' ? '#' : '', 'ordering', $this->filter_order_Dir, $this->filter_order); ?>
             </th>
             <th width="20">
-              <input type="checkbox" name="checkall-toggle" value="" title="<?php echo \JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+              <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
             </th>
             <th align="left">
-              <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+              <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
             </th>
             <?php echo $this->tmp_extra_column_headers?>
             <th width="320">
-                <?php echo JText::_('JSHOP_SHIPPING_PRICES')?>
+                <?php echo Text::_('JSHOP_SHIPPING_PRICES')?>
             </th>
             <th width="30" class="center">
-              <?php echo JText::_('JSHOP_PUBLISH')?>
+              <?php echo Text::_('JSHOP_PUBLISH')?>
             </th>
             <th width="50" class="center">
-                <?php echo JText::_('JSHOP_EDIT')?>
+                <?php echo Text::_('JSHOP_EDIT')?>
             </th>
             <th width="40" class="center">
-                <?php echo \JHTML::_('grid.sort', JText::_('JSHOP_ID'), 'shipping_id', $this->filter_order_Dir, $this->filter_order); ?>
+                <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_ID'), 'shipping_id', $this->filter_order_Dir, $this->filter_order); ?>
             </th>
         </tr>
     </thead>
@@ -60,22 +65,22 @@ if ($saveOrder){
             <?php } ?>
         </td>
         <td>
-         <?php echo \JHTML::_('grid.id', $i, $shipping->shipping_id);?>
+         <?php echo HTMLHelper::_('grid.id', $i, $shipping->shipping_id);?>
         </td>
         <td>
           <a href="index.php?option=com_jshopping&controller=shippings&task=edit&shipping_id=<?php echo $shipping->shipping_id; ?>">
               <?php if ($shipping->count_shipping_price==0){?>
-                 <img src="components/com_jshopping/images/disabled.png" alt="disabled" title="<?php print JText::_('JSHOP_NOT_SET_PRICE')?>" />&nbsp;
+                 <img src="components/com_jshopping/images/disabled.png" alt="disabled" title="<?php print Text::_('JSHOP_NOT_SET_PRICE')?>" />&nbsp;
              <?php }?>
              <?php echo $shipping->name;?>
           </a>
         </td>
         <?php echo $shipping->tmp_extra_column_cells?>
         <td>
-         <a href="index.php?option=com_jshopping&controller=shippingsprices&shipping_id_back=<?php print $shipping->shipping_id;?>" class="btn btn-info"><?php echo JText::_('JSHOP_SHIPPING_PRICES')." (".$shipping->count_shipping_price.")"?> <img src="components/com_jshopping/images/tree.gif" border="0" /></a>
+         <a href="index.php?option=com_jshopping&controller=shippingsprices&shipping_id_back=<?php print $shipping->shipping_id;?>" class="btn btn-info"><?php echo Text::_('JSHOP_SHIPPING_PRICES')." (".$shipping->count_shipping_price.")"?> <img src="components/com_jshopping/images/tree.gif" border="0" /></a>
         </td>
         <td class="center">
-         <?php echo \JHTML::_('jgrid.published', $shipping->published, $i);?>
+         <?php echo HTMLHelper::_('jgrid.published', $shipping->published, $i);?>
         </td>
          <td class="center">
              <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=shippings&task=edit&shipping_id=<?php echo $shipping->shipping_id; ?>'>
@@ -100,6 +105,6 @@ if ($saveOrder){
 </div>
 <script>
 jQuery(function(){
-	jshopAdmin.setMainMenuActive('<?php print JURI::base()?>index.php?option=com_jshopping&controller=other');
+	jshopAdmin.setMainMenuActive('<?php print Uri::base()?>index.php?option=com_jshopping&controller=other');
 });
 </script>

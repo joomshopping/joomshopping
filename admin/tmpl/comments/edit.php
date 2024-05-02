@@ -1,4 +1,7 @@
-<?php 
+<?php
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 /**
 * @version      5.1.4 02.05.2023
 * @author       MAXXmarketing GmbH
@@ -19,7 +22,7 @@ function selectProductBehaviour(pid){
     var html = '';
     jQuery.getJSON(url, function(json){
         html = json.product_name;
-        html += `<a class="btn btn-secondary clear_com" href="#" onclick="clear_product_commentar()"><?php print JText::_('JSHOP_CLEAR')?></a>`;
+        html += `<a class="btn btn-secondary clear_com" href="#" onclick="clear_product_commentar()"><?php print Text::_('JSHOP_CLEAR')?></a>`;
         jQuery(".review_product_name").html(html);
     });
     window.parent.jQuery('#aModal').modal('hide');
@@ -37,7 +40,7 @@ function clear_product_commentar(){
             <table class="admintable" >
                 <tr>
                     <td class="key" style="width:180px;">
-                        <?php echo \JText::_('JSHOP_PUBLISH');?>
+                        <?php echo Text::_('JSHOP_PUBLISH');?>
                     </td>
                     <td>
                         <input type="checkbox" name="publish" value="<?php echo $this->review->publish; ?>" <?php if ($this->review->publish){ echo 'checked="checked"'; } ?> />
@@ -46,36 +49,36 @@ function clear_product_commentar(){
                 <?php if ($this->review->review_id){ ?>
                     <tr>
                         <td class="key" style="width:180px;">
-                            <?php echo JText::_('JSHOP_NAME_PRODUCT')?>
+                            <?php echo Text::_('JSHOP_NAME_PRODUCT')?>
                         </td>
                         <td>
                             <span class="review_product_name">
                                 <?php echo $this->review->name?>
                                 <a class="btn btn-secondary clear_com" href="#" onclick="clear_product_commentar()">
-                                    <?php print JText::_('JSHOP_CLEAR')?>
+                                    <?php print Text::_('JSHOP_CLEAR')?>
                                 </a>
                             </span>                               
                             <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#aModal" onclick="jshopAdmin.cElName=0">
-                                <?php print JText::_('JSHOP_LOAD')?>
+                                <?php print Text::_('JSHOP_LOAD')?>
                             </a>
                          </td>
                     </tr>
                 <?php } else { ?>
                     <tr>
                         <td class="key" style="width:180px;">
-                            <?php echo JText::_('JSHOP_PRODUCT')?>*
+                            <?php echo Text::_('JSHOP_PRODUCT')?>*
                         </td>
                         <td>
                             <span class="review_product_name"></span>
                             <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#aModal" onclick="jshopAdmin.cElName=0">
-                                <?php print JText::_('JSHOP_LOAD')?>
+                                <?php print Text::_('JSHOP_LOAD')?>
                             </a>
                         </td>
                    </tr>    
                 <?php } ?>
                 <tr>
                     <td class="key" style="width:180px;">
-                        <?php echo JText::_('JSHOP_USER')?>*
+                        <?php echo Text::_('JSHOP_USER')?>*
                     </td>
                     <td>
                         <input type="text" class="inputbox form-control" size="50" name="user_name" value="<?php echo $this->review->user_name?>" />
@@ -83,7 +86,7 @@ function clear_product_commentar(){
                 </tr>
                 <tr>
                     <td class="key" style="width:180px;">
-                        <?php echo JText::_('JSHOP_EMAIL')?>*
+                        <?php echo Text::_('JSHOP_EMAIL')?>*
                     </td>
                     <td>
                         <input type="text" class="inputbox form-control" size="50" name="user_email" value="<?php echo $this->review->user_email?>" />
@@ -92,7 +95,7 @@ function clear_product_commentar(){
                   
                 <tr>
                     <td  class="key">
-                        <?php echo JText::_('JSHOP_PRODUCT_REVIEW')?>*
+                        <?php echo Text::_('JSHOP_PRODUCT_REVIEW')?>*
                     </td>
                     <td>
                         <textarea name="review" class="form-control" cols="35"><?php echo $this->review->review ?></textarea>
@@ -101,7 +104,7 @@ function clear_product_commentar(){
                 <?php if (!$this->config->hide_product_rating){?>
                     <tr>
                         <td class="key">
-                            <?php echo JText::_('JSHOP_REVIEW_MARK')?> 
+                            <?php echo Text::_('JSHOP_REVIEW_MARK')?> 
                         </td>
                         <td>
                             <?php print $this->mark?>
@@ -114,7 +117,7 @@ function clear_product_commentar(){
         <div class="clr"></div>
         <input type="hidden" name="product_id" id="product_id" class="form-control" value="<?php print $this->review->product_id;?>" />
         <input type="hidden" name="review_id" value="<?php echo (int)$this->review->review_id?>">
-        <input type="hidden" name="task" value="<?php echo \JFactory::getApplication()->input->getVar('task', '')?>" />
+        <input type="hidden" name="task" value="<?php echo Factory::getApplication()->input->getVar('task', '')?>" />
         <?php print $this->tmp_html_end?>
     </form>
 
@@ -122,7 +125,7 @@ function clear_product_commentar(){
     'bootstrap.renderModal',
     'aModal',
     array(
-        'title'       => \JText::_('Products'),
+        'title'       => Text::_('Products'),
         'backdrop'    => 'static',
         'url'         => 'index.php?option=com_jshopping&controller=product_list_selectable&tmpl=component',
         'height'      => '400px',

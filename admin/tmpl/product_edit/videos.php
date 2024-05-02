@@ -1,4 +1,6 @@
 <?php
+use Joomla\CMS\Language\Text;
+
 /**
 * @version      5.0.0 15.09.2018
 * @author       MAXXmarketing GmbH
@@ -26,8 +28,8 @@ defined('_JEXEC') or die();
                 </a>
             </div>
             <div class="link_delete_foto">
-                <a class="btn btn-mini" href="#" onclick="if (confirm('<?php print JText::_('JSHOP_DELETE_VIDEO')?>')) jshopAdmin.deleteVideoProduct('<?php echo $video->video_id?>');return false;">
-                    <img src="components/com_jshopping/images/publish_r.png"> <?php print JText::_('JSHOP_DELETE_VIDEO')?>
+                <a class="btn btn-mini" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_VIDEO')?>')) jshopAdmin.deleteVideoProduct('<?php echo $video->video_id?>');return false;">
+                    <img src="components/com_jshopping/images/publish_r.png"> <?php print Text::_('JSHOP_DELETE_VIDEO')?>
                 </a>
             </div>
         </div>
@@ -38,16 +40,16 @@ defined('_JEXEC') or die();
     <table class="admintable" >
         <?php for ($i=0; $i < $jshopConfig->product_video_upload_count; $i++){?>
         <tr>
-            <td class="key" style="width:250px;"><?php print JText::_('JSHOP_UPLOAD_VIDEO')?></td>
+            <td class="key" style="width:250px;"><?php print Text::_('JSHOP_UPLOAD_VIDEO')?></td>
             <td>
             <input type="file" name="product_video_<?php print $i;?>" /><textarea rows="5" cols="22" name="product_video_code_<?php print $i;?>" style="display: none;"></textarea>
 			<?php if ($jshopConfig->show_insert_code_in_product_video) { ?>
-            <div style="padding-top:3px;"><input type="checkbox" value="1" name="product_insert_code_<?php print $i;?>" id="product_insert_code_<?php print $i;?>" onclick="jshopAdmin.changeVideoFileField(this);"/><label for="product_insert_code_<?php print $i;?>"><?php print JText::_('JSHOP_INSERT_CODE')?></label></div>
+            <div style="padding-top:3px;"><input type="checkbox" value="1" name="product_insert_code_<?php print $i;?>" id="product_insert_code_<?php print $i;?>" onclick="jshopAdmin.changeVideoFileField(this);"/><label for="product_insert_code_<?php print $i;?>"><?php print Text::_('JSHOP_INSERT_CODE')?></label></div>
 			<?php } ?>
             </td>
         </tr>
         <tr>
-            <td class="key"><?php print JText::_('JSHOP_UPLOAD_VIDEO_IMAGE')?></td>
+            <td class="key"><?php print Text::_('JSHOP_UPLOAD_VIDEO_IMAGE')?></td>
             <td><input type="file" name="product_video_preview_<?php print $i;?>" /></td>
         </tr>
         <tr>
@@ -65,9 +67,9 @@ defined('_JEXEC') or die();
     <br/>
     <?php $pkey='plugin_template_attribute'; if ($this->$pkey){ print $this->$pkey;}?>
     <div class="helpbox">
-        <div class="head"><?php echo JText::_('JSHOP_ABOUT_UPLOAD_FILES')?></div>
+        <div class="head"><?php echo Text::_('JSHOP_ABOUT_UPLOAD_FILES')?></div>
         <div class="text">
-            <?php print sprintf(JText::_('JSHOP_SIZE_FILES_INFO'), ini_get("upload_max_filesize"), ini_get("post_max_size"));?>
+            <?php print sprintf(Text::_('JSHOP_SIZE_FILES_INFO'), ini_get("upload_max_filesize"), ini_get("post_max_size"));?>
         </div>
     </div>
 </div>
