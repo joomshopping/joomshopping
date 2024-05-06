@@ -247,13 +247,13 @@ class ProductTable extends MultilangTable{
     return $data;
     }
 
-	function getInitLoadAttribute($selected = array()){
+	function getInitLoadAttribute($selected = array(), $displayonlyattrtype = null){
 		$this->setAttributeSubmitted($selected);
 		$attributesDatas = $this->getAttributesDatas($selected);
 		$this->product_attribute_datas = $attributesDatas;
         $this->setAttributeActive($attributesDatas['attributeActive']);
         $attributeValues = $attributesDatas['attributeValues'];
-        return $this->getBuildSelectAttributes($attributeValues, $attributesDatas['attributeSelected']);
+        return $this->getBuildSelectAttributes($attributeValues, $attributesDatas['attributeSelected'], $displayonlyattrtype);
 	}
 
     function getPIDCheckQtyValue(){

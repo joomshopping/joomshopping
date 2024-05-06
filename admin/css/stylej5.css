@@ -30,4 +30,7 @@
     select.form-control{
         background-color: var(--body-bg);
     }
+	.block_related_inner{
+		background: #333;
+	}
 }

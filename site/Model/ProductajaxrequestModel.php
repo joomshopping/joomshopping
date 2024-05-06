@@ -21,6 +21,7 @@ class ProductAjaxRequestModel  extends BaseModel{
 	public $attribs;
 	public $freeattr;
 	public $request;
+    public $displayonlyattrtype = null;
 	
 	public function __construct(){
 		$this->product = JSFactory::getTable('product');
@@ -72,11 +73,11 @@ class ProductAjaxRequestModel  extends BaseModel{
 		$product->load($this->product_id);
 		$dispatcher->triggerEvent('onBeforeLoadDisplayAjaxAttrib2', array(&$product));
 		
-		$attributes = $product->getInitLoadAttribute($this->attribs);
+		$attributes = $product->getInitLoadAttribute($this->attribs, $this->displayonlyattrtype);
         $product->setFreeAttributeActive($this->freeattr);
 
         $rows = array();
-        foreach($attributes as $k=>$v){          
+        foreach($attributes as $k=>$v){
             $rows['id_'.$k] = $v->selects;
         }
 

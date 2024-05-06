@@ -18,6 +18,7 @@ use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
+use Joomla\Component\Jshopping\Site\Helper\Request;
 
 defined('_JEXEC') or die();
 
@@ -821,12 +822,13 @@ class ProductsController extends BaseadminController{
         JSFactory::getConfig()->setDisplayPriceFront($display_price);
         $product_id = $this->input->getInt('product_id');
         $change_attr = $this->input->getInt('change_attr');
-        $qty = \Joomla\Component\Jshopping\Site\Helper\Request::getQuantity('qty', 1);
-		$attribs = \Joomla\Component\Jshopping\Site\Helper\Request::getAttribute('attr');
-        $freeattr = \Joomla\Component\Jshopping\Site\Helper\Request::getFreeAttribute('freeattr');
+        $qty = Request::getQuantity('qty', 1);
+		$attribs = Request::getAttribute('attr');
+        $freeattr = Request::getFreeAttribute('freeattr');
 
         $model = JSFactory::getModel('productajaxrequest', 'Site');
 		$model->setData($product_id, $change_attr, $qty, $attribs, $freeattr, $request);
+        $model->displayonlyattrtype = 1;
 		print $model->getProductDataJson();
 		die();
     }

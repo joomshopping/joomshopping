@@ -4,6 +4,15 @@ div.width-45 {
 div.width-55 {
     width: 55%;
 }
+.mw-320{
+    max-width: 320px;
+}
+.mw-480{
+    max-width: 480px;
+}
+.mw-600{
+    max-width: 600px;
+}
 #installer-install table.adminform{
 	width:100%;
 }
@@ -334,6 +343,8 @@ div#element-box .jssubmenu div.m {
     height: 235px;
     border:1px solid #ccc;
     text-align: center;
+    background: #fff;
+    border-radius: 3px;
 }
 .block_related_inner .image{
     height: 140px;
@@ -470,7 +481,17 @@ div#element-box .jssubmenu div.m {
 	margin-left:5px;
 }
 .product_attribute_select .prod_attr_img img{
-    width:20px;
+    width:40px;
+}
+.product_attribute_select select{
+    width: 140px;
+    max-width: 100%;
+    background-color: #fefefe;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: .6rem 1rem;
+    line-height: 1.5;
 }
 .pagination.related{
     font-size: 16px;

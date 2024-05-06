@@ -6,7 +6,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 /**
- * @version      5.0.0 15.09.2018
+ * @version      5.4.1 06.05.2024
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -32,8 +32,6 @@ class pm_paypal extends PaymentRoot {
     }
 
     function checkTransaction($pmconfigs, $order, $act) {
-        $jshopConfig = JSFactory::getConfig();
-
         if ($pmconfigs['testmode']) {
             $host = "www.sandbox.paypal.com";
         } else {
@@ -44,7 +42,7 @@ class pm_paypal extends PaymentRoot {
         $order->order_total = $this->fixOrderTotal($order);
         
         $opending = 0;
-        if ($order->order_total != $_POST['mc_gross'] || $order->currency_code_iso != $_POST['mc_currency']) {
+        if ($order->order_total != $post['mc_gross'] || $order->currency_code_iso != $post['mc_currency']) {
             $opending = 1;
         }
 
@@ -52,20 +50,13 @@ class pm_paypal extends PaymentRoot {
         $transaction = $post['txn_id'];
         $transactiondata = array('txn_id' => $post['txn_id'], 'payer_email' => $post['payer_email'], 'mc_gross' => $post['mc_gross'], 'mc_currency' => $post['mc_currency'], 'payment_status' => $post['payment_status']);
 
-        if (strtolower($pmconfigs['email_received']) != strtolower($_POST['business']) && strtolower($pmconfigs['email_received']) != strtolower($_POST['receiver_email'])) {
+        if (strtolower($pmconfigs['email_received']) != strtolower($post['business']) && strtolower($pmconfigs['email_received']) != strtolower($post['receiver_email'])) {
             return array(0, 'Error email received. Order ID ' . $order->order_id, $transaction, $transactiondata);
         }
 
         $req = 'cmd=_notify-validate';
-        if (function_exists('get_magic_quotes_gpc')) {
-            $get_magic_quotes_exists = true;
-        }
-        foreach ($_POST as $key => $value){
-            if ($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) {
-                $value = urlencode(stripslashes($value));
-            } else {
-                $value = urlencode($value);
-            }
+        foreach($post as $key => $value){
+            $value = urlencode($value);
             $req .= "&$key=$value";
         }
 
@@ -98,8 +89,8 @@ class pm_paypal extends PaymentRoot {
                     return array(1, '', $transaction, $transactiondata);
                 }
             } elseif ($payment_status == 'Pending') {
-                Helper::saveToLog("payment.log", "Status pending. Order ID " . $order->order_id . ". Reason: " . $_POST['pending_reason']);
-                return array(2, trim(stripslashes($_POST['pending_reason'])), $transaction, $transactiondata);
+                Helper::saveToLog("payment.log", "Status pending. Order ID " . $order->order_id . ". Reason: " . $post['pending_reason']);
+                return array(2, trim(stripslashes($post['pending_reason'])), $transaction, $transactiondata);
             } else {
                 return array(3, "Status $payment_status. Order ID " . $order->order_id, $transaction, $transactiondata);
             }

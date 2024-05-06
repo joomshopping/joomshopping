@@ -13,7 +13,7 @@ defined('_JEXEC') or die();
 <div id="product_extra_fields" class="tab-pane">
     <?php print $this->tmpl_extra_fields_start ?? '';?>
 
-    <div class="float-end mt-1 ms-2">
+    <div class="float-end mt-2 ms-2">
         <input type="text" class="form-control prod_extrafields_search" placeholder="<?php print Text::_('JSHOP_SEARCH')?>">
         <label><input type="checkbox" class="prod_extrafields_search_hide_unfilled"> <?php print Text::_('JSHOP_HIDE_UNFILLED')?></label>
     </div>

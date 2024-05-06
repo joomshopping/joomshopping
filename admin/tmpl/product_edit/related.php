@@ -3,7 +3,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.4.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,7 +12,7 @@ use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 ?>
 <div id="product_related" class="tab-pane">
-   <div class="col100">
+    <div class="col100">
     <fieldset class="adminform">
         <?php if ($this->getLayout() == 'editlist') {?>
         <div class="mb-2 mt-2">
@@ -48,20 +48,19 @@ defined('_JEXEC') or die();
         </div>
     </fieldset>
     </div>
-    <div class="clr"></div>
     <?php $pkey='plugin_template_related'; print $this->$pkey ?? '';?>
-   <br/>
-   <div class="col100">
-    <fieldset class="adminform">
-        <legend><?php echo Text::_('JSHOP_SEARCH')?></legend>
-       <div class="input-group">
-            <input type="text" class = "form-control" size="35" id="related_search" value="" />
-            &nbsp;
-            <input type="button" class="btn btn-primary" value="<?php echo Text::_('JSHOP_SEARCH')?>" onclick="jshopAdmin.releted_product_search(0, '<?php echo $row->product_id ?? 0;?>', 1);" />
-        </div>
-        <br/>
-        <div id="list_for_select_related"></div>
-    </fieldset>
-    </div>
-    <div class="clr"></div>
+    
+    <div class="col100 mt-2">
+        <fieldset class="adminform">
+            <legend><?php echo Text::_('JSHOP_SEARCH')?></legend>
+            <div class="mw-600">
+                <div class="input-group">
+                    <input type="text" class = "form-control" id="related_search" value="">
+            
+                    <input type="button" class="btn btn-primary" value="<?php echo Text::_('JSHOP_SEARCH')?>" onclick="jshopAdmin.releted_product_search(0, '<?php echo $row->product_id ?? 0;?>', 1);" />
+                </div>
+            </div>            
+            <div class="mt-3" id="list_for_select_related"></div>
+        </fieldset>
+    </div>    
 </div>

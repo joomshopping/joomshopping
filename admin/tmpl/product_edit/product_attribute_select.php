@@ -54,11 +54,11 @@ defined( '_JEXEC' ) or die();
     
     <h1><?php print $this->product->name?></h1>
     
-    <div class="jshop_code_prod" style="margin-bottom:20px;">
+    <div class="jshop_code_prod mb-3">
         <?php print Text::_('JSHOP_EAN')?>: <span id="product_code"><?php print $this->product->getEan();?></span>
     </div>
     
-    <div class="prod_price" style="margin-bottom:20px;">
+    <div class="prod_price mb-3">
         <?php print Text::_('JSHOP_PRICE')?>: 
         <span id="block_price">
             <?php print Helper::formatprice($this->product->getPriceCalculate())?>
@@ -67,11 +67,11 @@ defined( '_JEXEC' ) or die();
     
     <div class="jshop_prod_attributes jshop">
         <?php foreach($this->attributes as $attribut) : ?>
-            <div class = "row">
+            <div class="row mb-2">
                 <div class="col-2 attributes_title">
                     <span class="attributes_name" id="attr_name_id_<?php print $attribut->attr_id?>"><?php print $attribut->attr_name?>:</span>
                 </div>
-                <div class = "col-10">
+                <div class="col-10">
                     <span id='block_attr_sel_<?php print $attribut->attr_id?>'>
                         <?php print $attribut->selects?>
                     </span>

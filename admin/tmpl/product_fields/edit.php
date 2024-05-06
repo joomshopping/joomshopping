@@ -40,7 +40,7 @@ $row = $this->row;
                                 <?php echo Text::_('JSHOP_DESCRIPTION') ?> <?php if ($this->multilang) print "(" . $lang->lang . ")"; ?>
                             </td>
                             <td>
-                                <input type="text" class="inputbox form-control" id="<?php print $description ?>" name="<?php print $description ?>" value="<?php echo $row->$description; ?>" />
+                                <textarea class="inputbox form-control" id="<?php print $description?>" name="<?php print $description ?>"><?php echo $row->$description; ?></textarea>
                             </td>
                         </tr>
                     <?php } ?>
