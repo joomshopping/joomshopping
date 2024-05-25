@@ -16,7 +16,7 @@ foreach($this->options as $el){?>
     <label>
         <input type="radio" name="jshop_attr_id[<?php print $this->attr_id?>]" id="<?php print $id?>" value="<?php print $el->val_id?>" onclick="jshop.setAttrValue('<?php print $this->attr_id?>', this.value);" <?php print $sel?>>
         <span class='radio_attr_label'>
-            <?php if ($el->image){?><img src="<?php print $this->config->image_attributes_live_path."/".$el->image?>" alt=''><?php }?>
+            <?php if ($el->image){?><img src="<?php print $this->config->image_attributes_live_path."/".$el->image?>" alt=''><?php }?><?php echo $el->_tmp_var_image_ext ?? '' ?>
             <span><?php print $el->value_name?></span>
         </span>
     </label>

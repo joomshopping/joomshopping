@@ -2,7 +2,7 @@
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.3.0 06.12.2023
+* @version      5.4.2 09.05.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,6 +16,7 @@ defined('_JEXEC') or die();
     <div class="float-end mt-2 ms-2">
         <input type="text" class="form-control prod_extrafields_search" placeholder="<?php print Text::_('JSHOP_SEARCH')?>">
         <label><input type="checkbox" class="prod_extrafields_search_hide_unfilled"> <?php print Text::_('JSHOP_HIDE_UNFILLED')?></label>
+        <?php print $this->tmpl_extra_fields_right ?? '';?>
     </div>
 
     <div class="col100" id="extra_fields_space">

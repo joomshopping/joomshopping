@@ -1090,6 +1090,8 @@ class ProductsModel extends BaseadminModel{
 		$jshopConfig = JSFactory::getConfig();
 		$product = JSFactory::getTable('product');
 		$product->load($id);
+        $app = Factory::getApplication();
+        $app->triggerEvent('onBeforeProductGroupUpdate', array(&$product, &$post));
 		if ($post['access']!=-1){
 			$product->set('access', $post['access']);
 		}

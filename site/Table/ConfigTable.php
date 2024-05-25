@@ -448,10 +448,14 @@ class ConfigTable{
             $this->real_ean_in_product_detail = 0;
         }
 
-		
 		$this->generate_pdf = ($this->order_send_pdf_client || $this->order_send_pdf_admin);        
         $this->user_number_in_invoice = isset($this->user_number_in_invoice) ? $this->user_number_in_invoice : 0;
         $this->not_redirect_in_wishlist_after_buy = isset($this->not_redirect_in_wishlist_after_buy) ? $this->not_redirect_in_wishlist_after_buy : 0;
+
+        $floatKeys = ['max_price_order', 'min_price_order', 'max_count_order_one_product', 'min_count_order_one_product'];
+        foreach($floatKeys as $key) {
+            $this->$key = floatval($this->$key);
+        }
 	}
 	
 	function getAdminContactEmails(){

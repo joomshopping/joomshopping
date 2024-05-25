@@ -64,7 +64,7 @@ class UserloginModel{
         if (!JSError::isError($error)){
             $return = $this->getRequestReturnUrl();
 			
-            $dispatcher->triggerEvent('onAfterLogout', array());
+            $dispatcher->triggerEvent('onAfterLogout', array(&$return));
 			
             if ( $return && !( strpos( $return, 'com_user')) ){
                 $this->setReturnUrl( $return );

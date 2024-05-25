@@ -564,7 +564,7 @@ a.saveorder{
     border: var(--border-width, 1px) solid var(--template-bg-dark-20, #aaa);
     min-height: 42px;
     padding: 8px;
-    background-color: #fff;
+    background-color: var(--body-bg);
 }
 .jshop_edit .prod_extrafield_title{
     padding-left: 10px;

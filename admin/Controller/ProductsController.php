@@ -680,8 +680,15 @@ class ProductsController extends BaseadminController{
                     $view->title = Text::_('JSHOP_ADD_NEW_OPTION_FOR').' "'.$v->name.'"';
                     $obj->btn = $view->loadTemplate();
                 } elseif ($v->type > 1) {
-                    $obj->values = "<input type='hidden' name='".'productfields['.$name.'][]'."' value='".($product->$name ?? '0')."'>";
-                    $obj->values .= "<span class='prod_extra_fields_uniq_val'>".(isset($product->$name) ? ($listvalue[$product->$name]->name ?? '') : '')."</span>";
+                    if ($edittype == 'list' && $v->type == 3) {
+                        $val = '-1';
+                        $val_text = ' - - - ';
+                    } else {
+                        $val = $product->$name ?? '0';
+                        $val_text = isset($product->$name) ? ($listvalue[$product->$name]->name ?? '') : '';
+                    }
+                    $obj->values = "<input type='hidden' name='".'productfields['.$name.'][]'."' value='".$val."'>";
+                    $obj->values .= "<span class='prod_extra_fields_uniq_val'>".$val_text."</span>";
                     $view = $this->getView("product_edit", 'html');
                     $view->setLayout("extrafields_btn_edit");
                     $view->title = Text::_('JSHOP_EDIT').' "'.$v->name.'"';

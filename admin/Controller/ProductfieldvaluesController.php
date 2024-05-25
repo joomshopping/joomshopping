@@ -112,7 +112,7 @@ class ProductfieldvaluesController extends BaseadminController{
         if (!$ef_id) die();
 
         $data = [];
-        $data['id'] = $ef_val_id;
+        $data['id'] = $ef_val_id > 0 ? $ef_val_id : 0;
         $data['field_id'] = $ef_id;
         foreach($options as $k => $v) {
             $data['name_'.$k] = $v;

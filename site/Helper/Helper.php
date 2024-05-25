@@ -535,8 +535,7 @@ class Helper{
         $liveurlhost = Uri::getInstance()->toString(array("scheme",'host', 'port'));
         if ($app->isClient('administrator')) {
 			$shop_item_id = self::getDefaultItemid($link);
-            $app = \Joomla\CMS\Application\CMSApplication::getInstance('site');            
-            $router = $app::getRouter();
+            $router = Factory::getContainer()->get('Joomla\\CMS\\Router\\SiteRouter');
             if (!preg_match('/Itemid=/', $link)){
                 if (!preg_match('/\?/', $link)) $sp = "?"; else $sp = "&";
                 $link .= $sp."Itemid=".$shop_item_id;

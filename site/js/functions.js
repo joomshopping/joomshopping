@@ -324,11 +324,20 @@ var jshopClass = function(){
 
     this.reloadAttrValue = function(){
         for(var id in jshopParams.attr_value){
-            if (jQuery("input[name=jshop_attr_id\\["+id+"\\]]").attr("type")=="radio"){
-                jshopParams.attr_value[id] = jQuery("input[name=jshop_attr_id\\["+id+"\\]]:checked").val();
-            }else{
-                jshopParams.attr_value[id] = jQuery("#jshop_attr_id"+id).val();
+            let val = 0;
+            if (jQuery("select[name=jshop_attr_id\\["+id+"\\]]").length) {
+                val = jQuery("select[name=jshop_attr_id\\["+id+"\\]]").val();
+            } else if (jQuery("input[name=jshop_attr_id\\["+id+"\\]]:checked").length) {
+                val = jQuery("input[name=jshop_attr_id\\["+id+"\\]]:checked").val();
+            } else if (jQuery("textarea[name=jshop_attr_id\\["+id+"\\]]").length) {
+                val = jQuery("textarea[name=jshop_attr_id\\["+id+"\\]]").val();
+            } else {
+                let type = jQuery("input[name=jshop_attr_id\\["+id+"\\]]").attr("type");
+                if (type != 'radio' && type != 'checkbox') {
+                    val = jQuery("input[name=jshop_attr_id\\["+id+"\\]]").val();
+                }
             }
+            jshopParams.attr_value[id] = val;
         }
     };
 
