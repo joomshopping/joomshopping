@@ -36,6 +36,7 @@ class UsersController extends BaseadminController{
         $limitstart = $app->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
         $text_search = $app->getUserStateFromRequest($context.'text_search', 'text_search', '');
         $usergroup_id = $app->getUserStateFromRequest($context.'l_usergroup_id', 'l_usergroup_id', 0, 'int');
+        $user_enable = $app->getUserStateFromRequest($context.'user_enable', 'user_enable', 0, 'int');
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "u_name", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         $e_name = $this->input->getCmd("e_name");
@@ -45,8 +46,11 @@ class UsersController extends BaseadminController{
         if ($usergroup_id){
             $filter['usergroup_id'] = $usergroup_id;
         }
+        if ($user_enable){
+            $filter['user_enable'] = $user_enable;
+        }
         
-        $users = JSFactory::getModel("users");        
+        $users = JSFactory::getModel("users");
         $total = $users->getCountAllUsers($text_search, $filter);
         $pageNav = new Pagination($total, $limitstart, $limit);
         $rows = $users->getAllUsers($pageNav->limitstart, $pageNav->limit, $text_search, $filter_order, $filter_order_Dir, $filter);
@@ -57,6 +61,7 @@ class UsersController extends BaseadminController{
         }
 
         $select_group = HTMLHelper::_('select.genericlist', SelectOptions::getUserGroups(1), 'l_usergroup_id', 'class="form-select" onchange="document.adminForm.submit();"', 'usergroup_id', 'usergroup_name', $usergroup_id);
+        $select_enable = HTMLHelper::_('select.genericlist', SelectOptions::getUserEnabled(1), 'user_enable', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $user_enable);
         
         $view=$this->getView("users", 'html');
         $view->setLayout("list");
@@ -68,6 +73,7 @@ class UsersController extends BaseadminController{
         $view->set('e_name', $e_name);
         $view->set('select_user', $select_user);
         $view->set('select_group', $select_group);
+        $view->set('select_enable', $select_enable);
 
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";

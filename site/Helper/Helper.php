@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.3 19.02.2024
+* @version      5.4.3 30.05.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -476,17 +476,21 @@ class Helper{
     return $Itemid[$lang];
     }
 
-    public static function getDefaultItemid($link = ''){
+    public static function getDefaultItemid($link = '', $search = '') {
         $Itemid = 0;
         $lang = '';
         if ($link!=''){
             $url = parse_url($link);
-            parse_str($url['query'], $query);
+            if (isset($url['query'])) {
+                parse_str($url['query'], $query);
+            }
             if (isset($query['lang'])){
                 $lang = $query['lang'];
             }
-            $shim = ShopItemMenu::getInstance($lang);
-            $Itemid = $shim->getItemIdFromQuery($query);
+            if (isset($query)) {
+                $shim = ShopItemMenu::getInstance($lang);
+                $Itemid = $shim->getItemIdFromQuery($query, $search);
+            }
         }
         if ($Itemid){
             return $Itemid;
@@ -499,7 +503,7 @@ class Helper{
     * set Sef Link
     *
     * @param string $link
-    * @param int $useDefaultItemId - (0 - current itemid, 1 - shop page itemid, 2 -manufacturer itemid, 3 - direct item menu)
+    * @param int $useDefaultItemId - (0 - current itemid, 1 - shop page itemid, 2 -manufacturer itemid, 3 - direct item menu, 4 - by query item menu, 5 - by controller item menu)
     * @param int $redirect
     */
     public static function SEFLink($link, $useDefaultItemId = 1, $redirect = 0, $ssl=null){
@@ -507,7 +511,11 @@ class Helper{
         PluginHelper::importPlugin('jshoppingproducts');
         Factory::getApplication()->triggerEvent('onLoadJshopSEFLink', array(&$link, &$useDefaultItemId, &$redirect, &$ssl));
         $defaultItemid = self::getDefaultItemid($link);
-        if ($useDefaultItemId==3){
+        if ($useDefaultItemId==5){
+            $Itemid = self::getDefaultItemid($link, 'by_controller');
+        } elseif ($useDefaultItemId==4){
+            $Itemid = self::getDefaultItemid($link, 'by_query');
+        } elseif ($useDefaultItemId==3){
             $Itemid = self::getDirectUrlItemId($link);
         } elseif ($useDefaultItemId==2){
             $Itemid = self::getShopManufacturerPageItemid();
@@ -577,13 +585,16 @@ class Helper{
     return $html;
     }
 
-    public static function saveToLog($file, $text){
+    public static function saveToLog($file, $text, $date_add = 1){
         $jshopConfig = JSFactory::getConfig();
         if (!$jshopConfig->savelog) return 0;
         if ($file=='paymentdata.log' && !$jshopConfig->savelogpaymentdata) return 0;
         $f = fopen($jshopConfig->log_path.$file, "a+");
 		if ($f) {
-			fwrite($f, self::getJsDate('now', 'Y-m-d H:i:s')." ".$text."\r\n");
+            if ($date_add) {
+                $text = self::getJsDate('now', 'Y-m-d H:i:s')." ".$text;
+            }
+			fwrite($f, $text."\r\n");
 			fclose($f);
 			return 1;
 		} else {

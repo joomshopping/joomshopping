@@ -572,6 +572,9 @@ a.saveorder{
 .jshop_edit .prod_extrafield_values .form-control{
     width: 100%;
 }
+.jshop_edit .list_prod_extrafields .hide{
+    display: none;
+}
 
 #extrafields_option_popup .modal-body{
     padding: 10px 20px;

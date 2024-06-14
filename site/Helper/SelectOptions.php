@@ -391,6 +391,20 @@ class SelectOptions{
         $list = JSFactory::getModel("usergroups")->getAllUsergroups();
         return array_merge($first_option, $list);
     }
+
+    public static function getUserEnabled($first = 1, $ext_first = 0){
+        $f_option = array();
+        if ($ext_first){
+            $first_option[] = HTMLHelper::_('select.option', -1, "- - -", 'id', 'name');
+        }
+        $first_name = self::getFirstNameOption($first, " - ".Text::_('JSHOP_ENABLED')." - ");
+        if ($first!==0){
+            $f_option[] = HTMLHelper::_('select.option', '0', $first_name, 'id','name');
+        }
+        $f_option[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_PUBLISH'), 'id', 'name');
+        $f_option[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_UNPUBLISH'), 'id', 'name');
+        return $f_option;
+    }
     
     public static function getPaymentPriceTypes(){
         $currencyCode = Helper::getMainCurrencyCode();

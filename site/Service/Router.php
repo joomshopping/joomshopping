@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.3 19.01.2023
+* @version      5.4.3 31.05.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,6 +18,8 @@ include_once __DIR__.'/../bootstrap.php';
 use Joomla\Component\Jshopping\Site\Lib\ShopItemMenu;
 
 class Router extends \Joomla\CMS\Component\Router\RouterBase{
+
+	private $debug = 0;
 
 	function build(&$query){
 		$segments = array();
@@ -182,7 +184,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 	}
 
 	function parse(&$segments){
-		$vars = array();
+		$vars = [];
 		Helper::initLoadJoomshoppingLanguageFile();
 		$reservedFirstAlias = JSFactory::getReservedFirstAlias();
 		$menu = Factory::getApplication()->getMenu();
@@ -192,6 +194,10 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		} else {
 			$miquery = $menuItem->query;
 		}
+		if ($this->debug) Helper::saveToLog('router.log', "\n".$_SERVER['REQUEST_URI'], 0);
+		if ($this->debug) Helper::saveToLog('router.log', 'segments '.print_r($segments, 1), 0);
+		if ($this->debug) Helper::saveToLog('router.log', 'miquery '.print_r($miquery, 1), 0);
+
 		PluginHelper::importPlugin('jshoppingrouter');
 		$app = Factory::getApplication();
 		$app->triggerEvent('onBeforeParseRoute', array(&$vars, &$segments));
@@ -201,58 +207,25 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		if (empty($segments) && count($vars)) {
 			return $vars;
 		}
-		if (!isset($segments[1])){
-			$segments[1] = '';
-		}
 		if (!isset($miquery['controller']) && isset($miquery['view'])){
 			$miquery['controller'] = $miquery['view'];
 		}
         $miquery['task'] = isset($miquery['task']) ? $miquery['task'] : "";
 
 		if (isset($miquery['controller'])){
-			if ($miquery['controller']=="cart"){
-				$vars['controller'] = "cart";
-				$vars['task'] = $segments[0];
-				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
-				$segments = [];
-				return $vars;
-			}
-			if ($miquery['controller']=="wishlist"){
-				$vars['controller'] = "wishlist";
-				$vars['task'] = $segments[0];
-				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
-				$segments = [];
-				return $vars;
-			}
-			if ($miquery['controller']=="search"){
-				$vars['controller'] = "search";
-				$vars['task'] = $segments[0];
-				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
-				$segments = [];
-				return $vars;
-			}
-			if ($miquery['controller']=="user" && $miquery['task']==""){
-				$vars['controller'] = "user";
-				$vars['task'] = $segments[0];
-				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
-				$segments = [];
-				return $vars;
-			}
-			if ($miquery['controller']=="checkout"){
-				$vars['controller'] = "checkout";
-				$vars['task'] = $segments[0];
-				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
-				$segments = [];
-				return $vars;
-			}
-			if ($miquery['controller']=="vendor" && $miquery['task']==""){
-				$vars['controller'] = "vendor";
-				$vars['task'] = $segments[0];
-				if (isset($segments[1]) && $segments[1]) {
-					$vars['vendor_id'] = $segments[1];
+			if ($miquery['controller']=="category" && isset($miquery['category_id']) && $miquery['category_id'] && !isset($segments[1])) {
+				$prodalias = JSFactory::getAliasProduct();
+				$product_id = array_search($segments[0], $prodalias, true);
+				if (!$product_id){
+					throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
 				}
+				$vars['controller'] = "product";
+				$vars['task'] = "view";
+				$vars['category_id'] = $miquery['category_id'];
+				$vars['product_id'] = $product_id;
 				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
+				if ($this->debug) Helper::saveToLog('router.log', print_r($vars, 1), 0);
 				return $vars;
 			}
 			if ($miquery['controller']=="content" && $miquery['task']=="view"){
@@ -265,21 +238,19 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
                 }
 				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
+				if ($this->debug) Helper::saveToLog('router.log', print_r($vars, 1), 0);
 				return $vars;
 			}
-			if ($miquery['controller']=="category" && isset($miquery['category_id']) && $miquery['category_id'] && $segments[1]=="") {
-				$prodalias = JSFactory::getAliasProduct();
-				$product_id = array_search($segments[0], $prodalias, true);
-				if (!$product_id){
-					throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
+			$skip_mi_cntrs = ['category', 'products', 'manufacturer'];
+			if (!in_array($miquery['controller'], $skip_mi_cntrs) && $miquery['task'] == "") {
+				$vars['controller'] = $miquery['controller'];
+				$vars['task'] = $segments[0];
+				if ($vars['controller'] == 'vendor' && isset($segments[1]) && $segments[1]) {
+					$vars['vendor_id'] = $segments[1];
 				}
-
-				$vars['controller'] = "product";
-				$vars['task'] = "view";
-				$vars['category_id'] = $miquery['category_id'];
-				$vars['product_id'] = $product_id;
 				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
+				if ($this->debug) Helper::saveToLog('router.log', print_r($vars, 1), 0);
 				return $vars;
 			}
 		}
@@ -287,16 +258,17 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		if ($segments[0] && !in_array($segments[0], $reservedFirstAlias)){
 			$catalias = JSFactory::getAliasCategory();
 			$category_id = array_search($segments[0], $catalias, true);
-			if ($category_id && $segments[1]==""){
+			if ($category_id && !isset($segments[1])) {
 				$vars['controller'] = "category";
 				$vars['task'] = "view";
 				$vars['category_id'] = $category_id;
 				$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 				$segments = [];
+				if ($this->debug) Helper::saveToLog('router.log', print_r($vars, 1), 0);
 				return $vars;
 			}
 
-			if ($category_id && $segments[1]!=""){
+			if ($category_id && isset($segments[1])){
 				$prodalias = JSFactory::getAliasProduct();
 				$product_id = array_search($segments[1], $prodalias, true);
 				if (!$product_id){
@@ -309,11 +281,12 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 					$vars['product_id'] = $product_id;
 					$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 					$segments = [];
+					if ($this->debug) Helper::saveToLog('router.log', print_r($vars, 1), 0);
 					return $vars;
 				}
 			}
 
-			if (!$category_id && $segments[1]==""){
+			if (!$category_id && !isset($segments[1])){
 				$manalias = JSFactory::getAliasManufacturer();
 				$manufacturer_id = array_search($segments[0], $manalias, true);
 				if ($manufacturer_id){
@@ -322,6 +295,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 					$vars['manufacturer_id'] = $manufacturer_id;
 					$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
 					$segments = [];
+					if ($this->debug) Helper::saveToLog('router.log', print_r($vars, 1), 0);
 					return $vars;
 				}
 			}
@@ -333,9 +307,9 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 
 			throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
 
-		}else{
+		} else {
 			$vars['controller'] = $segments[0];
-			$vars['task'] = $segments[1];
+			$vars['task'] = $segments[1] ?? '';
 
 			if ($vars['controller']=="category" && $vars['task']=="view"){
 				$vars['category_id'] = $segments[2];
@@ -346,7 +320,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 				$vars['product_id'] = $segments[3];
 			}
 
-			if ($vars['controller']=="product" && $vars['task']=="ajax_attrib_select_and_price"){
+			if ($vars['controller']=="product" && $vars['task']=="ajax_attrib_select_and_price" && isset($segments[2])){
 				$vars['product_id'] = $segments[2];
 			}
 
@@ -354,7 +328,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 				$vars['manufacturer_id'] = $segments[2];
 			}
 
-			if ($vars['controller']=="content"){
+			if ($vars['controller']=="content" && isset($segments[2])){
 				$vars['page'] = $segments[2];
 			}
 
@@ -363,8 +337,9 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 			}
 		}
 
-	$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
-	$segments = [];
-	return $vars;
+		$app->triggerEvent('onAfterParseRoute', array(&$vars, &$segments));
+		$segments = [];
+		if ($this->debug) Helper::saveToLog('router.log', print_r($vars, 1), 0);
+		return $vars;
 	}
 }

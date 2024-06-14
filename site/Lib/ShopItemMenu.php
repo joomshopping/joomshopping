@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.3 19.02.2024
+* @version      5.4.3 31.05.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -68,12 +68,8 @@ class ShopItemMenu{
         $this->register = 0;
 
         foreach($list as $k=>$v){
-            $data = $v->data;
-            if (!isset($data['controller']) && isset($data['view'])){
-                $data['controller'] = $data['view'];
-                unset($data['view']);
-                unset($data['layout']);
-            }
+            $data = $this->getListDataFilterInfo($v->data);
+
             if (count($data)==4 && $data['controller']=="product" && isset($data['task']) && $data['task']=="view" && isset($data['category_id']) && isset($data['product_id'])){
                 $this->list_product[$data['product_id']] = $v->id;
             }
@@ -241,10 +237,14 @@ class ShopItemMenu{
     return $this->checkout;
     }
 
-    function getItemIdFromQuery($query){
+    function getItemIdFromQuery($query, $search = ''){
         $Itemid = 0;
 		if (!isset($query['controller'])) {
 			$query['controller'] = null;
+            if (isset($query['view'])) {
+                $query['controller'] = $query['view'];
+                unset($query['view']);
+            }
 		}
 		if (!isset($query['task'])) {
 			$query['task'] = null;
@@ -316,6 +316,56 @@ class ShopItemMenu{
 		if ($query['controller']=="checkout" && $this->getCheckout()){
 			$Itemid = $this->getCheckout();
 		}
+        if (in_array($search, ['by_query', 'by_controller']) && !$Itemid) {
+            $Itemid = $this->getSearchByQuery($query);
+        }
+        if ($search == 'by_controller' && !$Itemid) {
+            $Itemid = $this->getSearchByController($query);
+        }
         return $Itemid;
+    }
+
+    function getSearchByQuery($query) {
+        $list = $this->getList();
+        unset($query['option']);
+        $h_query = $this->getHeshUrlByQuery($query);
+        foreach($list as $v) {
+            $data = $this->getListDataFilterInfo($v->data);
+            $hash = $this->getHeshUrlByQuery($data);
+            if ($h_query == $hash) {
+                return $v->id;
+            }
+        }
+        return 0;
+    }
+
+    function getSearchByController($query) {
+        $list = $this->getList();
+        foreach($list as $v) {
+            $data = $this->getListDataFilterInfo($v->data);
+            if ($data['controller'] == $query['controller']) {
+                return $v->id;
+            }
+        }
+        return 0;
+    }
+
+    function getHeshUrlByQuery($query){
+        ksort($query);
+        foreach($query as $k => $v) {
+            if ($v) {
+                $_query[] = $k."=".$v;
+            }
+        }
+        return implode('&', $_query);
+    }
+
+    function getListDataFilterInfo($data) {
+        if (!isset($data['controller']) && isset($data['view'])){
+            $data['controller'] = $data['view'];
+            unset($data['view']);
+            unset($data['layout']);
+        }
+        return $data;
     }
 }
