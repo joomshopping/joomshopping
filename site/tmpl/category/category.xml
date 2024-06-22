@@ -3,13 +3,13 @@
 	<layout title="CATEGORY"></layout>
 	<fields name="request">
 		<fieldset name="request">
-            <field name="task" type="hidden" default="view"/>
-			<field name="category_id" type="text" default="" label="Category_ID" description="Category_ID" required="true" />
-            <field name="manufacturer_id" type="text" default="" label="Manufacturer_ID" description="Manufacturer_ID" />
-            <field name="label_id" type="text" default="" label="Label_ID" description="Label_ID" />
-            <field name="vendor_id" type="text" default="" label="Vendor_ID" description="Vendor_ID" />
-            <field name="price_from" type="text" default="" label="Price_from" description="Price_from" />
-            <field name="price_to" type="text" default="" label="Price_to" description="Price_to" />
+            <field name="task" type="hidden" default="view"/>			
+            <field type="jshoppingcategories" name="category_id" label="Category_ID" addfieldprefix="Joomla\Component\Jshopping\Administrator\Field" default="" required="true" />
+            <field type="jshoppingmanufacturers" name="manufacturer_id" label="Manufacturer_ID" addfieldprefix="Joomla\Component\Jshopping\Administrator\Field" default="" />
+            <field type="jshoppinglabels" name="label_id" label="Label_ID" addfieldprefix="Joomla\Component\Jshopping\Administrator\Field" default="" />
+            <field type="jshoppingvendors" name="vendor_id" label="Vendor_ID" addfieldprefix="Joomla\Component\Jshopping\Administrator\Field" default="" />
+            <field name="price_from" type="text" default="" label="Price_from" />
+            <field name="price_to" type="text" default="" label="Price_to" />
 		</fieldset>
 	</fields>
 </metadata>

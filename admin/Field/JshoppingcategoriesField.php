@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      5.4.2 07.06.2024
+ * @version      5.5.0 07.06.2024
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,33 +13,26 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
-use \Joomla\Component\Jshopping\Site\Helper\SelectOptions;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 class JshoppingcategoriesField extends ListField
 {
-
 	protected $type = 'jshoppingcategories';
 
-	protected function getOptions():array
+	protected function getOptions(): array
 	{
-
-		// Load JoomShopping config and models
-		if (!class_exists('\JSFactory'))
-		{
-			require_once(JPATH_SITE . '/components/com_jshopping/bootstrap.php');
-		}
+		require_once(JPATH_SITE . '/components/com_jshopping/bootstrap.php');
 
 		$options = [];
+        
+        $default = $this->element['default'] ?? null;
 
-		$allcats = \JSHelper::buildTreeCategory(0);
-
-		foreach ($allcats as $category)
-		{
-			if($category->category_id == 0){
-				unset($category);
-			} else{
-				$options[] = HTMLHelper::_('select.option', $category->category_id, $category->name);
-			}
+		$allcats = Helper::buildTreeCategory(0);
+        if (isset($default) && ((string)$default) === '') {
+            $options[] = HTMLHelper::_('select.option', '', '');
+        }
+		foreach ($allcats as $category) {
+			$options[] = HTMLHelper::_('select.option', $category->category_id, $category->name);
 		}
 
 		return $options;

@@ -28,6 +28,9 @@ $select_user = $this->select_user;
     <div>
         <?php print $this->select_group?>
     </div>
+    <div>
+        <?php print $this->select_enable?>
+    </div>
 
     <div>
         <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">

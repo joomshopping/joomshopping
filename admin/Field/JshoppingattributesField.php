@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      5.5.0 07.06.2024
+ * @version      5.4.2 07.06.2024
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -8,31 +8,31 @@
  */
 
 namespace Joomla\Component\Jshopping\Administrator\Field;
-
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 
-class JshoppingextrafieldsField extends ListField
+class JshoppingattributesField extends ListField
 {
-	protected $type = 'jshoppingextrafields';
+	protected $type = 'jshoppingattributes';
 
 	protected function getOptions(): array
 	{
+		$options = [];
 		require_once(JPATH_SITE . '/components/com_jshopping/bootstrap.php');
-		$productfield = JSFactory::getTable('productfield');
-        $list = $productfield->getList();
+
+		$attributes = JSFactory::getTable('attribut');
+		$rows = $attributes->getAllAttributes();
 
 		$default = $this->element['default'] ?? null;
         if (isset($default) && ((string)$default) === '') {
             $options[] = HTMLHelper::_('select.option', '', '');
         }
-		foreach ($list as $item) {
-			$options[] = HTMLHelper::_('select.option', $item->id, $item->name);
+		foreach ($rows as $attr) {
+			$options[] = HTMLHelper::_('select.option', $attr->attr_id, $attr->name);
 		}
-
 		return $options;
 	}
 }

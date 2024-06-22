@@ -203,7 +203,6 @@ class JSFactory{
     public static function getReservedFirstAlias(){
     static $alias;
         if (!isset($alias)){
-            jimport('joomla.filesystem.folder');
             $files = Folder::files(JPATH_ROOT."/components/com_jshopping/Controller");
             $alias = array();
             foreach($files as $file){

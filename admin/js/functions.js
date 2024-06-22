@@ -571,19 +571,43 @@ var jshopAdminClass = function(){
         var catsurl = "";
 		if (!edittype) edittype = '';
         jQuery("#category_id :selected").each(function(j, selected){
-          value = jQuery(selected).val();
-          text = jQuery(selected).text();
-          if (value!=0){
-              catsurl += "&cat_id[]="+value;
-          }
+            value = jQuery(selected).val();
+            text = jQuery(selected).text();
+            if (value!=0){
+                catsurl += "&cat_id[]="+value;
+            }
         });
 
-        var url = 'index.php?option=com_jshopping&controller=products&task=product_extra_fields&product_id='+product_id+catsurl+"&ajax=1&edittype="+edittype;
+        var url = 'index.php?option=com_jshopping&controller=products&task=product_extra_fields_hide&product_id='+product_id+catsurl+"&ajax=1&edittype="+edittype;
         jQuery.ajaxSetup({ cache: false });
-        jQuery.get(url, function(data){
-            jQuery("#extra_fields_space").html(data);
+        jQuery.getJSON(url, function(json){
+            for (let item of json) {
+                if (item.row_class == 'hide') {
+                    jQuery('.list_prod_extrafields tr[extrafieldid='+item.id+']').addClass('hide');
+                } else {
+                    jQuery('.list_prod_extrafields tr[extrafieldid='+item.id+']').removeClass('hide');
+                }
+            }
+            jshopAdmin.reloadDisplayProductExtraGroup();
         });
     };
+
+    this.reloadDisplayProductExtraGroup = function() {
+        jQuery('.list_prod_extrafields .ef_group').each(function(){
+            let id = jQuery(this).attr('ef_gr_id');
+            let hide = 1;
+            jQuery('.list_prod_extrafields tr[extrafield_gr_id='+id+']').each(function(){
+                if (!jQuery(this).hasClass('hide')) {
+                    hide = 0;
+                }
+            });
+            if (hide) {
+                jQuery(this).addClass('hide');
+            } else {
+                jQuery(this).removeClass('hide');
+            }
+        })
+    }
 
     this.PFShowHideSelectCats = function(){
         var value = jQuery("input[name=allcats]:checked").val();

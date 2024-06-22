@@ -29,6 +29,14 @@ class UsersModel extends BaseadminModel{
         if (isset($filter['usergroup_id']) && $filter['usergroup_id']){
             $where .= " and U.usergroup_id = ".(int)$filter['usergroup_id'];
         }
+        if (isset($filter['user_enable'])){
+            if ($filter['user_enable'] == 1) {
+                $where .= " and UM.block = 0";
+            }
+            if ($filter['user_enable'] == 2) {
+                $where .= " and UM.block = 1";
+            }
+        }        
         if ($order && $orderDir){
             $queryorder = "order by ".$order." ".$orderDir;
         }
@@ -50,6 +58,14 @@ class UsersModel extends BaseadminModel{
         }
         if (isset($filter['usergroup_id']) && $filter['usergroup_id']){
             $where .= " and U.usergroup_id = ".(int)$filter['usergroup_id'];
+        }
+        if (isset($filter['user_enable'])){
+            if ($filter['user_enable'] == 1) {
+                $where .= " and UM.block = 0";
+            }
+            if ($filter['user_enable'] == 2) {
+                $where .= " and UM.block = 1";
+            }
         }
         $query = "SELECT COUNT(U.user_id) FROM `#__jshopping_users` AS U
                  INNER JOIN `#__users` AS UM ON U.user_id = UM.id where 1 ".$where;

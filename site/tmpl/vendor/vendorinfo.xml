@@ -3,8 +3,8 @@
 	<layout title="VENDORINFO"></layout>
 	<fields name="request">
 		<fieldset name="request">
-            <field name="task" type="hidden" default="info"/>
-            <field name="vendor_id" type="text" default="" label="Vendor_ID" description="Vendor_ID" required="true" />
+            <field name="task" type="hidden" default="info"/>            
+			<field type="jshoppingvendors" name="vendor_id" label="Vendor_ID" addfieldprefix="Joomla\Component\Jshopping\Administrator\Field" default="" required="true" />
 		</fieldset>
 	</fields>
 </metadata>

@@ -11,28 +11,29 @@ namespace Joomla\Component\Jshopping\Administrator\Field;
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\Field\ListField;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 
-class JshoppingextrafieldsField extends ListField
+class JshoppingmanufacturersField extends ListField
 {
-	protected $type = 'jshoppingextrafields';
+	protected $type = 'jshoppingmanufacturers';
 
 	protected function getOptions(): array
-	{
+	{		
 		require_once(JPATH_SITE . '/components/com_jshopping/bootstrap.php');
-		$productfield = JSFactory::getTable('productfield');
-        $list = $productfield->getList();
 
-		$default = $this->element['default'] ?? null;
+		$model = JSFactory::getModel("Manufacturers");
+		$list = $model->getList();
+
+		$options = [];
+		$default = $this->element['default'] ?? null;		
         if (isset($default) && ((string)$default) === '') {
             $options[] = HTMLHelper::_('select.option', '', '');
         }
 		foreach ($list as $item) {
-			$options[] = HTMLHelper::_('select.option', $item->id, $item->name);
+			$options[] = HTMLHelper::_('select.option', $item->manufacturer_id, $item->name);
 		}
-
 		return $options;
 	}
 }

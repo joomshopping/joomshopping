@@ -625,7 +625,37 @@ class ProductsController extends BaseadminController{
         die();
     }
 
-    function _getHtmlProductExtraFields($categorys = [], $product = null, $edittype = ''){
+    function product_extra_fields_hide(){
+        $cat_id = $this->input->getVar("cat_id");
+        $categorys = array();
+        if (is_array($cat_id)){
+            foreach($cat_id as $cid){
+                $categorys[] = intval($cid);
+            }
+        }
+
+        $_productfields = JSFactory::getModel("productfields");
+        $list = $_productfields->getList(1);
+        $fields = [];
+        foreach($list as $v){
+            $insert = 0;
+            if ($v->allcats==1){
+                $insert = 1;
+            }else{
+                $cats = unserialize($v->cats);
+                foreach($categorys as $catid){
+                    if (in_array($catid, $cats)) $insert = 1;
+                }
+            }
+            $row_class = $insert ? '' : 'hide';
+            $fields[] = ['id' => $v->id, 'row_class' => $row_class];
+        }
+        
+        print json_encode($fields);
+        die();
+    }
+
+    function _getHtmlProductExtraFields($categorys = [], $product = null, $edittype = '', $hide = 0){
 		if ($product === null) $product = new \stdClass;
 		$_productfields = JSFactory::getModel("productfields");
         $list = $_productfields->getList(1);
@@ -644,6 +674,7 @@ class ProductsController extends BaseadminController{
         $fields = [];
         foreach($list as $v){
             $insert = 0;
+            $html_hide = 1;
 			if ($edittype == 'list') {
 				$insert = 1;
 			}
@@ -655,6 +686,10 @@ class ProductsController extends BaseadminController{
                     if (in_array($catid, $cats)) $insert = 1;
                 }
             }
+            $html_hide = $insert ? 0 : 1;
+            if (!$hide) {
+                $insert = 1;
+            }
             if ($edittype == 'list' && $v->type == 2) {
                 $insert = 0;
             }
@@ -662,7 +697,9 @@ class ProductsController extends BaseadminController{
                 $obj = new \stdClass();
                 $obj->id = $v->id;
                 $obj->name = $v->name;
+                $obj->group = $v->group;
                 $obj->groupname = $v->groupname;
+                $obj->row_class = $html_hide ? 'hide' : '';
                 $name = 'extra_field_'.$v->id;
                 if ($v->type == 0) {
                     if ($v->multilist==1){
