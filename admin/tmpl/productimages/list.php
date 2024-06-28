@@ -1,10 +1,9 @@
 <?php
-
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 /**
- * @version      5.0.0 15.09.2018
+ * @version      5.5.0 28.06.2024
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -33,14 +32,14 @@ defined('_JEXEC') or die();
     </div>
 
 
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
 		<?php foreach ($this->list as $file): ?>
             <div class="col">
-                <div class="card h-100">
+                <div class="card border border-secondary h-100">
 					<?php
 					$img_url     = $this->config->image_product_live_path . '/thumb_' . $file;
 					$img_attribs = [
-						'class'   => 'img-fluid',
+						'class'   => 'img-fluid select-image',
 						'loading' => 'lazy',
 						'title'   => $file,
 					];

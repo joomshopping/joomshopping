@@ -326,9 +326,14 @@ class ProductsModel extends BaseadminModel{
         if ($jshopConfig->admin_show_product_extra_field){
             $_productfields = JSFactory::getModel("productfields");
             $list_productfields = $_productfields->getList(1);
+            if (isset($post['category_id'])) {
+                $ch_active = array_keys($_productfields->getListForCats($post['category_id']));
+            }
             foreach($list_productfields as $v){
-                if ($v->type==0 && !isset($post['extra_field_'.$v->id])){
-                    $post['extra_field_'.$v->id] = '';
+                if (isset($post['category_id']) && isset($post['extra_field_'.$v->id])) {
+                    if (!in_array($v->id, $ch_active)) {
+                        $post['extra_field_'.$v->id] = '';
+                    }
                 }
             }
         }

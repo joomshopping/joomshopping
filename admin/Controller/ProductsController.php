@@ -633,24 +633,15 @@ class ProductsController extends BaseadminController{
                 $categorys[] = intval($cid);
             }
         }
-
         $_productfields = JSFactory::getModel("productfields");
         $list = $_productfields->getList(1);
+        $ch_active = array_keys($_productfields->getListForCats($categorys));
         $fields = [];
         foreach($list as $v){
-            $insert = 0;
-            if ($v->allcats==1){
-                $insert = 1;
-            }else{
-                $cats = unserialize($v->cats);
-                foreach($categorys as $catid){
-                    if (in_array($catid, $cats)) $insert = 1;
-                }
-            }
+            $insert = intval(in_array($v->id, $ch_active));
             $row_class = $insert ? '' : 'hide';
             $fields[] = ['id' => $v->id, 'row_class' => $row_class];
         }
-        
         print json_encode($fields);
         die();
     }
@@ -659,6 +650,7 @@ class ProductsController extends BaseadminController{
 		if ($product === null) $product = new \stdClass;
 		$_productfields = JSFactory::getModel("productfields");
         $list = $_productfields->getList(1);
+        $ch_active = array_keys($_productfields->getListForCats($categorys));
 
         $_productfieldvalues = JSFactory::getModel("productfieldvalues");
         $listvalue = $_productfieldvalues->getAllList(10);
@@ -672,19 +664,11 @@ class ProductsController extends BaseadminController{
 		}
 
         $fields = [];
-        foreach($list as $v){
-            $insert = 0;
-            $html_hide = 1;
+        foreach($list as $v) {
 			if ($edittype == 'list') {
 				$insert = 1;
-			}
-            if ($v->allcats==1){
-                $insert = 1;
-            }else{
-                $cats = unserialize($v->cats);
-                foreach($categorys as $catid){
-                    if (in_array($catid, $cats)) $insert = 1;
-                }
+			} else {
+                $insert = intval(in_array($v->id, $ch_active));
             }
             $html_hide = $insert ? 0 : 1;
             if (!$hide) {

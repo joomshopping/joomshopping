@@ -405,7 +405,11 @@ div#element-box .jssubmenu div.m {
 .product_folder_image {
 	display: none;
 }
-
+.card .select-image {
+    max-height: 100%;
+    object-fit: contain;
+    aspect-ratio: 1/1;
+}
 .order_stat_file_download_clear{
     text-align: right;
     padding-top:3px;

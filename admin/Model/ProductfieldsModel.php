@@ -29,15 +29,15 @@ class ProductFieldsModel extends BaseadminModel{
             $ordering = "G.ordering, ".$ordering;
         }        
         $where = '';
-		$_where = array();		
+		$_where = array();
 		if (isset($filter['group']) && $filter['group']){
-            $_where[] = " F.group = '".$db->escape($filter['group'])."' ";    
-        }		
+            $_where[] = " F.group = '".$db->escape($filter['group'])."' ";
+        }
 		if (isset($filter['text_search']) && $filter['text_search']){
             $text_search = $filter['text_search'];
             $word = addcslashes($db->escape($text_search), "_%");
             $_where[]=  "(LOWER(F.`".$lang->get('name')."`) LIKE '%" . $word . "%' OR LOWER(F.`".$lang->get('description')."`) LIKE '%" . $word . "%' OR F.id LIKE '%" . $word . "%')";
-        }		
+        }
 		if (count($_where)>0){
 			$where = " WHERE ".implode(" AND ",$_where);
 		}
@@ -107,20 +107,20 @@ class ProductFieldsModel extends BaseadminModel{
         $productfield->setCategorys($categorys);
         if (!$id){
             $productfield->ordering = null;
-            $productfield->ordering = $productfield->getNextOrder();            
+            $productfield->ordering = $productfield->getNextOrder();
         }
         if (!$productfield->store()){
-            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));            
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0; 
         }
-        if (!$id){            
+        if (!$id){
             $productfield->addNewFieldProducts();
         } else {
             if ($old_type != $productfield->type || $old_multilist != $productfield->multilist) {
                 $productfield->updateFieldProducts();
             }
         }
-        $app->triggerEvent('onAfterSaveProductField', array(&$productfield));        
+        $app->triggerEvent('onAfterSaveProductField', array(&$productfield));
         return $productfield;
     }
     
@@ -179,7 +179,7 @@ class ProductFieldsModel extends BaseadminModel{
         return $db->loadObjectList();
     }
 
-    public function converProductDataDeprecatedTextToList($id, $new_type) {        
+    public function converProductDataDeprecatedTextToList($id, $new_type) {
         $modelVal = JSFactory::getModel('ProductFieldValues');
         $field = 'extra_field_'.(int)$id;
         $list = $this->getListProducsValueByExtraFieldId($id);
@@ -187,18 +187,38 @@ class ProductFieldsModel extends BaseadminModel{
         foreach ($list as $item) {
             if ($item->$field !== '') {
                 Helper::saveToLog('convert_extrafield_dep_text.log', 'pid: '.$item->product_id.' efid: '.$id.' val: '.$item->$field);
-                $data = ['id' => 0, 'field_id' => $id];                
+                $data = ['id' => 0, 'field_id' => $id];
                 foreach($langs as $lang) {
                     $data['name_'.$lang] = $item->$field;
                 }
                 if ($new_type != 2) {
                     $data['_save_unique'] = 1;
-                }                
+                }
                 $productfieldvalue = $modelVal->save($data);
-                $modelVal->updateProductValue($item->product_id, $id, $productfieldvalue->id);                
+                $modelVal->updateProductValue($item->product_id, $id, $productfieldvalue->id);
                 Helper::saveToLog('convert_extrafield_dep_text.log', 'new vid: '.$productfieldvalue->id);
             }
         }
+    }
+
+    public function getListForCats($categorys = []) {
+        $list = $this->getList(1);
+        $res = [];
+        foreach($list as $v){
+            $insert = 0;
+            if ($v->allcats==1){
+                $insert = 1;
+            } else {
+                $cats = unserialize($v->cats);
+                foreach($categorys as $catid){
+                    if (in_array($catid, $cats)) $insert = 1;
+                }
+            }
+            if ($insert) {
+                $res[$v->id] = $v;
+            }
+        }
+        return $res;
     }
 
 }

@@ -324,7 +324,7 @@ var jshopClass = function(){
 
     this.reloadAttrValue = function(){
         for(var id in jshopParams.attr_value){
-            let val = 0;
+            let val = 0;            
             if (jQuery("select[name=jshop_attr_id\\["+id+"\\]]").length) {
                 val = jQuery("select[name=jshop_attr_id\\["+id+"\\]]").val();
             } else if (jQuery("input[name=jshop_attr_id\\["+id+"\\]]:checked").length) {
@@ -421,7 +421,7 @@ jQuery(document).ready(function(){
         jshop.showHideAddressDelivery(1);
     };
 
-	jQuery('#previewfinish_btn').on('click', function(){
+	jQuery(document).on('click', '#previewfinish_btn', function(){
 		return jshop.checkAGBAndNoReturn(jQuery(this).attr('data-agb'), jQuery(this).attr('data-noreturn'));
 	});
 	
