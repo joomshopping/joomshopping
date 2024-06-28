@@ -78,6 +78,7 @@
       	<folder>css</folder>
 		<folder>Dispatcher</folder>
 		<folder>Extension</folder>
+        <folder>Field</folder>
         <folder>Helper</folder>
       	<folder>images</folder>
       	<folder>js</folder>
