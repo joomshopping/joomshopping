@@ -790,4 +790,5 @@ HTMLHelper::_('behavior.formvalidator');
             </div>
         </form>
     </div>
+    <?php print $this->_tmp_html_end ?? ''?>
 </div>

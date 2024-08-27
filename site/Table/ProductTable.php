@@ -886,7 +886,9 @@ class ProductTable extends MultilangTable{
                     $listid = explode(',', $productExtraField[$field_name]);
                     $tmp = array();
                     foreach($listid as $extrafiledvalueid){
-                        $tmp[] = $fieldvalues[$extrafiledvalueid];
+                        if (isset($fieldvalues[$extrafiledvalueid])) {
+                            $tmp[] = $fieldvalues[$extrafiledvalueid];
+                        }
                     }
                     $extra_field_value = implode($JshopConfig->multi_charactiristic_separator, $tmp);
                     $rows[] = array("id"=>$field_id, "name"=>$listfield[$field_id]->name, "description"=>$listfield[$field_id]->description, "value"=>$extra_field_value, "groupname"=>$listfield[$field_id]->groupname, 'field_value_ids'=>$listid, 'group_id' => $field->group);

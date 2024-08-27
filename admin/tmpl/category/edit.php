@@ -6,7 +6,7 @@ use Joomla\CMS\Editor\Editor;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 
 /**
- * @version      5.1.0 15.09.2022
+ * @version      5.5.1 15.07.2024
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -34,6 +34,7 @@ $jshopConfig = $this->config;
             <?php } ?>
             <li class="nav-item"><a class="nav-link" href="#main-page" data-toggle="tab"><?php echo Text::_('JSHOP_MAIN_PARAMETERS') ?></a></li>
             <li class="nav-item"><a class="nav-link" href="#image" data-toggle="tab"><?php echo Text::_('JSHOP_IMAGE') ?></a></li>
+            <?php echo $this->tmp_tab_nav_item ?? '';?>
         </ul>
         <div id="editdata-document" class="tab-content">
             <?php
@@ -295,6 +296,7 @@ $jshopConfig = $this->config;
                 </div>
                 <?php print $this->tmp_html_extra_image ?? '' ?>
             </div>
+            <?php echo $this->tmp_tab_pane ?? '';?>
         </div>
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="category_id" value="<?php echo (int)$row->category_id ?>" />

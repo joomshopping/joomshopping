@@ -24,7 +24,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 	function build(&$query){
 		$segments = array();
 		Helper::initLoadJoomshoppingLanguageFile();
-		$lang = isset($query['lang']) ? $query['lang'] : '';
+		$lang = isset($query['lang']) && $query['lang'] != "*" ? $query['lang'] : '';
 		$shim = ShopItemMenu::getInstance($lang);
 		PluginHelper::importPlugin('jshoppingrouter');
 		$app = Factory::getApplication();

@@ -70,7 +70,7 @@ HTMLHelper::_('behavior.formvalidator');
                 </div>
                 <div class="controls">
                     <input type="text" name="l_name" id="l_name" value="<?php print $this->user->l_name?>"
-                        class="input form-control <?php echo $cssreq['f_name']?>">
+                        class="input form-control <?php echo $cssreq['l_name']?>">
                 </div>
             </div>
             <?php endif; ?>
@@ -85,7 +85,7 @@ HTMLHelper::_('behavior.formvalidator');
                 </div>
                 <div class="controls">
                     <input type="text" name="m_name" id="m_name" value="<?php print $this->user->m_name?>"
-                        class="input form-control <?php echo $cssreq['f_name']?>">
+                        class="input form-control <?php echo $cssreq['m_name']?>">
                 </div>
             </div>
             <?php endif; ?>

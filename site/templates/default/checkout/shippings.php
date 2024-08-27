@@ -68,4 +68,5 @@ defined('_JEXEC') or die();
             <input type="submit" class="btn btn-success button" value="<?php print Text::_('JSHOP_NEXT')?>">
         </form>
     </div>
+    <?php print $this->_tmp_html_end ?? ''?>
 </div>

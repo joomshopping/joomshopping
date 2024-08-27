@@ -676,6 +676,9 @@ class CartModel{
 
     function add($product_id, $quantity, $attr_id, $freeattributes, $additional_fields = array(), $usetriggers = 1, &$errors = array(), $displayErrorMessage = 1){
         $jshopConfig = JSFactory::getConfig();
+        if ($this->type_cart == 'wishlist') {
+            $quantity = 1;
+        }
         if ($quantity <= 0){
             $errors['100'] = Text::_('JSHOP_ERROR_QUANTITY');
 			if ($displayErrorMessage){
@@ -743,6 +746,10 @@ class CartModel{
         if ($updateqty){
         foreach ($this->products as $key => $value){
             if ($value['product_id'] == $product_id && $value['attributes'] == $attr_serialize && $value['freeattributes']==$free_attr_serialize){
+                if ($this->type_cart == 'wishlist') {
+                    $new_product = 0;
+                    break;
+                }
                 $product_in_cart = $this->products[$key]['quantity'];
                 $save_quantity = $product_in_cart + $quantity;
 

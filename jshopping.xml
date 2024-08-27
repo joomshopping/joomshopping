@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
    <name>jshopping</name>
-   <creationDate>28.06.2024</creationDate>
+   <creationDate>27.08.2024</creationDate>
    <author>MAXXmarketing GmbH</author>
    <authorEmail>marketing@maxx-marketing.net</authorEmail>
    <authorUrl>https://www.webdesigner-profi.de</authorUrl>
    <copyright></copyright>
    <license>Open Source License, GNU/GPL</license>
-   <version>5.5.0</version>
+   <version>5.5.1</version>
    <description>Joomshopping - shop component. Note: JoomShopping code files are named as jshopping</description>
    <namespace>Joomla\Component\Jshopping</namespace>
 

@@ -85,6 +85,9 @@ div.jshop_quote {
     margin: 4px;
     padding: 10px;
 }
+[data-bs-theme="dark"] div.jshop_quote {
+    background-color: var(--gray-700);
+}
 .jshop_border {
 	border: 1px solid #4A5F9A;
 }
@@ -199,12 +202,18 @@ table.table_attr{
     font-size: 16px;
     border:1px solid #ddd;
 }
+[data-bs-theme="dark"] .contacts {
+    background: var(--gray-700);
+}
 .contacts .jslogo{
     background: #f8fcff;
     text-align: center;
     padding: 12px;
     border-radius: 10px;
     position: relative;
+}
+[data-bs-theme="dark"] .contacts .jslogo {
+    background: var(--header-item-content-bg);
 }
 .contacts .jslogo .version{
     position: absolute;
@@ -223,6 +232,9 @@ table.table_attr{
     color: #2a5082;
     align-items: center;
 }
+[data-bs-theme="dark"] .contacts .info {
+    color: var(--template-link-color);
+}
 .contacts .info .img{
     width: 65px;
 }
@@ -234,6 +246,12 @@ table.table_attr{
 }
 .contacts a:link,.contacts a:visited,.contacts a:active {
 	color: #2a5082;
+}
+[data-bs-theme="dark"] .contacts a:link,
+[data-bs-theme="dark"] .contacts a:visited,
+[data-bs-theme="dark"] .contacts a:active,
+[data-bs-theme="dark"] .contacts .blue {
+    color: var(--template-link-color);
 }
 .contacts .blue{
     color: #2a5082;
@@ -250,6 +268,9 @@ table.table_attr{
     width: 360px;
     line-height: 130%;
     color: #757575;
+}
+[data-bs-theme="dark"] .contacts.firminfo {
+    color: var(--body-color);
 }
 
 
@@ -271,6 +292,9 @@ table.admintable td.key{
     border-top: 1px solid #999;
     border-bottom: 1px solid #999;
     background: #f6f6f6;    
+}
+[data-bs-theme="dark"] .helpbox {
+    background: var(--gray-700);
 }
 .helpbox .head{
     color: #888;
@@ -309,6 +333,9 @@ table.admintable td.key{
    border-radius:10px;
    padding:5px 10px;
 }
+[data-bs-theme="dark"] .jssubmenu {
+    background: var(--gray-700);
+}
 .jssubmenu #submenu{
     list-style: none outside none;
     margin: 0;
@@ -345,6 +372,12 @@ div#element-box .jssubmenu div.m {
     text-align: center;
     background: #fff;
     border-radius: 3px;
+}
+[data-bs-theme="dark"] .block_related_inner {
+    background: var(--gray-700);
+}
+[data-bs-theme="dark"] select.form-control {
+    background-color: var(--body-bg);
 }
 .block_related_inner .image{
     height: 140px;
@@ -574,7 +607,7 @@ a.saveorder{
 }
 .nav-tabs .nav-link {
     position: relative;
-    color: #132f53;
+    color: var(--link-color-rgb);
 }
 .nav-tabs .nav-link.active {
     font-weight: bold;

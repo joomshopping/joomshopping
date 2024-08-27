@@ -10,7 +10,7 @@ namespace Joomla\Component\Jshopping\Site\Model;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Pagination\Pagination;
+use Joomla\Component\Jshopping\Site\Helper\Pagination;
 defined('_JEXEC') or die();
 
 class VendorListModel  extends BaseModel{

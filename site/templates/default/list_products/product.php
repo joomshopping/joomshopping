@@ -36,7 +36,7 @@ defined('_JEXEC') or die();
                         <?php }?>
                     </div>
                 <?php }?>
-                <a href="<?php print $product->product_link?>">
+                <a class="product_link" href="<?php print $product->product_link?>">
                     <img class="jshop_img" src="<?php print $product->image?>" alt="<?php print htmlspecialchars($product->img_alt);?>" title="<?php print htmlspecialchars($product->img_title);?>"  />
                 </a>
             </div>

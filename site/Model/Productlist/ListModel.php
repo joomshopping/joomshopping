@@ -9,7 +9,7 @@
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
-use Joomla\CMS\Pagination\Pagination;
+use Joomla\Component\Jshopping\Site\Helper\Pagination;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Component\Jshopping\Site\Helper\Selects;
