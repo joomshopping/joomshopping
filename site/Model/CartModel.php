@@ -1308,5 +1308,32 @@ class CartModel{
 		extract(Helper::Js_add_trigger(get_defined_vars(), "before"));
 		return $url;
 	}
+    
+    function deleteUnpublishedProducts() {
+        $db = Factory::getDBO();
+        $products = [];
+        foreach($this->products as $v){
+            $products[] = $v['product_id'];
+        }
+        if (count($products)) {
+            $query = "SELECT prod.`product_id` FROM `#__jshopping_products` AS prod
+                      LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat USING (product_id)
+                      LEFT JOIN `#__jshopping_categories` AS cat ON pr_cat.category_id = cat.category_id
+                      WHERE prod.product_publish=1 AND cat.category_publish=1  AND prod.`product_id` IN (".implode(",",$products).")
+                      GROUP BY prod.product_id ";
+            $db->setQuery($query);
+            $_products = $db->loadColumn();
+            $del = 0;
+            foreach($this->products as $k => $v){
+                if (!in_array($v['product_id'], $_products)) {
+                    $del = 1;
+                    unset($this->products[$k]);
+                }
+            }
+            if ($del) {
+                $this->loadPriceAndCountProducts();
+            }
+        }
+    }
 
 }

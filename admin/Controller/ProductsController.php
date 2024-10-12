@@ -94,8 +94,7 @@ class ProductsController extends BaseadminController{
         }
         $lists['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'publish', 'style="width: 120px;" class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $publish);
 
-        $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onBeforeDisplayListProducts', array(&$rows));
+        $app->triggerEvent('onBeforeDisplayListProducts', array(&$rows));
 
         $view = $this->getView("product_list", 'html');
         $view->set('rows', $rows);
@@ -119,18 +118,18 @@ class ProductsController extends BaseadminController{
         $view->tmp_html_end = "";
 		$view->tmp_html_filter_end = '';
 
-        $dispatcher->triggerEvent('onBeforeDisplayListProductsView', array(&$view));
+        $app->triggerEvent('onBeforeDisplayListProductsView', array(&$view));
         $view->display();
     }
 
     function edit(){
-        Factory::getApplication()->input->set('hidemainmenu', true);
+        $app = Factory::getApplication();
+        $app->input->set('hidemainmenu', true);
         $jshopConfig = JSFactory::getConfig();
         $lang = JSFactory::getLang();
-        $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onLoadEditProduct', array());
+        $app->triggerEvent('onLoadEditProduct', array());
         $id_vendor_cuser = HelperAdmin::getIdVendorForCUser();
-        $category_id = $this->input->getInt('category_id');
+        $category_id = $this->input->getInt('category_id') ?: $app->getUserStateFromRequest("jshoping.list.admin.product".'category_id', 'category_id', 0, 'int') ;
         $tmpl_extra_fields = null;
         $product_id = $this->input->getInt('product_id');
         $product_attr_id = $this->input->getInt('product_attr_id');
@@ -162,7 +161,7 @@ class ProductsController extends BaseadminController{
         $_productprice = JSFactory::getTable('productprice');
         $product->product_add_prices = $_productprice->getAddPrices($product_id);
         $product->name = $product->getName();
-		$dispatcher->triggerEvent('onBeforeDisplayEditProductStart', array(&$product));
+		$app->triggerEvent('onBeforeDisplayEditProductStart', array(&$product));
 
         $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
@@ -373,7 +372,7 @@ class ProductsController extends BaseadminController{
             $lists['return_policy'] = HTMLHelper::_('select.genericlist', array_merge($first, $statictext_list), 'options[return_policy]','class = "inputbox form-select"','id','alias', $product_options['return_policy']);
         }
 
-        $dispatcher->triggerEvent('onBeforeDisplayEditProduct', array(&$product, &$related_products, &$lists, &$listfreeattributes, &$tax_value));
+        $app->triggerEvent('onBeforeDisplayEditProduct', array(&$product, &$related_products, &$lists, &$listfreeattributes, &$tax_value));
 
         $view=$this->getView("product_edit", 'html');
         $view->setLayout("default");
@@ -409,7 +408,7 @@ class ProductsController extends BaseadminController{
         $view->set('plugin_template_related', '');
         $view->set('plugin_template_files', '');
         $view->set('plugin_template_extrafields', '');
-        $dispatcher->triggerEvent('onBeforeDisplayEditProductView', array(&$view) );
+        $app->triggerEvent('onBeforeDisplayEditProductView', array(&$view) );
 		$view->display();
     }
 

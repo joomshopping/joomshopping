@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 23.12.2023
+* @version      5.5.2 10.10.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -24,7 +24,7 @@ class ProductTable extends MultilangTable{
 
     function setAttributeActive($attribs){
 		$db = Factory::getDBO();
-        $dispatcher = Factory::getApplication();
+        $app = Factory::getApplication();
         $JshopConfig = JSFactory::getConfig();
 		$this->setAttributeSubmitted($attribs, 1);
         $this->attribute_active = $attribs;
@@ -58,6 +58,8 @@ class ProductTable extends MultilangTable{
                 if ($JshopConfig->use_extend_attribute_data && isset($this->attribute_active_data->ext_attribute_product_id) && $this->attribute_active_data->ext_attribute_product_id){
                     $this->attribute_active_data->ext_data = $this->getExtAttributeData($this->attribute_active_data->ext_attribute_product_id);
                 }
+                $obj = $this;
+		        $app->triggerEvent('onAfterSetAttributeActiveDependent', array(&$attribs, &$obj));
             }
 
             if (count($independent_attr)){
@@ -69,7 +71,7 @@ class ProductTable extends MultilangTable{
                     $db->setQuery($query);
                     $attr_data2 = $db->loadObJect();
                     $obj = $this;
-                    $dispatcher->triggerEvent('onSetAddPriceIndependentAttr', array(&$independent_attr, &$k, &$v, &$attr_data2, &$obj));
+                    $app->triggerEvent('onSetAddPriceIndependentAttr', array(&$independent_attr, &$k, &$v, &$attr_data2, &$obj));
                     if ($attr_data2) {
                         if ($attr_data2->price_mod=="+"){
                             $this->attribute_active_data->price += $attr_data2->addprice;
@@ -109,7 +111,7 @@ class ProductTable extends MultilangTable{
             $this->attribute_active_data = NULL;
         }
         $obj = $this;
-		$dispatcher->triggerEvent('onAfterSetAttributeActive', array(&$attribs, &$obj));
+		$app->triggerEvent('onAfterSetAttributeActive', array(&$attribs, &$obj));
     }
 
 	function setAttributeSubmitted($attribs, $only_new = 0){
@@ -176,8 +178,8 @@ class ProductTable extends MultilangTable{
     function getAttributes2(){
         $db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_products_attr2` WHERE product_id=".(int)$this->product_id." ORDER BY id";
-        $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onAfterQueryGetAttributes2', array(&$query));
+        $app = Factory::getApplication();
+        $app->triggerEvent('onAfterQueryGetAttributes2', array(&$query));
         $db->setQuery($query);
         return $db->loadObJectList();
     }
@@ -676,13 +678,13 @@ class ProductTable extends MultilangTable{
     }
 	
 	function getPrice($quantity=1, $enableCurrency=1, $enableUserDiscount=1, $enableParamsTax=1, $cartProduct=array()){
-        $dispatcher = Factory::getApplication();
+        $app = Factory::getApplication();
         $JshopConfig = JSFactory::getConfig();
 		$this->product_price_wp = $this->product_price;
         $this->product_price_calculate = $this->getPriceWithParams();
 		$this->product_user_percent_discount = JSFactory::getUserShop()->percent_discount;
         $obj = $this;
-        $dispatcher->triggerEvent('onBeforeCalculatePriceProduct', array(&$quantity, &$enableCurrency, &$enableUserDiscount, &$enableParamsTax, &$obj, &$cartProduct));
+        $app->triggerEvent('onBeforeCalculatePriceProduct', array(&$quantity, &$enableCurrency, &$enableUserDiscount, &$enableParamsTax, &$obj, &$cartProduct));
 
         $this->product_add_prices = $this->getAddPrices();
         if ($quantity) {
@@ -712,7 +714,7 @@ class ProductTable extends MultilangTable{
         }
         $this->product_price_calculate1 = $this->product_price_calculate;
         $obj = $this;
-        $dispatcher->triggerEvent('onCalculatePriceProduct', array($quantity, $enableCurrency, $enableUserDiscount, $enableParamsTax, &$obj, &$cartProduct) );
+        $app->triggerEvent('onCalculatePriceProduct', array($quantity, $enableCurrency, $enableUserDiscount, $enableParamsTax, &$obj, &$cartProduct) );
         $this->product_price_calculate0 = $this->product_price_calculate;
         if ($JshopConfig->price_product_round){
             $this->product_price_calculate = round($this->product_price_calculate, intval($JshopConfig->decimal_count));
@@ -815,9 +817,9 @@ class ProductTable extends MultilangTable{
     function getTax(){
         $taxes = JSFactory::getAllTaxes();
 		$this->product_tax = isset($taxes[$this->product_tax_id]) ? $taxes[$this->product_tax_id] : 0;
-        $dispatcher = Factory::getApplication();
+        $app = Factory::getApplication();
         $obj = $this;
-        $dispatcher->triggerEvent('onBeforeGetTaxProduct', array(&$obj));
+        $app->triggerEvent('onBeforeGetTaxProduct', array(&$obj));
         return $this->product_tax;
     }
 
@@ -841,9 +843,9 @@ class ProductTable extends MultilangTable{
 				}
             }
         }
-        $dispatcher = Factory::getApplication();
+        $app = Factory::getApplication();
         $obj = $this;
-        $dispatcher->triggerEvent('onUpdateOtherPricesIncludeAllFactors', array(&$obj) );
+        $app->triggerEvent('onUpdateOtherPricesIncludeAllFactors', array(&$obj) );
     }
 
 	function getExtraFields($type = 1){

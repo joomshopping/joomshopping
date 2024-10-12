@@ -10,7 +10,7 @@ use Joomla\CMS\Language\Text;
 */
 defined('_JEXEC') or die();
 ?>
-<button class='btn btn-small btn-primary extrafields_btn_add' title="<?php print htmlspecialchars($this->title)?>">
+<button type="button" class='btn btn-small btn-primary extrafields_btn_add' title="<?php print htmlspecialchars($this->title)?>">
 	<span class='icon-new icon-white'></span> 
     <?php print Text::_("JSHOP_ADD")?>
 </button>

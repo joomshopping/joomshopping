@@ -700,7 +700,7 @@ class Helper{
         if (!$current_currency_value){
             $current_currency_value = $jshopConfig->currency_value;
         }
-    return $pricemaincurrency * $current_currency_value;
+    return floatval($pricemaincurrency) * floatval($current_currency_value);
     }
 
     public static function listProductUpdateData($products, $setUrl = 0){

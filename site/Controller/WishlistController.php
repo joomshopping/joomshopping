@@ -32,7 +32,8 @@ class WishlistController extends BaseController{
 		$dispatcher = Factory::getApplication();
 		$cartpreview = JSFactory::getModel('cartPreview', 'Site');
 
-		$cart = JSFactory::getModel('cart', 'Site')->init("wishlist", 1);		
+		$cart = JSFactory::getModel('cart', 'Site')->init("wishlist", 1);
+		$cart->deleteUnpublishedProducts();
 
 		Metadata::wishlist();
 		

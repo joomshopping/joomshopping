@@ -10,11 +10,11 @@ use Joomla\CMS\Language\Text;
 */
 defined('_JEXEC') or die();
 ?>
-<button class='btn btn-small btn-primary extrafields_btn_edit' title="<?php print htmlspecialchars($this->title)?>">
+<button type="button" class='btn btn-small btn-primary extrafields_btn_edit' title="<?php print htmlspecialchars($this->title)?>">
 	<span class='icon-edit icon-white'></span> 
     <?php print Text::_("JSHOP_EDIT")?>
 </button>
 
-<button class='btn btn-small btn-primary extrafields_btn_clear'>
+<button type="button" class='btn btn-small btn-primary extrafields_btn_clear'>
     <?php print Text::_("JSHOP_CLEAR")?>
 </button>

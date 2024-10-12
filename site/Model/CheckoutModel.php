@@ -221,13 +221,13 @@ class CheckoutModel extends BaseModel{
 		$text_total = $cartpreview->getTextTotalPrice();
 
         foreach($cart->products as $k=>$v) {
-			$cart->products[$k]['_tmp_tr_before'] = "";
-			$cart->products[$k]['_tmp_tr_after'] = "";
-			$cart->products[$k]['_ext_product_name'] = "";
-			$cart->products[$k]['_ext_attribute_html'] = "";
-			$cart->products[$k]['_ext_price_html'] = "";
-			$cart->products[$k]['_qty_unit'] = "";
-			$cart->products[$k]['_ext_price_total_html'] = "";
+			$cart->products[$k]['_tmp_tr_before'] ??= "";
+			$cart->products[$k]['_tmp_tr_after'] ??= "";
+			$cart->products[$k]['_ext_product_name'] ??= "";
+			$cart->products[$k]['_ext_attribute_html'] ??= "";
+			$cart->products[$k]['_ext_price_html'] ??= "";
+			$cart->products[$k]['_qty_unit'] ??= "";
+			$cart->products[$k]['_ext_price_total_html'] ??= "";
 		}
                 
         $view = $this->getView('cart');

@@ -29,14 +29,36 @@ div.width-55 {
     color: #565656;
     display: block;
     float: left;
-    height: 108px;
     text-decoration: none;
-    vertical-align: middle;
-    width: 108px;
+    vertical-align: middle;    
+	width: 158px;
+	height: 118px;
+	padding: 10px;
+	font-weight: 700;
+	font-size: .95rem;
+	transition: all .25s
+}
+#cpanel div.icon a span {
+	display: block;
+	text-align: center;
+	max-height: 32px;
+	overflow: hidden;
+	text-overflow: ellipsis
 }
 #cpanel div.icon a:hover{
     color: #000;
 }
+html[data-bs-theme="dark"] #cpanel div.icon a {
+	border-color: transparent;
+	background-color: #282D34;
+	color: #7ABFDC
+}
+
+html[data-bs-theme="dark"] #cpanel div.icon a:hover {
+	color: #FFF;
+	background-color: #1f3047
+}
+
 #cpanel img {
     margin: 0 auto;
     padding: 10px 0;
@@ -203,7 +225,9 @@ table.table_attr{
     border:1px solid #ddd;
 }
 [data-bs-theme="dark"] .contacts {
-    background: var(--gray-700);
+    background: var(--gray-700);    
+	border: 1px solid #ffffff0d;
+	box-shadow: 0 0 15px #111
 }
 .contacts .jslogo{
     background: #f8fcff;
@@ -226,6 +250,7 @@ table.table_attr{
     font-size: 18px;
     text-align: center;
     padding: 15px 5px 25px 5px;
+    margin-bottom: 10px;
 }
 .contacts .info{
     display: flex;
