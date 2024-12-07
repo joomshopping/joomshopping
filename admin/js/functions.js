@@ -15,6 +15,7 @@ var jshopAdminClass = function(){
     };
 	
 	this.floatVal = function(val) {
+        if (!val) val = '';
 		let res = parseFloat(val.replace(',', '.'));
 		if (isNaN(res)) res = 0;
 		return res;
@@ -816,6 +817,7 @@ var jshopAdminClass = function(){
         if (user_id > 0) {
             var data = {};
             data['user_id'] = user_id;
+            data['copy_empty_delivery_adress'] = '1';
             if (this.userinfo_ajax){
                 this.userinfo_ajax.abort();
             }

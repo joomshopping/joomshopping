@@ -294,6 +294,7 @@ $config->product_admin_demo_file = 1;
 $config->product_admin_sale_file = 1;
 $config->admin_shop_lang_as_admin_lang = 1;
 $config->admin_display_extra_field_values_in_list_max = 100;
+$config->admin_ordering_extra_field_values_in_select = 'ordering';
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';
@@ -629,3 +630,5 @@ $config->fields_client_check = [
 $config->fields_client_only_check = [
 	'password', 'password2', 'email2', 'privacy_statement'
 ];
+
+$config->ordering_full_name = ['f_name', 'm_name', 'l_name'];

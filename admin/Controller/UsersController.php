@@ -138,6 +138,7 @@ class UsersController extends BaseadminController{
     function get_userinfo(){
         $db = Factory::getDBO();
         $id = $this->input->getInt('user_id');
+        $copy_delivery_adress = $this->input->getInt('copy_empty_delivery_adress') ?? '0';
         if (!$id){
             print '{}';
             die;
@@ -145,6 +146,29 @@ class UsersController extends BaseadminController{
         $query = 'SELECT * FROM `#__jshopping_users` WHERE `user_id`='.(int)$id;
         $db->setQuery($query);
         $user = $db->loadAssoc();
+        if ($copy_delivery_adress && !$user['delivery_adress']) {
+            $user['d_title'] = $user['title'];
+            $user['d_f_name'] = $user['f_name'];
+            $user['d_l_name'] = $user['l_name'];
+            $user['d_m_name'] = $user['m_name'];
+            $user['d_firma_name'] = $user['firma_name'];
+            $user['d_home'] = $user['home'];
+            $user['d_apartment'] = $user['apartment'];
+            $user['d_street'] = $user['street'];
+            $user['d_street_nr'] = $user['street_nr'];
+            $user['d_zip'] = $user['zip'];
+            $user['d_city'] = $user['city'];
+            $user['d_state'] = $user['state'];
+            $user['d_email'] = $user['email'];
+            $user['d_birthday'] = $user['birthday'];
+            $user['d_country'] = $user['country'];
+            $user['d_phone'] = $user['phone'];
+            $user['d_mobil_phone'] = $user['mobil_phone'];
+            $user['d_fax'] = $user['fax'];
+            $user['d_ext_field_1'] = $user['ext_field_1'];
+            $user['d_ext_field_2'] = $user['ext_field_2'];
+            $user['d_ext_field_3'] = $user['ext_field_3'];
+        }
         echo json_encode((array)$user);
         die();
     }

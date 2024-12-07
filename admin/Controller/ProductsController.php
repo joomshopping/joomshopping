@@ -646,13 +646,14 @@ class ProductsController extends BaseadminController{
     }
 
     function _getHtmlProductExtraFields($categorys = [], $product = null, $edittype = '', $hide = 0){
+        $jshopConfig = JSFactory::getConfig();
 		if ($product === null) $product = new \stdClass;
 		$_productfields = JSFactory::getModel("productfields");
         $list = $_productfields->getList(1);
         $ch_active = array_keys($_productfields->getListForCats($categorys));
 
         $_productfieldvalues = JSFactory::getModel("productfieldvalues");
-        $listvalue = $_productfieldvalues->getAllList(10);
+        $listvalue = $_productfieldvalues->getAllList(10, $jshopConfig->admin_ordering_extra_field_values_in_select);
 
         $f_option = array();
 		if ($edittype == 'list') {

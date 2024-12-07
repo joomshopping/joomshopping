@@ -1079,6 +1079,7 @@ class ProductTable extends MultilangTable{
         $view->set('url_attr_img', $this->getUrlProdAttrImg($item->select_active_image));
         $view->set('attribute', $attr);
         $view->set('item', $item);
+        $view->product = $this;
         $app->triggerEvent('onBuildSelectAttributeView', array(&$view));
         return $view->loadTemplate();
     }

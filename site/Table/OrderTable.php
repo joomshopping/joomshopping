@@ -886,4 +886,11 @@ class OrderTable extends ShopbaseTable{
         return $prev_order_status_data;
     }
 
+    public function getFullName($prefix = '') {
+        $JshopConfig = JSFactory::getConfig();
+        $of = $JshopConfig->ordering_full_name;
+        $full_name = $this->{$prefix.$of[0]} . " " . $this->{$prefix.$of[1]} . " " . $this->{$prefix.$of[2]};
+        return $full_name;
+    }
+
 }

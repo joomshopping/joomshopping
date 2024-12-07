@@ -185,7 +185,7 @@ $print = $this->print;
         <?php if ($this->config_fields['f_name']['display']){?>
         <tr>
           <td width="40%"><b><?php print Text::_('JSHOP_FULL_NAME')?>:</b></td>
-		  <td width="60%"><?php print $this->order->f_name?> <?php print $this->order->l_name?> <?php print $this->order->m_name?></td>
+          <td width="60%"><?php print $this->order->getFullName()?></td>
         </tr>
         <?php } ?>
         <?php if ($this->config_fields['client_type']['display']){?>
@@ -323,7 +323,7 @@ $print = $this->print;
         <?php if ($this->config_fields['d_f_name']['display']){?>
         <tr>
             <td width="40%"><b><?php print Text::_('JSHOP_FULL_NAME')?>:</b></td>
-			<td width="60%"><?php print $this->order->d_f_name?> <?php print $this->order->d_l_name?> <?php print $this->order->d_m_name?></td>
+			<td width="60%"><?php print $this->order->getFullName('d_')?></td>
         </tr>
         <?php } ?>
 		<?php if ($this->config_fields['d_birthday']['display']){?>

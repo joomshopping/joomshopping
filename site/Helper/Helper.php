@@ -818,7 +818,6 @@ class Helper{
                 $products[$key]->product_price_default = 0;
                 $products[$key]->basic_price_info['price_show'] = 0;
                 $products[$key]->tax = 0;
-                $jshopConfig->show_plus_shipping_in_product = 0;
             }
             if ($jshopConfig->product_list_show_qty_stock){
                 $products[$key]->qty_in_stock = Helper::getDataProductQtyInStock($products[$key]);

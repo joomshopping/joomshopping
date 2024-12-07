@@ -94,7 +94,7 @@ class Order extends \TCPDF{
             
         $address_data = array(
             $order->firma_name,
-            trim($order->f_name." ".$order->l_name." ".$order->m_name),
+            trim($order->getFullName()),
             trim(trim($order->street." ".$order->street_nr)." ".$order->home." ".$order->apartment),
             trim($order->zip." ".$order->city),
             $order->state,

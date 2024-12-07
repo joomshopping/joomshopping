@@ -199,7 +199,6 @@ class ProductShopModel extends BaseModel{
             $product->product_basic_price_show = 0;
             $product->product_is_add_price = 0;
             $product->product_tax = 0;
-            $jshopConfig->show_plus_shipping_in_product = 0;
         }
 
         if (trim($product->description) == "" && $jshopConfig->show_short_descr_insted_of == 1) {

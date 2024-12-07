@@ -5,7 +5,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.4.2 25.05.2024
+* @version      5.5.3 17.11.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,8 +18,8 @@ class AddonCore{
     protected $addon_params;
     protected $addon_alias = '';
 	protected $addon_id;
-    public $debug = 0;    
-    
+    public $debug = 0;
+
     public function __construct($addon_alias = ''){
 		if ($addon_alias != ''){
 			$this->addon_alias = $addon_alias;
@@ -76,12 +76,16 @@ class AddonCore{
         JSFactory::loadExtLanguageFile($this->addon_alias);
     }
     
-    public function loadCss($extname = '', $dir = null, $ovdir = null){
+    public function loadCss($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1){
         $document = Factory::getDocument();
         $template = $this->getJoomlaTemplate();
         $dir = $dir ?? 'components/com_jshopping/css/addons';
         $ovdir = $ovdir ?? 'templates/'.$template.'/css/addons';
-        $filename = $this->addon_alias.$extname.'.css';
+        if ($name_as_alias) {
+            $filename = $this->addon_alias.$extname.'.css';
+        } else {
+            $filename = $extname.'.css';
+        }
         if ($this->debug) {
             print '<pre>';
             print '#Addon loadCss: '.$filename."\n";
@@ -95,12 +99,16 @@ class AddonCore{
         $document->addStyleSheet(Uri::root().$dir.'/'.$filename);
     }
     
-    public function loadJs($extname = '', $dir = null, $ovdir = null){
+    public function loadJs($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1){
         $document = Factory::getDocument();
         $template = $this->getJoomlaTemplate();
         $dir = $dir ?? 'components/com_jshopping/js/addons';
         $ovdir = $ovdir ?? 'templates/'.$template.'/js/addons';
-        $filename = $this->addon_alias.$extname.'.js';
+        if ($name_as_alias) {
+            $filename = $this->addon_alias.$extname.'.js';
+        } else {
+            $filename = $extname.'.js';
+        }
         if ($this->debug) {
             print '<pre>';
             print '#Addon loadJs: '.$filename."\n";
@@ -111,7 +119,7 @@ class AddonCore{
         if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
             $dir = $ovdir;
         }
-        $document->addScript(Uri::root().$dir.'/'.$filename);        
+        $document->addScript(Uri::root().$dir.'/'.$filename);
     }
     
     public function getPathImages(){

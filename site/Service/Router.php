@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.3 31.05.2024
+* @version      5.5.3 17.10.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -213,7 +213,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
         $miquery['task'] = isset($miquery['task']) ? $miquery['task'] : "";
 
 		if (isset($miquery['controller'])){
-			if ($miquery['controller']=="category" && isset($miquery['category_id']) && $miquery['category_id'] && !isset($segments[1])) {
+            if ($miquery['controller']=="category" && isset($miquery['category_id']) && $miquery['category_id'] && isset($segments[0])) {
 				$prodalias = JSFactory::getAliasProduct();
 				$product_id = array_search($segments[0], $prodalias, true);
 				if (!$product_id){

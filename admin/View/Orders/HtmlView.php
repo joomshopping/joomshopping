@@ -23,7 +23,7 @@ class HtmlView extends BaseHtmlView{
         parent::display($tpl);
 	}
     function displayEdit($tpl=null){
-        ToolbarHelper::title($this->order->order_number, 'generic.png');
+        ToolbarHelper::title($this->order->order_id ? Text::_('JSHOP_EDIT').' '.$this->order->order_number : Text::_('JSHOP_NEW'), 'generic.png');
         ToolbarHelper::save();
         ToolbarHelper::apply();
         ToolbarHelper::cancel();

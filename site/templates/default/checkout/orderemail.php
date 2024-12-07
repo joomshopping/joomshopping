@@ -132,7 +132,7 @@ h3{
         <?php if ($this->config_fields['f_name']['display']){?>
         <tr>
           <td width="100"><?php print Text::_('JSHOP_FULL_NAME')?>:</td>
-          <td><?php print $this->order->f_name?> <?php print $this->order->l_name?> <?php print $this->order->m_name?></td>
+          <td><?php print $this->order->getFullName()?></td>
         </tr>
         <?php } ?>
         <?php if ($this->config_fields['birthday']['display']){?>
@@ -269,7 +269,7 @@ h3{
         <?php if ($this->config_fields['d_f_name']['display']){?>
         <tr>
             <td width="100"><?php print Text::_('JSHOP_FULL_NAME')?> </td>
-            <td><?php print $this->order->d_f_name?> <?php print $this->order->d_l_name?> <?php print $this->order->d_m_name?></td>
+            <td><?php print $this->order->getFullName('d_')?></td>
         </tr>
         <?php } ?>
         <?php if ($this->config_fields['birthday']['display']){?>

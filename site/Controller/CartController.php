@@ -114,6 +114,7 @@ class CartController extends BaseController{
 
         $view = $this->getView('cart');
         $view->setLayout("cart");
+        $view->set('cart', $cart);
         $view->set('config', $jshopConfig);
 		$view->set('products', $products);
 		$view->set('summ', $cartpreview->getSubTotal());

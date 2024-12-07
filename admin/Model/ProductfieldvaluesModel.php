@@ -36,10 +36,10 @@ class ProductFieldValuesModel extends BaseadminModel{
         return $db->loadObjectList();
     }
 
-    public function getAllList($display = 0){
+    public function getAllList($display = 0, $ordering = 'ordering'){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();
-        $query = "SELECT id, `".$lang->get("name")."` as name, field_id FROM `#__jshopping_products_extra_field_values` order by ordering";
+        $query = "SELECT id, `".$lang->get("name")."` as name, field_id FROM `#__jshopping_products_extra_field_values` order by ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         if ($display==0){

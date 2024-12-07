@@ -246,7 +246,7 @@ include(dirname(__FILE__)."/load.js.php");
                     <span class="taxinfo"><?php print Helper::productTaxInfo($this->product->product_tax);?></span>
                 <?php }?>
 
-                <?php if ($this->config->show_plus_shipping_in_product){?>
+                <?php if ($this->config->show_plus_shipping_in_product && $this->product->_display_price){?>
                     <span class="plusshippinginfo"><?php print sprintf(Text::_('JSHOP_PLUS_SHIPPING'), $this->shippinginfo);?></span>
                 <?php }?>
 
