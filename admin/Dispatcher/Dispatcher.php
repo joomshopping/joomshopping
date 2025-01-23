@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.1 21.02.2024
+* @version      5.5.4 21.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -68,7 +68,7 @@ class Dispatcher extends ComponentDispatcher{
 
         HTMLHelper::_('bootstrap.framework');
 		HTMLHelper::_('jquery.framework');
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa = JSFactory::getWebAssetManager();
         $wa->registerAndUseScript('com.jshopping.function', $jshopConfig->file_functions_js, ['weight' => $jshopConfig->js_admin_weight]);
         $wa->registerAndUseScript('com.jshopping.admin.function', $jshopConfig->live_admin_path.'js/functions.js', ['weight' => $jshopConfig->js_admin_weight]);
         $wa->registerAndUseStyle('com.jshopping.admin', $jshopConfig->live_admin_path.'css/style.css', ['weight' => $jshopConfig->css_admin_weight]);

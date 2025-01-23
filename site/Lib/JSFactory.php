@@ -14,6 +14,8 @@ use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Site\Helper\Legacywebassetmanager;
+
 defined('_JEXEC') or die();
 
 class JSFactory{
@@ -87,8 +89,7 @@ class JSFactory{
         $jshopConfig = JSFactory::getConfig();
         if (!$jshopConfig->load_css) return 0;
         if (!$load){
-            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-            $jshopConfig = JSFactory::getConfig();
+            $wa = JSFactory::getWebAssetManager();
 			if (file_exists($jshopConfig->css_path.$jshopConfig->template.'.css')){
                 $wa->registerAndUseStyle('com.jshopping', $jshopConfig->css_live_path.$jshopConfig->template.'.css', ['weight' => $jshopConfig->css_weight]);
 			}
@@ -103,7 +104,7 @@ class JSFactory{
     static $load;
         if (!$load){
             $jshopConfig = JSFactory::getConfig();
-            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+            $wa = JSFactory::getWebAssetManager();
             if ($jshopConfig->load_javascript) {
 				if ($jshopConfig->load_javascript_bootstrap) {
 					HTMLHelper::_('bootstrap.framework');
@@ -123,7 +124,7 @@ class JSFactory{
         if (!$load){
             $jshopConfig = JSFactory::getConfig();
             if ($jshopConfig->load_javascript){
-                $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+                $wa = JSFactory::getWebAssetManager();
                 $wa->registerAndUseScript('com.jshopping.metadata', $jshopConfig->file_metadata_js, ['weight' => $jshopConfig->js_weight]);
                 $wa->registerAndUseScript('com.jshopping.rating', $jshopConfig->file_rating_js, ['weight' => $jshopConfig->js_weight]);
                 $wa->registerAndUseStyle('com.jshopping.rating', $jshopConfig->file_rating_css, ['weight' => $jshopConfig->css_weight]);
@@ -138,7 +139,7 @@ class JSFactory{
         if (!$jshopConfig->load_jquery_lightbox) return 0;
         if (!$load){
             HTMLHelper::_('bootstrap.framework');
-            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+            $wa = JSFactory::getWebAssetManager();
             $wa->registerAndUseScript('com.jshopping.lightbox', $jshopConfig->file_lightbox_js, ['weight' => $jshopConfig->js_weight]);
             $wa->registerAndUseStyle('com.jshopping.lightbox', $jshopConfig->file_lightbox_css, ['weight' => $jshopConfig->css_weight]);
             $wa->addInlineScript($jshopConfig->script_lightbox_init);
@@ -601,6 +602,15 @@ class JSFactory{
             }
         }
     return $returnlist;
+    }
+    
+    public static function getWebAssetManager() {
+        if (JSFactory::getConfig()->use_web_asset_manager) {
+            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        } else {
+            $wa = new Legacywebassetmanager();
+        }
+        return $wa;
     }
 
     public static function getTable($type, $prefix = 'Joomla\\Component\\Jshopping\\Site\\Table\\', $config = array()){        

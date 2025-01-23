@@ -65,7 +65,7 @@ defined('_JEXEC') or die();
     </div>
     <div class="clr"></div>
     <br/>
-    <?php $pkey='plugin_template_attribute'; if ($this->$pkey){ print $this->$pkey;}?>
+    <?php $pkey='plugin_template_video'; if ($this->$pkey){ print $this->$pkey;}?>
     <div class="helpbox">
         <div class="head"><?php echo Text::_('JSHOP_ABOUT_UPLOAD_FILES')?></div>
         <div class="text">

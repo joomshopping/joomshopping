@@ -98,7 +98,7 @@ class AddonCore{
             $dir = $ovdir;
         }
         $weight = $weight ?? JSFactory::getConfig()->css_weight;
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa = JSFactory::getWebAssetManager();
         $wa->registerAndUseStyle($asset_name, Uri::root().$dir.'/'.$filename,  ['weight' => $weight]);
     }
     
@@ -124,7 +124,7 @@ class AddonCore{
             $dir = $ovdir;
         }
         $weight = $weight ?? JSFactory::getConfig()->js_weight;
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa = JSFactory::getWebAssetManager();
         $wa->registerAndUseScript($asset_name, Uri::root().$dir.'/'.$filename,  ['weight' => $weight]);
     }
     

@@ -303,6 +303,7 @@ $config->default_template_no_list_product = 'list_products/no_products.php';
 $config->default_template_block_form_filter_product = 'list_products/form_filters.php';
 $config->default_template_block_pagination_product = 'list_products/block_pagination.php';
 
+$config->use_web_asset_manager = 0;
 $config->css_weight = 1000;
 $config->js_weight = 1000;
 $config->css_admin_weight = 1000;
