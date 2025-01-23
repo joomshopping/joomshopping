@@ -7,6 +7,7 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class TopratingModel extends ListModel{
@@ -26,13 +27,16 @@ class TopratingModel extends ListModel{
     public function getContext(){
         return "jshoping.list.front.product.toprating";
     }
-    
+        
     public function getContextFilter(){
-        return "jshoping.list.front.product.toprating";
+        $context = "jshoping.list.front.product.toprating";
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onGetContextFilter', array(&$context, &$obj));
+        return $context;
     }
     
     public function getProductListName(){
         return 'toprating';
     }
-    	
+
 }

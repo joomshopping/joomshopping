@@ -8,6 +8,7 @@
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class ProductModel extends ListModel{
@@ -32,7 +33,10 @@ class ProductModel extends ListModel{
     }
 
     public function getContextFilter(){
-        return "jshoping.list.front.product.fulllist";
+        $context = "jshoping.list.front.product.fulllist";
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onGetContextFilter', array(&$context, &$obj));
+        return $context;
     }
 
     public function getProductListName(){

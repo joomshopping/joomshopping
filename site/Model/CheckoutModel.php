@@ -232,6 +232,7 @@ class CheckoutModel extends BaseModel{
                 
         $view = $this->getView('cart');
         $view->setLayout("checkout");
+        $view->set('cart', $cart);
         $view->set('step', $step);
         $view->set('config', $jshopConfig);
         $view->set('products', $cart->products);

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.3 20.02.2024
+* @version      5.5.4 18.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -28,7 +28,7 @@ class ListModel{
 		$context = $this->getContext();
 		$limitstart = $app->input->getInt('limitstart');
         $orderby = $app->getUserStateFromRequest($context.'orderby', 'orderby', $this->getDefaultProductSortingDirection(), 'int');
-        $order = $app->getUserStateFromRequest($context.'order', 'order', $this->getDefaultProductSorting(), 'int');
+        $order = $app->getUserStateFromRequest($context.'order', 'order', $this->getDefaultProductSorting(), 'cmd');
         $limit = $app->getUserStateFromRequest($context.'limit', 'limit', $this->getCountProductsPerPage(), 'int');
         if (!$limit){
             $limit = $this->getCountProductsPerPage();
@@ -173,7 +173,9 @@ class ListModel{
             $adv_query .= " AND prod.vendor_id in (".implode(",",$filters['vendors']).")";
         }
         if (isset($filters['extra_fields']) && is_array($filters['extra_fields'])){
+            $ef_all = JSFactory::getAllProductExtraField();
             foreach($filters['extra_fields'] as $f_id=>$vals){
+                if (!isset($ef_all[$f_id])) continue;
                 if (is_array($vals) && count($vals)){
                     $tmp = array();
                     foreach($vals as $val_id){
@@ -190,7 +192,9 @@ class ListModel{
             }
         }
 		if (isset($filters['extra_fields_t']) && is_array($filters['extra_fields_t'])){
+            $ef_all = JSFactory::getAllProductExtraField();
             foreach($filters['extra_fields_t'] as $f_id=>$vals){
+                if (!isset($ef_all[$f_id])) continue;
                 if (is_array($vals) && count($vals)){
                     $tmp = array();
                     foreach($vals as $val){
@@ -407,7 +411,12 @@ class ListModel{
     }
     
     public function getOrderBy(){
-        return $this->orderby;
+        if (substr_count($this->order, '.')) {
+            $tmp = explode('.', $this->order);
+            return intval($tmp[1]);
+        } else {
+            return $this->orderby;
+        }
     }
 	
     public function getOrder(){
@@ -476,7 +485,10 @@ class ListModel{
     }
 
     public function getContextFilter(){
-        return "jshoping.list.front.product";
+        $context = "jshoping.list.front.product";
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onGetContextFilter', array(&$context, &$obj));
+        return $context;
     }
 
     public function getNoFilterListProduct(){

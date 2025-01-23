@@ -5,7 +5,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.5.4 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -31,6 +31,16 @@ $jshopConfig = JSFactory::getConfig();
             <div>
                 <?php print $lists['notfinished'];?>
             </div>
+            <?php if (!$jshopConfig->without_payment){?>
+            <div>
+                <?php print $lists['payments'];?>
+            </div>
+            <?php }?>
+            <?php if (!$jshopConfig->without_shipping){?>
+            <div>
+                <?php print $lists['shippings'];?>
+            </div>
+            <?php }?>
             <div>
                 <?php echo HTMLHelper::_('calendar', $this->filter['date_from'], 'date_from', 'date_from', $jshopConfig->field_birthday_format, array('class'=>'inputbox middle2', 'size'=>'5', 'maxlength'=>'10', 'placeholder'=> Text::_('JSHOP_DATE_FROM')));?>                
             </div>

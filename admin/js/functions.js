@@ -1125,7 +1125,7 @@ var jshopAdminClass = function(){
             let tr = jQuery("tr[extrafieldid="+ef_id+"]");
             if (jQuery('.prod_extrafield_values select', tr).length) {
                 jQuery('.prod_extrafield_values select', tr).append('<option value="'+json.id+'">'+json.text+'</option>');
-                jQuery('.prod_extrafield_values select', tr).val(json.id);
+                jQuery('.prod_extrafield_values select option[value='+json.id+']', tr).prop("selected", "selected");
             } else {
                 jQuery('.prod_extrafield_values input[type=hidden]', tr).val(json.id);
                 jQuery('.prod_extrafield_values .prod_extra_fields_uniq_val', tr).html(json.text);

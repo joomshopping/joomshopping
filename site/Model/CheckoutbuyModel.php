@@ -242,7 +242,7 @@ class CheckoutBuyModel  extends CheckoutModel{
 		if (isset($transaction)) {
 			$order->saveTransaction($transaction);
 		}
-        $order->saveTransactionData($rescode, $status, $transactiondata);
+        $order->saveTransactionData($rescode, $status, $transaction, $transactiondata);
 
         if ($restext!=''){
             Helper::saveToLog("payment.log", $restext);

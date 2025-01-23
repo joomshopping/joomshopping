@@ -270,7 +270,7 @@ class CheckoutController extends BaseController{
                 JSError::raiseWarning("", Text::_('JSHOP_ERROR_SHIPPING'));
                 return 0;
             }
-            $this->setRedirect($checkoutStep->getCheckoutUrl('step4save&sh_pr_method_id='.$first_shipping));
+            $this->setRedirect($checkoutStep->getCheckoutUrl('step4save&sh_pr_method_id='.$first_shipping.'&t='.time()));
             return 0;
         }
 

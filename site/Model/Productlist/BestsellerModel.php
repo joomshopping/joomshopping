@@ -65,7 +65,10 @@ class BestsellerModel extends ListModel{
     }
     
     public function getContextFilter(){
-        return "jshoping.list.front.product.bestseller";
+        $context = "jshoping.list.front.product.bestseller";
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onGetContextFilter', array(&$context, &$obj));
+        return $context;
     }
     
     public function getProductListName(){

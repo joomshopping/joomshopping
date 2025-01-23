@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.4.0 06.04.2024
+* @version      5.5.4 19.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -97,8 +97,9 @@ $i=0;
                 <td class="center">
                     <?php if ($row->usekey){?>
                     <a class="btn btn-micro"
-                        href='index.php?option=com_jshopping&controller=licensekeyaddon&alias=<?php print $row->alias?>&back=<?php print $this->back64?>'><img
-                            src='components/com_jshopping/images/icon-16-edit.png'></a>
+                        href='index.php?option=com_jshopping&controller=licensekeyaddon&alias=<?php print $row->alias?>&back=<?php print $this->back64?>'>
+                        <i class="icon-key"></i>
+                    </a>
                     <?php }?>
                 </td>
                 <td class="center">

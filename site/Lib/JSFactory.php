@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.1 28.09.2022
+* @version      5.5.4 18.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -24,7 +24,7 @@ class JSFactory{
     static $config;
         if (!isset($config)){
             PluginHelper::importPlugin('jshopping');
-            $dispatcher = Factory::getApplication();            
+            $dispatcher = Factory::getApplication();
             $config = new \Joomla\Component\Jshopping\Site\Table\ConfigTable();
             include(JPATH_JOOMSHOPPING.'/config/default_config.php');
             if (file_exists(JPATH_JOOMSHOPPING.'/config/user_config.php')){
@@ -45,7 +45,7 @@ class JSFactory{
     static $usershop;
         if (!isset($usershop)){
             $user = Factory::getUser(self::$load_user_id);
-            $db = Factory::getDBO();            
+            $db = Factory::getDBO();
             $usershop = new \Joomla\Component\Jshopping\Site\Table\UsershopTable($db);
             if ($user->id){
                 if (!$usershop->isUserInShop($user->id)){
@@ -87,13 +87,13 @@ class JSFactory{
         $jshopConfig = JSFactory::getConfig();
         if (!$jshopConfig->load_css) return 0;
         if (!$load){
-            $document = Factory::getDocument();
+            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
             $jshopConfig = JSFactory::getConfig();
 			if (file_exists($jshopConfig->css_path.$jshopConfig->template.'.css')){
-				$document->addStyleSheet($jshopConfig->css_live_path.$jshopConfig->template.'.css');
+                $wa->registerAndUseStyle('com.jshopping', $jshopConfig->css_live_path.$jshopConfig->template.'.css', ['weight' => $jshopConfig->css_weight]);
 			}
             if (file_exists($jshopConfig->css_path.$jshopConfig->template.'.custom.css')){
-                $document->addStyleSheet($jshopConfig->css_live_path.$jshopConfig->template.'.custom.css');
+                $wa->registerAndUseStyle('com.jshopping.custom', $jshopConfig->css_live_path.$jshopConfig->template.'.css', ['weight' => $jshopConfig->css_weight]);
             }
             $load = 1;
         }
@@ -103,7 +103,7 @@ class JSFactory{
     static $load;
         if (!$load){
             $jshopConfig = JSFactory::getConfig();
-            $document = Factory::getDocument();
+            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
             if ($jshopConfig->load_javascript) {
 				if ($jshopConfig->load_javascript_bootstrap) {
 					HTMLHelper::_('bootstrap.framework');
@@ -111,8 +111,8 @@ class JSFactory{
 				if ($jshopConfig->load_javascript_jquery) {
 					HTMLHelper::_('jquery.framework');
 				}
-                $document->addScript($jshopConfig->file_functions_js);
-                $document->addScriptDeclaration($jshopConfig->script_js_init);
+                $wa->registerAndUseScript('com.jshopping.function', $jshopConfig->file_functions_js, ['weight' => $jshopConfig->js_weight]);
+                $wa->addInlineScript($jshopConfig->script_js_init);
             }
             $load = 1;
         }
@@ -123,10 +123,10 @@ class JSFactory{
         if (!$load){
             $jshopConfig = JSFactory::getConfig();
             if ($jshopConfig->load_javascript){
-                $document = Factory::getDocument();
-                $document->addScript($jshopConfig->file_metadata_js);
-                $document->addScript($jshopConfig->file_rating_js);
-                $document->addStyleSheet($jshopConfig->file_rating_css);
+                $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+                $wa->registerAndUseScript('com.jshopping.metadata', $jshopConfig->file_metadata_js, ['weight' => $jshopConfig->js_weight]);
+                $wa->registerAndUseScript('com.jshopping.rating', $jshopConfig->file_rating_js, ['weight' => $jshopConfig->js_weight]);
+                $wa->registerAndUseStyle('com.jshopping.rating', $jshopConfig->file_rating_css, ['weight' => $jshopConfig->css_weight]);
             }
             $load = 1;
         }
@@ -138,10 +138,10 @@ class JSFactory{
         if (!$jshopConfig->load_jquery_lightbox) return 0;
         if (!$load){
             HTMLHelper::_('bootstrap.framework');
-            $document = Factory::getDocument();
-            $document->addScript($jshopConfig->file_lightbox_js);
-            $document->addStyleSheet($jshopConfig->file_lightbox_css);
-            $document->addScriptDeclaration($jshopConfig->script_lightbox_init);
+            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+            $wa->registerAndUseScript('com.jshopping.lightbox', $jshopConfig->file_lightbox_js, ['weight' => $jshopConfig->js_weight]);
+            $wa->registerAndUseStyle('com.jshopping.lightbox', $jshopConfig->file_lightbox_css, ['weight' => $jshopConfig->css_weight]);
+            $wa->addInlineScript($jshopConfig->script_lightbox_init);
             $load = 1;
         }
     }

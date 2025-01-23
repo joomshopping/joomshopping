@@ -68,12 +68,12 @@ class Dispatcher extends ComponentDispatcher{
 
         HTMLHelper::_('bootstrap.framework');
 		HTMLHelper::_('jquery.framework');
-        $doc = Factory::getDocument();
-        $doc->addScript($jshopConfig->live_path.'js/functions.js');
-        $doc->addScript($jshopConfig->live_admin_path.'js/functions.js?5.3.3');
-        $doc->addStyleSheet($jshopConfig->live_admin_path.'css/style.css');       
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerAndUseScript('com.jshopping.function', $jshopConfig->file_functions_js, ['weight' => $jshopConfig->js_admin_weight]);
+        $wa->registerAndUseScript('com.jshopping.admin.function', $jshopConfig->live_admin_path.'js/functions.js', ['weight' => $jshopConfig->js_admin_weight]);
+        $wa->registerAndUseStyle('com.jshopping.admin', $jshopConfig->live_admin_path.'css/style.css', ['weight' => $jshopConfig->css_admin_weight]);
         if (version_compare(JVERSION, '5.0.0') >= 0 && version_compare(JVERSION, '5.1.0') < 0) {
-            $doc->addStyleSheet($jshopConfig->live_admin_path.'css/stylej5.css');
+            $wa->registerAndUseStyle('com.jshopping.admin.j5', $jshopConfig->live_admin_path.'css/stylej5.css', ['weight' => $jshopConfig->css_admin_weight]);
         }
     }
 

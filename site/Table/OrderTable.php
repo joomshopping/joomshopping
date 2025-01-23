@@ -460,12 +460,12 @@ class OrderTable extends ShopbaseTable{
         return $rows;
     }
     
-    function saveTransactionData($rescode, $status_id, $data){
+    function saveTransactionData($rescode, $status_id, $transaction, $data){
         $row = JSFactory::getTable("PaymentTrx");
         $row->order_id = $this->order_id;
         $row->rescode = $rescode;
         $row->status_id = $status_id;
-        $row->transaction = $this->transaction;
+        $row->transaction = $transaction;
         $row->date = Helper::getJsDate();
         $row->store();
         if (is_array($data)){
@@ -889,7 +889,12 @@ class OrderTable extends ShopbaseTable{
     public function getFullName($prefix = '') {
         $JshopConfig = JSFactory::getConfig();
         $of = $JshopConfig->ordering_full_name;
-        $full_name = $this->{$prefix.$of[0]} . " " . $this->{$prefix.$of[1]} . " " . $this->{$prefix.$of[2]};
+        $name_parts = array_filter([
+            $this->{$prefix . $of[0]},
+            $this->{$prefix . $of[1]},
+            $this->{$prefix . $of[2]}
+        ]);
+        $full_name = implode(' ', $name_parts);
         return $full_name;
     }
 

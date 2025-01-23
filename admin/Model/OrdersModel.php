@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.0 05.06.2023
+* @version      5.5.4 05.06.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -36,7 +36,13 @@ class OrdersModel extends BaseadminModel{
 		if ($filters['date_to']){
 			$date = Helper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
 			$where .= ' and O.order_date<="'.$db->escape($date).' 23:59:59" ';
-		}        
+		}
+        if (isset($filters['payment_id']) && $filters['payment_id']){
+		    $where .= " and O.payment_method_id=".$db->q($filters['payment_id']);
+	    }
+	    if (isset($filters['shipping_id']) && $filters['shipping_id']){
+		    $where .= " and O.shipping_method_id=".$db->q($filters['shipping_id']);
+	    }
         
         if (isset($filters['vendor_id']) && $filters['vendor_id']){
             $where .= " and OI.vendor_id='".$db->escape($filters['vendor_id'])."'";
@@ -74,6 +80,12 @@ class OrdersModel extends BaseadminModel{
 			$date = Helper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
 			$where .= ' and O.order_date<="'.$db->escape($date).' 23:59:59" ';
 		}
+        if (isset($filters['payment_id']) && $filters['payment_id']){
+		    $where .= " and O.payment_method_id=".$db->q($filters['payment_id']);
+	    }
+	    if (isset($filters['shipping_id']) && $filters['shipping_id']){
+		    $where .= " and O.shipping_method_id=".$db->q($filters['shipping_id']);
+	    }
         
         $order = $filter_order." ".$filter_order_Dir;
         

@@ -742,6 +742,7 @@ class Helper{
             }else{
                 $products[$key]->user_discount = $userShop->percent_discount;
             }
+            $products[$key]->_original_product_price0 = $products[$key]->product_price;
             $app->triggerEvent('onListProductUpdateDataProduct', array(&$products, &$key, &$value, &$use_userdiscount));
 
             $products[$key]->_original_product_price = $products[$key]->product_price;

@@ -8,6 +8,7 @@
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class VendorModel extends ListModel{
@@ -40,7 +41,10 @@ class VendorModel extends ListModel{
     }
 
     public function getContextFilter(){
-        return "Jshoping.list.front.product.vendor.".$this->table->id;
+        $context = "Jshoping.list.front.product.vendor.".$this->table->id;
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onGetContextFilter', array(&$context, &$obj));
+        return $context;
     }
 
     public function getStandartFilterListProduct(){

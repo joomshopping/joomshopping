@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.2 10.10.2024
+* @version      5.5.4 21.12.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -20,6 +20,7 @@ class ProductTable extends MultilangTable{
     function __construct(&$_db){
         parent::__construct('#__jshopping_products', 'product_id', $_db);
         PluginHelper::importPlugin('jshoppingproducts');
+        $this->_product_user_percent_discount = JSFactory::getUserShop()->percent_discount;
     }
 
     function setAttributeActive($attribs){
@@ -64,7 +65,7 @@ class ProductTable extends MultilangTable{
 
             if (count($independent_attr)){
 				if (!isset($this->attribute_active_data)) $this->attribute_active_data = new \stdClass();
-                if (!isset($this->attribute_active_data->price)) $this->attribute_active_data->price = $this->product_price;
+                if (!isset($this->attribute_active_data->price)) $this->attribute_active_data->price = $this->getMainPrice();
                 if (!isset($this->attribute_active_data->old_price)) $this->attribute_active_data->old_price = $this->product_old_price;
                 foreach($independent_attr as $k=>$v){
                     $query = "select addprice, price_mod from #__jshopping_products_attr2 where product_id=".(int)$this->product_id." and attr_id=".(int)$k." and attr_value_id=".(int)$v;
@@ -311,11 +312,18 @@ class ProductTable extends MultilangTable{
         }
     }
 
+    function getMainPrice() {
+        $price = $this->product_price;
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onBeforeGetMainPriceProduct', array(&$price, &$obj));
+        return $price;
+    }
+
     function getPriceWithParams(){
         if (isset($this->attribute_active_data->price)){
             return $this->attribute_active_data->price;
         }else{
-            return $this->product_price;
+            return $this->getMainPrice();
         }
     }
 
@@ -540,7 +548,7 @@ class ProductTable extends MultilangTable{
     function getMinimumPrice(){
         $JshopConfig = JSFactory::getConfig();
         $db = Factory::getDBO();
-        $min_price = $this->product_price;
+        $min_price = $this->getMainPrice();
 
         $query = "select count(*) as countattr, MIN(price) AS min_price from `#__jshopping_products_attr` where product_id=".(int)$this->product_id;
         $db->setQuery($query);
@@ -680,9 +688,8 @@ class ProductTable extends MultilangTable{
 	function getPrice($quantity=1, $enableCurrency=1, $enableUserDiscount=1, $enableParamsTax=1, $cartProduct=array()){
         $app = Factory::getApplication();
         $JshopConfig = JSFactory::getConfig();
-		$this->product_price_wp = $this->product_price;
+		$this->product_price_wp = $this->getMainPrice();
         $this->product_price_calculate = $this->getPriceWithParams();
-		$this->product_user_percent_discount = JSFactory::getUserShop()->percent_discount;
         $obj = $this;
         $app->triggerEvent('onBeforeCalculatePriceProduct', array(&$quantity, &$enableCurrency, &$enableUserDiscount, &$enableParamsTax, &$obj, &$cartProduct));
 
@@ -707,10 +714,10 @@ class ProductTable extends MultilangTable{
 			$this->product_price_wp = Helper::getPriceCalcParamsTax($this->product_price_wp, $this->product_tax_id);
         }
 
-        if ($enableUserDiscount && $this->product_user_percent_discount && $this->getUseUserDiscount()){            
+        if ($enableUserDiscount && $this->_product_user_percent_discount && $this->getUseUserDiscount()){
 			$this->product_price_default = $this->product_price_calculate;
-			$this->product_price_calculate = Helper::getPriceDiscount($this->product_price_calculate, $this->product_user_percent_discount);
-			$this->product_price_wp = Helper::getPriceDiscount($this->product_price_wp, $this->product_user_percent_discount);
+			$this->product_price_calculate = Helper::getPriceDiscount($this->product_price_calculate, $this->_product_user_percent_discount);
+			$this->product_price_wp = Helper::getPriceDiscount($this->product_price_wp, $this->_product_user_percent_discount);
         }
         $this->product_price_calculate1 = $this->product_price_calculate;
         $obj = $this;
@@ -790,9 +797,8 @@ class ProductTable extends MultilangTable{
             $JshopConfig = JSFactory::getConfig();
             $productprice = JSFactory::getTable('productprice');
             $this->product_add_prices = $productprice->getAddPrices($this->product_id);
-
-            $price = $this->getPriceWithParams();
-            $price_wp = $this->product_price;
+            $price = $this->product_price_calculate;
+            $price_wp = $this->product_price_wp;
             foreach($this->product_add_prices as $k=>$v){
                 if ($JshopConfig->product_price_qty_discount == 1){
                     $this->product_add_prices[$k]->price = $price - $v->discount; //discount value
@@ -824,14 +830,11 @@ class ProductTable extends MultilangTable{
     }
 
     function updateOtherPricesIncludeAllFactors(){
-        $JshopConfig = JSFactory::getConfig();
-        $userShop = JSFactory::getUserShop();
-
         $this->product_old_price = $this->getOldPrice();
         $this->product_old_price = Helper::getPriceFromCurrency($this->product_old_price, $this->currency_id);
         $this->product_old_price = Helper::getPriceCalcParamsTax($this->product_old_price, $this->product_tax_id);
         if ($this->getUseUserDiscount()){
-			$this->product_old_price = Helper::getPriceDiscount($this->product_old_price, $userShop->percent_discount);
+			$this->product_old_price = Helper::getPriceDiscount($this->product_old_price, $this->_product_user_percent_discount);
 		}
 
         if (is_array($this->product_add_prices)){
@@ -839,7 +842,7 @@ class ProductTable extends MultilangTable{
                 $this->product_add_prices[$key]->price = Helper::getPriceFromCurrency($this->product_add_prices[$key]->price, $this->currency_id);
                 $this->product_add_prices[$key]->price = Helper::getPriceCalcParamsTax($this->product_add_prices[$key]->price, $this->product_tax_id);
 				if ($this->getUseUserDiscount()){
-					$this->product_add_prices[$key]->price = Helper::getPriceDiscount($this->product_add_prices[$key]->price, $userShop->percent_discount);
+					$this->product_add_prices[$key]->price = Helper::getPriceDiscount($this->product_add_prices[$key]->price, $this->_product_user_percent_discount);
 				}
             }
         }
@@ -1022,7 +1025,6 @@ class ProductTable extends MultilangTable{
     }
 
     function getBuildSelectAttributesOptions($attr_values){
-        $userShop = JSFactory::getUserShop();
         $JshopConfig = JSFactory::getConfig();
         $options = [];
         foreach($attr_values as $k2=>$v2){
@@ -1031,8 +1033,8 @@ class ProductTable extends MultilangTable{
             $addPrice = isset($v2->addprice) ? $v2->addprice : 0;
             $addPrice = Helper::getPriceFromCurrency($addPrice, $this->currency_id);
             $addPrice = Helper::getPriceCalcParamsTax($addPrice, $this->product_tax_id);
-            if ($userShop->percent_discount){
-                $addPrice = Helper::getPriceDiscount($addPrice, $userShop->percent_discount);
+            if ($this->_product_user_percent_discount){
+                $addPrice = Helper::getPriceDiscount($addPrice, $this->_product_user_percent_discount);
             }
             $options[$k2]->addprice = $addPrice;
             $options[$k2]->price_mod = isset($v2->price_mod) ? $v2->price_mod : "";

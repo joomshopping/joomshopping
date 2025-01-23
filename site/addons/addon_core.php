@@ -5,7 +5,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.5.3 17.11.2024
+* @version      5.5.4 18.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -76,9 +76,9 @@ class AddonCore{
         JSFactory::loadExtLanguageFile($this->addon_alias);
     }
     
-    public function loadCss($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1){
-        $document = Factory::getDocument();
+    public function loadCss($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $weight = null){
         $template = $this->getJoomlaTemplate();
+        $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
         $dir = $dir ?? 'components/com_jshopping/css/addons';
         $ovdir = $ovdir ?? 'templates/'.$template.'/css/addons';
         if ($name_as_alias) {
@@ -91,17 +91,20 @@ class AddonCore{
             print '#Addon loadCss: '.$filename."\n";
             print '#Addon loadCss dir: '.$dir."\n";
             print '#Addon loadCss ovdir: '.$ovdir."\n";
+            print '#Addon loadCss asset_name: '.$asset_name."\n";
             print '</pre>';
         }
         if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
             $dir = $ovdir;
         }
-        $document->addStyleSheet(Uri::root().$dir.'/'.$filename);
+        $weight = $weight ?? JSFactory::getConfig()->css_weight;
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerAndUseStyle($asset_name, Uri::root().$dir.'/'.$filename,  ['weight' => $weight]);
     }
     
-    public function loadJs($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1){
-        $document = Factory::getDocument();
+    public function loadJs($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $weight = null){
         $template = $this->getJoomlaTemplate();
+        $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
         $dir = $dir ?? 'components/com_jshopping/js/addons';
         $ovdir = $ovdir ?? 'templates/'.$template.'/js/addons';
         if ($name_as_alias) {
@@ -114,12 +117,15 @@ class AddonCore{
             print '#Addon loadJs: '.$filename."\n";
             print '#Addon loadJs dir: '.$dir."\n";
             print '#Addon loadJs ovdir: '.$ovdir."\n";
+            print '#Addon loadJs asset_name: '.$asset_name."\n";
             print '</pre>';
         }
         if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
             $dir = $ovdir;
         }
-        $document->addScript(Uri::root().$dir.'/'.$filename);
+        $weight = $weight ?? JSFactory::getConfig()->js_weight;
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerAndUseScript($asset_name, Uri::root().$dir.'/'.$filename,  ['weight' => $weight]);
     }
     
     public function getPathImages(){
@@ -132,6 +138,14 @@ class AddonCore{
 
     protected function getJoomlaTemplate() {
         return Factory::getApplication()->getTemplate(true)->template;
+    }
+
+    protected function getAssetName($extname, $dir, $ovdir, $name_as_alias) {
+        $name = 'jshopping.addon.'.$this->addon_alias.$extname;
+        if ($dir.$ovdir.$name_as_alias != '1') {
+            $name .= '.'.substr(md5($dir.$ovdir.$name_as_alias),0,8);
+        }
+        return $name;
     }
 
 }

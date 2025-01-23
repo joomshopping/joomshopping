@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.7 31.08.2022
+* @version      5.5.4 31.08.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -51,9 +51,11 @@ class OrdersController extends BaseadminController{
         $text_search = $app->getUserStateFromRequest( $context.'text_search', 'text_search', '' );
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "order_number", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "desc", 'cmd');
+        $payment_id = $app->getUserStateFromRequest($context.'payment_id', 'payment_id', 0, 'int');
+	    $shipping_id = $app->getUserStateFromRequest($context.'shipping_id', 'shipping_id', 0, 'int');
   
-        $filter = array("status_id"=>$status_id, 'user_id'=>$client_id, "date_from"=>$date_from, "date_to"=>$date_to, "text_search"=>$text_search, 'notfinished'=>$notfinished);        
-        if ($id_vendor_cuser){            
+        $filter = array("status_id"=>$status_id, 'user_id'=>$client_id, "date_from"=>$date_from, "date_to"=>$date_to, "text_search"=>$text_search, 'notfinished'=>$notfinished, "payment_id"=>$payment_id, "shipping_id"=>$shipping_id);
+        if ($id_vendor_cuser){
             $filter["vendor_id"] = $id_vendor_cuser;
         }
         
@@ -70,8 +72,10 @@ class OrdersController extends BaseadminController{
         $rows = $orders->getAllOrders($pageNav->limitstart, $pageNav->limit, $filter, $filter_order, $filter_order_Dir);
         
         $lists['status_orders'] = SelectOptions::getOrderStatus();       
-        $lists['changestatus'] = HTMLHelper::_('select.genericlist', SelectOptions::getOrderStatus(1) ,'status_id','class="form-select" style="width: 170px;" ','status_id','name', $status_id);
-        $lists['notfinished'] = HTMLHelper::_('select.genericlist', SelectOptions::getNotFinshed(), 'notfinished','class="form-select" style="width: 170px;" title="'.Text::_('JSHOP_NOT_FINISHED').'" ','id','name', $notfinished);
+        $lists['changestatus'] = HTMLHelper::_('select.genericlist', SelectOptions::getOrderStatus(1) ,'status_id','class="form-select middle2"','status_id','name', $status_id);
+        $lists['notfinished'] = HTMLHelper::_('select.genericlist', SelectOptions::getNotFinshed(), 'notfinished','class="form-select middle2" title="'.Text::_('JSHOP_NOT_FINISHED').'" ','id','name', $notfinished);
+        $lists['payments'] = HTMLHelper::_('select.genericlist', SelectOptions::getPayments('- '.Text::_('JSHOP_PAYMENTS').'-'), 'payment_id','class="form-select middle2"','payment_id','name', $payment_id);
+        $lists['shippings'] = HTMLHelper::_('select.genericlist', SelectOptions::getShippings('- '.Text::_('JSHOP_SHIPPINGS').'-'), 'shipping_id','class="form-select middle2"','shipping_id','name', $shipping_id);
 
 		$payments = JSFactory::getModel("payments");
         $payments_list = $payments->getListNamePaymens(0);

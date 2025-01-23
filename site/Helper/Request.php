@@ -48,7 +48,11 @@ class Request{
 	}
     
     public static function getCartTo(){
+		$jshopConfig = JSFactory::getConfig();
         $to = Factory::getApplication()->input->getCmd('to', "cart");
+		if ($jshopConfig->use_limit_request_cart_to && !in_array($to, $jshopConfig->allow_limit_request_cart_to)){
+			$to = 'cart';
+		}
         return $to;
     }
 

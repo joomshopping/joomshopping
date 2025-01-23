@@ -7,6 +7,8 @@
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
+
+use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
@@ -29,7 +31,10 @@ class CategoryModel extends ListModel{
     }
 
     public function getContextFilter(){
-        return "jshoping.list.front.product.cat.".$this->table->category_id;
+        $context = "jshoping.list.front.product.cat.".$this->table->category_id;
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onGetContextFilter', array(&$context, &$obj));
+        return $context;
     }
 
     public function getStandartFilterListProduct(){

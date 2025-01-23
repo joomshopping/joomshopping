@@ -59,7 +59,7 @@ class RandomModel extends ListModel{
         return $products;
     }
         
-    function getCountProductsPerPage(){       
+    function getCountProductsPerPage(){
         return JSFactory::getConfig()->count_products_to_page_random;
     }
     
@@ -79,11 +79,14 @@ class RandomModel extends ListModel{
     }
     
     public function getContextFilter(){
-        return "jshoping.list.front.product.random";
+        $context = "jshoping.list.front.product.random";
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onGetContextFilter', array(&$context, &$obj));
+        return $context;
     }
     
     public function getProductListName(){
         return 'random';
     }
-        
+
 }

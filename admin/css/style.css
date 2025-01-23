@@ -677,7 +677,7 @@ div.latest{
     padding: 3px;
     color: #fff;
 }
-div.latest a, div.latest a{
+div.latest a, div.latest a, div.latest a:not(.badge):not(.btn):not(.dropdown-item){
     color: #fff;
 }
 div.latest a[target="_blank"]::before{

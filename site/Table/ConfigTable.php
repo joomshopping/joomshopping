@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.5 09.03.2024
+* @version      5.5.4 18.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -446,6 +446,10 @@ class ConfigTable{
             $this->real_ean_in_cart = 0;
             $this->real_ean_in_product_list = 0;
             $this->real_ean_in_product_detail = 0;
+        }
+
+        if ($this->without_shipping) {
+            $this->summ_null_shipping = 0;
         }
 
 		$this->generate_pdf = ($this->order_send_pdf_client || $this->order_send_pdf_admin);        

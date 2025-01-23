@@ -8,6 +8,7 @@
 */
 namespace Joomla\Component\Jshopping\Site\Model\Productlist;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class TophitsModel extends ListModel{
@@ -20,7 +21,7 @@ class TophitsModel extends ListModel{
 		}
     }
     
-    function getCountProductsPerPage(){       
+    function getCountProductsPerPage(){
         return JSFactory::getConfig()->count_products_to_page_tophits;
     }
     
@@ -37,7 +38,10 @@ class TophitsModel extends ListModel{
     }
     
     public function getContextFilter(){
-        return "jshoping.list.front.product.tophits";
+        $context = "jshoping.list.front.product.tophits";
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onGetContextFilter', array(&$context, &$obj));
+        return $context;
     }
     
     public function getProductListName(){
