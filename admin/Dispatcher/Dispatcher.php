@@ -69,11 +69,13 @@ class Dispatcher extends ComponentDispatcher{
         HTMLHelper::_('bootstrap.framework');
 		HTMLHelper::_('jquery.framework');
         $wa = JSFactory::getWebAssetManager();
-        $wa->registerAndUseScript('com.jshopping.function', $jshopConfig->file_functions_js, ['weight' => $jshopConfig->js_admin_weight]);
-        $wa->registerAndUseScript('com.jshopping.admin.function', $jshopConfig->live_admin_path.'js/functions.js', ['weight' => $jshopConfig->js_admin_weight]);
-        $wa->registerAndUseStyle('com.jshopping.admin', $jshopConfig->live_admin_path.'css/style.css', ['weight' => $jshopConfig->css_admin_weight]);
+        $wap = $jshopConfig->getWebAssetParams('script', 'com.jshopping.admin.function');
+        $wa->registerAndUseScript('com.jshopping.function', $jshopConfig->file_functions_js, $wap['options'], $wap['attributes'], $wap['dependencies']);
+        $wa->registerAndUseScript('com.jshopping.admin.function', $jshopConfig->live_admin_path.'js/functions.js', $wap['options'], $wap['attributes'], $wap['dependencies']);
+        $wap = $jshopConfig->getWebAssetParams('style', 'com.jshopping.admin');
+        $wa->registerAndUseStyle('com.jshopping.admin', $jshopConfig->live_admin_path.'css/style.css', $wap['options'], $wap['attributes'], $wap['dependencies']);
         if (version_compare(JVERSION, '5.0.0') >= 0 && version_compare(JVERSION, '5.1.0') < 0) {
-            $wa->registerAndUseStyle('com.jshopping.admin.j5', $jshopConfig->live_admin_path.'css/stylej5.css', ['weight' => $jshopConfig->css_admin_weight]);
+            $wa->registerAndUseStyle('com.jshopping.admin.j5', $jshopConfig->live_admin_path.'css/stylej5.css', $wap['options'], $wap['attributes'], $wap['dependencies']);
         }
     }
 

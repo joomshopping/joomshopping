@@ -465,5 +465,10 @@ class ConfigTable{
 	function getAdminContactEmails(){
 		return explode(',', $this->contact_email);
 	}
+    
+    function getWebAssetParams($type, $name) {
+        $res = $this->web_asset[$type][$name] ?? $this->web_asset[$type]['*'] ?? [];
+        return $res;
+    }
 
 }

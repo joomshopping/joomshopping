@@ -304,10 +304,10 @@ $config->default_template_block_form_filter_product = 'list_products/form_filter
 $config->default_template_block_pagination_product = 'list_products/block_pagination.php';
 
 $config->use_web_asset_manager = 0;
-$config->css_weight = 1000;
-$config->js_weight = 1000;
-$config->css_admin_weight = 1000;
-$config->js_admin_weight = 1000;
+$config->web_asset = [
+    'style' => ['*' => ['options'=>['weight' => 1000], 'attributes'=>[], 'dependencies'=>[]]],
+    'script' => ['*' => ['options'=>['weight' => 1000], 'attributes'=>[], 'dependencies'=>[]]]
+];
 $config->load_javascript_bootstrap = 1;
 $config->load_javascript_jquery = 1;
 $config->file_jquery_media_js = $config->live_path.'js/jquery/jquery.media.js';
@@ -398,6 +398,7 @@ $other_config = array(
     "load_jquery_lightbox",
     "load_javascript",
     "load_css",
+    "use_web_asset_manager",
     'list_products_calc_basic_price_from_product_price',
     'hide_from_basic_price','calc_basic_price_from_product_price',
     'user_discount_not_apply_prod_old_price'
@@ -418,6 +419,7 @@ $other_config_checkbox = array(
     "load_jquery_lightbox",
     "load_css",
     "load_javascript",
+    "use_web_asset_manager",
     'set_old_price_after_group_set_price',
     'list_products_calc_basic_price_from_product_price',
     'hide_from_basic_price',

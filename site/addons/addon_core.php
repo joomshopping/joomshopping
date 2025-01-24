@@ -76,7 +76,7 @@ class AddonCore{
         JSFactory::loadExtLanguageFile($this->addon_alias);
     }
     
-    public function loadCss($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $weight = null){
+    public function loadCss($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $wap = null){
         $template = $this->getJoomlaTemplate();
         $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
         $dir = $dir ?? 'components/com_jshopping/css/addons';
@@ -97,12 +97,12 @@ class AddonCore{
         if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
             $dir = $ovdir;
         }
-        $weight = $weight ?? JSFactory::getConfig()->css_weight;
         $wa = JSFactory::getWebAssetManager();
-        $wa->registerAndUseStyle($asset_name, Uri::root().$dir.'/'.$filename,  ['weight' => $weight]);
+        $wap = $wap ?? JSFactory::getConfig()->getWebAssetParams('style', $asset_name);
+        $wa->registerAndUseStyle($asset_name, Uri::root().$dir.'/'.$filename, $wap['options'], $wap['attributes'], $wap['dependencies']);
     }
     
-    public function loadJs($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $weight = null){
+    public function loadJs($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $wap = null){
         $template = $this->getJoomlaTemplate();
         $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
         $dir = $dir ?? 'components/com_jshopping/js/addons';
@@ -123,9 +123,9 @@ class AddonCore{
         if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
             $dir = $ovdir;
         }
-        $weight = $weight ?? JSFactory::getConfig()->js_weight;
         $wa = JSFactory::getWebAssetManager();
-        $wa->registerAndUseScript($asset_name, Uri::root().$dir.'/'.$filename,  ['weight' => $weight]);
+        $wap = $wap ?? JSFactory::getConfig()->getWebAssetParams('script', $asset_name);
+        $wa->registerAndUseScript($asset_name, Uri::root().$dir.'/'.$filename, $wap['options'], $wap['attributes'], $wap['dependencies']);
     }
     
     public function getPathImages(){

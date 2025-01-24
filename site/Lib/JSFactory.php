@@ -91,10 +91,12 @@ class JSFactory{
         if (!$load){
             $wa = JSFactory::getWebAssetManager();
 			if (file_exists($jshopConfig->css_path.$jshopConfig->template.'.css')){
-                $wa->registerAndUseStyle('com.jshopping', $jshopConfig->css_live_path.$jshopConfig->template.'.css', ['weight' => $jshopConfig->css_weight]);
+                $wap = $jshopConfig->getWebAssetParams('style', 'com.jshopping');
+                $wa->registerAndUseStyle('com.jshopping', $jshopConfig->css_live_path.$jshopConfig->template.'.css', $wap['options'], $wap['attributes'], $wap['dependencies']);
 			}
             if (file_exists($jshopConfig->css_path.$jshopConfig->template.'.custom.css')){
-                $wa->registerAndUseStyle('com.jshopping.custom', $jshopConfig->css_live_path.$jshopConfig->template.'.css', ['weight' => $jshopConfig->css_weight]);
+                $wap = $jshopConfig->getWebAssetParams('style', 'com.jshopping.custom');
+                $wa->registerAndUseStyle('com.jshopping.custom', $jshopConfig->css_live_path.$jshopConfig->template.'.css', $wap['options'], $wap['attributes'], $wap['dependencies']);
             }
             $load = 1;
         }
@@ -112,7 +114,8 @@ class JSFactory{
 				if ($jshopConfig->load_javascript_jquery) {
 					HTMLHelper::_('jquery.framework');
 				}
-                $wa->registerAndUseScript('com.jshopping.function', $jshopConfig->file_functions_js, ['weight' => $jshopConfig->js_weight]);
+                $wap = $jshopConfig->getWebAssetParams('script', 'com.jshopping.function');
+                $wa->registerAndUseScript('com.jshopping.function', $jshopConfig->file_functions_js, $wap['options'], $wap['attributes'], $wap['dependencies']);
                 $wa->addInlineScript($jshopConfig->script_js_init);
             }
             $load = 1;
@@ -125,9 +128,12 @@ class JSFactory{
             $jshopConfig = JSFactory::getConfig();
             if ($jshopConfig->load_javascript){
                 $wa = JSFactory::getWebAssetManager();
-                $wa->registerAndUseScript('com.jshopping.metadata', $jshopConfig->file_metadata_js, ['weight' => $jshopConfig->js_weight]);
-                $wa->registerAndUseScript('com.jshopping.rating', $jshopConfig->file_rating_js, ['weight' => $jshopConfig->js_weight]);
-                $wa->registerAndUseStyle('com.jshopping.rating', $jshopConfig->file_rating_css, ['weight' => $jshopConfig->css_weight]);
+                $wap = $jshopConfig->getWebAssetParams('script', 'com.jshopping.metadata');
+                $wa->registerAndUseScript('com.jshopping.metadata', $jshopConfig->file_metadata_js, $wap['options'], $wap['attributes'], $wap['dependencies']);
+                $wap = $jshopConfig->getWebAssetParams('script', 'com.jshopping.rating');
+                $wa->registerAndUseScript('com.jshopping.rating', $jshopConfig->file_rating_js, $wap['options'], $wap['attributes'], $wap['dependencies']);
+                $wap = $jshopConfig->getWebAssetParams('style', 'com.jshopping.rating');
+                $wa->registerAndUseStyle('com.jshopping.rating', $jshopConfig->file_rating_css, $wap['options'], $wap['attributes'], $wap['dependencies']);
             }
             $load = 1;
         }
@@ -140,8 +146,10 @@ class JSFactory{
         if (!$load){
             HTMLHelper::_('bootstrap.framework');
             $wa = JSFactory::getWebAssetManager();
-            $wa->registerAndUseScript('com.jshopping.lightbox', $jshopConfig->file_lightbox_js, ['weight' => $jshopConfig->js_weight]);
-            $wa->registerAndUseStyle('com.jshopping.lightbox', $jshopConfig->file_lightbox_css, ['weight' => $jshopConfig->css_weight]);
+            $wap = $jshopConfig->getWebAssetParams('script', 'com.jshopping.lightbox');
+            $wa->registerAndUseScript('com.jshopping.lightbox', $jshopConfig->file_lightbox_js, $wap['options'], $wap['attributes'], $wap['dependencies']);
+            $wap = $jshopConfig->getWebAssetParams('style', 'com.jshopping.lightbox');
+            $wa->registerAndUseStyle('com.jshopping.lightbox', $jshopConfig->file_lightbox_css, $wap['options'], $wap['attributes'], $wap['dependencies']);
             $wa->addInlineScript($jshopConfig->script_lightbox_init);
             $load = 1;
         }
