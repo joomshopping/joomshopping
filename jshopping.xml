@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
    <name>jshopping</name>
-   <creationDate>22.01.2025</creationDate>
+   <creationDate>24.01.2025</creationDate>
    <author>MAXXmarketing GmbH</author>
    <authorEmail>marketing@maxx-marketing.net</authorEmail>
    <authorUrl>https://www.webdesigner-profi.de</authorUrl>
