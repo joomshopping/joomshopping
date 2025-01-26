@@ -167,12 +167,20 @@ var jshopClass = function(){
         if (typeof(jshopParams.decimal_count)==='undefined') jshopParams.decimal_count = 2;
         if (typeof(jshopParams.decimal_symbol)==='undefined') jshopParams.decimal_symbol = ".";
 		if (typeof(jshopParams.format_currency)==='undefined') jshopParams.format_currency = "00 Symb";
+        if (typeof(jshopParams.thousand_separator)==='undefined') jshopParams.thousand_separator = "";
         price = price.toFixed(jshopParams.decimal_count).toString();
+        if (jshopParams.thousand_separator != '') {
+            price = this.formatNumberWithSpaces(price, jshopParams.thousand_separator);
+        }
         price = price.replace('.',jshopParams.decimal_symbol);
         res = jshopParams.format_currency.replace("Symb",jshopParams.currency_code);
         res = res.replace("00",price);
     return res;
     };
+
+    this.formatNumberWithSpaces = function(number, symbol) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, symbol);
+    }
 
     this.prevAjaxHandler = null;
     this.reloadAttribEvents = [];

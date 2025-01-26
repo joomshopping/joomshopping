@@ -96,7 +96,7 @@ class JSFactory{
 			}
             if (file_exists($jshopConfig->css_path.$jshopConfig->template.'.custom.css')){
                 $wap = $jshopConfig->getWebAssetParams('style', 'com.jshopping.custom');
-                $wa->registerAndUseStyle('com.jshopping.custom', $jshopConfig->css_live_path.$jshopConfig->template.'.css', $wap['options'], $wap['attributes'], $wap['dependencies']);
+                $wa->registerAndUseStyle('com.jshopping.custom', $jshopConfig->css_live_path.$jshopConfig->template.'.custom.css', $wap['options'], $wap['attributes'], $wap['dependencies']);
             }
             $load = 1;
         }
