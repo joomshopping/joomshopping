@@ -1,13 +1,16 @@
 <?php
 /**
-* @version      5.3.5 15.09.2018
+* @version      5.5.5 01.02.2015
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 
-namespace Joomla\Component\Jshopping\Administrator\Model; 
+namespace Joomla\Component\Jshopping\Administrator\Model;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
@@ -40,11 +43,11 @@ class LogsModel extends BaseadminModel{
     }
 
     public function download($file){
-        $jshopConfig = JSFactory::getConfig();        
+        $jshopConfig = JSFactory::getConfig();
         $dir = $jshopConfig->log_path;
         $file_name = $dir.$file;
 		if (!file_exists($file_name)){
-            throw new Exception('Error. File not exist');
+            throw new \Exception('Error. File not exist');
         }
 		
         header("Cache-Control: no-cache, must-revalidate");
@@ -65,5 +68,27 @@ class LogsModel extends BaseadminModel{
             print readfile($file_name);
         }
 	}
+
+    public function deleteList(array $cid, $msg = 1){
+        $app = Factory::getApplication();
+        $res = array();
+		foreach($cid as $id){
+            $this->delete($id);
+            if ($msg){
+                $app->enqueueMessage(Text::_('JSHOP_ITEM_DELETED'), 'message');
+            }
+            $res[$id] = true;
+		}
+        return $res;
+    }
+
+    public function delete($file) {
+        $jshopConfig = JSFactory::getConfig();
+        $filename = str_replace(array('..', '/', ':'), '', $file);
+        $dir = $jshopConfig->log_path;
+        $file_name = $dir.$filename;
+        @unlink($file_name);
+        return 1;
+    }
             
 }

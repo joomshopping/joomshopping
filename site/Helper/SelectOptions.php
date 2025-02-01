@@ -528,5 +528,13 @@ class SelectOptions{
         $type[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_COUPON_ABS_VALUE'), 'id', 'name');
         return $type;
     }
+
+    public static function getGroupOptionEditType(){
+        $option = [];
+        $option[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_ADD_NEW'), 'id', 'name');
+        $option[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_OVERWRITE'), 'id', 'name');
+        $option[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_DELETE_OLD'), 'id', 'name');
+        return $option;
+    }
     
 }

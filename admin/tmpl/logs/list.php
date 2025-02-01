@@ -4,7 +4,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.5.5 01.02.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -26,6 +26,7 @@ $rows = $this->rows;
                     <th align="left"><?php echo Text::_('JSHOP_DATE')?></th>
                     <th align="left"><?php echo Text::_('JSHOP_SIZE')?></th>
                     <th class="center"><?php echo Text::_('JSHOP_DOWNLOAD')?></th>
+                    <th class="center"><?php echo Text::_('JSHOP_DELETE')?></th>
                 </tr>
             </thead>
             <?php $i = 0; ?>
@@ -44,6 +45,11 @@ $rows = $this->rows;
                 <td class="center">
                     <a href="index.php?option=com_jshopping&controller=logs&task=download&id=<?php echo $file[0];?>">
                         <i class="icon-download"></i>
+                    </a>
+                </td>
+                <td class="center">
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=logs&task=remove&cid=<?php print $file[0];?>' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>');">
+                        <i class="icon-delete"></i>
                     </a>
                 </td>
             </tr>

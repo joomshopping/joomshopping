@@ -25,7 +25,7 @@ class LogsController extends BaseadminController{
         
 		$view = $this->getView("logs", 'html');
         $view->setLayout("list");	
-        $view->set('rows', $rows);
+        $view->rows = $rows;
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 

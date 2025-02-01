@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.6 01.07.2022
+* @version      5.5.5 30.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,8 +22,8 @@ class ImportexportController extends BaseController{
     function start(){
 		$this->input->set('noredirect', 1);
 		$key = $this->input->getVar("key");
-        $alias = $this->input->getVar("alias");
-        $id = $this->input->getInt("id");
+        $alias = $this->input->getVar("alias");        
+        $id = $this->input->get->getInt("id");
 		$model = JSFactory::getModel('importExportStart', 'Site');
 		if ($model->checkKey($key)){
 			$model->executeList(null, 1, $alias, $id);

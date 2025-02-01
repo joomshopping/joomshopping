@@ -4,7 +4,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.5.5 31.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,7 +16,7 @@ defined('_JEXEC') or die();
     <div class="col100">
     <table class="admintable" width="90%">
     <tr>
-       <td class="key" style="width:180px;">
+       <td class="key" style="width:200px;">
          <?php echo Text::_('JSHOP_PUBLISH')?>
        </td>
        <td>
@@ -50,7 +50,7 @@ defined('_JEXEC') or die();
        </td>
     </tr>
     <?php }?>
-    <?php $pkey='plugin_template_info_price'; if (isset($this->$pkey)){ print $this->$pkey;}?>
+    <?php print $this->plugin_template_info_price ?? '';?>
     <?php if ($jshopConfig->disable_admin['product_price_per_consignment'] == 0){?>
     <tr>
        <td class="key">
@@ -301,25 +301,24 @@ defined('_JEXEC') or die();
     </tr>
     <?php }?>
      
-    <?php if ($jshopConfig->admin_show_product_basic_price) { ?>
+    <?php if ($jshopConfig->admin_show_product_basic_price) { ?>    
     <tr>
-       <td class="key"><br/><?php echo Text::_('JSHOP_BASIC_PRICE')?></td>
+        <td class="key">            
+            <?php echo Text::_('JSHOP_WEIGHT_VOLUME_UNITS')?>
+            <div class="small"><?php echo Text::_('JSHOP_BASIC_PRICE')?></div>
+        </td>
+        <td>
+            <input type="text" name="weight_volume_units" class = "form-control" value="<?php echo $row->weight_volume_units?>" />
+        </td>
     </tr>
     <tr>
-       <td class="key">
-         <?php echo Text::_('JSHOP_WEIGHT_VOLUME_UNITS')?>
-       </td>
-       <td>
-         <input type="text" name="weight_volume_units" class = "form-control" value="<?php echo $row->weight_volume_units?>" />
-       </td>
-    </tr>
-    <tr>
-       <td class="key">
-         <?php echo Text::_('JSHOP_UNIT_MEASURE')?>
-       </td>
-       <td>
-         <?php echo $lists['basic_price_units'];?>
-       </td>
+        <td class="key">
+            <?php echo Text::_('JSHOP_UNIT_MEASURE')?>
+            <div class="small"><?php echo Text::_('JSHOP_BASIC_PRICE')?></div>
+        </td>
+        <td>
+            <?php echo $lists['basic_price_units'];?>
+        </td>
     </tr>
     <?php }?>
     <?php if ($jshopConfig->return_policy_for_product){?>
@@ -343,8 +342,7 @@ defined('_JEXEC') or die();
     </tr>
     <?php }?>
     <?php }?>
-    <?php $pkey='plugin_template_info'; if ($this->$pkey){ print $this->$pkey;}?>
+    <?php print $this->plugin_template_info ?? '';?>
    </table>
-   </div>
-   <div class="clr"></div>
+   </div>   
 </div>

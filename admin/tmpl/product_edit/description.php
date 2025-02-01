@@ -26,6 +26,7 @@ foreach($this->languages as $lang){
    <div id="<?php print $lang->language.'-page'?>" class="tab-pane<?php if ($i==1){?> active<?php }?>">
      <div class="col100">
      <table class="admintable" >
+      <?php echo $this->{'plugin_template_top_description_'.$lang->language} ?? '';?>
        <tr>
          <td class="key" style="width:180px;">
            <?php echo Text::_('JSHOP_TITLE')?>*

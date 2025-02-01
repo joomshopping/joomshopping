@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 06.12.2023
+* @version      5.5.5 31.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -97,16 +97,16 @@ class ProductsController extends BaseadminController{
         $app->triggerEvent('onBeforeDisplayListProducts', array(&$rows));
 
         $view = $this->getView("product_list", 'html');
-        $view->set('rows', $rows);
-        $view->set('lists', $lists);
-        $view->set('filter_order', $filter_order);
-        $view->set('filter_order_Dir', $filter_order_Dir);
-        $view->set('category_id', $category_id);
-        $view->set('manufacturer_id', $manufacturer_id);
-        $view->set('pagination', $pagination);
-        $view->set('text_search', $text_search);
-        $view->set('config', $jshopConfig);
-        $view->set('show_vendor', $show_vendor);
+        $view->rows = $rows;
+        $view->lists = $lists;
+        $view->filter_order = $filter_order;
+        $view->filter_order_Dir = $filter_order_Dir;
+        $view->category_id = $category_id;
+        $view->manufacturer_id = $manufacturer_id;
+        $view->pagination = $pagination;
+        $view->text_search = $text_search;
+        $view->config = $jshopConfig;
+        $view->show_vendor = $show_vendor;
         foreach($rows as $row) {
             $row->tmp_html_col_after_title = "";
         }
@@ -376,20 +376,20 @@ class ProductsController extends BaseadminController{
 
         $view=$this->getView("product_edit", 'html');
         $view->setLayout("default");
-        $view->set('product', $product);
-        $view->set('lists', $lists);
-        $view->set('related_products', $related_products);
-        $view->set('edit', $edit);
-        $view->set('product_with_attribute', $product_with_attribute);
-        $view->set('tax_value', $tax_value);
-        $view->set('languages', $languages);
-        $view->set('multilang', $multilang);
-        $view->set('tmpl_extra_fields', $tmpl_extra_fields);
-        $view->set('withouttax', $withouttax);
-        $view->set('display_vendor_select', $display_vendor_select);
-        $view->set('listfreeattributes', $listfreeattributes);
-        $view->set('product_attr_id', $product_attr_id);
-		$view->set('categories_select_list', $categories_select_list);
+        $view->product = $product;
+        $view->lists = $lists;
+        $view->related_products = $related_products;
+        $view->edit = $edit;
+        $view->product_with_attribute = $product_with_attribute;
+        $view->tax_value = $tax_value;
+        $view->languages = $languages;
+        $view->multilang = $multilang;
+        $view->tmpl_extra_fields = $tmpl_extra_fields;
+        $view->withouttax = $withouttax;
+        $view->display_vendor_select = $display_vendor_select;
+        $view->listfreeattributes = $listfreeattributes;
+        $view->product_attr_id = $product_attr_id;
+		$view->categories_select_list = $categories_select_list;
         $view->currency = $current_currency;
         $view->ind_attr_td_header = "";
         $view->dep_attr_td_header = "";
@@ -399,15 +399,17 @@ class ProductsController extends BaseadminController{
         $view->ind_attr_td_row = [];
         $view->ind_attr_td_footer = [];
         foreach($languages as $lang){
-            $view->set('plugin_template_description_'.$lang->language, '');
+            $view->{'plugin_template_description_'.$lang->language} = '';
+            $view->{'plugin_template_top_description_'.$lang->language} = '';
         }
-        $view->set('plugin_template_info', '');
-        $view->set('plugin_template_attribute', '');
-        $view->set('plugin_template_freeattribute', '');
-        $view->set('plugin_template_images', '');
-        $view->set('plugin_template_related', '');
-        $view->set('plugin_template_files', '');
-        $view->set('plugin_template_extrafields', '');
+        $view->plugin_template_info='';
+        $view->plugin_template_attribute='';
+        $view->plugin_template_freeattribute='';
+        $view->plugin_template_images='';
+        $view->plugin_template_related='';
+        $view->plugin_template_files='';
+        $view->plugin_template_extrafields='';
+        $view->plugin_template_video='';
         $app->triggerEvent('onBeforeDisplayEditProductView', array(&$view) );
 		$view->display();
     }
@@ -494,11 +496,7 @@ class ProductsController extends BaseadminController{
         $lists['tax'] = HTMLHelper::_('select.genericlist', $list_tax,'product_tax_id','class = "inputbox form-select"','tax_id','tax_name');
         $lists['categories'] = HTMLHelper::_('select.genericlist', $categories, 'category_id[]', 'class="inputbox form-select" size="10" multiple = "multiple" ', 'category_id', 'name');
         $lists['templates'] = HelperAdmin::getTemplates('product', "", 1);
-        $option = array();
-        $option[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_ADD_NEW'), 'id', 'name');
-        $option[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_OVERWRITE'), 'id', 'name');
-        $option[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_DELETE_OLD'), 'id', 'name');
-        $lists['add_new_related'] = HTMLHelper::_('select.genericlist', $option, 'add_new_related','class="inputbox form-select"','id','name');
+        $lists['add_new_related'] = HTMLHelper::_('select.genericlist', SelectOptions::getGroupOptionEditType(), 'add_new_related','class="inputbox form-select"','id','name');
 
         $view = $this->getView("product_edit", 'html');
         $view->setLayout("editlist");
@@ -511,7 +509,7 @@ class ProductsController extends BaseadminController{
         $view->languages = $languages;
         $view->set('related_products', []);
         $view->set('etemplatevar', '');
-        $dispatcher->triggerEvent('onBeforeDisplayEditListProductView', array(&$view) );
+        $dispatcher->triggerEvent('onBeforeDisplayEditListProductView', array(&$view));
         $view->editGroup();
     }
 
