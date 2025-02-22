@@ -117,7 +117,7 @@ class CountriesModel extends BaseadminModel{
     
     protected function _reorderCountry(&$country) {
 		$db = Factory::getDBO();
-		$query = "UPDATE `#__jshopping_countries` SET `ordering` = ordering + 1 WHERE `ordering` > '".$country->ordering."'";		
+		$query = "UPDATE `#__jshopping_countries` SET `ordering` = ordering + 1 WHERE `ordering` > ".$db->q($country->ordering);
 		$db->setQuery($query);
 		$db->execute();
 		$country->ordering++;

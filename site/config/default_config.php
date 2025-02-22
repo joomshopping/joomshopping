@@ -3,7 +3,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.5.4 22.01.2025
+* @version      5.5.6 10.02.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -297,6 +297,7 @@ $config->admin_display_extra_field_values_in_list_max = 100;
 $config->admin_ordering_extra_field_values_in_select = 'ordering';
 $config->use_limit_request_cart_to = 1;
 $config->allow_limit_request_cart_to = ['cart', 'wishlist'];
+$config->order_change_status_reload_global_lang = 0;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';

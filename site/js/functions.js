@@ -185,9 +185,12 @@ var jshopClass = function(){
     this.prevAjaxHandler = null;
     this.reloadAttribEvents = [];
     this.extdataurlupdateattr = {};
-    this.reloadAttribSelectAndPrice = function(id_select){
-        var product_id = jQuery("#product_id").val();
-        var qty = jQuery("#quantity").val();
+    this.reloadAttribSelectAndPrice = function(id_select, product_block){
+        if (typeof product_block === 'undefined') {
+            product_block = jQuery(".productfull");
+        }        
+        var product_id = jQuery("#product_id", product_block).val();
+        var qty = jQuery("#quantity", product_block).val();
         var data = {};
         data["change_attr"] = id_select;
         data["qty"] = qty;
@@ -211,90 +214,90 @@ var jshopClass = function(){
                 for(var i=0;i<jshopParams.attr_list.length;i++){
                     var id = jshopParams.attr_list[i];
                     if (reload_atribut){
-                        jQuery("#block_attr_sel_"+id).html(json['id_'+id]);
+                        jQuery("#block_attr_sel_"+id, product_block).html(json['id_'+id]);
                     }
                     if (id == id_select) reload_atribut = 1;
                 }
 
-                jQuery("#block_price").html(json.price);
-                jQuery("#pricefloat").val(json.pricefloat);
+                jQuery("#block_price", product_block).html(json.price);
+                jQuery("#pricefloat", product_block).val(json.pricefloat);
 
                 if (json.basicprice){
-                    jQuery("#block_basic_price").html(json.basicprice);
+                    jQuery("#block_basic_price", product_block).html(json.basicprice);
                 }
 
                 for(key in json){
                     if (key.substr(0,3)=="pq_"){
-                        jQuery("#pricelist_from_"+key.substr(3)).html(json[key]);
+                        jQuery("#pricelist_from_"+key.substr(3), product_block).html(json[key]);
                     }
                     if (key.substr(0,4)=="pqb_"){
-                        jQuery("#pricelist_f_"+key.substr(4)+' .base .price').html(json[key]);
+                        jQuery("#pricelist_f_"+key.substr(4)+' .base .price', product_block).html(json[key]);
                     }
                 }
 
                 if (json.available=="0"){
-                    jQuery(".productfull #not_available").addClass('not_available');
-                    jQuery(".productfull #not_available").removeClass('available');
-                    jQuery(".productfull #not_available").html(jshopParams.translate_not_available);
+                    jQuery("#not_available", product_block).addClass('not_available');
+                    jQuery("#not_available", product_block).removeClass('available');
+                    jQuery("#not_available", product_block).html(jshopParams.translate_not_available);
                 }else{
-                    jQuery(".productfull #not_available").removeClass('not_available');
-                    jQuery(".productfull #not_available").addClass('available');
-                    jQuery(".productfull #not_available").html(jshopParams.translate_available ?? '');
+                    jQuery("#not_available", product_block).removeClass('not_available');
+                    jQuery("#not_available", product_block).addClass('available');
+                    jQuery("#not_available", product_block).html(jshopParams.translate_available ?? '');
                 }
 
                 if (json.displaybuttons=="0"){
-                    jQuery(".productfull .prod_buttons").hide();
+                    jQuery(".prod_buttons", product_block).hide();
                 }else{
-                    jQuery(".productfull .prod_buttons").show();
+                    jQuery(".prod_buttons", product_block).show();
                 }
 
                 if (typeof json.ean !== 'undefined'){
-                    jQuery("#product_code").html(json.ean);
+                    jQuery("#product_code", product_block).html(json.ean);
                 }
                 if (typeof json.manufacturer_code !== 'undefined'){
-                    jQuery("#manufacturer_code").html(json.manufacturer_code);
+                    jQuery("#manufacturer_code", product_block).html(json.manufacturer_code);
                 }
                 if (typeof json.real_ean !== 'undefined'){
-                    jQuery("#real_ean").html(json.real_ean);
+                    jQuery("#real_ean", product_block).html(json.real_ean);
                 }
 
                 if (json.weight){
-                    jQuery("#block_weight").html(json.weight);
+                    jQuery("#block_weight", product_block).html(json.weight);
                 }
                 if (json.pricedefault){
-                    jQuery("#pricedefault").html(json.pricedefault);
+                    jQuery("#pricedefault", product_block).html(json.pricedefault);
                 }
                 if (typeof json.qty !== 'undefined'){
-                    jQuery("#product_qty").html(json.qty);
+                    jQuery("#product_qty", product_block).html(json.qty);
                 }
                 if (json.oldprice){
-                    jQuery("#old_price").html(json.oldprice);
-                    jQuery(".old_price").show();
+                    jQuery("#old_price", product_block).html(json.oldprice);
+                    jQuery(".old_price", product_block).show();
                 }else{
-                    jQuery(".old_price").hide();
+                    jQuery(".old_price", product_block).hide();
                 }
 
                 if (json.block_image_thumb || json.block_image_middle){
-					jQuery('.video_full').hide();
-					jQuery("#videoshophtml5").remove();
-                    jQuery("#list_product_image_thumb").html(json.block_image_thumb);
-                    jQuery("#list_product_image_middle").html(json.block_image_middle);
+					jQuery('.video_full', product_block).hide();
+					jQuery("#videoshophtml5", product_block).remove();
+                    jQuery("#list_product_image_thumb", product_block).html(json.block_image_thumb);
+                    jQuery("#list_product_image_middle", product_block).html(json.block_image_middle);
                 }
 
                 if (typeof(json.demofiles)!='undefined'){
-                    jQuery("#list_product_demofiles").html(json.demofiles);
+                    jQuery("#list_product_demofiles", product_block).html(json.demofiles);
                 }
 
                 if (json.showdeliverytime){
                     if (json.showdeliverytime=="0"){
-                        jQuery(".productfull .deliverytime").hide();
+                        jQuery(".deliverytime", product_block).hide();
                     }else{
-                        jQuery(".productfull .deliverytime").show();
+                        jQuery(".deliverytime", product_block).show();
                     }
                 }
 
                 jQuery.each(that.reloadAttribEvents, function(key, handler){
-                    handler.call(this, json);
+                    handler.call(this, json, product_block);
                 });
 
                 that.reloadAttrValue();
@@ -302,9 +305,9 @@ var jshopClass = function(){
         );
     };
 
-    this.setAttrValue = function(id, value){
+    this.setAttrValue = function(id, value, product_block){
         jshopParams.attr_value[id] = value;
-        this.reloadAttribSelectAndPrice(id);
+        this.reloadAttribSelectAndPrice(id, product_block);
         this.reloadAttribImg(id, value);
     };
 
@@ -349,10 +352,10 @@ var jshopClass = function(){
         }
     };
 
-    this.reloadPrices = function(){
+    this.reloadPrices = function(product_block){
         var qty = jQuery("#quantity").val();
         if (qty!=""){
-            this.reloadAttribSelectAndPrice(0);
+            this.reloadAttribSelectAndPrice(0, product_block);
         }
     };
 
@@ -411,6 +414,7 @@ var jshopClass = function(){
 var jshop = new jshopClass();
 
 jQuery(document).ready(function(){
+
 	jQuery('.jshop #client_type').on('change', function(){
 		jshop.showHideFieldFirm(this.value);
 	});

@@ -207,6 +207,10 @@ class CheckoutBuyModel  extends CheckoutModel{
 		$order = JSFactory::getTable('order');
         $order->load($order_id);
 
+		if ($jshopConfig->order_change_status_reload_global_lang) {
+			$globalLanguage = Factory::getContainer()->get(\Joomla\CMS\Language\LanguageFactoryInterface::class)->createLanguage($order->getLang());
+			Factory::$language = $globalLanguage;
+		}
 		JSFactory::loadLanguageFile($order->getLang(), true);
 		$lang = JSFactory::getLang($order->getLang());
 

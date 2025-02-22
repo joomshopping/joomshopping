@@ -94,7 +94,10 @@ class IeSimpleExport extends IeController{
         
         $csv = new Csv();
         $csv->write($filename, $data);
-                
+        
+        if ($app->isClient('cli')) {
+            return 1;
+        }
         if (!$app->input->getInt("noredirect")){
             $app->redirect("index.php?option=com_jshopping&controller=importexport&task=view&ie_id=".$ie_id);
         }

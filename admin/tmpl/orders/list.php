@@ -180,6 +180,7 @@ $jshopConfig = JSFactory::getConfig();
                         href="javascript:void window.open('<?php echo $jshopConfig->pdf_orders_live_path."/".$row->pdf_file?>', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=800,height=600,directories=no,location=no');">
                         <img border="0" src="components/com_jshopping/images/jshop_print.png" alt="print" />
                     </a>
+                    <?php echo $row->_after_order_pdf ?? '';?>
                     <?php }elseif($jshopConfig->send_invoice_manually){?>
                     <a href="index.php?option=com_jshopping&controller=orders&task=send&order_id=<?php echo $row->order_id?>&back=orders"
                         title="<?php print Text::_('JSHOP_SEND_MAIL')?>">

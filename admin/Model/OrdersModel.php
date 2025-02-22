@@ -601,6 +601,7 @@ class OrdersModel extends BaseadminModel{
                 $order->saveOrderHistory(1, '');
             }
         }elseif($order->order_created==1 && $jshopConfig->generate_pdf){
+            $dispatcher->triggerEvent('onAdminSaveOrderPdfResave', array(&$order, &$file_generete_pdf_order));
 			$order->load($order_id);
             $order->prepareOrderPrint('', 1);
             $order->generatePdf($file_generete_pdf_order);

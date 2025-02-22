@@ -88,6 +88,7 @@ h3{
         <?php print $this->order->order_number?>
      </td>
   </tr>
+  <?php print $this->_tr_after_order_number ?? '';?>
   <tr>
      <td>
         <?php print Text::_('JSHOP_ORDER_DATE')?>:

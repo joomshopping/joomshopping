@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.8 06.08.2022
+* @version      5.5.6 12.02.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -91,6 +91,8 @@ class Order extends \TCPDF{
         $y+=10;
         $pdf->SetFont('freesans','',11);
         $pdf->SetXY(20,$y);
+        
+        $order->_pdf_order_nr = $order->_pdf_order_nr ?? $order->order_number;
             
         $address_data = array(
             $order->firma_name,
@@ -106,15 +108,15 @@ class Order extends \TCPDF{
         
         $pdf->SetFont('freesansi','',11);
         $pdf->SetXY(110,$y);
-        $pdf->MultiCell(80,4.5,Text::_('JSHOP_ORDER_SHORT_NR')." ".$order->order_number."\n".Text::_('JSHOP_ORDER_FROM')." ".$order->order_date,0,'R');
+        $pdf->MultiCell(80,4.5,Text::_('JSHOP_ORDER_SHORT_NR')." ".$order->_pdf_order_nr."\n".Text::_('JSHOP_ORDER_FROM')." ".$order->order_date,0,'R');
+        $dispatcher->triggerEvent('onGeneratePdfOrderAfterOrderNr', array(&$order, &$pdf, &$y));
         if ($jshopConfig->date_invoice_in_invoice){
-            $y+=12;
-            $pdf->SetXY(110,$y);
+            $pdf->SetXY(110, $pdf->getY());
             $pdf->MultiCell(80,4.5,Text::_('JSHOP_INVOICE_DATE')." ".Helper::formatdate($order->invoice_date), 0, 'R');
         }
         if ($jshopConfig->user_number_in_invoice && $order->user_id && $user->number){
             $y+=11;
-            $pdf->SetXY(110,$y);
+            $pdf->SetXY(110, $pdf->getY());
             $pdf->MultiCell(80,4.5,Text::_('JSHOP_USER_NUMBER')." ".$user->number, 0, 'R');
         }
             

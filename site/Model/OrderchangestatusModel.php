@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.7 25.08.2022
+* @version      5.5.6 10.02.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -104,6 +104,10 @@ class OrderChangeStatusModel  extends BaseModel{
 		$this->orderStatusStore();
 		
 		if ($this->getAppAdmin()){
+            if ($jshopConfig->order_change_status_reload_global_lang) {
+				$globalLanguage = Factory::getContainer()->get(\Joomla\CMS\Language\LanguageFactoryInterface::class)->createLanguage($this->order->getLang());
+				Factory::$language = $globalLanguage;
+			}
 			JSFactory::loadLanguageFile($this->order->getLang(), true);
 			JSFactory::getLang($this->order->getLang());
 		}

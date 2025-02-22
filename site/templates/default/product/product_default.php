@@ -13,8 +13,8 @@ defined('_JEXEC') or die();
 $product = $this->product;
 include(dirname(__FILE__)."/load.js.php");
 ?>
-<div class="jshop productfull" id="comjshop">
-    <form name="product" method="post" action="<?php print $this->action?>" enctype="multipart/form-data" autocomplete="off">
+<div class="jshop productview" id="comjshop">
+    <form class="productfull" name="product" method="post" action="<?php print $this->action?>" enctype="multipart/form-data" autocomplete="off">
     
         <h1><?php print $this->product->name?><?php if ($this->config->show_product_code){?> <span class="jshop_code_prod">(<?php print Text::_('JSHOP_EAN_PRODUCT')?>: <span id="product_code"><?php print $this->product->getEan();?></span>)</span><?php }?></h1>
         

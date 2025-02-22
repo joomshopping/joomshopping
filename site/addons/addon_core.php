@@ -5,7 +5,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.5.4 18.01.2025
+* @version      5.5.6 18.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -72,8 +72,8 @@ class AddonCore{
         return $view;
     }
 
-    public function loadLanguage(){
-        JSFactory::loadExtLanguageFile($this->addon_alias);
+    public function loadLanguage($langtag = ""){
+        JSFactory::loadExtLanguageFile($this->addon_alias, $langtag);
     }
     
     public function loadCss($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $wap = null){
