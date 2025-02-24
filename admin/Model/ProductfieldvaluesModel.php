@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.4 24.02.2024
+* @version      5.5.6 24.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -70,13 +70,14 @@ class ProductFieldValuesModel extends BaseadminModel{
         $query = $db->getQuery(true);
         $query->select($db_filed_select)
             ->from($db->qn('#__jshopping_products_extra_field_values'))
-            ->where($db->qn('field_id') . '=' . $db->q($field_id))            
+            ->where($db->qn('field_id') . '=' . $db->q($field_id))
             ->order('id');
         $db->setQuery($query);
         return $db->loadObjectList();
     }
 
     public function save(array $post){
+        $db = Factory::getDBO();
         $productfieldvalue = JSFactory::getTable('productFieldValue');
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveProductFieldValue', array(&$post));
@@ -94,7 +95,7 @@ class ProductFieldValuesModel extends BaseadminModel{
         $productfieldvalue->bind($post);
         if (!$post['id']) {
             $productfieldvalue->ordering = null;
-            $productfieldvalue->ordering = $productfieldvalue->getNextOrder('field_id="' . $post['field_id'] . '"');
+            $productfieldvalue->ordering = $productfieldvalue->getNextOrder('field_id='.$db->q($post['field_id']));
         }
         $productfieldvalue->store();
         $dispatcher->triggerEvent('onAfterSaveProductFieldValue', array(&$productfieldvalue));
@@ -188,5 +189,16 @@ class ProductFieldValuesModel extends BaseadminModel{
             ->where($db->qn('product_id') . '=' . $db->q($product_id));
         $db->setQuery($query);
         $db->execute();
+    }
+
+    public function copy($id) {
+        $db = Factory::getDBO();
+        $table = JSFactory::getTable('productfieldvalue');
+        $table->load($id);
+        $table->id = null;
+        $table->ordering = null;
+        $table->ordering = $table->getNextOrder('field_id='.$db->q($table->field_id));
+        $table->store();
+        return $table->id;
     }
 }

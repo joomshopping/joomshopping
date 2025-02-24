@@ -41,8 +41,26 @@ class ProductsModel extends BaseadminModel{
         }
         if (isset($filter['text_search']) && $filter['text_search']){
             $text_search = $filter['text_search'];
-            $word = addcslashes($db->escape($text_search), "_%");
-            $where .=  "AND (LOWER(pr.`".$lang->get('name')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('short_description')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('description')."`) LIKE '%" . $word . "%' OR pr.product_ean LIKE '%" . $word . "%' OR pr.product_id LIKE '%" . $word . "%' OR pr.manufacturer_code LIKE '%" . $word . "%'  OR pr.real_ean LIKE '%" . $word . "%')";
+            if (JSFactory::getConfig()->admin_products_search_by_words == 0) {
+                $word = addcslashes($db->escape($text_search), "_%");
+                $where .=  "AND (LOWER(pr.`".$lang->get('name')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('short_description')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('description')."`) LIKE '%" . $word . "%' OR pr.product_ean LIKE '%" . $word . "%' OR pr.product_id LIKE '%" . $word . "%' OR pr.manufacturer_code LIKE '%" . $word . "%'  OR pr.real_ean LIKE '%" . $word . "%')";
+            } else {
+                $words = explode(' ', $text_search);
+                $where .= "AND (";
+                $search_conditions = [];
+                foreach ($words as $word) {
+                    $escaped_word = addcslashes($db->escape($word), "_%");
+                    $search_conditions[] = "(LOWER(pr.`" . $lang->get('name') . "`) LIKE '%" . $escaped_word . "%'
+                    OR LOWER(pr.`" . $lang->get('short_description') . "`) LIKE '%" . $escaped_word . "%'
+                    OR LOWER(pr.`" . $lang->get('description') . "`) LIKE '%" . $escaped_word . "%'
+                    OR pr.product_ean LIKE '%" . $escaped_word . "%'
+                    OR pr.product_id LIKE '%" . $escaped_word . "%'
+                    OR pr.manufacturer_code LIKE '%" . $escaped_word . "%'
+                    OR pr.real_ean LIKE '%" . $escaped_word . "%')\n";
+                }
+                $where .= implode(" AND ", $search_conditions);
+                $where .= ")";
+            }
         }
         if (isset($filter['manufacturer_id']) && $filter['manufacturer_id']){
             $where .= " AND pr.product_manufacturer_id = '".$db->escape($filter['manufacturer_id'])."' ";
@@ -1486,6 +1504,7 @@ class ProductsModel extends BaseadminModel{
         foreach($array as $value2){
             if (count($value2)){
                 foreach($value2 as $value3){
+                    $value3 = $this->prepareCopyProductRow($tables[$i], $value3, $product->product_id);
                     $db->setQuery($this->copyProductBuildQuery($tables[$i], $value3, $product->product_id));
                     $db->execute();
                 }
@@ -1516,6 +1535,19 @@ class ProductsModel extends BaseadminModel{
 			$db->execute();
 		}
         return $product;
+    }
+
+    function prepareCopyProductRow($table, $data, $product_id){
+        if ($table == 'to_extra_fields') {
+            $ef_typetext_ids = JSFactory::getModel('ProductFields')->getListIdByType(2);
+            foreach($ef_typetext_ids as $ef_id) {
+                if (isset($data['extra_field_'.$ef_id]) && $data['extra_field_'.$ef_id] != 0) {
+                    $new_val_id = JSFactory::getModel('ProductFieldValues')->copy($data['extra_field_'.$ef_id]);
+                    $data['extra_field_'.$ef_id] = $new_val_id;
+                }
+            }
+        }
+        return $data;
     }
 	
 	function getListExtAttributeProductId($product_id){

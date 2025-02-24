@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.4 05.06.2023
+* @version      5.5.6 23.02.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,80 +17,26 @@ defined('_JEXEC') or die();
 class OrdersModel extends BaseadminModel{
 
     function getCountAllOrders($filters) {
-        $jshopConfig = JSFactory::getConfig();
         $db = Factory::getDBO();
-        $where = "";
-        if ($filters['status_id']){
-            $where .= " and O.order_status = '".$db->escape($filters['status_id'])."'";
-        }
-        if ($filters['user_id']) $where .= " and O.user_id = '".$db->escape($filters['user_id'])."'";
-        if ($filters['text_search']){
-            $search = $db->escape($filters['text_search']);
-            $where .= " and (O.`order_number` like '%".$search."%' or O.`f_name` like '%".$search."%' or O.`l_name` like '%".$search."%' or O.`email` like '%".$search."%' or O.`firma_name` like '%".$search."%' or O.`d_f_name` like '%".$search."%' or O.`d_l_name` like '%".$search."%' or O.`d_firma_name` like '%".$search."%' or O.order_add_info like '%".$search."%') ";
-        }
-        if (!$filters['notfinished']) $where .= "and O.order_created='1' ";
-        if ($filters['date_from']){
-			$date = Helper::getJsDateDB($filters['date_from'], $jshopConfig->field_birthday_format);
-			$where .= ' and O.order_date>="'.$db->escape($date).'" ';
-		}
-		if ($filters['date_to']){
-			$date = Helper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
-			$where .= ' and O.order_date<="'.$db->escape($date).' 23:59:59" ';
-		}
-        if (isset($filters['payment_id']) && $filters['payment_id']){
-		    $where .= " and O.payment_method_id=".$db->q($filters['payment_id']);
-	    }
-	    if (isset($filters['shipping_id']) && $filters['shipping_id']){
-		    $where .= " and O.shipping_method_id=".$db->q($filters['shipping_id']);
-	    }
-        
+        $where = $this->_getAllOrdersQueryForFilter($filters);
         if (isset($filters['vendor_id']) && $filters['vendor_id']){
-            $where .= " and OI.vendor_id='".$db->escape($filters['vendor_id'])."'";
             $query = "SELECT COUNT(distinct O.order_id) FROM `#__jshopping_orders` as O
                   left join `#__jshopping_order_item` as OI on OI.order_id=O.order_id
                   where 1 $where ORDER BY O.order_id DESC";
         }else{
             $query = "SELECT COUNT(O.order_id) FROM `#__jshopping_orders` as O where 1 ".$where;
         }
-		
-        $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onBeforeQueryGetCountAllOrders', array(&$query, &$filters));
+        $app = Factory::getApplication();
+        $app->triggerEvent('onBeforeQueryGetCountAllOrders', array(&$query, &$filters));
         $db->setQuery($query);
         return $db->loadResult();
     }
 
     function getAllOrders($limitstart, $limit, $filters, $filter_order, $filter_order_Dir) {
-        $jshopConfig = JSFactory::getConfig();
         $db = Factory::getDBO(); 
-        $where = "";
-        if ($filters['status_id']){
-            $where .= " and O.order_status = '".$db->escape($filters['status_id'])."'";
-        }
-        if($filters['user_id']) $where .= " and O.user_id = '".$db->escape($filters['user_id'])."'";
-        if ($filters['text_search']){
-            $search = $db->escape($filters['text_search']);
-            $where .= " and (O.`order_number` like '%".$search."%' or O.`f_name` like '%".$search."%' or O.`l_name` like '%".$search."%' or O.`email` like '%".$search."%' or O.`firma_name` like '%".$search."%' or O.`d_f_name` like '%".$search."%' or O.`d_l_name` like '%".$search."%' or O.`d_firma_name` like '%".$search."%' or O.order_add_info like '%".$search."%') ";
-        }
-        if (!$filters['notfinished']) $where .= "and O.order_created='1' ";
-        if ($filters['date_from']){
-			$date = Helper::getJsDateDB($filters['date_from'], $jshopConfig->field_birthday_format);
-			$where .= ' and O.order_date>="'.$db->escape($date).'" ';
-		}
-		if ($filters['date_to']){
-			$date = Helper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
-			$where .= ' and O.order_date<="'.$db->escape($date).' 23:59:59" ';
-		}
-        if (isset($filters['payment_id']) && $filters['payment_id']){
-		    $where .= " and O.payment_method_id=".$db->q($filters['payment_id']);
-	    }
-	    if (isset($filters['shipping_id']) && $filters['shipping_id']){
-		    $where .= " and O.shipping_method_id=".$db->q($filters['shipping_id']);
-	    }
-        
+        $where = $this->_getAllOrdersQueryForFilter($filters);
         $order = $filter_order." ".$filter_order_Dir;
-        
         if (isset($filters['vendor_id']) && $filters['vendor_id']){
-            $where .= " and OI.vendor_id='".$db->escape($filters['vendor_id'])."'";
             $query = "SELECT distinct O.* FROM `#__jshopping_orders` as O
                   left join `#__jshopping_order_item` as OI on OI.order_id=O.order_id
                   where 1 $where ORDER BY ".$order;
@@ -99,11 +45,55 @@ class OrdersModel extends BaseadminModel{
                   left join `#__jshopping_vendors` as V on V.id=O.vendor_id
                   where 1 $where ORDER BY ".$order;
         }
-        
-        $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onBeforeQueryGetAllOrders', array(&$query, &$filters, &$filter_order, &$filter_order_Dir));
+        $app = Factory::getApplication();
+        $app->triggerEvent('onBeforeQueryGetAllOrders', array(&$query, &$filters, &$filter_order, &$filter_order_Dir));
 		$db->setQuery($query, $limitstart, $limit);
         return $db->loadObjectList();
+    }
+
+    function _getAllOrdersQueryForFilter($filters){
+        $jshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
+        $where = "";
+        if ($filters['status_id']){
+            $where .= " and O.order_status=".$db->q($filters['status_id']);
+        }
+        if ($filters['user_id']) $where .= " and O.user_id=".$db->q($filters['user_id']);
+        if ($filters['text_search']){
+            $search = $db->escape($filters['text_search']);
+            $where .= " and (
+            O.`order_number` like '%".$search."%' 
+            or O.`f_name` like '%".$search."%' 
+            or O.`l_name` like '%".$search."%' 
+            or CONCAT(O.`f_name`, ' ', O.`l_name`) like '%".$search."%' 
+            or O.`email` like '%".$search."%' 
+            or O.`firma_name` like '%".$search."%' 
+            or O.`d_f_name` like '%".$search."%' 
+            or O.`d_l_name` like '%".$search."%'
+            or CONCAT(O.`d_f_name`, ' ', O.`d_l_name`) like '%".$search."%' 
+            or O.`d_firma_name` like '%".$search."%' 
+            or O.order_add_info like '%".$search."%'
+            ) ";
+        }
+        if (!$filters['notfinished']) $where .= "and O.order_created=1 ";
+        if ($filters['date_from']){
+			$date = Helper::getJsDateDB($filters['date_from'], $jshopConfig->field_birthday_format);
+			$where .= ' and O.order_date>="'.$db->escape($date).'" ';
+		}
+		if ($filters['date_to']){
+			$date = Helper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
+			$where .= ' and O.order_date<="'.$db->escape($date).' 23:59:59" ';
+		}
+        if (isset($filters['payment_id']) && $filters['payment_id']){
+		    $where .= " and O.payment_method_id=".$db->q($filters['payment_id']);
+	    }
+	    if (isset($filters['shipping_id']) && $filters['shipping_id']){
+		    $where .= " and O.shipping_method_id=".$db->q($filters['shipping_id']);
+	    }
+        if (isset($filters['vendor_id']) && $filters['vendor_id']){
+            $where .= " and OI.vendor_id=".$db->q($filters['vendor_id']);
+        }
+        return $where;
     }
 
     function getAllOrderStatus($order = null, $orderDir = null) {

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.4 26.02.2024
+* @version      5.5.6 26.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -219,6 +219,16 @@ class ProductFieldsModel extends BaseadminModel{
             }
         }
         return $res;
+    }
+
+    public function getListIdByType($type) {
+        $db = Factory::getDBO();
+        $query = $db->getQuery(true);
+        $query->select('id')
+            ->from($db->qn('#__jshopping_products_extra_fields'))
+            ->where($db->qn('type').' = '.(int)$type);
+        $db->setQuery($query);
+        return $db->loadColumn();
     }
 
 }

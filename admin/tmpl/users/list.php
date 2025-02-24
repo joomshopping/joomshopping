@@ -104,68 +104,72 @@ $select_user = $this->select_user;
 </tr>
 </thead> 
 <?php $i=0; foreach($rows as $row){?>
-
-<tr class="row<?php echo ($i  %2);?>" >
-    
- <td>
-   <?php echo $pageNav->getRowOffset($i);?>
- </td>
- <?php if(!$select_user) {?> 
- <td>
-   <?php echo HTMLHelper::_('grid.id', $i, $row->user_id);?>
- </td>
- <?php }?>
- <td>
-     <?php if($select_user) {?> <a onclick="window.parent.selectUserBehaviour('<?php echo $row->user_id?>','<?php echo $this->e_name?>')" href="#"> <?php }?>
-   <?php echo $row->number;?>
-    <?php if($select_user) {?> </a> <?php }?>
- </td>
- <td>
-  <?php if(!$select_user) {?>    
-   <a href="index.php?option=com_jshopping&controller=users&task=edit&user_id=<?php echo $row->user_id?>">
-     <?php echo $row->u_name?>
-   </a>
-  <?php }else{?>
-   <a onclick="window.parent.selectUserBehaviour('<?php echo $row->user_id?>','<?php echo $this->e_name?>')" href="#">  
-     <?php echo $row->u_name?>
-   </a>
-  <?php }?>
- </td>
- <td>
-   <?php echo $row->f_name;?>
- </td>
- <td>
-   <?php echo $row->l_name;?>
- </td>
- <td>
-   <?php echo $row->firma_name;?>
- </td>
- <td>
-   <?php echo $row->email;?>
- </td>
- <?php print $row->tmp_html_col_after_email?>
- <td>
-   <?php echo $row->usergroup_name;?>
- </td>
- <?php if(!$select_user) {?> 
- <td class="center">
-   <a class="btn btn-mini btn-info" href='index.php?option=com_jshopping&controller=orders&client_id=<?php print $row->user_id?>' target='_blank'>
-    <?php print Text::_('JSHOP_ORDERS')?>
-   </a>
- </td>
- <td class="center">
-   <?php echo HTMLHelper::_('jgrid.published', !$row->block, $i);?>
- </td>
- <td class="center">
-    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=users&task=edit&user_id=<?php print $row->user_id?>'>
-        <i class="icon-edit"></i>
+<tr class="row<?php echo ($i  %2);?>">
+    <td>
+    <?php echo $pageNav->getRowOffset($i);?>
+    </td>
+    <?php if(!$select_user) {?> 
+    <td>
+    <?php echo HTMLHelper::_('grid.id', $i, $row->user_id);?>
+    </td>
+    <?php }?>
+    <td>
+        <?php if ($select_user) {?>
+            <a onclick="window.parent.selectUserBehaviour('<?php echo $row->user_id?>','<?php echo $this->e_name?>')" href="#"> 
+        <?php }?>
+        <?php echo $row->number;?>
+        <?php if ($select_user) {?>
+            </a>
+        <?php }?>
+        <?php print $row->tmp_html_after_number ?? '';?>
+    </td>
+    <td>
+        <?php if(!$select_user) {?>    
+        <a href="index.php?option=com_jshopping&controller=users&task=edit&user_id=<?php echo $row->user_id?>">
+            <?php echo $row->u_name?>
+        </a>
+        <?php }else{?>
+        <a onclick="window.parent.selectUserBehaviour('<?php echo $row->user_id?>','<?php echo $this->e_name?>')" href="#">  
+            <?php echo $row->u_name?>
+        </a>
+        <?php }?>
+        <?php print $row->tmp_html_after_u_name ?? '';?>
+    </td>
+    <td>
+    <?php echo $row->f_name;?>
+    </td>
+    <td>
+    <?php echo $row->l_name;?>
+    </td>
+    <td>
+    <?php echo $row->firma_name;?>
+    </td>
+    <td>
+    <?php echo $row->email;?>
+    </td>
+    <?php print $row->tmp_html_col_after_email?>
+    <td>
+    <?php echo $row->usergroup_name;?>
+    </td>
+    <?php if(!$select_user) {?> 
+    <td class="center">
+    <a class="btn btn-mini btn-info" href='index.php?option=com_jshopping&controller=orders&client_id=<?php print $row->user_id?>' target='_blank'>
+        <?php print Text::_('JSHOP_ORDERS')?>
     </a>
- </td>
- <?php }?>
- <td class="center">
-    <?php print $row->user_id?>
- </td>
-<?php print $row->tmp_html_col_after_id?>
+    </td>
+    <td class="center">
+    <?php echo HTMLHelper::_('jgrid.published', !$row->block, $i);?>
+    </td>
+    <td class="center">
+        <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=users&task=edit&user_id=<?php print $row->user_id?>'>
+            <i class="icon-edit"></i>
+        </a>
+    </td>
+    <?php }?>
+    <td class="center">
+        <?php print $row->user_id?>
+    </td>
+    <?php print $row->tmp_html_col_after_id?>
 </tr>
 
 <?php 
