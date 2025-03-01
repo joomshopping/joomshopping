@@ -8,6 +8,7 @@
 */
 defined('_JEXEC') or die();
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -26,6 +27,9 @@ $i=0;
             <thead>
                 <tr>
                     <th class="title" width="10">#</th>
+                    <th width="10">
+                        <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)">
+                    </th>
                     <th align="left">
                         <?php echo Text::_('JSHOP_TITLE')?>
                     </th>
@@ -47,6 +51,9 @@ $i=0;
                         <?php echo Text::_('JSHOP_CONFIG')?>
                     </th>
                     <th width="50" class="center">
+                        <?php echo Text::_('JSHOP_PUBLISH')?>
+                    </th>
+                    <th width="50" class="center">
                         <?php echo Text::_('JSHOP_DELETE')?>
                     </th>
                     <th width="40" class="center">
@@ -58,6 +65,9 @@ $i=0;
             <tr class="row<?php echo $i % 2;?>">
                 <td>
                     <?php echo $i+1;?>
+                </td>
+                <td>
+                    <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
                 </td>
                 <td>
                     <?php echo $row->name;?>
@@ -111,8 +121,13 @@ $i=0;
                     <?php }?>
                 </td>
                 <td class="center">
+                    <?php if ($row->publish != -1) {?>
+                    <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
+                    <?php }?>
+                </td>
+                <td class="center">
                     <a class="btn btn-micro  btn-nopad"
-                        href='index.php?option=com_jshopping&controller=addons&task=remove&id=<?php print $row->id?>'
+                        href='index.php?option=com_jshopping&controller=addons&task=remove&cid[]=<?php print $row->id?>'
                         onclick="return confirm('<?php print Text::_('JSHOP_DELETE_ALL_DATA')?>')">
                         <i class="icon-delete"></i>
                     </a>

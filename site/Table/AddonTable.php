@@ -11,15 +11,11 @@ use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\File;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 defined('_JEXEC') or die();
 
 class AddonTable extends ShopbaseTable{
-    
-    var $id = null;
-    var $alias = null;
-    var $key = null;
-    var $version = null;
-    var $params = null;
     
     function __construct(&$_db){
         parent::__construct('#__jshopping_addons', 'id', $_db);
@@ -228,7 +224,6 @@ class AddonTable extends ShopbaseTable{
 	}
 	
 	function deleteFolders($folders){
-		jimport('joomla.filesystem.folder');
 		foreach($folders as $folder){
 			if ($folder!=''){
 				Folder::delete(JPATH_ROOT."/".$folder);
@@ -237,12 +232,81 @@ class AddonTable extends ShopbaseTable{
 	}
 	
 	function deleteFiles($files){
-		jimport('joomla.filesystem.file');
 		foreach($files as $file){
 			if ($file!=''){
 				File::delete(JPATH_ROOT."/".$file);
 			}
 		}
 	}
+
+    function getFolder() {
+        return JPATH_ROOT."/components/com_jshopping/addons/".$this->alias;
+    }
+
+    function published() {
+        $file = $this->getFolder()."/published.php";
+        if (file_exists($file)) {
+            include $file;
+        } else {
+            $je_list = $this->getJoomlaExtensions();
+            $this->joomlaExtensionsPublish($je_list, 1);
+        }
+        $this->publish = 1;
+        $this->store();
+    }
+
+    function unpublished() {
+        $file = $this->getFolder()."/unpublished.php";
+        if (file_exists($file)) {
+            include $file;
+        } else {
+            $je_list = $this->getJoomlaExtensions();
+            $this->joomlaExtensionsPublish($je_list, 0);
+        }
+        $this->publish = 0;
+        $this->store();
+    }
+
+    function getJoomlaExtensionsFromConfigFile() {
+        $file = $this->getFolder()."/joomla_extensions.php";
+        if (file_exists($file)) {
+            return include $file;
+        } else {
+            return [];
+        }
+    }
+
+    function getJoomlaExtensionsDefault() {
+        $db = Factory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select(['type','element','folder']);
+        $query->from($db->qn('#__extensions'));
+        $query->where($db->qn('type')."=".$db->q('plugin'));
+        $query->where($db->qn('element')."=".$db->q($this->alias));
+        $db->setQuery($query);
+        return $db->loadAssocList();
+    }
+
+    function getJoomlaExtensions() {
+        $list = $this->getJoomlaExtensionsFromConfigFile();
+        if (count($list) == 0) {
+            $list = $this->getJoomlaExtensionsDefault();
+        }
+        return $list;
+    }
+
+    function joomlaExtensionsPublish($list, $flag) {
+        $db = Factory::getDbo();
+        foreach($list as $item) {
+            $query = $db->getQuery(true);
+            $query->update('#__extensions')
+            ->set($db->qn('enabled')." = ".(int)$flag)
+            ->where($db->qn('type')." = ". $db->q($item['type']))
+            ->where($db->qn('element')." = ". $db->q($item['element']))
+            ->where($db->qn('folder')." = ". $db->q($item['folder']));
+            $db->setQuery($query);
+            $db->execute();
+        }
+    }
 
 }

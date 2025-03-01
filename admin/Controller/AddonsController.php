@@ -74,12 +74,6 @@ class AddonsController extends BaseadminController{
             $this->setRedirect("index.php?option=com_jshopping&controller=addons");
         }
     }
-
-    public function remove(){
-        $id = $this->input->getVar("id");
-        JSFactory::getModel("addons")->delete($id);
-        $this->setRedirect("index.php?option=com_jshopping&controller=addons");
-    }
     
     public function info(){
         $id = $this->input->getVar("id");

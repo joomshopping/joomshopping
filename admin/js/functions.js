@@ -1176,7 +1176,7 @@ var jshopAdminClass = function(){
                     }
                 }
                 if (jQuery(".prod_extrafield_values select", this).length) {   
-                    let val = jQuery(".prod_extrafield_values select", this).val();                 
+                    let val = jQuery(".prod_extrafield_values select", this).val();
                     if (val=='0' || val.length==0) {
                         jQuery(this).hide();
                     }
@@ -1200,7 +1200,16 @@ var jshopAdmin = new jshopAdminClass();
 
 jQuery(document).ready(function(){
     jQuery('.js-stools-btn-clear').click(function(){
-        jQuery('#text_search').val('');
+        let closest = jQuery(this).closest('.js-filters');
+        let selects = jQuery('select', closest);
+        selects.each(function(){
+            jQuery(this).val(0);
+            let def_value = jQuery(this).attr('default-value');
+            if (typeof(def_value) != 'undefined') {
+                jQuery(this).val(def_value);  
+            }
+        });
+        jQuery('input', closest).val('');
         this.form.submit();
     });
 

@@ -3,7 +3,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.5.6 10.02.2025
+* @version      5.6.0 01.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -61,6 +61,7 @@ $config->css_path = $config->path."css/";
 $config->css_live_path = $config->live_path."css/";
 
 $config->file_generete_pdf_order = '\\Joomla\\Component\\Jshopping\\Site\\Pdf\\Order';
+$config->system_addons = ['tcpdf' => ['alias' => 'lib_tcpdf', 'name' => 'Lib TcPdf', 'version' => '1.1.0']];
 
 $config->xml_update_path = "http://www.webdesigner-profi.de/joomla-webdesign/update/update.xml";
 $config->updates_site_path = "http://www.webdesigner-profi.de/joomla-webdesign/joomla-shop/downloads/updates.html";

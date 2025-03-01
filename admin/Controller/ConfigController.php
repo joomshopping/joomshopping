@@ -286,6 +286,8 @@ class ConfigController extends BaseadminController{
 		$extconf = array('imageheader'=>'header.jpg', 'imagefooter'=>'footer.jpg');	
 		$post = $this->input->post->getArray();
         $dispatcher->triggerEvent('onBeforeSaveConfig', array(&$post, &$extconf));
+
+        JSFactory::getModel("addondependencies")->clearSystemAddons();
         
         if ($tab == 5){
             $vendor = JSFactory::getTable('vendor');

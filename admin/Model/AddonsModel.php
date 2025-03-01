@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.1 15.04.2024
+* @version      5.6.0 01.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,7 +18,9 @@ defined('_JEXEC') or die();
 
 class AddonsModel extends BaseadminModel{
 
-    function getList($details = 0){
+    protected $nameTable = 'addon';
+
+    public function getList($details = 0){
         $db = Factory::getDBO();
         $jshopConfig = JSFactory::getConfig();
         $query = "SELECT * FROM `#__jshopping_addons`";
@@ -73,6 +75,15 @@ class AddonsModel extends BaseadminModel{
 		$dispatcher->triggerEvent('onAfterSaveAddons', array(&$params, &$post, &$row));
         return $row;
     }
+
+    public function deleteList(array $cid, $msg = 1){
+        $res = [];
+		foreach($cid as $id){
+            $this->delete($id);
+            $res[$id] = true;
+		}
+        return $res;
+    }
     
     public function delete($id){
         $text = '';
@@ -83,11 +94,25 @@ class AddonsModel extends BaseadminModel{
         if ($row->uninstall){
             include(JPATH_ROOT.$row->uninstall);
         }
+        $alias = $row->alias;
         $row->delete();
+        JSFactory::getModel('Addondependencies')->deleteByParent($alias);
         $dispatcher->triggerEvent('onAfterRemoveAddons', array(&$id, &$text));
         if ($text){
             Factory::getApplication()->enqueueMessage($text, 'message');
         }
+    }
+
+    public function publish(array $cid, $flag){
+        foreach($cid as $id){
+            $table = $this->getDefaultTable();
+            $table->load($id);
+            if ($flag) {
+                $table->published();
+            } else {
+                $table->unpublished();
+            }
+		}
     }
 
     public function getListWebCategory() {
