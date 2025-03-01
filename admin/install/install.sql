@@ -1287,7 +1287,7 @@ INSERT INTO `#__jshopping_configs` (`id`, `config_id`, `key`, `value`) VALUES
 (43, 1, 'hide_buy_not_avaible_stock', '1'),
 (44, 1, 'show_sort_product', '1'),
 (45, 1, 'show_count_select_products', '1'),
-(46, 1, 'order_send_pdf_client', '1'),
+(46, 1, 'order_send_pdf_client', '0'),
 (47, 1, 'order_send_pdf_admin', '0'),
 (48, 1, 'show_delivery_time', '0'),
 (49, 1, 'securitykey', ''),
