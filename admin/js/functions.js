@@ -1194,6 +1194,12 @@ var jshopAdminClass = function(){
         return ajaxLoadAnimate;
     }
 
+    this.windowPopup = function(obj) {
+        let url = jQuery(obj).attr('patch');
+        let name = jQuery(obj).attr('winname') ?? 'win';
+        window.open(url, name, 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=800,height=600,directories=no,location=no');
+    }
+
 }
 
 var jshopAdmin = new jshopAdminClass();
@@ -1211,6 +1217,11 @@ jQuery(document).ready(function(){
         });
         jQuery('input', closest).val('');
         this.form.submit();
+    });
+
+    jQuery(document).on('click', 'a.js_window_popup', function(){        
+        jshopAdmin.windowPopup(this);
+        return false;
     });
 
     jQuery(".joomla-tabs [data-toggle='tab']").on("click", function(e){

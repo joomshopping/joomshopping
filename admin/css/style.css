@@ -702,6 +702,9 @@ img.productlabels{
 .fs-14 {
     font-size: 14px;
 }
+.js_window_popup{
+    cursor: pointer;
+}
 #ajaxLoadAnimate {
     position : fixed;
     left : 0;

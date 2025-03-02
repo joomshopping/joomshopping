@@ -49,7 +49,7 @@ class AddondependenciesModel extends BaseadminModel{
             if ($this->checkInstall($item->alias, $item->version)) {
                 Helper::saveToLog("install_dep.log", 'checkinstall ok '.$item->alias." ".$item->version);
                 $this->saveAutoInstallResult($item->id, 1);
-            } elseif ($item->autoinstall == 0) {
+            } elseif ($item->error == 0) {
                 $this->autoInstall($item, $msg = 1);
             } elseif ($msg) {
                 $this->msgInstall($item);
@@ -140,9 +140,10 @@ class AddondependenciesModel extends BaseadminModel{
     public function saveAutoInstallResult($id, $result) {
         $table = JSFactory::getTable('addondependencies');
         $table->id = $id;
-        $table->autoinstall = 1;
         if ($result == 1) {
             $table->installed = 1;
+        } else {
+            $table->error = 1;
         }
         $table->store();
     }

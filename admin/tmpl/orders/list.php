@@ -174,25 +174,22 @@ $jshopConfig = JSFactory::getConfig();
                 <?php }?>
                 <td class="center">
                     <?php if ($jshopConfig->generate_pdf){?>
-                    <?php if ($display_info_order && $row->order_created){?>
-                    <?php if ($row->pdf_file!=''){?>
-                    <a
-                        href="javascript:void window.open('<?php echo $jshopConfig->pdf_orders_live_path."/".$row->pdf_file?>', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=800,height=600,directories=no,location=no');">
-                        <img border="0" src="components/com_jshopping/images/jshop_print.png" alt="print" />
-                    </a>
-                    <?php echo $row->_after_order_pdf ?? '';?>
-                    <?php }elseif($jshopConfig->send_invoice_manually){?>
-                    <a href="index.php?option=com_jshopping&controller=orders&task=send&order_id=<?php echo $row->order_id?>&back=orders"
-                        title="<?php print Text::_('JSHOP_SEND_MAIL')?>">
-                        <i class="icon-envelope"></i>
-                    </a>
-                    <?php }?>
-                    <?php }?>
+                        <?php if ($display_info_order && $row->order_created){?>
+                            <?php if ($row->pdf_file!=''){?>
+                                <a class="js_window_popup" patch="<?php echo $jshopConfig->pdf_orders_live_path."/".$row->pdf_file?>" title="<?php print Text::_('JSHOP_EMAIL_BILL')?>">
+                                    <i class="icon-vcard"></i>
+                                </a>
+                                <?php echo $row->_after_order_pdf ?? '';?>
+                            <?php }elseif($jshopConfig->send_invoice_manually){?>
+                                <a class="js_window_popup" patch="index.php?option=com_jshopping&controller=orders&task=send&order_id=<?php echo $row->order_id?>&back=orders" title="<?php print Text::_('JSHOP_SEND_MAIL')?>">
+                                    <i class="icon-envelope"></i>
+                                </a>
+                            <?php }?>
+                        <?php }?>
                     <?php }else{?>
-                    <a
-                        href="javascript:void window.open('index.php?option=com_jshopping&controller=orders&task=printOrder&order_id=<?php echo $row->order_id?>&tmpl=component', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=yes,resizable=yes,width=800,height=600,directories=no,location=no');">
-                        <img border="0" src="components/com_jshopping/images/jshop_print.png" alt="printhtml" />
-                    </a>
+                        <a class="js_window_popup" patch="index.php?option=com_jshopping&controller=orders&task=printOrder&order_id=<?php echo $row->order_id?>&tmpl=component">
+                            <i class="icon-address"></i>
+                        </a>
                     <?php }?>
                     <?php if (isset($row->_ext_order_info)) echo $row->_ext_order_info;?>
                 </td>
@@ -254,9 +251,8 @@ $jshopConfig = JSFactory::getConfig();
                 <?php print $row->_tmp_cols_8?>
                 <?php if ($jshopConfig->shop_mode==1){?>
                 <td class="center">
-                    <a class="btn btn-micro btn-nopad"
-                        href='index.php?option=com_jshopping&controller=orders&task=transactions&order_id=<?php print $row->order_id;?>'>
-                        <img src='components/com_jshopping/images/jshop_options_s.png'>
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=orders&task=transactions&order_id=<?php print $row->order_id;?>'>
+                        <i class="icon-tree-2"></i>
                     </a>
                 </td>
                 <?php }?>
