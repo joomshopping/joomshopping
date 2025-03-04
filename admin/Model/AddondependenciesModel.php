@@ -18,18 +18,24 @@ use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 
 defined('_JEXEC') or die();
 
-class AddondependenciesModel extends BaseadminModel{    
+class AddondependenciesModel extends BaseadminModel{
 
-    public function getList($installed = null){
+    public function getList($filter = []){
         $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $query->select('*');
         $query->from($db->qn('#__jshopping_addons_dependencies'));
-        if (isset($installed)) {
-            $query->where($db->qn('installed')."=".$db->q($installed));
+        if (isset($filter['installed'])) {
+            $query->where($db->qn('installed')."=".$db->q($filter['installed']));
+        }
+        if (isset($filter['alias'])) {
+            $query->where($db->qn('alias')."=".$db->q($filter['alias']));
+        }
+        if (isset($filter['parent'])) {
+            $query->where($db->qn('parent')."=".$db->q($filter['parent']));
         }
         $db->setQuery($query);
-        return $db->loadObjectList();        
+        return $db->loadObjectList();
     }
 
     public function deleteByParent($parent) {
@@ -44,7 +50,7 @@ class AddondependenciesModel extends BaseadminModel{
     public function autoInstallAll($msg = 1){
         Factory::getLanguage()->load('com_installer');
         $this->systemAddonsCheck();
-        $list = $this->getList(0);
+        $list = $this->getList(['installed' => 0]);
         foreach($list as $item) {
             if ($this->checkInstall($item->alias, $item->version)) {
                 Helper::saveToLog("install_dep.log", 'checkinstall ok '.$item->alias." ".$item->version);

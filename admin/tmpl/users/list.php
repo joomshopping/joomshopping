@@ -3,7 +3,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.0 01.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -153,7 +153,7 @@ $select_user = $this->select_user;
     </td>
     <?php if(!$select_user) {?> 
     <td class="center">
-    <a class="btn btn-mini btn-info" href='index.php?option=com_jshopping&controller=orders&client_id=<?php print $row->user_id?>' target='_blank'>
+    <a class="btn btn-sm btn-info" href='index.php?option=com_jshopping&controller=orders&client_id=<?php print $row->user_id?>' target='_blank'>
         <?php print Text::_('JSHOP_ORDERS')?>
     </a>
     </td>

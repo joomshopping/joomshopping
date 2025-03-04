@@ -13,6 +13,7 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 
 defined('_JEXEC') or die();
 
@@ -67,40 +68,49 @@ class AddonsModel extends BaseadminModel{
         if (!is_array($params)){
             $params = array();
         }
-        $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onBeforeSaveAddons', array(&$params, &$post, &$row));
+        $app = Factory::getApplication();
+        $app->triggerEvent('onBeforeSaveAddons', array(&$params, &$post, &$row));
         $row->bind($post);
         $row->setParams($params);
         $row->store();
-		$dispatcher->triggerEvent('onAfterSaveAddons', array(&$params, &$post, &$row));
+		$app->triggerEvent('onAfterSaveAddons', array(&$params, &$post, &$row));
         return $row;
     }
 
     public function deleteList(array $cid, $msg = 1){
         $res = [];
 		foreach($cid as $id){
-            $this->delete($id);
+            $this->delete($id, $msg);
             $res[$id] = true;
 		}
         return $res;
     }
     
-    public function delete($id){
+    public function delete($id, $msg = 1){
         $text = '';
-        $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onBeforeRemoveAddons', array(&$id));
+        $app = Factory::getApplication();
+        $app->triggerEvent('onBeforeRemoveAddons', array(&$id));
+        $adModel = JSFactory::getModel('Addondependencies');
         $row = JSFactory::getTable('addon');
         $row->load($id);
+        $used = $adModel->getList(['alias' => $row->alias]);
+        if (count($used)) {
+            if ($msg){
+                JSError::raiseWarning("", $row->name." - ".Text::_('JSHOP_ADDON_NO_DELETED'));
+            }
+            return 0;
+        }
         if ($row->uninstall){
             include(JPATH_ROOT.$row->uninstall);
         }
         $alias = $row->alias;
         $row->delete();
-        JSFactory::getModel('Addondependencies')->deleteByParent($alias);
-        $dispatcher->triggerEvent('onAfterRemoveAddons', array(&$id, &$text));
-        if ($text){
-            Factory::getApplication()->enqueueMessage($text, 'message');
+        $adModel->deleteByParent($alias);
+        $app->triggerEvent('onAfterRemoveAddons', array(&$id, &$text));
+        if ($msg && $text){
+            $app->enqueueMessage($text, 'message');
         }
+        return 1;
     }
 
     public function publish(array $cid, $flag){

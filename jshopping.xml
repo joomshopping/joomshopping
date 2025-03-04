@@ -7,7 +7,7 @@
    <authorUrl>https://www.webdesigner-profi.de</authorUrl>
    <copyright></copyright>
    <license>Open Source License, GNU/GPL</license>
-   <version>5.6.0A3</version>
+   <version>5.6.0A4</version>
    <description>Joomshopping - shop component. Note: JoomShopping code files are named as jshopping</description>
    <namespace>Joomla\Component\Jshopping</namespace>
 

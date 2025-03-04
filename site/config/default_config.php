@@ -61,7 +61,7 @@ $config->css_path = $config->path."css/";
 $config->css_live_path = $config->live_path."css/";
 
 $config->file_generete_pdf_order = '\\Joomla\\Component\\Jshopping\\Site\\Pdf\\Order';
-$config->system_addons = ['tcpdf' => ['alias' => 'lib_tcpdf', 'name' => 'Lib TcPdf', 'version' => '1.1.0']];
+$config->system_addons = ['tcpdf' => ['alias' => 'lib_tcpdf', 'name' => 'Lib TcPdf', 'version' => '1.1.1']];
 
 $config->xml_update_path = "http://www.webdesigner-profi.de/joomla-webdesign/update/update.xml";
 $config->updates_site_path = "http://www.webdesigner-profi.de/joomla-webdesign/joomla-shop/downloads/updates.html";
