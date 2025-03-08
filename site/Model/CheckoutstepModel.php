@@ -65,7 +65,7 @@ class CheckoutStepModel  extends BaseModel{
 		
 	}
 	
-	public function getCheckoutUrl($step, $defaultItemId = 0, $redirect = 1){
+	public function getCheckoutUrl($step, $defaultItemId = 1, $redirect = 1){
 		$jshopConfig = JSFactory::getConfig();
 		if (preg_match('/^(\d)+$/', $step)){			
 			$task = 'step'.$step;

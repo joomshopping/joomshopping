@@ -164,7 +164,7 @@ class Metadata{
 		self::metaData("myorder-detail", 0, Text::_('JSHOP_MY_ORDERS'));
 		$shim = ShopItemMenu::getInstance();
 		if ($shim->getOrders()!=Factory::getApplication()->input->getInt('Itemid')){
-			Helper::appendPathWay(Text::_('JSHOP_MY_ORDERS'), Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=orders', 0, 0, $jshopConfig->use_ssl));
+			Helper::appendPathWay(Text::_('JSHOP_MY_ORDERS'), Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=orders', 1, 0, $jshopConfig->use_ssl));
 		}
         Helper::appendPathWay(Text::_('JSHOP_ORDER_NUMBER').": ".$order->order_number);
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.0 07.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,15 +17,25 @@ defined('_JEXEC') or die();
 
 class AddonTable extends ShopbaseTable{
     
-    function __construct(&$_db){
+    public function __construct(&$_db){
         parent::__construct('#__jshopping_addons', 'id', $_db);
     }
     
-    function setParams($params){
-        $this->params = serialize($params);
+    public function setParams($params, $only_new = 0){
+        if ($only_new == 0) {
+            $this->params = serialize($params);
+        } else {
+            $save_params = $this->getParams();
+            foreach($params as $k=>$v) {
+                if (!isset($save_params[$k])) {
+                    $save_params[$k] = $v;
+                }
+            }
+            $this->params = serialize($save_params);
+        }
     }
         
-    function getParams(){
+    public function getParams(){
         if ($this->params!=""){
             return unserialize($this->params);
         }else{
@@ -33,19 +43,19 @@ class AddonTable extends ShopbaseTable{
         }
     }
 
-    function loadAlias($alias){
+    public function loadAlias($alias){
         $this->load(array('alias'=>$alias));
         $this->alias = $alias;
     }
     
-    function getKeyForAlias($alias){
+    public function getKeyForAlias($alias){
         $db = Factory::getDbo();
         $query = "select `key` from #__jshopping_addons where `alias`='".$db->escape($alias)."'";
         $db->setQuery($query);
         return $db->loadResult();
     }
 	
-	function installJoomlaExtension($data, $installexist = 0){
+	public function installJoomlaExtension($data, $installexist = 0){
         $db = Factory::getDbo();
         $db->setQuery("SELECT extension_id FROM `#__extensions` WHERE element='".$db->escape($data['element'])."' AND folder='".$db->escape($data['folder'])."'");
         $exid = (int)$db->loadResult();
@@ -65,7 +75,7 @@ class AddonTable extends ShopbaseTable{
         }
     }
 	
-	function installJoomlaModule($data, $installexist = 0){
+	public function installJoomlaModule($data, $installexist = 0){
         $db = Factory::getDbo();
         $db->setQuery("SELECT id FROM `#__modules` WHERE module='".$db->escape($data['module'])."'");
         $exid = (int)$db->loadResult();
@@ -91,7 +101,7 @@ class AddonTable extends ShopbaseTable{
         }
     }
     
-    function installShipping($data, $installexist = 0){
+    public function installShipping($data, $installexist = 0){
         $db = Factory::getDbo();
         $db->setQuery("SELECT id FROM `#__jshopping_shipping_ext_calc` WHERE `alias`='".$db->escape($data['alias'])."'");
         $exid = (int)$db->loadResult();
@@ -116,7 +126,7 @@ class AddonTable extends ShopbaseTable{
         }
     }
 	
-	function installShippingMethod($data, $installexist = 0){
+	public function installShippingMethod($data, $installexist = 0){
         $db = Factory::getDbo();
         $db->setQuery("SELECT shipping_id FROM `#__jshopping_shipping_method` WHERE `alias`='".$db->escape($data['alias'])."'");
         $exid = (int)$db->loadResult();
@@ -141,7 +151,7 @@ class AddonTable extends ShopbaseTable{
         }
     }
     
-    function installPayment($data, $installexist = 0){
+    public function installPayment($data, $installexist = 0){
         $db = Factory::getDbo();
         $db->setQuery("SELECT payment_id FROM `#__jshopping_payment_method` WHERE `payment_class`='".$db->escape($data['payment_class'])."'");
         $exid = (int)$db->loadResult();
@@ -165,7 +175,7 @@ class AddonTable extends ShopbaseTable{
             return 0;
         }
     }
-    function installImportExport($data, $installexist = 0){
+    public function installImportExport($data, $installexist = 0){
         $db = Factory::getDbo();
         $db->setQuery("SELECT id FROM `#__jshopping_import_export` WHERE `alias`='".$db->escape($data['alias'])."'");
         $exid = (int)$db->loadResult();
@@ -185,7 +195,7 @@ class AddonTable extends ShopbaseTable{
         }
     }
     
-    function addFieldTable($table, $field, $type){
+    public function addFieldTable($table, $field, $type){
         $db = Factory::getDBO();
         $listfields = $db->getTableColumns($table);
         if (!isset($listfields[$field])){
@@ -195,35 +205,35 @@ class AddonTable extends ShopbaseTable{
         }
     }
 	
-	function deleteFieldTable($table, $field){
+	public function deleteFieldTable($table, $field){
 		$db = Factory::getDBO();
 		$query = "ALTER TABLE ".$db->quoteName($table)." DROP ".$db->quoteName($field);
 		$db->setQuery($query);
 		$db->execute();
 	}
 
-	function deleteTable($name) {
+	public function deleteTable($name) {
         $db = Factory::getDbo();
         $query = 'DROP TABLE IF EXISTS '.$db->quoteName($name);
         $db->setQuery($query);
 		$db->execute();
     }
 	
-	function unInstallJoomlaExtension($type, $element, $folder){
+	public function unInstallJoomlaExtension($type, $element, $folder){
 		$db = Factory::getDbo();
 		$query = "delete from `#__extensions` WHERE element='".$db->escape($element)."' AND folder='".$db->escape($folder)."' AND `type`='".$db->escape($type)."'";
 		$db->setQuery($query);
 		return $db->execute();
 	}
 	
-	function unInstallJoomlaModule($name){
+	public function unInstallJoomlaModule($name){
 		$db = Factory::getDbo();
 		$query = "DELETE FROM `#__modules` WHERE module='".$db->escape($name)."'";
 		$db->setQuery($query);
 		return $db->execute();
 	}
 	
-	function deleteFolders($folders){
+	public function deleteFolders($folders){
 		foreach($folders as $folder){
 			if ($folder!=''){
 				Folder::delete(JPATH_ROOT."/".$folder);
@@ -231,7 +241,7 @@ class AddonTable extends ShopbaseTable{
 		}
 	}
 	
-	function deleteFiles($files){
+	public function deleteFiles($files){
 		foreach($files as $file){
 			if ($file!=''){
 				File::delete(JPATH_ROOT."/".$file);
@@ -239,11 +249,11 @@ class AddonTable extends ShopbaseTable{
 		}
 	}
 
-    function getFolder() {
+    public function getFolder() {
         return JPATH_ROOT."/components/com_jshopping/addons/".$this->alias;
     }
 
-    function published() {
+    public function published() {
         $file = $this->getFolder()."/published.php";
         if (file_exists($file)) {
             include $file;
@@ -255,7 +265,7 @@ class AddonTable extends ShopbaseTable{
         $this->store();
     }
 
-    function unpublished() {
+    public function unpublished() {
         $file = $this->getFolder()."/unpublished.php";
         if (file_exists($file)) {
             include $file;
@@ -267,7 +277,7 @@ class AddonTable extends ShopbaseTable{
         $this->store();
     }
 
-    function getJoomlaExtensionsFromConfigFile() {
+    public function getJoomlaExtensionsFromConfigFile() {
         $file = $this->getFolder()."/joomla_extensions.php";
         if (file_exists($file)) {
             return include $file;
@@ -276,7 +286,7 @@ class AddonTable extends ShopbaseTable{
         }
     }
 
-    function getJoomlaExtensionsDefault() {
+    public function getJoomlaExtensionsDefault() {
         $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $query->select(['type','element','folder']);
@@ -287,7 +297,7 @@ class AddonTable extends ShopbaseTable{
         return $db->loadAssocList();
     }
 
-    function getJoomlaExtensions() {
+    public function getJoomlaExtensions() {
         $list = $this->getJoomlaExtensionsFromConfigFile();
         if (count($list) == 0) {
             $list = $this->getJoomlaExtensionsDefault();
@@ -295,7 +305,7 @@ class AddonTable extends ShopbaseTable{
         return $list;
     }
 
-    function joomlaExtensionsPublish($list, $flag) {
+    public function joomlaExtensionsPublish($list, $flag) {
         $db = Factory::getDbo();
         foreach($list as $item) {
             $query = $db->getQuery(true);
@@ -308,5 +318,23 @@ class AddonTable extends ShopbaseTable{
             $db->execute();
         }
     }
+
+	public function store($updateNulls = false){
+        if (isset($this->_dependencies)){
+            foreach($this->_dependencies as $item){
+	            $addonDep = JSFactory::getTable('addondependencies');
+	            $addonDep->loadAlias($item['alias'], $item['parent'] ?? $this->alias);
+	            $addonDep->name = $item['name'];
+	            $addonDep->version = $item['version'];
+	            $addonDep->installed = $item['installed'] ?? 0;
+	            $addonDep->error = $item['error'] ?? 0;
+	            $addonDep->store();
+            }
+        }
+        if (isset($this->_publish) && (!$this->id || $this->publish == -1)) {
+            $this->publish = $this->_publish;
+        }
+		return parent::store($updateNulls);
+	}
 
 }

@@ -429,7 +429,7 @@ class UserController extends BaseController{
         $jshopConfig = JSFactory::getConfig();
         Helper::checkUserLogin();
 		$order_id = $this->input->getInt('order_id');
-		$back_url = Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=order&order_id=".$order_id,0,1,$jshopConfig->use_ssl);
+		$back_url = Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=order&order_id=".$order_id,1,1,$jshopConfig->use_ssl);
 		
 		$model = JSFactory::getModel('userOrder', 'Site');
 		$model->setUserId(Factory::getUser()->id);

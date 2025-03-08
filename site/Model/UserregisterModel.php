@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.1 15.09.2018
+* @version      5.6.0 08.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -87,13 +87,13 @@ class UserregisterModel  extends UserbaseModel{
         return $res;
     }
     
-    private function savePostData(){
-        $session = Factory::getSession();            
-        $session->set('registrationdata', $this->post_data);		
+    public function savePostData(){
+        $session = Factory::getSession();
+        $session->set('registrationdata', $this->post_data);
     }
     
     public function getPostData(){
-        $session = Factory::getSession();            
+        $session = Factory::getSession();
         return $session->get('registrationdata');
     }
     

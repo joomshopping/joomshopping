@@ -156,6 +156,10 @@ class AddondependenciesModel extends BaseadminModel{
 
     public function msgInstall($item) {
         JSError::raiseWarning(300, Text::_('JSHOP_PLEASE_INSTALL').' '.$item->name." ".$item->version);
+        $caturl = 'index.php?option=com_jshopping&controller=addons&task=listweb';
+        $site = JSFactory::getConfig()->website_addons_url;
+        JSError::raiseWarning(300, Text::sprintf('JSHOP_ADDON_USE_CATALOG_OR_WEBSITE', $caturl, $site));
+        
         return 1;
     }
 }

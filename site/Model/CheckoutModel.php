@@ -162,7 +162,7 @@ class CheckoutModel extends BaseModel{
             }elseif($key=='1'){
                 $url = Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=login', 1, 0, $jshopConfig->use_ssl);
             }else{
-                $url = Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step'.$key,0,0,$jshopConfig->use_ssl);
+                $url = Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step'.$key,1,0,$jshopConfig->use_ssl);
             }
             if ($key < $step && !($jshopConfig->step_4_3 && $key==3 && $step==4) || ($jshopConfig->step_4_3 && $key==4 && $step==3)){
                 $output[$key] = '<span class="not_active_step"><a href="'.$url.'">'.$value.'</a></span>';

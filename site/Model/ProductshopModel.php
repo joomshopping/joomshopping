@@ -285,5 +285,13 @@ class ProductShopModel extends BaseModel{
 	public function getTextReview(){
 		return $this->text_review;
 	}
-    
+
+	public function checkValidProductAttributesValues($attributes, $selected){
+		foreach ($attributes as $attribute){
+			if (!empty($selected[$attribute->attr_id]) && $attribute->select_active != $selected[$attribute->attr_id]){
+				return false;
+			}
+		}
+		return true;
+	}
 }
