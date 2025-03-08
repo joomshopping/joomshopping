@@ -678,6 +678,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_addons` (
 `uninstall` VARCHAR(255) NOT NULL default '',
 `params` longtext NOT NULL,
 `publish` TINYINT(1) NOT NULL default -1,
+`config` text NOT NULL,
 PRIMARY KEY  (`id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 

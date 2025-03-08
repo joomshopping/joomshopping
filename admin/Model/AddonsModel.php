@@ -64,16 +64,34 @@ class AddonsModel extends BaseadminModel{
     
     public function save(array $post){
         $row = JSFactory::getTable('addon');
-        $params = $post['params'];
-        if (!is_array($params)){
-            $params = array();
-        }
+        $params = $post['params'] ?? [];
         $app = Factory::getApplication();
         $app->triggerEvent('onBeforeSaveAddons', array(&$params, &$post, &$row));
         $row->bind($post);
         $row->setParams($params);
         $row->store();
 		$app->triggerEvent('onAfterSaveAddons', array(&$params, &$post, &$row));
+        return $row;
+    }
+
+    public function saveconfig(array $post){
+        $row = JSFactory::getTable('addon');
+        $config = $post['config'] ?? [];
+        if (!$config['folder_overrides_view']) {
+            unset($config['folder_overrides_view']);
+        }
+        if (!$config['folder_overrides_js']) {
+            unset($config['folder_overrides_js']);
+        }
+        if (!$config['folder_overrides_css']) {
+            unset($config['folder_overrides_css']);
+        }
+        $app = Factory::getApplication();
+        $app->triggerEvent('onBeforeSaveConfigAddons', array(&$config, &$post, &$row));
+        $row->bind($post);
+        $row->setConfig($config);
+        $row->store();
+		$app->triggerEvent('onBeforeSaveConfigAddons', array(&$config, &$post, &$row));
         return $row;
     }
 

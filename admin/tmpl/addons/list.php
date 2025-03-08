@@ -50,6 +50,11 @@ $i=0;
                     <th width="60" class="center">
                         <?php echo Text::_('JSHOP_CONFIG')?>
                     </th>
+                    <?php if ($this->config->shop_mode == 1) {?>
+                    <th width="50" class="center">
+                        <?php echo Text::_('JSHOP_MAINTENANCE')?>
+                    </th>
+                    <?php } ?>
                     <th width="50" class="center">
                         <?php echo Text::_('JSHOP_PUBLISH')?>
                     </th>
@@ -114,20 +119,25 @@ $i=0;
                 </td>
                 <td class="center">
                     <?php if ($row->config_file_exist){?>
-                    <a class="btn btn-micro  btn-nopad"
-                        href='index.php?option=com_jshopping&controller=addons&task=edit&id=<?php print $row->id?>'>
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=edit&id=<?php print $row->id?>'>
                         <i class="icon-edit"></i>
                     </a>
-                    <?php }?>
+                    <?php }?>                    
                 </td>
+                <?php if ($this->config->shop_mode == 1) {?>
+                <td class="center">
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=config&id=<?php print $row->id?>'>
+                        <i class="icon-wrench"></i>
+                    </a>
+                </td>
+                <?php }?>
                 <td class="center">
                     <?php if ($row->publish != -1) {?>
                     <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
                     <?php }?>
                 </td>
                 <td class="center">
-                    <a class="btn btn-micro  btn-nopad"
-                        href='index.php?option=com_jshopping&controller=addons&task=remove&cid[]=<?php print $row->id?>'
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=remove&cid[]=<?php print $row->id?>'
                         onclick="return confirm('<?php print Text::_('JSHOP_DELETE_ALL_DATA')?>')">
                         <i class="icon-delete"></i>
                     </a>

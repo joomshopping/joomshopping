@@ -37,6 +37,13 @@ class HtmlView extends BaseHtmlView{
         ToolbarHelper::cancel();
         parent::display($tpl);
     }
+
+    function displayConfig($tpl = null){
+        ToolbarHelper::title(Text::_('JSHOP_ADDONS')." / ".Text::_('JSHOP_MAINTENANCE').' / '.$this->row->name, 'generic.png' );
+        ToolbarHelper::save('saveconfig');
+        ToolbarHelper::cancel();
+        parent::display($tpl);
+    }
     
     function displayInfo($tpl = null){
         ToolbarHelper::title(Text::_('JSHOP_ADDONS')." / ".Text::_('JSHOP_DESCRIPTION').' / '.$this->row->name, 'generic.png' );
@@ -61,7 +68,6 @@ class HtmlView extends BaseHtmlView{
         ToolbarHelper::custom("back", 'arrow-left', 'arrow-left', Text::_('JSHOP_ADDONS'), false);
         HelperAdmin::btnHome();
         ToolbarHelper::custom("listwebrefresh", 'icon-refresh', 'icon-refresh', Text::_('JSHOP_REFRESH'), false);
-        
         parent::display($tpl);
 	}
 

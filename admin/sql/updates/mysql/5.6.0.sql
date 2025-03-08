@@ -1,4 +1,5 @@
 ALTER TABLE `#__jshopping_addons` ADD `publish` TINYINT(1) NOT NULL default -1;
+ALTER TABLE `#__jshopping_addons` ADD `config` text NOT NULL;
 
 CREATE TABLE IF NOT EXISTS `#__jshopping_addons_dependencies` (
 `id` int(11) NOT NULL auto_increment,

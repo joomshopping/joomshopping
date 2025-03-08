@@ -5,7 +5,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.5.6 18.01.2025
+* @version      5.6.0 08.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,6 +18,7 @@ class AddonCore{
     protected $addon_params;
     protected $addon_alias = '';
 	protected $addon_id;
+    protected $table;
     public $debug = 0;
 
     public function __construct($addon_alias = ''){
@@ -27,26 +28,37 @@ class AddonCore{
         if ($this->addon_alias == ''){
             throw new Exception('addon_alias empty');
         }
+        $this->table = JSFactory::getTable('addon');
+        $this->table->loadAlias($this->addon_alias);
+
+        if (JSFactory::getConfig()->shop_mode == 1) {
+            $config = $this->table->getConfig();
+            if (isset($config['debug']) && $config['debug']) {
+                $this->debug = $config['debug'];
+            }
+        }
     }
     
     public function getAddonAlias(){
         return $this->addon_alias;
     }
 
-    public function getAddonParams(){
-        if (!$this->addon_params){
-            $addon = JSFactory::getTable('addon');
-            $addon->loadAlias($this->addon_alias);
-            $this->addon_params = $addon->getParams();
-        }
+    public function getAddonParams(){        
+        $this->addon_params = $this->table->getParams();
         return $this->addon_params;
+    }
+
+    public function getAddonConfig(){
+        return $this->table->getConfig();
+    }
+
+    public function getTable(){
+        return $this->table;
     }
     
     public function getAddonId(){
         if (!$this->addon_id){
-            $addon = JSFactory::getTable('addon');
-            $addon->loadAlias($this->addon_alias);
-            $this->addon_id = $addon->id;
+            $this->addon_id = $this->table->id;
         }
         return $this->addon_id;
     }
@@ -54,7 +66,8 @@ class AddonCore{
 	public function getView($layout = '', $dir = null, $ovdir = null){
         $dir = $dir ?? 'components/com_jshopping/templates/addons/'.$this->addon_alias;
 		$template = $this->getJoomlaTemplate();
-		$ovdir = $ovdir ?? 'templates/'.$template.'/html/com_jshopping/addons/'.$this->addon_alias;
+        $config = $this->table->getConfig();
+		$ovdir = $ovdir ?? $config['folder_overrides_view'] ?? 'templates/'.$template.'/html/com_jshopping/addons/'.$this->addon_alias;
 		$view_config = array("template_path" => JPATH_ROOT.'/'.$dir);
         $view = new Joomla\Component\Jshopping\Site\View\Addons\HtmlView($view_config);
 		$view->addTemplatePath(JPATH_ROOT.'/'.$ovdir);
@@ -79,8 +92,9 @@ class AddonCore{
     public function loadCss($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $wap = null){
         $template = $this->getJoomlaTemplate();
         $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
+        $config = $this->table->getConfig();
         $dir = $dir ?? 'components/com_jshopping/css/addons';
-        $ovdir = $ovdir ?? 'templates/'.$template.'/css/addons';
+        $ovdir = $ovdir ?? $config['folder_overrides_css'] ?? 'templates/'.$template.'/css/addons';
         if ($name_as_alias) {
             $filename = $this->addon_alias.$extname.'.css';
         } else {
@@ -105,8 +119,9 @@ class AddonCore{
     public function loadJs($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $wap = null){
         $template = $this->getJoomlaTemplate();
         $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
+        $config = $this->table->getConfig();
         $dir = $dir ?? 'components/com_jshopping/js/addons';
-        $ovdir = $ovdir ?? 'templates/'.$template.'/js/addons';
+        $ovdir = $ovdir ?? $config['folder_overrides_js'] ?? 'templates/'.$template.'/js/addons';
         if ($name_as_alias) {
             $filename = $this->addon_alias.$extname.'.js';
         } else {

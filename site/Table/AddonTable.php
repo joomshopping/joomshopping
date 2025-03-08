@@ -36,10 +36,32 @@ class AddonTable extends ShopbaseTable{
     }
         
     public function getParams(){
-        if ($this->params!=""){
+        if ($this->params != ""){
             return unserialize($this->params);
         }else{
-            return array();
+            return [];
+        }
+    }
+
+    public function setConfig($params, $only_new = 0){
+        if ($only_new == 0) {
+            $this->config = serialize($params);
+        } else {
+            $save_params = $this->getConfig();
+            foreach($params as $k=>$v) {
+                if (!isset($save_params[$k])) {
+                    $save_params[$k] = $v;
+                }
+            }
+            $this->config = serialize($save_params);
+        }
+    }
+        
+    public function getConfig(){
+        if ($this->config != ""){
+            return unserialize($this->config);
+        }else{
+            return [];
         }
     }
 
