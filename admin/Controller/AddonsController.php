@@ -10,6 +10,8 @@ namespace Joomla\Component\Jshopping\Administrator\Controller;
 
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 
@@ -134,6 +136,9 @@ class AddonsController extends BaseadminController{
         $def_overrides_js =  'templates/{YOUR_JOOMLA_TEMPLATE}/js/addons';
         $def_overrides_css =  'templates/{YOUR_JOOMLA_TEMPLATE}/css/addons';
 
+        $debug_options = [0 => Text::_('JNo'), 1 => Text::_('JYES')." L1", 2 => Text::_('JYES')." L2", 3 => Text::_('JYES')." L3"];
+        $debug_select = HTMLHelper::_('select.genericlist', $debug_options, 'config[debug]','class="inputbox form-select"','id','name', $config['debug'] ?? 0);
+
 		$view = $this->getView("addons", 'html');
         $view->setLayout("config");
         $view->row = $row;
@@ -144,6 +149,7 @@ class AddonsController extends BaseadminController{
         $view->def_overrides_view = $def_overrides_view;
         $view->def_overrides_js = $def_overrides_js;
         $view->def_overrides_css = $def_overrides_css;
+        $view->debug_select = $debug_select;
         $app->triggerEvent('onBeforeConfigAddons', array(&$view));
 		$view->displayConfig();
 	}

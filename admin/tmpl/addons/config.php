@@ -30,7 +30,7 @@ defined('_JEXEC') or die();
                 <?php echo Text::_('JSHOP_DEBUG')?>
             </td>
             <td>
-                <?php print HTMLHelper::_('select.booleanlist', 'config[debug]', 'class="inputbox"', $this->config['debug'] ?? 0);?>
+                <?php echo $this->debug_select?>
             </td>
         </tr>
         <tr>

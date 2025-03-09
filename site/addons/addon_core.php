@@ -18,7 +18,7 @@ class AddonCore{
     protected $addon_params;
     protected $addon_alias = '';
 	protected $addon_id;
-    protected $table;
+    protected $table = null;
     public $debug = 0;
 
     public function __construct($addon_alias = ''){
@@ -28,11 +28,8 @@ class AddonCore{
         if ($this->addon_alias == ''){
             throw new Exception('addon_alias empty');
         }
-        $this->table = JSFactory::getTable('addon');
-        $this->table->loadAlias($this->addon_alias);
-
-        if (JSFactory::getConfig()->shop_mode == 1) {
-            $config = $this->table->getConfig();
+        if (JSFactory::getConfig()->shop_mode > 0) {
+            $config = $this->getTable()->getConfig();
             if (isset($config['debug']) && $config['debug']) {
                 $this->debug = $config['debug'];
             }
@@ -43,30 +40,42 @@ class AddonCore{
         return $this->addon_alias;
     }
 
-    public function getAddonParams(){        
-        $this->addon_params = $this->table->getParams();
+    public function getAddonParams(){
+        $this->addon_params = $this->getTable()->getParams();
+        if ($this->debug > 1) {
+            print '<pre>';
+            print '#Addon '.$this->addon_alias.' params: '."\n";
+            print_r($this->addon_params);
+            print '</pre>';
+        }
         return $this->addon_params;
     }
 
     public function getAddonConfig(){
-        return $this->table->getConfig();
+        return $this->getTable()->getConfig();
     }
 
     public function getTable(){
+        if (!isset($this->table)){
+            $this->table = JSFactory::getTable('addon');
+            $this->table->loadAlias($this->addon_alias);
+        }
         return $this->table;
     }
     
     public function getAddonId(){
-        if (!$this->addon_id){
-            $this->addon_id = $this->table->id;
-        }
+        $this->addon_id = $this->getTable()->id;
         return $this->addon_id;
+    }
+
+    public function getPublish(){
+        return $this->getTable()->publish;
     }
 
 	public function getView($layout = '', $dir = null, $ovdir = null){
         $dir = $dir ?? 'components/com_jshopping/templates/addons/'.$this->addon_alias;
 		$template = $this->getJoomlaTemplate();
-        $config = $this->table->getConfig();
+        $config = $this->getAddonConfig();
 		$ovdir = $ovdir ?? $config['folder_overrides_view'] ?? 'templates/'.$template.'/html/com_jshopping/addons/'.$this->addon_alias;
 		$view_config = array("template_path" => JPATH_ROOT.'/'.$dir);
         $view = new Joomla\Component\Jshopping\Site\View\Addons\HtmlView($view_config);
@@ -77,22 +86,27 @@ class AddonCore{
         $view->addon_path_images = $this->getPathImages();
         if ($this->debug) {
             print '<pre>';
-            print '#Addon getView: '.$layout."\n";
-            print '#Addon getView dir: '.$dir."\n";
-            print '#Addon getView ovdir: '.$ovdir."\n";
+            print '#Addon '.$this->addon_alias.' getView: '.$layout."\n";
+            print '#Addon '.$this->addon_alias.' getView dir: '.$dir."\n";
+            print '#Addon '.$this->addon_alias.' getView ovdir: '.$ovdir."\n";
             print '</pre>';
         }
         return $view;
     }
 
     public function loadLanguage($langtag = ""){
+        if ($this->debug > 1) {
+            print '<pre>';
+            print '#Addon '.$this->addon_alias.' language loaded'."\n";
+            print '</pre>';
+        }
         JSFactory::loadExtLanguageFile($this->addon_alias, $langtag);
     }
     
     public function loadCss($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $wap = null){
         $template = $this->getJoomlaTemplate();
         $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
-        $config = $this->table->getConfig();
+        $config = $this->getAddonConfig();
         $dir = $dir ?? 'components/com_jshopping/css/addons';
         $ovdir = $ovdir ?? $config['folder_overrides_css'] ?? 'templates/'.$template.'/css/addons';
         if ($name_as_alias) {
@@ -102,10 +116,10 @@ class AddonCore{
         }
         if ($this->debug) {
             print '<pre>';
-            print '#Addon loadCss: '.$filename."\n";
-            print '#Addon loadCss dir: '.$dir."\n";
-            print '#Addon loadCss ovdir: '.$ovdir."\n";
-            print '#Addon loadCss asset_name: '.$asset_name."\n";
+            print '#Addon '.$this->addon_alias.' loadCss: '.$filename."\n";
+            print '#Addon '.$this->addon_alias.' loadCss dir: '.$dir."\n";
+            print '#Addon '.$this->addon_alias.' loadCss ovdir: '.$ovdir."\n";
+            print '#Addon '.$this->addon_alias.' loadCss asset_name: '.$asset_name."\n";
             print '</pre>';
         }
         if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
@@ -119,7 +133,7 @@ class AddonCore{
     public function loadJs($extname = '', $dir = null, $ovdir = null, $name_as_alias = 1, $wap = null){
         $template = $this->getJoomlaTemplate();
         $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
-        $config = $this->table->getConfig();
+        $config = $this->getAddonConfig();
         $dir = $dir ?? 'components/com_jshopping/js/addons';
         $ovdir = $ovdir ?? $config['folder_overrides_js'] ?? 'templates/'.$template.'/js/addons';
         if ($name_as_alias) {
@@ -129,10 +143,10 @@ class AddonCore{
         }
         if ($this->debug) {
             print '<pre>';
-            print '#Addon loadJs: '.$filename."\n";
-            print '#Addon loadJs dir: '.$dir."\n";
-            print '#Addon loadJs ovdir: '.$ovdir."\n";
-            print '#Addon loadJs asset_name: '.$asset_name."\n";
+            print '#Addon '.$this->addon_alias.' loadJs: '.$filename."\n";
+            print '#Addon '.$this->addon_alias.' loadJs dir: '.$dir."\n";
+            print '#Addon '.$this->addon_alias.' loadJs ovdir: '.$ovdir."\n";
+            print '#Addon '.$this->addon_alias.' loadJs asset_name: '.$asset_name."\n";
             print '</pre>';
         }
         if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
@@ -148,7 +162,7 @@ class AddonCore{
     }
     
     public function checkLicKey(){
-		return Helper::compareX64(Helper::replaceWWW(Helper::getJHost().$this->addon_alias), Helper::getLicenseKeyAddon($this->addon_alias));
+		return Helper::compareX64(Helper::replaceWWW(Helper::getJHost().$this->addon_alias), $this->getTable()->key);
 	}
 
     protected function getJoomlaTemplate() {

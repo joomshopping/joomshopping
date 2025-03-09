@@ -50,7 +50,7 @@ $i=0;
                     <th width="60" class="center">
                         <?php echo Text::_('JSHOP_CONFIG')?>
                     </th>
-                    <?php if ($this->config->shop_mode == 1) {?>
+                    <?php if ($this->config->shop_mode > 0) {?>
                     <th width="50" class="center">
                         <?php echo Text::_('JSHOP_MAINTENANCE')?>
                     </th>
@@ -124,7 +124,7 @@ $i=0;
                     </a>
                     <?php }?>                    
                 </td>
-                <?php if ($this->config->shop_mode == 1) {?>
+                <?php if ($this->config->shop_mode > 0) {?>
                 <td class="center">
                     <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=config&id=<?php print $row->id?>'>
                         <i class="icon-wrench"></i>
