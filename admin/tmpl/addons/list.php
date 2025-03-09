@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.5.4 19.01.2025
+* @version      5.6.0 09.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -42,9 +42,6 @@ $i=0;
                     </th>
                     <?php }?>
                     <th width="60" class="center">
-                        <?php echo Text::_('JSHOP_DESCRIPTION')?>
-                    </th>
-                    <th width="60" class="center">
                         <?php echo Text::_('JSHOP_KEY')?>
                     </th>
                     <th width="60" class="center">
@@ -76,6 +73,11 @@ $i=0;
                 </td>
                 <td>
                     <?php echo $row->name;?>
+                    <?php if ($row->info_file_exist){?>
+                        <a href='index.php?option=com_jshopping&controller=addons&task=info&id=<?php print $row->id?>'>
+                            <div class="small"><i class="icon-info-circle"></i> <?php echo Text::_('JSHOP_DESCRIPTION')?></div>
+                        </a>
+                    <?php }?>
                 </td>
                 <td>
                     <?php if (isset($row->avialable_version_update)) {?>
@@ -86,9 +88,9 @@ $i=0;
                         <?php echo $row->version;?>
                     <?php }?>
                     <?php if ($row->version_file_exist){?>
-                    <a class="btn btn-micro"
-                        href='index.php?option=com_jshopping&controller=addons&task=version&id=<?php print $row->id?>'><img
-                            src='components/com_jshopping/images/jshop_info_s.png'></a>
+                        <a class="btn btn-micro tbody-icon" href='index.php?option=com_jshopping&controller=addons&task=version&id=<?php print $row->id?>'>
+                            <i class="icon-info"></i>
+                        </a>
                     <?php }?>
                 </td>
                 <?php if ($this->config->disable_admin['addons_catalog'] == 0) {?>
@@ -103,16 +105,8 @@ $i=0;
                 </td>
                 <?php }?>
                 <td class="center">
-                    <?php if ($row->info_file_exist){?>
-                    <a class="btn btn-micro"
-                        href='index.php?option=com_jshopping&controller=addons&task=info&id=<?php print $row->id?>'><img
-                            src='components/com_jshopping/images/jshop_info_s.png'></a>
-                    <?php }?>
-                </td>
-                <td class="center">
                     <?php if ($row->usekey){?>
-                    <a class="btn btn-micro"
-                        href='index.php?option=com_jshopping&controller=licensekeyaddon&alias=<?php print $row->alias?>&back=<?php print $this->back64?>'>
+                    <a class="btn btn-micro" href='index.php?option=com_jshopping&controller=licensekeyaddon&alias=<?php print $row->alias?>&back=<?php print $this->back64?>'>
                         <i class="icon-key"></i>
                     </a>
                     <?php }?>
@@ -122,7 +116,7 @@ $i=0;
                     <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=edit&id=<?php print $row->id?>'>
                         <i class="icon-edit"></i>
                     </a>
-                    <?php }?>                    
+                    <?php }?>
                 </td>
                 <?php if ($this->config->shop_mode > 0) {?>
                 <td class="center">
@@ -150,14 +144,14 @@ $i=0;
         </table>
         <?php }?>
 
-        <?php if (count($rows) == 0) {?>
+        <?php if ($this->config->disable_admin['addons_catalog'] == 0) {?>
             <div class="text-center mt-3">
                 <a class="btn btn-success" href="index.php?option=com_jshopping&controller=addons&task=listweb">
                     <span class="icon-folder" aria-hidden="true"></span>
                     <?php echo Text::_('JSHOP_ADDONS_CATALOG')?>
                 </a>
             </div>
-        <?php }?>
+        <?php } ?>
 
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="hidemainmenu" value="0" />

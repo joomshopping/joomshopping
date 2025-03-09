@@ -177,7 +177,7 @@ $jshopConfig = JSFactory::getConfig();
                         <?php if ($display_info_order && $row->order_created){?>
                             <?php if ($row->pdf_file!=''){?>
                                 <a class="js_window_popup" patch="<?php echo $jshopConfig->pdf_orders_live_path."/".$row->pdf_file?>" title="<?php print Text::_('JSHOP_EMAIL_BILL')?>">
-                                    <i class="icon-vcard"></i>
+                                    <i class="icon-print"></i>
                                 </a>
                                 <?php echo $row->_after_order_pdf ?? '';?>
                             <?php }elseif($jshopConfig->send_invoice_manually){?>
