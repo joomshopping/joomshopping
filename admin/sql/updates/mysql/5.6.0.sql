@@ -1,5 +1,6 @@
 ALTER TABLE `#__jshopping_addons` ADD `publish` TINYINT(1) NOT NULL default -1;
 ALTER TABLE `#__jshopping_addons` ADD `config` text NOT NULL;
+ALTER TABLE `#__jshopping_categories` ADD `product_sorting` VARCHAR(4) NOT NULL AFTER `access`, ADD `product_sorting_direction` TINYINT NOT NULL DEFAULT '-1' AFTER `product_sorting`;
 
 CREATE TABLE IF NOT EXISTS `#__jshopping_addons_dependencies` (
 `id` int(11) NOT NULL auto_increment,

@@ -77,7 +77,7 @@ class SelectOptions{
 			$list = $jshopConfig->sorting_products_name_s_select;
 		}
 		foreach($list as $key=>$value){
-            $option[] = HTMLHelper::_('select.option', $key, Text::_($value), 'id', 'name' );
+            $option[] = HTMLHelper::_('select.option', $key, Text::_($value), 'id', 'name');
         }
 		return $option;
 	}
@@ -536,5 +536,26 @@ class SelectOptions{
         $option[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_DELETE_OLD'), 'id', 'name');
         return $option;
     }
-    
+
+    public static function getProductSorting($first = 0) {
+        $first_option = [];
+        $first_name = self::getFirstNameOption($first, "- - -");
+        if ($first!==0){
+            $first_option[] = HTMLHelper::_('select.option', '', $first_name, 'id', 'name');
+        }        
+        $options = self::getProductsOrdering(1);
+        return array_merge($first_option, $options);
+    }
+
+    public static function getSortingDirection($first = 0) {
+        $first_name = self::getFirstNameOption($first, "- - -");
+        $option = [];
+        if ($first!==0){
+            $option[] = HTMLHelper::_('select.option', -1, $first_name, 'id', 'value');
+        }
+        $option[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_A_Z'), 'id','value');
+        $option[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_Z_A'), 'id','value');
+        return $option;
+    }
+
 }

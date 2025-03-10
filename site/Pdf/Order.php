@@ -1,12 +1,14 @@
 <?php
 /**
-* @version      5.5.6 12.02.2025
+* @version      5.6.0 10.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Pdf;
+
+use Exception;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
@@ -14,8 +16,12 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
-include_once(JPATH_JOOMSHOPPING."/config/pdf_config.php");
-include_once(JPATH_JOOMSHOPPING."/Lib/tcpdf/tcpdf.php");
+if (file_exists(JPATH_JOOMSHOPPING."/Lib/tcpdf/tcpdf.php")) {
+    include_once(JPATH_JOOMSHOPPING."/config/pdf_config.php");
+    include_once(JPATH_JOOMSHOPPING."/Lib/tcpdf/tcpdf.php");
+} else {
+    throw new Exception('Install Lib TcPdf');
+}
 
 class Order extends \TCPDF{
     public $pdfOrderHeader;

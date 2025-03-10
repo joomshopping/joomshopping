@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_categories` (
 `products_page` int(8) NOT NULL default '12',
 `products_row` int(3) NOT NULL default '3',
 `access` int(3) NOT NULL default '1',
+`product_sorting` VARCHAR(4) NOT NULL,
+`product_sorting_direction` TINYINT NOT NULL DEFAULT '-1',
 `img_alt` varchar(255) NOT NULL default '',
 `img_title` varchar(255) NOT NULL default '',
 PRIMARY KEY  (`category_id`),

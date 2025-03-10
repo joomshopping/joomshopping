@@ -338,7 +338,9 @@ $config->product_search_fields = array(
 );
 
 $config->attribut_dep_sorting_in_product = "V.value_ordering"; // (V.value_ordering, value_name, PA.price, PA.ean, PA.count)
+$config->attribut_dep_sorting_in_product_dir = 0;
 $config->attribut_nodep_sorting_in_product = "V.value_ordering"; // (V.value_ordering, value_name, addprice)
+$config->attribut_nodep_sorting_in_product_dir = 0;
 $config->new_extra_field_type = 'varchar(100)';
 $config->new_extra_field_type_list = 'int(11)';
 $config->new_extra_field_type_multilist = 'varchar(32)';

@@ -20,6 +20,7 @@ class AddonCore{
 	protected $addon_id;
     protected $table = null;
     public $debug = 0;
+    public $log = 0;
 
     public function __construct($addon_alias = ''){
 		if ($addon_alias != ''){
@@ -32,6 +33,9 @@ class AddonCore{
             $config = $this->getTable()->getConfig();
             if (isset($config['debug']) && $config['debug']) {
                 $this->debug = $config['debug'];
+            }
+            if (isset($config['log']) && $config['log']) {
+                $this->log = $config['log'];
             }
         }
     }
@@ -91,14 +95,22 @@ class AddonCore{
             print '#Addon '.$this->addon_alias.' getView ovdir: '.$ovdir."\n";
             print '</pre>';
         }
+        if ($this->log) {
+            Helper::saveToLog($this->addon_alias.".log", 'getView: '.$layout);
+            Helper::saveToLog($this->addon_alias.".log", 'getView dir: '.$dir);
+            Helper::saveToLog($this->addon_alias.".log", 'getView ovdir: '.$ovdir);
+        }
         return $view;
     }
 
     public function loadLanguage($langtag = ""){
         if ($this->debug > 1) {
             print '<pre>';
-            print '#Addon '.$this->addon_alias.' language loaded'."\n";
+            print '#Addon '.$this->addon_alias.' language loaded '.$langtag."\n";
             print '</pre>';
+        }
+        if ($this->log) {
+            Helper::saveToLog($this->addon_alias.".log", 'language loaded '.$langtag);
         }
         JSFactory::loadExtLanguageFile($this->addon_alias, $langtag);
     }
@@ -124,6 +136,9 @@ class AddonCore{
         }
         if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
             $dir = $ovdir;
+        }
+        if ($this->log) {
+            Helper::saveToLog($this->addon_alias.".log", 'loadCss: '.$dir.'/'.$filename);
         }
         $wa = JSFactory::getWebAssetManager();
         $wap = $wap ?? JSFactory::getConfig()->getWebAssetParams('style', $asset_name);
@@ -151,6 +166,9 @@ class AddonCore{
         }
         if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
             $dir = $ovdir;
+        }
+        if ($this->log) {
+            Helper::saveToLog($this->addon_alias.".log", 'loadJs: '.$dir.'/'.$filename);
         }
         $wa = JSFactory::getWebAssetManager();
         $wap = $wap ?? JSFactory::getConfig()->getWebAssetParams('script', $asset_name);

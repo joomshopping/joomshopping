@@ -35,6 +35,14 @@ defined('_JEXEC') or die();
         </tr>
         <tr>
             <td class="key">
+                <?php echo Text::_('JSHOP_LOGS')?>
+            </td>
+            <td>
+                <?php print HTMLHelper::_('select.booleanlist', 'config[log]', 'class="inputbox"', $this->config['log'] ?? 0);?>           
+            </td>
+        </tr>
+        <tr>
+            <td class="key">
                 <?php echo Text::_('JSHOP_FOLDER_OVERRIDES')?> (view)
             </td>
             <td>

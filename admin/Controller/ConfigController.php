@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.2 10.11.2023
+* @version      5.6.0 10.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -81,9 +81,7 @@ class ConfigController extends BaseadminController{
         $lists['category_sorting'] = HTMLHelper::_('select.genericlist', $catsort, 'category_sorting','class = "form-select"','id','value', $jshopConfig->category_sorting);
         $lists['manufacturer_sorting'] = HTMLHelper::_('select.genericlist', $catsort, 'manufacturer_sorting','class = "form-select"','id','value', $jshopConfig->manufacturer_sorting);
         
-        $sortd = array();
-        $sortd[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_A_Z'), 'id','value');
-        $sortd[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_Z_A'), 'id','value');
+        $sortd = SelectOptions::getSortingDirection();
         $lists['product_sorting_direction'] = HTMLHelper::_('select.genericlist', $sortd, 'product_sorting_direction','class = "form-select"','id','value', $jshopConfig->product_sorting_direction);
         
         $opt = array();
@@ -93,7 +91,8 @@ class ConfigController extends BaseadminController{
         $opt[] = HTMLHelper::_('select.option', 'PA.ean', Text::_('JSHOP_EAN_PRODUCT'), 'id','value');
         $opt[] = HTMLHelper::_('select.option', 'PA.count', Text::_('JSHOP_QUANTITY_PRODUCT'), 'id','value');
         $opt[] = HTMLHelper::_('select.option', 'PA.product_attr_id', Text::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
-        $lists['attribut_dep_sorting_in_product'] = HTMLHelper::_('select.genericlist', $opt, 'attribut_dep_sorting_in_product','class = "form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product);
+        $lists['attribut_dep_sorting_in_product'] = HTMLHelper::_('select.genericlist', $opt, 'attribut_dep_sorting_in_product','class="form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product);
+        $lists['attribut_dep_sorting_in_product_dir'] = HTMLHelper::_('select.genericlist', $sortd, 'attribut_dep_sorting_in_product_dir','class="form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product_dir);
         
         $opt = array();
         $opt[] = HTMLHelper::_('select.option', 'V.value_ordering', Text::_('JSHOP_SORT_MANUAL'), 'id','value');
@@ -101,12 +100,9 @@ class ConfigController extends BaseadminController{
         $opt[] = HTMLHelper::_('select.option', 'addprice', Text::_('JSHOP_SORT_PRICE'), 'id','value');
         $opt[] = HTMLHelper::_('select.option', 'PA.id', Text::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
         $lists['attribut_nodep_sorting_in_product'] = HTMLHelper::_('select.genericlist', $opt, 'attribut_nodep_sorting_in_product','class = "form-select"','id','value', $jshopConfig->attribut_nodep_sorting_in_product);        
-        
-        $select = array();        
-        foreach($jshopConfig->sorting_products_name_select as $key => $value){
-            $select[] = HTMLHelper::_('select.option', $key, Text::_($value), 'id', 'value');
-        }
-        $lists['product_sorting'] = HTMLHelper::_('select.genericlist',$select, "product_sorting", 'class = "form-select"', 'id','value', $jshopConfig->product_sorting);
+        $lists['attribut_nodep_sorting_in_product_dir'] = HTMLHelper::_('select.genericlist', $sortd, 'attribut_nodep_sorting_in_product_dir','class="form-select"','id','value', $jshopConfig->attribut_nodep_sorting_in_product_dir);
+        $product_sorting_options = SelectOptions::getProductSorting();
+        $lists['product_sorting'] = HTMLHelper::_('select.genericlist', $product_sorting_options, "product_sorting", 'class = "form-select"', 'id', 'name', $jshopConfig->product_sorting);
         
         if ($jshopConfig->admin_show_product_extra_field){
             $_productfields = JSFactory::getModel("productfields");
@@ -121,13 +117,12 @@ class ConfigController extends BaseadminController{
             
         $view = $this->getView("config", 'html');
         $view->setLayout("categoryproduct");
-        $view->set("lists", $lists);
-        $view->set('etemplatevar', '');
-
+        $view->lists = $lists;
+        $view->etemplatevar = '';
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onBeforeEditConfigCatProd', array(&$view));
+        $app = Factory::getApplication();
+        $app->triggerEvent('onBeforeEditConfigCatProd', array(&$view));
         $view->display();
     }
     

@@ -4,7 +4,7 @@ use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.6.0 10.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -585,6 +585,9 @@ $jshopConfig=JSFactory::getConfig();
 		<td>
 			<?php print $this->lists['attribut_dep_sorting_in_product'];?>
 		</td>
+		<td>
+			<?php print $this->lists['attribut_dep_sorting_in_product_dir'];?>
+		</td>
 	</tr>
 	<tr>
 		<td class="key">
@@ -592,6 +595,9 @@ $jshopConfig=JSFactory::getConfig();
 		</td>
 		<td>
 			<?php print $this->lists['attribut_nodep_sorting_in_product'];?>
+		</td>
+		<td>
+			<?php print $this->lists['attribut_nodep_sorting_in_product_dir'];?>
 		</td>
 	</tr>
 	<tr>

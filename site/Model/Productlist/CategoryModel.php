@@ -49,4 +49,20 @@ class CategoryModel extends ListModel{
         return 1;
     }
 
+    function getDefaultProductSorting(){
+        $sort = $this->table->product_sorting;
+        if (!$sort) {
+            $sort = JSFactory::getConfig()->product_sorting;
+        }
+        return $sort;
+    }
+
+    function getDefaultProductSortingDirection(){
+        $dir = $this->table->product_sorting_direction;
+        if ($dir == -1) {
+            $dir = JSFactory::getConfig()->product_sorting_direction;
+        }
+        return $dir;
+    }
+
 }

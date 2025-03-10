@@ -188,7 +188,7 @@ class ProductTable extends MultilangTable{
     //get attrib values
 	function getAttribValue($attr_id, $other_attr = array(), $onlyExistProduct = 0){
         $db = Factory::getDBO();
-        $JshopConfig = JSFactory::getConfig();
+        $jshopConfig = JSFactory::getConfig();
         $allattribs = JSFactory::getAllAttributes(1);
         $lang = JSFactory::getLang();
         if ($allattribs[$attr_id]->independent==0){
@@ -197,9 +197,12 @@ class ProductTable extends MultilangTable{
                 $where.=" and PA.attr_".(int)$k."=".(int)$v;
             }
             if ($onlyExistProduct) $where.=" and PA.count>0 ";
-            $sorting = $JshopConfig->attribut_dep_sorting_in_product;
+            $sorting = $jshopConfig->attribut_dep_sorting_in_product;
+            $jshopConfig->attribut_dep_sorting_in_product_dir = $jshopConfig->attribut_dep_sorting_in_product_dir ?? 0;
+            $dir = $jshopConfig->attribut_dep_sorting_in_product_dir ? 'DESC' : 'ASC';
             if ($sorting=="") $sorting = "V.value_ordering";
 			if ($sorting=="PA.product_attr_id") $sorting = "min(PA.product_attr_id)";
+            $sorting .= ' '.$dir;
             $field = "attr_".(int)$attr_id;
             $query = "SELECT PA.$field as val_id, V.`".$lang->get("name")."` as value_name, V.image
                       FROM `#__jshopping_products_attr` as PA
@@ -208,8 +211,11 @@ class ProductTable extends MultilangTable{
 					  GROUP BY PA.$field
                       ORDER BY ".$sorting;
         }else{
-            $sorting = $JshopConfig->attribut_nodep_sorting_in_product;
+            $sorting = $jshopConfig->attribut_nodep_sorting_in_product;
+            $jshopConfig->attribut_nodep_sorting_in_product_dir = $jshopConfig->attribut_nodep_sorting_in_product_dir ?? 0;
+            $dir = $jshopConfig->attribut_nodep_sorting_in_product_dir ? 'DESC' : 'ASC';
             if ($sorting=="") $sorting = "V.value_ordering";
+            $sorting .= ' '.$dir;
             $query = "SELECT PA.attr_value_id as val_id, V.`".$lang->get("name")."` as value_name, V.image, price_mod, addprice
                       FROM `#__jshopping_products_attr2` as PA
 					  INNER JOIN #__jshopping_attr_values as V ON PA.attr_value_id=V.value_id

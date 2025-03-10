@@ -178,6 +178,22 @@ $jshopConfig = $this->config;
                         </tr>
                         <tr>
                             <td class="key">
+                                <?php echo Text::_('JSHOP_PRODUCT_SORTING')?>
+                            </td>
+                            <td>
+                                <?php print $lists['product_sorting'];?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="key">
+                                <?php echo Text::_('JSHOP_PRODUCT_SORTING_DIRECTION')?>
+                            </td>
+                            <td>
+                                <?php print $lists['product_sorting_direction'];?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="key">
                                 <?php echo Text::_('JSHOP_PARENT_CATEGORY') ?>*
                             </td>
                             <td>
