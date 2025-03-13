@@ -198,7 +198,7 @@ class SelectOptions{
     }
     
     public static function getTaxs($first = 0, $ext_first = 0, $options = array()){
-        $all_taxes = JSFactory::getModel("taxes")->getAllTaxes();
+        $all_taxes = JSFactory::getModel("taxes")->getAllTaxes('ordering', 'ASC');
         $list_tax = array();
         if ($ext_first){
             $list_tax[] = HTMLHelper::_('select.option', -1, "- - -", 'tax_id', 'tax_name');

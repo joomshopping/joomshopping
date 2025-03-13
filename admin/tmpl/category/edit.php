@@ -6,7 +6,7 @@ use Joomla\CMS\Editor\Editor;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 
 /**
- * @version      5.5.1 15.07.2024
+ * @version      5.6.0 13.03.2025
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -162,18 +162,18 @@ $jshopConfig = $this->config;
 
                         <tr>
                             <td class="key">
-                                <?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE') ?>*
+                                <?php echo Text::_('JSHOP_COUNT_PRODUCTS_PAGE') ?>
                             </td>
                             <td>
-                                <input type="text" class="inputbox form-control" id="products_page" name="products_page" value="<?php echo $count_product_page = ($row->category_id) ? ($row->products_page) : ($jshopConfig->count_products_to_page); ?>" />
+                                <input type="text" class="inputbox form-control" id="products_page" name="products_page" value="<?php echo $row->products_page > 0 ? $row->products_page : '';?>">
                             </td>
                         </tr>
                         <tr>
                             <td class="key">
-                                <?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW') ?>*
+                                <?php echo Text::_('JSHOP_COUNT_PRODUCTS_ROW') ?>
                             </td>
                             <td>
-                                <input type="text" class="inputbox form-control" id="products_row" name="products_row" value="<?php echo $count_product_row = ($row->category_id) ? ($row->products_row) : ($jshopConfig->count_products_to_row); ?>" />
+                                <input type="text" class="inputbox form-control" id="products_row" name="products_row" value="<?php echo $row->products_row > 0 ? $row->products_row : '';?>">
                             </td>
                         </tr>
                         <tr>
@@ -320,13 +320,7 @@ $jshopConfig = $this->config;
         <script type="text/javascript">
             Joomla.submitbutton = function(task) {
                 if (task == 'save' || task == 'apply') {
-                    if (!parseInt(jQuery('#products_page').val())) {
-                        alert('<?php echo Text::_('JSHOP_WRITE_PRODUCTS_PAGE') ?>');
-                        return 0;
-                    } else if (!parseInt(jQuery('#products_row').val())) {
-                        alert('<?php echo Text::_('JSHOP_WRITE_PRODUCTS_ROW') ?>');
-                        return 0;
-                    } else if (jshop.isEmpty(jQuery('#category_width_image').val()) && jshop.isEmpty(jQuery('#category_height_image').val())) {
+                    if (jshop.isEmpty(jQuery('#category_width_image').val()) && jshop.isEmpty(jQuery('#category_height_image').val())) {
                         alert('<?php echo Text::_('JSHOP_WRITE_SIZE_BAD') ?>');
                         return 0;
                     }

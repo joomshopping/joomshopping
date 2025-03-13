@@ -367,12 +367,10 @@ class ConfigController extends BaseadminController{
 		}
         
         if (isset($post['update_count_prod_rows_all_cats']) && $tab==6 && $post['update_count_prod_rows_all_cats']){
-            $count_products_to_page = intval($post['count_products_to_page']);
-            $count_products_to_row = intval($post['count_products_to_row']);
-            $query = "update `#__jshopping_categories` set `products_page`='".$count_products_to_page."', `products_row`='".$count_products_to_row."'";
+            $query = "update `#__jshopping_categories` set `products_page`=0, `products_row`=0";
             $db->setQuery($query);
             $db->execute();
-            $query = "update `#__jshopping_manufacturers` set `products_page`='".$count_products_to_page."', `products_row`='".$count_products_to_row."'";
+            $query = "update `#__jshopping_manufacturers` set `products_page`=0, `products_row`=0";
             $db->setQuery($query);
             $db->execute();
         }

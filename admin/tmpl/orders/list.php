@@ -47,6 +47,7 @@ $jshopConfig = JSFactory::getConfig();
             <div>                
                 <?php echo HTMLHelper::_('calendar', $this->filter['date_to'], 'date_to', 'date_to', $jshopConfig->field_birthday_format, array('class'=>'inputbox middle2', 'size'=>'5', 'maxlength'=>'10', 'placeholder'=> Text::_('JSHOP_DATE_TO')));?>
             </div>
+            <?php print $this->tmp_html_filter_before_btn ?? '';?>
             <div>
                 <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>"
                     class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">

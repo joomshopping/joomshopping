@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.0 13.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -21,34 +21,41 @@ class CountriesModel extends BaseadminModel{
     /**
     * get list country
     * 
-    * @param int $publish (0-all, 1-publish, 2-unpublish)
+    * @param mixed $filter array or (0-all, 1-publish, 2-unpublish)
     * @param int $limitstart
     * @param int $limit
     * @param int $orderConfig use order config
     * @return array
     */
-    function getAllCountries($publish = 1, $limitstart = null, $limit = null, $orderConfig = 1, $order = null, $orderDir = null){
+    function getAllCountries($filter = 1, $limitstart = null, $limit = null, $orderConfig = 1, $order = null, $orderDir = null){
         $db = Factory::getDBO();
         $jshopConfig = JSFactory::getConfig();
+        $lang = JSFactory::getLang();
                 
-        if ($publish == 0) {
-            $where = " ";
+        $where = '';
+        if (is_array($filter)) {
+            if (isset($filter['publish'])) {
+                $where .= " AND `country_publish` = ".$db->q($filter['publish']);
+            }
+            if (isset($filter['text_search'])) {
+                $where .= " AND (`".$lang->get("name")."` LIKE ".$db->q('%'.$filter['text_search'].'%')." OR country_code=".$db->q($filter['text_search'])." OR country_code_2=".$db->q($filter['text_search']).")";
+            }
         } else {
-            if ($publish == 1) {
-                $where = (" WHERE country_publish = '1' ");
-            } else {
-                if ($publish == 2) {
-                    $where = (" WHERE country_publish = '0' ");
-                }
+            if ($filter == 1) {
+                $where = " AND country_publish = 1 ";
+            }
+            if ($filter == 2) {
+                $where = " AND country_publish = 0 ";                
             }
         }
+        
         $ordering = "ordering";
         if ($orderConfig && $jshopConfig->sorting_country_in_alphabet) $ordering = "name";
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
-        $lang = JSFactory::getLang();
-        $query = "SELECT country_id, country_publish, ordering, country_code, country_code_2, `".$lang->get("name")."` as name FROM `#__jshopping_countries` ".$where." ORDER BY ".$ordering;
+        $query = "SELECT country_id, country_publish, ordering, country_code, country_code_2, `".$lang->get("name")."` as name 
+            FROM `#__jshopping_countries` WHERE 1 ".$where." ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query, $limitstart, $limit);
         return $db->loadObjectList();
@@ -68,12 +75,29 @@ class CountriesModel extends BaseadminModel{
     
     /**
     * get count county
-    * @param int $publish
+    * @param mixed $filter array or int => publish
     * @return int
     */
-    function getCountPublishCountries($publish = 1) {
-        $db = Factory::getDBO(); 
-        $query = "SELECT COUNT(country_id) FROM `#__jshopping_countries` WHERE country_publish = '".intval($publish)."'";
+    function getCountPublishCountries($filter = 1) {
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
+        $where = '';
+        if (is_array($filter)) {
+            if (isset($filter['publish'])) {
+                $where .= " AND `country_publish` = ".$db->q($filter['publish']);
+            }
+            if (isset($filter['text_search'])) {
+                $where .= " AND (`".$lang->get("name")."` LIKE ".$db->q('%'.$filter['text_search'].'%')." OR country_code=".$db->q($filter['text_search'])." OR country_code_2=".$db->q($filter['text_search']).")";
+            }
+        } else {
+            if ($filter == 1) {
+                $where = " AND country_publish = 1";
+            }
+            if ($filter == 0) {
+                $where = " AND country_publish = 0";                
+            }
+        }
+        $query = "SELECT COUNT(country_id) FROM `#__jshopping_countries` WHERE 1 ".$where;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadResult();

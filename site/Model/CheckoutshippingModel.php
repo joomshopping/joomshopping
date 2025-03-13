@@ -131,22 +131,26 @@ class CheckoutShippingModel  extends CheckoutModel{
             $params = $allparams[$sh_method->shipping_id];
         }
         
+        $shippingForm = $sh_method->getShippingForm();
+        
         if (isset($params)){
+            if ($shippingForm) {
+                $params = $shippingForm->prepareSaveParams($params);
+            }
             $cart->setShippingParams($params);
         }else{
             $cart->setShippingParams('');
         }
-        
-        $shippingForm = $sh_method->getShippingForm();
-        		
-        if ($shippingForm && !$shippingForm->check($params, $sh_method)){            
+
+        $cart->setShippingId($sh_method->shipping_id);
+        $cart->setShippingPrId($sh_pr_method_id);
+
+        if ($shippingForm && !$shippingForm->check($params, $sh_method)){
 			$this->setError($shippingForm->getErrorMessage());
             return 0;
         }
-		
+
         $prices = $shipping_method_price->calculateSum($cart);
-        $cart->setShippingId($sh_method->shipping_id);
-        $cart->setShippingPrId($sh_pr_method_id);
         $cart->setShippingsDatas($prices, $shipping_method_price);
         
         if ($jshopConfig->show_delivery_date){
@@ -159,7 +163,7 @@ class CheckoutShippingModel  extends CheckoutModel{
                 if ($jshopConfig->delivery_order_depends_delivery_product){
                     $day = $cart->getDeliveryDaysProducts();
                     if ($day){
-                        $delivery_date = Helper::getCalculateDeliveryDay($day);                    
+                        $delivery_date = Helper::getCalculateDeliveryDay($day);
                     }
                 }
             }
@@ -168,7 +172,7 @@ class CheckoutShippingModel  extends CheckoutModel{
 
         //update payment price        
         if ($cart->getPaymentId()){
-			$paym_method = $this->getPaymentMethod();			
+			$paym_method = $this->getPaymentMethod();
             $cart->setDisplayItem(1, 1);
             $paym_method->setCart($cart);
             $price = $paym_method->getPrice();

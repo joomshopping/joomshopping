@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.0 13.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -31,20 +31,21 @@ class CountriesController extends BaseadminController{
         $limit = $app->getUserStateFromRequest( $context.'limit', 'limit', $app->getCfg('list_limit'), 'int' );
         $limitstart = $app->getUserStateFromRequest( $context.'limitstart', 'limitstart', 0, 'int' );
         $publish = $app->getUserStateFromRequest( $context.'publish', 'publish', 0, 'int' );
+        $text_search = $app->getUserStateFromRequest($context.'text_search', 'text_search', '');
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');        
 		
-		$countries = JSFactory::getModel("countries");
-		$total = $countries->getCountAllCountries();
-        if ($publish == 0){
-            $total = $countries->getCountAllCountries();
-        } else {
-            $total = $countries->getCountPublishCountries($publish % 2);
+        $filters = [];
+        if ($publish) {
+            $filters['publish'] = $publish % 2;
         }
-		
-		jimport('joomla.html.pagination');
+        if ($text_search) {
+            $filters['text_search'] = $text_search;
+        }
+		$countries = JSFactory::getModel("countries");
+        $total = $countries->getCountPublishCountries($filters);
         $pageNav = new Pagination($total, $limitstart, $limit);		
-        $rows = $countries->getAllCountries($publish, $pageNav->limitstart,$pageNav->limit, 0, $filter_order, $filter_order_Dir);
+        $rows = $countries->getAllCountries($filters, $pageNav->limitstart,$pageNav->limit, 0, $filter_order, $filter_order_Dir);
         $filter = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(4), 'publish', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $publish);
                 
 		$view = $this->getView("countries", 'html');
@@ -54,11 +55,11 @@ class CountriesController extends BaseadminController{
         $view->set('filter', $filter);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
+        $view->text_search = $text_search;
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
         $view->tmp_html_filter_end = "";
         $view->tmp_html_end = "";
-
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayCountries', array(&$view));
 		$view->displayList(); 
@@ -77,7 +78,7 @@ class CountriesController extends BaseadminController{
         
 		$edit = ($country_id)?($edit = 1):($edit = 0);                
         
-        OutputFilter::objectHTMLSafe( $country, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($country, ENT_QUOTES);
 
 		$view=$this->getView("countries", 'html');
         $view->setLayout("edit");		

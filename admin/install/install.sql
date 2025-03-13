@@ -157,6 +157,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_taxes` (
 `tax_id` int(11) NOT NULL auto_increment,
 `tax_name` VARCHAR(50) NOT NULL default '',
 `tax_value` DECIMAL(12,2) NOT NULL default 0,
+`ordering` INT NOT NULL default 0,
 PRIMARY KEY  (`tax_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 

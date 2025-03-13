@@ -6,7 +6,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.0 13.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -46,11 +46,7 @@ $i=0;
 
 </div>
 
-<?php
-if (isset($this->ext_coupon_html_befor_list)){
-    print $this->ext_coupon_html_befor_list;
-}
-?>
+<?php  print $this->ext_coupon_html_befor_list ?? '';?>
 
 <table class="table table-striped">
 <thead>
