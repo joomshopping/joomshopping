@@ -5,7 +5,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.5.4 15.09.2018
+* @version      5.6.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -174,13 +174,13 @@ $jshopConfig = JSFactory::getConfig();
                 <?php }?>
                 <td class="center">
                     <?php if ($jshopConfig->generate_pdf){?>
-                        <?php if ($display_info_order && $row->order_created){?>
-                            <?php if ($row->pdf_file!=''){?>
+                        <?php if ($display_info_order){?>
+                            <?php if ($row->pdf_file != ''){?>
                                 <a class="js_window_popup" patch="<?php echo $jshopConfig->pdf_orders_live_path."/".$row->pdf_file?>" title="<?php print Text::_('JSHOP_EMAIL_BILL')?>">
                                     <i class="icon-print"></i>
                                 </a>
                                 <?php echo $row->_after_order_pdf ?? '';?>
-                            <?php }elseif($jshopConfig->send_invoice_manually){?>
+                            <?php }elseif($jshopConfig->send_invoice_manually && $row->order_created){?>
                                 <a href="index.php?option=com_jshopping&controller=orders&task=send&order_id=<?php echo $row->order_id?>&back=orders" title="<?php print Text::_('JSHOP_SEND_MAIL')?>">
                                     <i class="icon-envelope"></i>
                                 </a>

@@ -283,7 +283,8 @@ class SelectOptions{
         $option = array();
         $option[] = HTMLHelper::_('select.option', "", " - " .Text::_('JSHOP_NOT_FINISHED')." - ", 'id', 'name');
         $option[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_HIDE'), 'id', 'name');
-        $option[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_SHOW'), 'id', 'name');
+        $option[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_SHOW'), 'id', 'name');
+        $option[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_ALL'), 'id', 'name');        
         return $option;
     }
     

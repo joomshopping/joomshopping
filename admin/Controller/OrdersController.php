@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.4 31.08.2022
+* @version      5.6.0 14.03.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.

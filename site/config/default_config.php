@@ -650,3 +650,4 @@ $config->fields_client_only_check = [
 
 $config->ordering_full_name = ['f_name', 'm_name', 'l_name'];
 $config->check_valid_productpage_attribute = 0;
+$config->sysmsg_use_order_pdf = 0;

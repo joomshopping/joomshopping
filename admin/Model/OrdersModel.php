@@ -75,7 +75,9 @@ class OrdersModel extends BaseadminModel{
             or O.order_add_info like '%".$search."%'
             ) ";
         }
-        if (!$filters['notfinished']) $where .= "and O.order_created=1 ";
+        $filters['notfinished'] = $filters['notfinished'] ?? 0;
+        if ($filters['notfinished'] == 2) $where .= "and O.order_created=0 ";
+        if ($filters['notfinished'] < 1) $where .= "and O.order_created=1 ";
         if ($filters['date_from']){
 			$date = Helper::getJsDateDB($filters['date_from'], $jshopConfig->field_birthday_format);
 			$where .= ' and O.order_date>="'.$db->escape($date).'" ';

@@ -63,6 +63,7 @@ class Dispatcher extends ComponentDispatcher{
         if ($checkInstall && $user->authorise('core.admin.install', 'com_jshopping')){
             Helper::installNewLanguages();
             JSFactory::getModel("addondependencies")->autoInstallAll();
+            JSFactory::getModel("sysmsg")->show();
         }
 
         if ($ajax) {
