@@ -91,7 +91,7 @@ class CheckoutController extends BaseController{
         $view->_tmp_ext_html_address_end = "";
         $view->_tmpl_address_html_8 = "";
         $view->_tmpl_address_html_9 = "";
-        $view->set('action', JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl('step2save', 0, 0));
+        $view->set('action', JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl('step2save', 1, 0));
         $dispatcher->triggerEvent('onBeforeDisplayCheckoutStep2View', array(&$view));
         $view->display();
     }
@@ -189,7 +189,7 @@ class CheckoutController extends BaseController{
         $view->set('small_cart', $small_cart);
         $view->_tmp_ext_html_payment_start = "";
         $view->_tmp_ext_html_payment_end = "";
-        $view->set('action', $checkoutStep->getCheckoutUrl('step3save', 0, 0));
+        $view->set('action', $checkoutStep->getCheckoutUrl('step3save', 1, 0));
         $dispatcher->triggerEvent('onBeforeDisplayCheckoutStep3View', array(&$view));
         $view->display();
     }
@@ -283,7 +283,7 @@ class CheckoutController extends BaseController{
         $view->set('small_cart', $small_cart);
         $view->_tmp_ext_html_shipping_start = "";
         $view->_tmp_ext_html_shipping_end = "";
-        $view->set('action', $checkoutStep->getCheckoutUrl('step4save', 0, 0));
+        $view->set('action', $checkoutStep->getCheckoutUrl('step4save', 1, 0));
         $dispatcher->triggerEvent('onBeforeDisplayCheckoutStep4View', array(&$view));
         $view->display();
     }
@@ -358,7 +358,7 @@ class CheckoutController extends BaseController{
 		$view->set('payment_name', $pm_method->getName());
         $view->set('delivery_info', $delivery_info);
 		$view->set('invoice_info', $invoice_info);
-        $view->set('action', JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl('step5save', 0, 0));
+        $view->set('action', JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl('step5save', 1, 0));
         $view->set('config', $jshopConfig);
         $view->set('delivery_time', $delivery_time);
         $view->set('delivery_date', $delivery_date);

@@ -1176,7 +1176,7 @@ var jshopAdminClass = function(){
                     }
                 }
                 if (jQuery(".prod_extrafield_values select", this).length) {   
-                    let val = jQuery(".prod_extrafield_values select", this).val();                 
+                    let val = jQuery(".prod_extrafield_values select", this).val();
                     if (val=='0' || val.length==0) {
                         jQuery(this).hide();
                     }
@@ -1194,14 +1194,34 @@ var jshopAdminClass = function(){
         return ajaxLoadAnimate;
     }
 
+    this.windowPopup = function(obj) {
+        let url = jQuery(obj).attr('patch');
+        let name = jQuery(obj).attr('winname') ?? 'win';
+        window.open(url, name, 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=800,height=600,directories=no,location=no');
+    }
+
 }
 
 var jshopAdmin = new jshopAdminClass();
 
 jQuery(document).ready(function(){
     jQuery('.js-stools-btn-clear').click(function(){
-        jQuery('#text_search').val('');
+        let closest = jQuery(this).closest('.js-filters');
+        let selects = jQuery('select', closest);
+        selects.each(function(){
+            jQuery(this).val(0);
+            let def_value = jQuery(this).attr('default-value');
+            if (typeof(def_value) != 'undefined') {
+                jQuery(this).val(def_value);  
+            }
+        });
+        jQuery('input', closest).val('');
         this.form.submit();
+    });
+
+    jQuery(document).on('click', 'a.js_window_popup', function(){        
+        jshopAdmin.windowPopup(this);
+        return false;
     });
 
     jQuery(".joomla-tabs [data-toggle='tab']").on("click", function(e){

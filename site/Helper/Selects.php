@@ -91,7 +91,7 @@ class Selects{
             $attribs = self::getDataultAttribs('');
         }
 		if ($jshopConfig->admin_show_product_extra_field){
-            $urlsearchcaracters = Helper::SEFLink("index.php?option=com_jshopping&controller=search&task=get_html_characteristics&ajax=1", 0, 1);
+            $urlsearchcaracters = Helper::SEFLink("index.php?option=com_jshopping&controller=search&task=get_html_characteristics&ajax=1", 1, 1);
             $attribs .= " onchange='jshop.updateSearchCharacteristic(\"".$urlsearchcaracters."\",this.value);'";
         }		
 		return self::getCategory($selected, $attribs);

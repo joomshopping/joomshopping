@@ -5,7 +5,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.5.4 15.09.2018
+* @version      5.6.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -47,6 +47,7 @@ $jshopConfig = JSFactory::getConfig();
             <div>                
                 <?php echo HTMLHelper::_('calendar', $this->filter['date_to'], 'date_to', 'date_to', $jshopConfig->field_birthday_format, array('class'=>'inputbox middle2', 'size'=>'5', 'maxlength'=>'10', 'placeholder'=> Text::_('JSHOP_DATE_TO')));?>
             </div>
+            <?php print $this->tmp_html_filter_before_btn ?? '';?>
             <div>
                 <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>"
                     class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
@@ -142,9 +143,9 @@ $jshopConfig = JSFactory::getConfig();
                 </td>
                 <td>
                     <?php if ($row->blocked){?>
-                    <img src="components/com_jshopping/images/checked_out.png" />
+                        <i class="icon-checkedout"></i>
                     <?php }else{?>
-                    <?php echo HTMLHelper::_('grid.id', $i, $row->order_id);?>
+                        <?php echo HTMLHelper::_('grid.id', $i, $row->order_id);?>
                     <?php }?>
                 </td>
                 <td>
@@ -156,8 +157,7 @@ $jshopConfig = JSFactory::getConfig();
                 <?php print $row->_tmp_cols_1?>
                 <td>
                     <?php if ($row->user_id > 0){?>
-                    <a
-                        href="index.php?option=com_jshopping&controller=users&task=edit&user_id=<?php print $row->user_id?>">
+                    <a href="index.php?option=com_jshopping&controller=users&task=edit&user_id=<?php print $row->user_id?>">
                         <?php }?>
                         <?php echo $row->name?>
                         <?php if ($row->user_id > 0){?>
@@ -174,25 +174,22 @@ $jshopConfig = JSFactory::getConfig();
                 <?php }?>
                 <td class="center">
                     <?php if ($jshopConfig->generate_pdf){?>
-                    <?php if ($display_info_order && $row->order_created){?>
-                    <?php if ($row->pdf_file!=''){?>
-                    <a
-                        href="javascript:void window.open('<?php echo $jshopConfig->pdf_orders_live_path."/".$row->pdf_file?>', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=800,height=600,directories=no,location=no');">
-                        <img border="0" src="components/com_jshopping/images/jshop_print.png" alt="print" />
-                    </a>
-                    <?php echo $row->_after_order_pdf ?? '';?>
-                    <?php }elseif($jshopConfig->send_invoice_manually){?>
-                    <a href="index.php?option=com_jshopping&controller=orders&task=send&order_id=<?php echo $row->order_id?>&back=orders"
-                        title="<?php print Text::_('JSHOP_SEND_MAIL')?>">
-                        <i class="icon-envelope"></i>
-                    </a>
-                    <?php }?>
-                    <?php }?>
+                        <?php if ($display_info_order){?>
+                            <?php if ($row->pdf_file != ''){?>
+                                <a class="js_window_popup" patch="<?php echo $jshopConfig->pdf_orders_live_path."/".$row->pdf_file?>" title="<?php print Text::_('JSHOP_EMAIL_BILL')?>">
+                                    <i class="icon-print"></i>
+                                </a>
+                                <?php echo $row->_after_order_pdf ?? '';?>
+                            <?php }elseif($jshopConfig->send_invoice_manually && $row->order_created){?>
+                                <a href="index.php?option=com_jshopping&controller=orders&task=send&order_id=<?php echo $row->order_id?>&back=orders" title="<?php print Text::_('JSHOP_SEND_MAIL')?>">
+                                    <i class="icon-envelope"></i>
+                                </a>
+                            <?php }?>
+                        <?php }?>
                     <?php }else{?>
-                    <a
-                        href="javascript:void window.open('index.php?option=com_jshopping&controller=orders&task=printOrder&order_id=<?php echo $row->order_id?>&tmpl=component', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=yes,resizable=yes,width=800,height=600,directories=no,location=no');">
-                        <img border="0" src="components/com_jshopping/images/jshop_print.png" alt="printhtml" />
-                    </a>
+                        <a class="js_window_popup" patch="index.php?option=com_jshopping&controller=orders&task=printOrder&order_id=<?php echo $row->order_id?>&tmpl=component">
+                            <i class="icon-address"></i>
+                        </a>
                     <?php }?>
                     <?php if (isset($row->_ext_order_info)) echo $row->_ext_order_info;?>
                 </td>
@@ -226,11 +223,8 @@ $jshopConfig = JSFactory::getConfig();
                     <?php if ($row->order_created && $display_info_order){?>
                     <div class="d-none update_status_panel">
                         <div>
-                            <input class="inputbox va-middle" type="checkbox"
-                                name="order_check_id[<?php echo $row->order_id?>]"
-                                id="order_check_id_<?php echo $row->order_id?>" />
-                            <label class="fs-14"
-                                for="order_check_id_<?php echo $row->order_id?>"><?php echo Text::_('JSHOP_NOTIFY_CUSTOMER')?></label>
+                            <input class="inputbox va-middle" type="checkbox" name="order_check_id[<?php echo $row->order_id?>]" id="order_check_id_<?php echo $row->order_id?>">
+                            <label class="fs-14" for="order_check_id_<?php echo $row->order_id?>"><?php echo Text::_('JSHOP_NOTIFY_CUSTOMER')?></label>
                         </div>
                         <input class="button btn btn-primary" type="button" name=""
                             value="<?php echo Text::_('JSHOP_UPDATE_STATUS')?>"
@@ -238,12 +232,11 @@ $jshopConfig = JSFactory::getConfig();
                     </div>
                     <?php }?>
                     <?php if ($display_info_order && !$row->order_created && !$row->blocked){?>
-                    <div><a
-                            href="index.php?option=com_jshopping&controller=orders&task=finish&order_id=<?php print $row->order_id?>&js_nolang=1"><?php print Text::_('JSHOP_FINISH_ORDER')?></a>
+                    <div>
+                        <a href="index.php?option=com_jshopping&controller=orders&task=finish&order_id=<?php print $row->order_id?>&js_nolang=1"><?php print Text::_('JSHOP_FINISH_ORDER')?></a>
                     </div>
                     <?php }?>
                     <?php print $row->_tmp_ext_info_update?>
-
                 </td>
                 <?php print $row->_tmp_cols_6?>
                 <?php print $row->_tmp_cols_7?>
@@ -254,16 +247,14 @@ $jshopConfig = JSFactory::getConfig();
                 <?php print $row->_tmp_cols_8?>
                 <?php if ($jshopConfig->shop_mode==1){?>
                 <td class="center">
-                    <a class="btn btn-micro btn-nopad"
-                        href='index.php?option=com_jshopping&controller=orders&task=transactions&order_id=<?php print $row->order_id;?>'>
-                        <img src='components/com_jshopping/images/jshop_options_s.png'>
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=orders&task=transactions&order_id=<?php print $row->order_id;?>'>
+                        <i class="icon-tree-2"></i>
                     </a>
                 </td>
                 <?php }?>
                 <td class="center">
                     <?php if ($display_info_order){?>
-                    <a class="btn btn-micro btn-nopad"
-                        href='index.php?option=com_jshopping&controller=orders&task=edit&order_id=<?php print $row->order_id;?>&client_id=<?php print $this->client_id;?>'>
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=orders&task=edit&order_id=<?php print $row->order_id;?>&client_id=<?php print $this->client_id;?>'>
                         <i class="icon-edit"></i>
                     </a>
                     <?php }?>
@@ -282,7 +273,8 @@ $jshopConfig = JSFactory::getConfig();
                 ?>
                 <?php print $this->_tmp_cols_foot_total?>
                 <td colspan="<?php print $cols+(int)$this->deltaColspan0?>" class="right">
-                    <b><?php print Text::_('JSHOP_TOTAL')?></b></td>
+                    <b><?php print Text::_('JSHOP_TOTAL')?></b>
+                </td>
                 <td><b><?php print Helper::formatprice($this->total, Helper::getMainCurrencyCode())?></b></td>
                 <?php if ($jshopConfig->shop_mode==1){?>
                 <td></td>

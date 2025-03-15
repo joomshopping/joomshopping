@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\User\User;
 defined('_JEXEC') or die('');
 
 abstract class UsershopbaseTable extends ShopbaseTable{
@@ -156,5 +157,17 @@ abstract class UsershopbaseTable extends ShopbaseTable{
         $this->birthday = Helper::getDisplayDate($this->birthday, $JshopConfig->field_birthday_format);
         $this->d_birthday = Helper::getDisplayDate($this->d_birthday, $JshopConfig->field_birthday_format);
     }
+
+	function isAdmin() {
+		if ($this->user_id <= 0) {
+			return 0;
+		}
+		$user = new User($this->user_id);
+		$adminGroups = [7, 8];
+		if (array_intersect($adminGroups, $user->getAuthorisedGroups())) {
+			return 1;
+		}
+		return 0;
+	}
 	
 }

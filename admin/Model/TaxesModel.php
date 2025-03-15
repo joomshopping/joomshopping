@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.0 13.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -59,10 +59,10 @@ class TaxesModel extends BaseadminModel{
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveTax', array(&$tax));
         $tax->bind($post);
-        if( !$tax->store() ) {
-            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
-            return 0;
+        if (!$tax->hasPrimaryKey() && $tax->hasField('ordering')){
+            $tax->ordering = $tax->getNextOrder();
         }
+        $tax->store();
         $dispatcher->triggerEvent('onAfterSaveTax', array(&$tax));
         return $tax;
     }

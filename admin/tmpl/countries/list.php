@@ -5,7 +5,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -32,8 +32,19 @@ if ($saveOrder){
     <div class="js-filters">
         <?php print $this->tmp_html_filter?>
         <div>
-            <label><?php print Text::_('JSHOP_SHOW')?>:</label>
             <?php print $this->filter;?>
+        </div>
+        <div>
+            <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>"
+                class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
+        </div>
+        <div>          
+            <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
+                <span class="icon-search" aria-hidden="true"></span>
+            </button>                
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
         <?php print $this->tmp_html_filter_end?>      
     </div>

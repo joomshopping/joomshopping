@@ -18,6 +18,9 @@ class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){
         ToolbarHelper::title(Text::_('JSHOP_ADDONS'), 'generic.png');
+        ToolbarHelper::publishList();
+        ToolbarHelper::unpublishList();
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
         if ($this->config->disable_admin['addons_catalog'] == 0) {
             ToolbarHelper::custom("listweb", 'folder', 'folder', Text::_('JSHOP_ADDONS_CATALOG'), false);
         }
@@ -31,6 +34,13 @@ class HtmlView extends BaseHtmlView{
         ToolbarHelper::spacer();
         ToolbarHelper::apply();
         ToolbarHelper::spacer();
+        ToolbarHelper::cancel();
+        parent::display($tpl);
+    }
+
+    function displayConfig($tpl = null){
+        ToolbarHelper::title(Text::_('JSHOP_ADDONS')." / ".Text::_('JSHOP_MAINTENANCE').' / '.$this->row->name, 'generic.png' );
+        ToolbarHelper::save('saveconfig');
         ToolbarHelper::cancel();
         parent::display($tpl);
     }
@@ -58,7 +68,6 @@ class HtmlView extends BaseHtmlView{
         ToolbarHelper::custom("back", 'arrow-left', 'arrow-left', Text::_('JSHOP_ADDONS'), false);
         HelperAdmin::btnHome();
         ToolbarHelper::custom("listwebrefresh", 'icon-refresh', 'icon-refresh', Text::_('JSHOP_REFRESH'), false);
-        
         parent::display($tpl);
 	}
 

@@ -55,9 +55,10 @@ class UsereditModel  extends UserbaseModel{
 		if (!$this->admin_registration){
 			$post['lang'] = $jshopConfig->getLang();
 			unset($post['usergroup_id']);
-			if (!$jshopConfig->not_update_user_joomla && isset($post['email'])){
+			if (!$jshopConfig->not_update_user_joomla && $jshopConfig->update_username_joomla && isset($post['email'])){
 				$field = $jshopConfig->getListFieldsRegisterType('register');
-				if ($field['u_name']['display'] == 0 && $post['email']){
+				$uadmin = (isset($this->user) && $this->user->isAdmin());
+				if ($field['u_name']['display'] == 0 && $post['email'] && !$uadmin){
 					$post['u_name'] = $post['email'];
 				}
 			}

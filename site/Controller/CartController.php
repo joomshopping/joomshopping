@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.1 09.04.2024
+* @version      5.6.0 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -167,7 +167,7 @@ class CartController extends BaseController{
             print Helper::getOkMessageJson($cart);
             die();
         }
-        $this->setRedirect( Helper::SEFLink($cart->getUrlList(),0,1) );
+        $this->setRedirect( Helper::SEFLink($cart->getUrlList(),1,1) );
     }
 
     function refresh(){
@@ -182,7 +182,7 @@ class CartController extends BaseController{
             print Helper::getOkMessageJson($cart);
             die();
         }
-        $this->setRedirect( Helper::SEFLink($cart->getUrlList(),0,1) );
+        $this->setRedirect( Helper::SEFLink($cart->getUrlList(),1,1) );
     }
 
     function discountsave(){
@@ -217,7 +217,7 @@ class CartController extends BaseController{
 		if ($back_step) {
 			$url = JSFactory::getModel('checkoutStep', 'Site')->getCheckoutUrl((string)$back_step, 1);
 		} else {
-			$url = Helper::SEFLink($cart->getUrlList(), 0, 1);
+			$url = Helper::SEFLink($cart->getUrlList(), 1, 1);
 		}
         $this->setRedirect($url);
     }
@@ -231,6 +231,6 @@ class CartController extends BaseController{
             print Helper::getOkMessageJson($cart);
             die();
         }
-        $this->setRedirect(Helper::SEFLink($cart->getUrlList(), 0, 1));
+        $this->setRedirect(Helper::SEFLink($cart->getUrlList(), 1, 1));
     }
 }

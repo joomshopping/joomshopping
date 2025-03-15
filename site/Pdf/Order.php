@@ -1,12 +1,14 @@
 <?php
 /**
-* @version      5.5.6 12.02.2025
+* @version      5.6.0 10.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Pdf;
+
+use Exception;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
@@ -14,11 +16,16 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
-include_once(JPATH_JOOMSHOPPING."/config/pdf_config.php");
-include_once(JPATH_JOOMSHOPPING."/Lib/tcpdf/tcpdf.php");
+if (file_exists(JPATH_JOOMSHOPPING."/Lib/tcpdf/tcpdf.php")) {
+    include_once(JPATH_JOOMSHOPPING."/config/pdf_config.php");
+    include_once(JPATH_JOOMSHOPPING."/Lib/tcpdf/tcpdf.php");
+} else {
+    throw new Exception('Install Lib TcPdf');
+}
 
 class Order extends \TCPDF{
-    
+    public $pdfOrderHeader;
+    public $_vendorinfo;
     public $pdfcolors = array(array(0,0,0), array(200,200,200), array(155,155,155));
     public $img_header = 'header.jpg';
     public $img_footer = 'footer.jpg';
@@ -139,23 +146,23 @@ class Order extends \TCPDF{
         $width_filename	= 65;
         if (!$jshopConfig->show_product_code_in_order) $width_filename = 87;
         $pdf->setfillcolor($pdf->pdfcolors[1][0], $pdf->pdfcolors[1][1], $pdf->pdfcolors[1][2]);
-        $pdf->Rect(20,116,170,4,'F');
+        $pdf->Rect(20,116,170,4,'DF');
         $pdf->SetFont('freesansb','',7.5);
         $pdf->SetXY(20,116);
-        $pdf->MultiCell($width_filename, 4, Text::_('JSHOP_NAME_PRODUCT'), 1, 'L');
+        $pdf->MultiCell($width_filename, 4, Text::_('JSHOP_NAME_PRODUCT'), 0, 'L');
         
         if ($jshopConfig->show_product_code_in_order){
             $pdf->SetXY(85,116);
-            $pdf->MultiCell(22, 4, Text::_('JSHOP_EAN_PRODUCT'), 1, 'L');
+            $pdf->MultiCell(22, 4, Text::_('JSHOP_EAN_PRODUCT'), 0, 'L');
         }
         
         $pdf->SetXY(107,116);
-        $pdf->MultiCell(18, 4, Text::_('JSHOP_QUANTITY'), 1, 'L');
+        $pdf->MultiCell(18, 4, Text::_('JSHOP_QUANTITY'), 0, 'L');
         
         $pdf->SetXY(125,116);
-        $pdf->MultiCell(25, 4, Text::_('JSHOP_SINGLEPRICE'), 1, 'L');
+        $pdf->MultiCell(25, 4, Text::_('JSHOP_SINGLEPRICE'), 0, 'L');
         $pdf->SetXY(150,116);
-        $pdf->MultiCell(40, 4,Text::_('JSHOP_TOTAL'), 1,'R');
+        $pdf->MultiCell(40, 4,Text::_('JSHOP_TOTAL'), 0,'R');
             
         $y = 120;
         foreach($order->products as $prod){
@@ -280,11 +287,11 @@ class Order extends \TCPDF{
 
         if (!$hide_subtotal){
             $pdf->SetXY(20,$y);
-            $pdf->Rect(20,$y,170,5,'F');
-            $pdf->MultiCell(130,5,Text::_('JSHOP_SUBTOTAL'),'1','R');	
+            $pdf->Rect(20,$y,170,5,'DF');
+            $pdf->MultiCell(130,5,Text::_('JSHOP_SUBTOTAL'), 0,'R');	
             $pdf->SetXY(150,$y);	
             $_pdf_ext_subtotal = isset($order->_pdf_ext_subtotal) ? $order->_pdf_ext_subtotal : '';
-            $pdf->MultiCell(40,5,\JSHelper::formatprice($order->order_subtotal, $order->currency_code, 0, -1).$_pdf_ext_subtotal,'1','R');
+            $pdf->MultiCell(40,5,\JSHelper::formatprice($order->order_subtotal, $order->currency_code, 0, -1).$_pdf_ext_subtotal, 0,'R');
         }else{
             $y = $y - 5;
         }
@@ -294,29 +301,29 @@ class Order extends \TCPDF{
         if ($order->order_discount > 0){
             $y = $y + 5;     
             $pdf->SetXY(20,$y);
-            $pdf->Rect(20,$y,170,5,'F');
+            $pdf->Rect(20,$y,170,5,'DF');
             $_pdf_ext_discount_text = isset($order->_pdf_ext_discount_text) ? $order->_pdf_ext_discount_text : '';
-            $pdf->MultiCell(130,5, Text::_('JSHOP_RABATT_VALUE').$_pdf_ext_discount_text,'1','R');
+            $pdf->MultiCell(130,5, Text::_('JSHOP_RABATT_VALUE').$_pdf_ext_discount_text, 0,'R');
             $pdf->SetXY(150,$y);
             $_pdf_ext_discount = isset($order->_pdf_ext_discount) ? $order->_pdf_ext_discount : '';
-            $pdf->MultiCell(40,5, "-".Helper::formatprice($order->order_discount, $order->currency_code, 0, -1).$_pdf_ext_discount,'1','R');
+            $pdf->MultiCell(40,5, "-".Helper::formatprice($order->order_discount, $order->currency_code, 0, -1).$_pdf_ext_discount, 0,'R');
         }
         
         if (!$jshopConfig->without_shipping){
             $pdf->SetXY(20,$y + 5);
-            $pdf->Rect(20,$y + 5,170,5,'F');
-            $pdf->MultiCell(130,5,Text::_('JSHOP_SHIPPING_PRICE'),'1','R');
+            $pdf->Rect(20,$y + 5,170,5,'DF');
+            $pdf->MultiCell(130,5,Text::_('JSHOP_SHIPPING_PRICE'), 0,'R');
             $pdf->SetXY(150,$y + 5);
             $_pdf_ext_shipping = isset($order->_pdf_ext_shipping) ? $order->_pdf_ext_shipping : '';
-            $pdf->MultiCell(40,5,\JSHelper::formatprice($order->order_shipping, $order->currency_code, 0, -1).$_pdf_ext_shipping,'1','R');
+            $pdf->MultiCell(40,5,\JSHelper::formatprice($order->order_shipping, $order->currency_code, 0, -1).$_pdf_ext_shipping, 0,'R');
             if ($order->order_package>0 || $jshopConfig->display_null_package_price){
                 $y=$y+5;
                 $pdf->SetXY(20,$y + 5);
-                $pdf->Rect(20,$y + 5,170,5,'F');
-                $pdf->MultiCell(130,5,Text::_('JSHOP_PACKAGE_PRICE'),'1','R');
+                $pdf->Rect(20,$y + 5,170,5,'DF');
+                $pdf->MultiCell(130,5,Text::_('JSHOP_PACKAGE_PRICE'), 0,'R');
                 $pdf->SetXY(150,$y + 5);
                 $_pdf_ext_shipping_package = isset($order->_pdf_ext_shipping_package) ? $order->_pdf_ext_shipping_package : '';
-                $pdf->MultiCell(40,5,\JSHelper::formatprice($order->order_package, $order->currency_code, 0, -1).$_pdf_ext_shipping_package,'1','R');
+                $pdf->MultiCell(40,5,\JSHelper::formatprice($order->order_package, $order->currency_code, 0, -1).$_pdf_ext_shipping_package, 0,'R');
             }
         }else{
             $y = $y - 5;
@@ -325,11 +332,11 @@ class Order extends \TCPDF{
         if ($order->order_payment != 0){
             $y = $y + 5;     
             $pdf->SetXY(20,$y+5);
-            $pdf->Rect(20,$y+5,170,5,'F');
-            $pdf->MultiCell(130,5, $order->payment_name,'1','R');
+            $pdf->Rect(20,$y+5,170,5,'DF');
+            $pdf->MultiCell(130,5, $order->payment_name, 0,'R');
             $pdf->SetXY(150,$y+5);
             $_pdf_ext_payment = isset($order->_pdf_ext_payment) ? $order->_pdf_ext_payment : '';
-            $pdf->MultiCell(40,5, Helper::formatprice($order->order_payment, $order->currency_code, 0, -1).$_pdf_ext_payment, '1','R');
+            $pdf->MultiCell(40,5, Helper::formatprice($order->order_payment, $order->currency_code, 0, -1).$_pdf_ext_payment, 0,'R');
         }
 
         $show_percent_tax = $order->getShowPercentTax();
@@ -339,13 +346,13 @@ class Order extends \TCPDF{
         if (!$jshopConfig->hide_tax){
             foreach($order->order_tax_list as $percent=>$value){
                 $pdf->SetXY(20,$y + 10);
-                $pdf->Rect(20,$y + 10,170,5,'F');
+                $pdf->Rect(20,$y + 10,170,5,'DF');
                 $text = Helper::displayTotalCartTaxName($order->display_price);
                 if ($show_percent_tax) $text = $text." ".Helper::formattax($percent)."%";
-                $pdf->MultiCell(130,5,$text ,'1','R');        
+                $pdf->MultiCell(130,5,$text , 0,'R');        
                 $pdf->SetXY(150,$y + 10);
                 $_pdf_ext_tax = isset($order->_pdf_ext_tax[$percent]) ? $order->_pdf_ext_tax[$percent] : '';
-                $pdf->MultiCell(40,5,\JSHelper::formatprice($value, $order->currency_code, 0, -1).$_pdf_ext_tax,'1','R');
+                $pdf->MultiCell(40,5,\JSHelper::formatprice($value, $order->currency_code, 0, -1).$_pdf_ext_tax, 0,'R');
                 $y = $y + 5;
             }
         }
@@ -354,17 +361,17 @@ class Order extends \TCPDF{
 
         $pdf->SetFont('freesansb','',10);
         $pdf->SetXY(20,$y + 10);
-        $pdf->Rect(20,$y + 10,170, 5.1,'F');
-        $pdf->MultiCell(130, 5 , $text_total,'1','R');
+        $pdf->Rect(20,$y + 10,170, 5.1,'DF');
+        $pdf->MultiCell(130, 5 , $text_total, 0,'R');
         
         $pdf->SetXY(150,$y + 10);
         $_pdf_ext_total = isset($order->_pdf_ext_total) ? $order->_pdf_ext_total : '';
-        $pdf->MultiCell(40,5,\JSHelper::formatprice($order->order_total, $order->currency_code, 0, -1).$_pdf_ext_total,'1','R');
+        $pdf->MultiCell(40,5,\JSHelper::formatprice($order->order_total, $order->currency_code, 0, -1).$_pdf_ext_total, 0,'R');
         if ($jshopConfig->display_tax_id_in_pdf && $order->tax_number){
             $y = $y+5.2;
             $pdf->SetFont('freesans','',7);
             $pdf->SetXY(20,$y + 10);        
-            $pdf->MultiCell(170, 4 , Text::_('JSHOP_TAX_NUMBER').": ".$order->tax_number,'1','L');
+            $pdf->MultiCell(170, 4 , Text::_('JSHOP_TAX_NUMBER').": ".$order->tax_number, 0,'L');
         }
         $dispatcher->triggerEvent('onBeforeCreatePdfOrderAfterEndTotal', array(&$order, &$pdf, &$y));
         
@@ -463,69 +470,69 @@ class Order extends \TCPDF{
         if ($show_bank_in_order){
             if ($vendorinfo->benef_bank_info || $vendorinfo->benef_bic || $vendorinfo->benef_conto || $vendorinfo->benef_payee || $vendorinfo->benef_iban || $vendorinfo->benef_swift){
                 $pdf->SetXY(115, $y);
-                $pdf->Rect(115, $y, 75,4,'F');
-                $pdf->MultiCell(75,4,Text::_('JSHOP_BANK'),'1','L');
+                $pdf->Rect(115, $y, 75,4,'DF');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_BANK'), 0,'L');
             }
             
             if ($vendorinfo->benef_bank_info){
                 $y2 += 4;
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_BANK_NAME'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_BANK_NAME'),'LRB','L');
             }
             
             if ($vendorinfo->benef_bic){
                 $y2 += 4;
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_BIC'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_BIC'),'LRB','L');
             }
             
             if ($vendorinfo->benef_conto){
                 $y2 += 4;
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_CONTO'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_CONTO'),'LRB','L');
             }
             
             if ($vendorinfo->benef_payee){
                 $y2 += 4;
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_PAYEE'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_PAYEE'),'LRB','L');
             }
             
             if ($vendorinfo->benef_iban){
                 $y2 += 4;
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_IBAN'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_IBAN'),'LRB','L');
             }
             
             if ($vendorinfo->benef_bic_bic){
                 $y2 += 4;
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_BIC_BIC'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_BIC_BIC'),'LRB','L');
             }
             
             if ($vendorinfo->benef_swift){
                 $y2 += 4;
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_SWIFT'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_BENEF_SWIFT'),'LRB','L');
             }
             
             if ($vendorinfo->interm_name || $vendorinfo->interm_swift){
                 $y2 += 4;
-                $pdf->Rect(115,$y2 + $y,75,4,'F');
+                $pdf->Rect(115,$y2 + $y,75,4,'DF');
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_INTERM_BANK'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_INTERM_BANK'), 'LRB','L');
             }
             
             if ($vendorinfo->interm_name){
                 $y2 += 4;
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_INTERM_NAME'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_INTERM_NAME'),'LRB','L');
             }
             
             if ($vendorinfo->interm_swift){
                 $y2 += 4;
                 $pdf->SetXY(115, $y2 + $y);
-                $pdf->MultiCell(75,4,Text::_('JSHOP_INTERM_SWIFT'),'1','L');
+                $pdf->MultiCell(75,4,Text::_('JSHOP_INTERM_SWIFT'),'LRB','L');
             }
             
             

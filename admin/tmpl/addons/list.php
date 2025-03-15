@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.5.4 19.01.2025
+* @version      5.6.0 09.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -8,6 +8,7 @@
 */
 defined('_JEXEC') or die();
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -26,6 +27,9 @@ $i=0;
             <thead>
                 <tr>
                     <th class="title" width="10">#</th>
+                    <th width="10">
+                        <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)">
+                    </th>
                     <th align="left">
                         <?php echo Text::_('JSHOP_TITLE')?>
                     </th>
@@ -38,13 +42,18 @@ $i=0;
                     </th>
                     <?php }?>
                     <th width="60" class="center">
-                        <?php echo Text::_('JSHOP_DESCRIPTION')?>
-                    </th>
-                    <th width="60" class="center">
                         <?php echo Text::_('JSHOP_KEY')?>
                     </th>
                     <th width="60" class="center">
                         <?php echo Text::_('JSHOP_CONFIG')?>
+                    </th>
+                    <?php if ($this->config->shop_mode > 0) {?>
+                    <th width="50" class="center">
+                        <?php echo Text::_('JSHOP_MAINTENANCE')?>
+                    </th>
+                    <?php } ?>
+                    <th width="50" class="center">
+                        <?php echo Text::_('JSHOP_PUBLISH')?>
                     </th>
                     <th width="50" class="center">
                         <?php echo Text::_('JSHOP_DELETE')?>
@@ -60,7 +69,15 @@ $i=0;
                     <?php echo $i+1;?>
                 </td>
                 <td>
+                    <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
+                </td>
+                <td>
                     <?php echo $row->name;?>
+                    <?php if ($row->info_file_exist){?>
+                        <a href='index.php?option=com_jshopping&controller=addons&task=info&id=<?php print $row->id?>'>
+                            <div class="small"><i class="icon-info-circle"></i> <?php echo Text::_('JSHOP_DESCRIPTION')?></div>
+                        </a>
+                    <?php }?>
                 </td>
                 <td>
                     <?php if (isset($row->avialable_version_update)) {?>
@@ -71,9 +88,9 @@ $i=0;
                         <?php echo $row->version;?>
                     <?php }?>
                     <?php if ($row->version_file_exist){?>
-                    <a class="btn btn-micro"
-                        href='index.php?option=com_jshopping&controller=addons&task=version&id=<?php print $row->id?>'><img
-                            src='components/com_jshopping/images/jshop_info_s.png'></a>
+                        <a class="btn btn-micro tbody-icon" href='index.php?option=com_jshopping&controller=addons&task=version&id=<?php print $row->id?>'>
+                            <i class="icon-info"></i>
+                        </a>
                     <?php }?>
                 </td>
                 <?php if ($this->config->disable_admin['addons_catalog'] == 0) {?>
@@ -88,31 +105,33 @@ $i=0;
                 </td>
                 <?php }?>
                 <td class="center">
-                    <?php if ($row->info_file_exist){?>
-                    <a class="btn btn-micro"
-                        href='index.php?option=com_jshopping&controller=addons&task=info&id=<?php print $row->id?>'><img
-                            src='components/com_jshopping/images/jshop_info_s.png'></a>
-                    <?php }?>
-                </td>
-                <td class="center">
                     <?php if ($row->usekey){?>
-                    <a class="btn btn-micro"
-                        href='index.php?option=com_jshopping&controller=licensekeyaddon&alias=<?php print $row->alias?>&back=<?php print $this->back64?>'>
+                    <a class="btn btn-micro" href='index.php?option=com_jshopping&controller=licensekeyaddon&alias=<?php print $row->alias?>&back=<?php print $this->back64?>'>
                         <i class="icon-key"></i>
                     </a>
                     <?php }?>
                 </td>
                 <td class="center">
                     <?php if ($row->config_file_exist){?>
-                    <a class="btn btn-micro  btn-nopad"
-                        href='index.php?option=com_jshopping&controller=addons&task=edit&id=<?php print $row->id?>'>
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=edit&id=<?php print $row->id?>'>
                         <i class="icon-edit"></i>
                     </a>
                     <?php }?>
                 </td>
+                <?php if ($this->config->shop_mode > 0) {?>
                 <td class="center">
-                    <a class="btn btn-micro  btn-nopad"
-                        href='index.php?option=com_jshopping&controller=addons&task=remove&id=<?php print $row->id?>'
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=config&id=<?php print $row->id?>'>
+                        <i class="icon-wrench"></i>
+                    </a>
+                </td>
+                <?php }?>
+                <td class="center">
+                    <?php if ($row->publish != -1) {?>
+                    <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
+                    <?php }?>
+                </td>
+                <td class="center">
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=remove&cid[]=<?php print $row->id?>'
                         onclick="return confirm('<?php print Text::_('JSHOP_DELETE_ALL_DATA')?>')">
                         <i class="icon-delete"></i>
                     </a>
@@ -125,14 +144,14 @@ $i=0;
         </table>
         <?php }?>
 
-        <?php if (count($rows) == 0) {?>
+        <?php if ($this->config->disable_admin['addons_catalog'] == 0) {?>
             <div class="text-center mt-3">
                 <a class="btn btn-success" href="index.php?option=com_jshopping&controller=addons&task=listweb">
                     <span class="icon-folder" aria-hidden="true"></span>
                     <?php echo Text::_('JSHOP_ADDONS_CATALOG')?>
                 </a>
             </div>
-        <?php }?>
+        <?php } ?>
 
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="hidemainmenu" value="0" />

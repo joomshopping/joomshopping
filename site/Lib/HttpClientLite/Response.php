@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.0 08.04.2024
+* @version      5.6.0 06.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -23,6 +23,10 @@ class Response
     public function getBody(): string
     {
         return $this->body;
+    }
+
+    public function getJsonDecode(){
+        return json_decode($this->body);
     }
 
     public function setInfo(array $info): void

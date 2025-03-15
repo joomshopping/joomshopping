@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.4 31.08.2022
+* @version      5.6.0 14.03.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -70,10 +70,10 @@ class OrdersController extends BaseadminController{
             $list_order_status[$v->status_id] = $v->name;
         }
         $rows = $orders->getAllOrders($pageNav->limitstart, $pageNav->limit, $filter, $filter_order, $filter_order_Dir);
-        
+
         $lists['status_orders'] = SelectOptions::getOrderStatus();       
         $lists['changestatus'] = HTMLHelper::_('select.genericlist', SelectOptions::getOrderStatus(1) ,'status_id','class="form-select middle2"','status_id','name', $status_id);
-        $lists['notfinished'] = HTMLHelper::_('select.genericlist', SelectOptions::getNotFinshed(), 'notfinished','class="form-select middle2" title="'.Text::_('JSHOP_NOT_FINISHED').'" ','id','name', $notfinished);
+        $lists['notfinished'] = HTMLHelper::_('select.genericlist', SelectOptions::getNotFinshed(), 'notfinished','class="form-select middle2" title="'.Text::_('JSHOP_NOT_FINISHED').'" default-value="'.$jshopConfig->order_notfinished_default.'"','id','name', $notfinished);
         $lists['payments'] = HTMLHelper::_('select.genericlist', SelectOptions::getPayments('- '.Text::_('JSHOP_PAYMENTS').'-'), 'payment_id','class="form-select middle2"','payment_id','name', $payment_id);
         $lists['shippings'] = HTMLHelper::_('select.genericlist', SelectOptions::getShippings('- '.Text::_('JSHOP_SHIPPINGS').'-'), 'shipping_id','class="form-select middle2"','shipping_id','name', $shipping_id);
 

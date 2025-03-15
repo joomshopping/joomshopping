@@ -10,6 +10,8 @@ namespace Joomla\Component\Jshopping\Administrator\Controller;
 
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 
@@ -29,9 +31,9 @@ class AddonsController extends BaseadminController{
 
         $view = $this->getView("addons", 'html');
         $view->setLayout("list");
-        $view->set('rows', $rows); 
-        $view->set('back64', $back64);
-        $view->set('config', JSFactory::getConfig());
+        $view->rows = $rows;
+        $view->back64 = $back64;
+        $view->config = JSFactory::getConfig();
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
@@ -69,16 +71,10 @@ class AddonsController extends BaseadminController{
     	}
         JSFactory::getModel("addons")->save($post);
         if ($this->getTask()=='apply') {
-            $this->setRedirect("index.php?option=com_jshopping&controller=addons&task=edit&id=".$post['id']);            
+            $this->setRedirect("index.php?option=com_jshopping&controller=addons&task=edit&id=".$post['id']);
         } else {
             $this->setRedirect("index.php?option=com_jshopping&controller=addons");
         }
-    }
-
-    public function remove(){
-        $id = $this->input->getVar("id");
-        JSFactory::getModel("addons")->delete($id);
-        $this->setRedirect("index.php?option=com_jshopping&controller=addons");
     }
     
     public function info(){
@@ -123,6 +119,49 @@ class AddonsController extends BaseadminController{
         $view = $this->getView("addons", 'html');
         $view->setLayout("help");
         $view->displayHelp();
+    }
+
+    public function config(){
+        $app = Factory::getApplication();
+        $app->input->set('hidemainmenu', true);
+		$id = $this->input->getInt("id");
+		$row = JSFactory::getTable('addon');
+		$row->load($id);
+        $config = $row->getConfig();
+        $def_folder_view =  'components/com_jshopping/templates/addons/'.$row->alias;
+        $def_folder_js =  'components/com_jshopping/js/addons';
+        $def_folder_css =  'components/com_jshopping/css/addons';
+
+        $def_overrides_view =  'templates/{YOUR_JOOMLA_TEMPLATE}/html/com_jshopping/addons/'.$row->alias;
+        $def_overrides_js =  'templates/{YOUR_JOOMLA_TEMPLATE}/js/addons';
+        $def_overrides_css =  'templates/{YOUR_JOOMLA_TEMPLATE}/css/addons';
+
+        $debug_options = [0 => Text::_('JNo'), 1 => Text::_('JYES')." L1", 2 => Text::_('JYES')." L2", 3 => Text::_('JYES')." L3"];
+        $debug_select = HTMLHelper::_('select.genericlist', $debug_options, 'config[debug]','class="inputbox form-select"','id','name', $config['debug'] ?? 0);
+
+		$view = $this->getView("addons", 'html');
+        $view->setLayout("config");
+        $view->row = $row;
+        $view->config = $config;
+        $view->def_folder_view = $def_folder_view;
+        $view->def_folder_js = $def_folder_js;
+        $view->def_folder_css = $def_folder_css;
+        $view->def_overrides_view = $def_overrides_view;
+        $view->def_overrides_js = $def_overrides_js;
+        $view->def_overrides_css = $def_overrides_css;
+        $view->debug_select = $debug_select;
+        $app->triggerEvent('onBeforeConfigAddons', array(&$view));
+		$view->displayConfig();
+	}
+
+    public function saveconfig() {
+        $post = $this->input->post->getArray(array(), null, 'RAW');
+	 	if (isset($post['f-id'])){
+	    	$post['id'] = $post['f-id'];
+        	unset($post['f-id']);
+    	}
+        JSFactory::getModel("addons")->saveconfig($post);
+        $this->setRedirect("index.php?option=com_jshopping&controller=addons");
     }
 
     public function listweb(){

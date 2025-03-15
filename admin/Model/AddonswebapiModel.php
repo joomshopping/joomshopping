@@ -18,6 +18,11 @@ class AddonswebapiModel extends BaseadminModel{
 
     private $catalog_addon_api = "https://www.webdesigner-profi.de/joomla-webdesign/shop/api";
     private $cache_dir = 'catalog_addon';
+    public $use_cache = 1;
+
+    public function useCache($use_cache) {
+        $this->use_cache = $use_cache;
+    }
 
     public function products() {
         $json = $this->request('/products');
@@ -46,6 +51,15 @@ class AddonswebapiModel extends BaseadminModel{
         }
     }
 
+    public function files($alias) {
+        $json = $this->request('/files', ['alias' => $alias]);
+        if ($json) {
+            return json_decode($json);
+        } else {
+            return [];
+        }
+    }
+
     public function clearCache() {
         $cache = new Cache(JSFactory::getConfig()->cache_path . $this->cache_dir);
         $cache->clearAll();
@@ -54,7 +68,7 @@ class AddonswebapiModel extends BaseadminModel{
     protected function request($uri, $params = []) {
         $cache_key = $this->getCacheKey($uri, $params);
         $cache = new Cache(JSFactory::getConfig()->cache_path . $this->cache_dir);
-        if ($cache_body = $cache->get($cache_key)) {
+        if ($this->use_cache && $cache_body = $cache->get($cache_key)) {
             return $cache_body;
         }
         $client = new Client(['base_uri' => $this->catalog_addon_api]);
@@ -64,7 +78,9 @@ class AddonswebapiModel extends BaseadminModel{
             $res = $client->request('POST', $uri, ['form_params' => $params, 'headers' => ["User-Agent: JoomShopping"]]);
         }
         $body = $res->getBody();
-        $cache->set($cache_key, $body);
+        if ($this->use_cache) {
+            $cache->set($cache_key, $body);
+        }
         return $body;
     }
 

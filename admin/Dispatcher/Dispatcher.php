@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.4 21.02.2024
+* @version      5.6.0 21.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -34,11 +34,14 @@ class Dispatcher extends ComponentDispatcher{
 	}
 
     private function initShop(){
-        if (!Factory::getUser()->authorise('core.manage', 'com_jshopping')) {
+        $user = Factory::getUser();
+        if (!$user->authorise('core.manage', 'com_jshopping')) {
             return JSError::raiseWarning(404, Text::_('JERROR_ALERTNOAUTHOR'));
-        }		
+        }
         $app = Factory::getApplication();
         $ajax = $app->input->getInt('ajax');
+        $controller = $app->input->getCmd('controller');
+        $task = $app->input->getCmd('task');
         $admin_load_user_id = $app->input->getInt('admin_load_user_id');
         if ($admin_load_user_id){
             JSFactory::setLoadUserId($admin_load_user_id);
@@ -54,10 +57,16 @@ class Dispatcher extends ComponentDispatcher{
         } else {
             $jshopConfig->setLang($jshopConfig->getFrontLang());
         }
+        $checkInstall = !$ajax && !$task;
+        $checkInstall = $checkInstall || ($controller=='config' && $task!='save');
 		
-        if (!$ajax){
+        if ($checkInstall && $user->authorise('core.admin.install', 'com_jshopping')){
             Helper::installNewLanguages();
-        }else{
+            JSFactory::getModel("addondependencies")->autoInstallAll();
+            JSFactory::getModel("sysmsg")->show();
+        }
+
+        if ($ajax) {
             header('Content-Type: text/html;charset=UTF-8');
         }
 

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 18.12.2023
+* @version      5.6.0 18.12.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -68,7 +68,7 @@ class WishlistController extends BaseController{
             print Helper::getOkMessageJson($cart);
             die();
         }
-        $this->setRedirect( Helper::SEFLink($cart->getUrlList(),0,1) );
+        $this->setRedirect( Helper::SEFLink($cart->getUrlList(),1,1) );
     }
 
     function remove_to_cart(){

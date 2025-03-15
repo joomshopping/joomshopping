@@ -69,6 +69,10 @@ class ProductController extends BaseController{
 		$model->clearBackValue();
 		
 		$attributes = $model->getAttributes();
+	    if ($jshopConfig->check_valid_productpage_attribute && !$model->checkValidProductAttributesValues($attributes, $attr)){
+		    throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
+		    return;
+	    }
         $all_attr_values = $model->getAllAttrValues();
 
 		if (!$product->checkView($category, $user, $category_id, $listcategory)){

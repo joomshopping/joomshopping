@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_categories` (
 `products_page` int(8) NOT NULL default '12',
 `products_row` int(3) NOT NULL default '3',
 `access` int(3) NOT NULL default '1',
+`product_sorting` VARCHAR(4) NOT NULL,
+`product_sorting_direction` TINYINT NOT NULL DEFAULT '-1',
 `img_alt` varchar(255) NOT NULL default '',
 `img_title` varchar(255) NOT NULL default '',
 PRIMARY KEY  (`category_id`),
@@ -155,6 +157,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_taxes` (
 `tax_id` int(11) NOT NULL auto_increment,
 `tax_name` VARCHAR(50) NOT NULL default '',
 `tax_value` DECIMAL(12,2) NOT NULL default 0,
+`ordering` INT NOT NULL default 0,
 PRIMARY KEY  (`tax_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -677,6 +680,19 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_addons` (
 `version` VARCHAR(255) NOT NULL default '',
 `uninstall` VARCHAR(255) NOT NULL default '',
 `params` longtext NOT NULL,
+`publish` TINYINT(1) NOT NULL default -1,
+`config` text NOT NULL,
+PRIMARY KEY  (`id`)
+) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+CREATE TABLE IF NOT EXISTS `#__jshopping_addons_dependencies` (
+`id` int(11) NOT NULL auto_increment,
+`alias` VARCHAR(255) NOT NULL default '',
+`name` VARCHAR(255) NOT NULL default '',
+`parent` VARCHAR(255) NOT NULL default '',
+`version` VARCHAR(255) NOT NULL default '',
+`installed` TINYINT(1) NOT NULL default 0,
+`error` TINYINT(1) NOT NULL DEFAULT 0,
 PRIMARY KEY  (`id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -1275,7 +1291,7 @@ INSERT INTO `#__jshopping_configs` (`id`, `config_id`, `key`, `value`) VALUES
 (43, 1, 'hide_buy_not_avaible_stock', '1'),
 (44, 1, 'show_sort_product', '1'),
 (45, 1, 'show_count_select_products', '1'),
-(46, 1, 'order_send_pdf_client', '1'),
+(46, 1, 'order_send_pdf_client', '0'),
 (47, 1, 'order_send_pdf_admin', '0'),
 (48, 1, 'show_delivery_time', '0'),
 (49, 1, 'securitykey', ''),

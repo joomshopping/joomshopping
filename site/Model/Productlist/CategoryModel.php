@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.0 13.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -15,11 +15,11 @@ defined('_JEXEC') or die();
 class CategoryModel extends ListModel{
 
     function getCountProductsPerPage(){
-        return $this->table->products_page;
+        return $this->table->products_page ? $this->table->products_page : JSFactory::getConfig()->count_products_to_page;
     }
 
     function getCountProductsToRow(){
-        return $this->table->products_row;
+        return $this->table->products_row ? $this->table->products_row : JSFactory::getConfig()->count_products_to_row;
     }
 
     function getProductFieldSorting($order){
@@ -47,6 +47,22 @@ class CategoryModel extends ListModel{
 
     public function getProductsOrderingTypeList(){
         return 1;
+    }
+
+    function getDefaultProductSorting(){
+        $sort = $this->table->product_sorting;
+        if (!$sort) {
+            $sort = JSFactory::getConfig()->product_sorting;
+        }
+        return $sort;
+    }
+
+    function getDefaultProductSortingDirection(){
+        $dir = $this->table->product_sorting_direction;
+        if ($dir == -1) {
+            $dir = JSFactory::getConfig()->product_sorting_direction;
+        }
+        return $dir;
     }
 
 }

@@ -95,9 +95,9 @@ class pm_sofortueberweisung extends PaymentRoot{
 	}
 
 	function showEndForm($params, $order) {
-        $return_url = ltrim(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=return&js_paymentclass=pm_sofortueberweisung', 0, 1), '/');
-        $cancel_url = ltrim(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=cancel&js_paymentclass=pm_sofortueberweisung', 0, 1), '/');
-        $notify_url = ltrim(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=notify&js_paymentclass=pm_sofortueberweisung&no_lang=1', 0, 1), '/');
+        $return_url = ltrim(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=return&js_paymentclass=pm_sofortueberweisung', 1, 1), '/');
+        $cancel_url = ltrim(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=cancel&js_paymentclass=pm_sofortueberweisung', 1, 1), '/');
+        $notify_url = ltrim(Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step7&act=notify&js_paymentclass=pm_sofortueberweisung&no_lang=1', 1, 1), '/');
         $inputs     = [
             'user_id'               => $params['user_id'],
             'project_id'            => $params['project_id'],

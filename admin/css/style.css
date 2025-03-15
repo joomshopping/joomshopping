@@ -702,6 +702,12 @@ img.productlabels{
 .fs-14 {
     font-size: 14px;
 }
+a.no_blank[target="_blank"]:before{
+    display: none;
+}
+.js_window_popup{
+    cursor: pointer;
+}
 #ajaxLoadAnimate {
     position : fixed;
     left : 0;

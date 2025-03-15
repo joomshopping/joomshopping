@@ -102,6 +102,12 @@ class CategoriesController extends BaseadminController{
         $lists['treecategories'] = HTMLHelper::_('select.genericlist', $categories, 'category_parent_id','class="inputbox form-select" onchange = "jshopAdmin.changeCategory()"','category_id','name', $parentid);
         $lists['parentid'] = $parentid;
         $lists['access'] = HTMLHelper::_('select.genericlist', SelectOptions::getAccessGroups(), 'access','class = "inputbox form-select"','id','title', $category->access);
+        
+        $sortd = SelectOptions::getSortingDirection(1);
+        $lists['product_sorting_direction'] = HTMLHelper::_('select.genericlist', $sortd, 'product_sorting_direction','class="form-select"','id','value', $category->product_sorting_direction ?? -1);
+
+        $product_sorting_options = SelectOptions::getProductSorting(1);
+        $lists['product_sorting'] = HTMLHelper::_('select.genericlist', $product_sorting_options, "product_sorting", 'class="form-select"', 'id', 'name', $category->product_sorting ?? 0);
 
         $view = $this->getView("category", 'html');
         $view->setLayout("edit");
