@@ -81,8 +81,8 @@ class Order extends \TCPDF{
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
         $pdf->SetMargins(0,0,0);
-        $pdf->addNewPage();
         $pdf->SetAutoPageBreak(false);
+        $pdf->addNewPage();        
         
         $y = 55;
         $pdf->SetXY(20,$y);

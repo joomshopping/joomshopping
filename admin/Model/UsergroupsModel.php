@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,13 +17,18 @@ class UsergroupsModel extends BaseadminModel{
     
     protected $nameTable = 'usergroup';
 
-    function getAllUsergroups($order = null, $orderDir = null){
+    function getAllUsergroups($order = null, $orderDir = null, $filter = []){
         $ordering = "usergroup_id";
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
         $db = Factory::getDBO();
-        $query = "SELECT * FROM `#__jshopping_usergroups` ORDER BY ".$ordering;
+        $lang = JSFactory::getLang();
+        $where = '';
+        if (isset($filter['text_search'])) {
+            $where .= " AND (`".$lang->get("name")."` LIKE ".$db->q('%'.$filter['text_search'].'%').")";
+        }
+        $query = "SELECT * FROM `#__jshopping_usergroups` WHERE 1 ".$where." ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();

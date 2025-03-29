@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 01.03.2025
+* @version      5.6.1 01.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -21,10 +21,15 @@ class AddonsModel extends BaseadminModel{
 
     protected $nameTable = 'addon';
 
-    public function getList($details = 0){
+    public function getList($details = 0, $filter = []){
         $db = Factory::getDBO();
         $jshopConfig = JSFactory::getConfig();
-        $query = "SELECT * FROM `#__jshopping_addons`";
+        $where = '';
+        if (isset($filter['text_search'])) {
+            $word = addcslashes($db->escape($filter['text_search']), "_%");
+            $where .= " AND (`name` LIKE ".$db->q('%'.$word.'%').")";
+        }
+        $query = "SELECT * FROM `#__jshopping_addons` WHERE 1 ".$where;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $rows = $db->loadObjectList();

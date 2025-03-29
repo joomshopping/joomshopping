@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.6.1 29.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,7 +17,7 @@ defined('_JEXEC') or die();
 class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
-        ToolbarHelper::title( Text::_('JSHOP_PRODUCT_EXTRA_FIELD_VALUES'), 'generic.png' );        
+        ToolbarHelper::title($this->productfield->getName() . ' / ' . Text::_('JSHOP_PRODUCT_EXTRA_FIELD_VALUES'), 'generic.png' );
         ToolbarHelper::custom( "back", 'arrow-left', 'arrow-left', Text::_('JSHOP_BACK_TO_PRODUCT_EXTRA_FIELDS'), false);
         if ($this->productfield->type != 2) {
             ToolbarHelper::addNew();

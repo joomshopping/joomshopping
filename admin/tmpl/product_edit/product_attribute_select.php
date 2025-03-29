@@ -44,7 +44,7 @@ defined( '_JEXEC' ) or die();
     <?php if (isset($this->_tmp_product_ext_js)) print $this->_tmp_product_ext_js;?>
 </script>
 
-<div class="product_attribute_select" style="padding:20px;">
+<div class="product_attribute_select productfull" style="padding:20px;">
     <input type="hidden" id="quantity" value="1">
     <input type="hidden" id="product_id" value="<?php print $this->product->product_id?>">
     <input type="hidden" id="pricefloat" value="<?php print $this->product->getPriceCalculate();?>">    
@@ -55,7 +55,7 @@ defined( '_JEXEC' ) or die();
     <h1><?php print $this->product->name?></h1>
     
     <div class="jshop_code_prod mb-3">
-        <?php print Text::_('JSHOP_EAN')?>: <span id="product_code"><?php print $this->product->getEan();?></span>
+        <?php print Text::_('JSHOP_EAN_PRODUCT')?>: <span id="product_code"><?php print $this->product->getEan();?></span>
     </div>
     
     <div class="prod_price mb-3">

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,7 +16,7 @@ defined('_JEXEC') or die();
 
 class DeliveryTimesModel extends BaseadminModel{
 
-    function getDeliveryTimes($order = null, $orderDir = null){
+    function getDeliveryTimes($order = null, $orderDir = null, $filter = []){
         $db = Factory::getDBO();    
         $lang = JSFactory::getLang();    
         
@@ -24,7 +24,14 @@ class DeliveryTimesModel extends BaseadminModel{
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
-        $query = "SELECT id, `".$lang->get('name')."` as name FROM `#__jshopping_delivery_times` ORDER BY ".$ordering;
+        $where = '';        
+        if (isset($filter['text_search'])) {
+            $where .= " AND (`".$lang->get("name")."` LIKE ".$db->q('%'.$filter['text_search'].'%').")";
+        }
+        $query = "SELECT id, `".$lang->get('name')."` as name 
+        FROM `#__jshopping_delivery_times` 
+        WHERE 1 ".$where."
+        ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();

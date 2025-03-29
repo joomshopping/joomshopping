@@ -1,17 +1,19 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.1 29.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 
-namespace Joomla\Component\Jshopping\Administrator\Model; defined('_JEXEC') or die();
+namespace Joomla\Component\Jshopping\Administrator\Model; 
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Language\Text;
+
+defined('_JEXEC') or die();
 
 class FreeAttributModel extends BaseadminModel{
     
@@ -24,14 +26,22 @@ class FreeAttributModel extends BaseadminModel{
         return $db->loadResult();
     }
 
-    function getAll($order = null, $orderDir = null) {
+    function getAll($order = null, $orderDir = null, $filter = []) {
         $lang = JSFactory::getLang();
         $db = Factory::getDBO(); 
         $ordering = 'ordering';
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
-        $query = "SELECT id, `".$lang->get("name")."` as name, ordering, required FROM `#__jshopping_free_attr` ORDER BY ".$ordering;
+        $where = '';
+        if (isset($filter['text_search'])) {
+            $word = addcslashes($db->escape($filter['text_search']), "_%");
+            $where .= " AND (LOWER(`".$lang->get("name")."`) LIKE ".$db->q('%'.$word.'%')." OR LOWER(`".$lang->get('description')."`) LIKE '%" . $word . "%')";
+        }
+        $query = "SELECT id, `".$lang->get("name")."` as name, ordering, required 
+            FROM `#__jshopping_free_attr` 
+            WHERE 1 ".$where."
+            ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);        
         return $db->loadObjectList();
