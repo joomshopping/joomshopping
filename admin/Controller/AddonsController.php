@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.0 07.04.2024
+* @version      5.6.1 07.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -25,8 +25,12 @@ class AddonsController extends BaseadminController{
     }
 
     public function display($cachable = false, $urlparams = false){
+        $app = Factory::getApplication();
+        $context = "jshoping.list.admin.addons";
+        $filter = array_filter($app->getUserStateFromRequest($context.'filter', 'filter', [], 'array'));
+
         $addons = JSFactory::getModel("addons");
-        $rows = $addons->getList(1);
+        $rows = $addons->getList(1, $filter);
         $back64 = base64_encode("index.php?option=com_jshopping&controller=addons");
 
         $view = $this->getView("addons", 'html');
@@ -36,6 +40,7 @@ class AddonsController extends BaseadminController{
         $view->config = JSFactory::getConfig();
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
+        $view->filter = $filter;
 
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayAddons', array(&$view));

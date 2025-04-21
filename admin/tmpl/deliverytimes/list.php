@@ -5,7 +5,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -21,6 +21,22 @@ $i=0;
 <?php HelperAdmin::displaySubmenuOptions();?>
 <form action="index.php?option=com_jshopping&controller=deliverytimes" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
+<div class="js-filters">
+    <?php print $this->tmp_html_filter ?? ''?>
+    <div>
+        <input name="filter[text_search]" value="<?php echo htmlspecialchars($this->filter['text_search'] ?? '');?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
+            <span class="icon-search" aria-hidden="true"></span>
+        </button>                
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+    </div>
+    <?php print $this->tmp_html_filter_end ?? ''?>
+</div>
+
 <table class="table table-striped">
 <thead>
   <tr>

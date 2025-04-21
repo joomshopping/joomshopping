@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.6.0 09.03.2025
+* @version      5.6.1 29.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,6 +22,23 @@ $i=0;
     <?php HelperAdmin::displaySubmenuOptions();?>
     <form action="index.php?option=com_jshopping&controller=addons" method="post" name="adminForm" id="adminForm">
         <?php print $this->tmp_html_start?>
+
+        <div class="js-filters">
+            <?php print $this->tmp_html_filter ?? ''?>
+            <div>
+                <input name="filter[text_search]" value="<?php echo htmlspecialchars($this->filter['text_search'] ?? '');?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
+                    <span class="icon-search" aria-hidden="true"></span>
+                </button>                
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            </div>
+            <?php print $this->tmp_html_filter_end ?? ''?>      
+        </div>
+
         <?php if (count($rows) > 0) {?>
         <table class="table table-striped">
             <thead>
@@ -40,7 +57,7 @@ $i=0;
                     <th width="120">
                         <?php echo Text::_('JSHOP_LATEST')?>
                     </th>
-                    <?php }?>
+                    <?php }?>                    
                     <th width="60" class="center">
                         <?php echo Text::_('JSHOP_KEY')?>
                     </th>
@@ -77,7 +94,7 @@ $i=0;
                         <a href='index.php?option=com_jshopping&controller=addons&task=info&id=<?php print $row->id?>'>
                             <div class="small"><i class="icon-info-circle"></i> <?php echo Text::_('JSHOP_DESCRIPTION')?></div>
                         </a>
-                    <?php }?>
+                    <?php }?>                    
                 </td>
                 <td>
                     <?php if (isset($row->avialable_version_update)) {?>
@@ -116,7 +133,7 @@ $i=0;
                     <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=edit&id=<?php print $row->id?>'>
                         <i class="icon-edit"></i>
                     </a>
-                    <?php }?>
+                    <?php }?>                    
                 </td>
                 <?php if ($this->config->shop_mode > 0) {?>
                 <td class="center">

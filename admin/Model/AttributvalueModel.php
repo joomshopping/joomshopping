@@ -28,14 +28,21 @@ class AttributValueModel extends BaseadminModel{
         return $db->loadResult();
     }
 
-    function getAllValues($attr_id, $order = null, $orderDir = null) {
+    function getAllValues($attr_id, $order = null, $orderDir = null, $filter = []) {
         $db = Factory::getDBO(); 
         $lang = JSFactory::getLang();
         $ordering = 'value_ordering, value_id';
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
-        $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering FROM `#__jshopping_attr_values` where attr_id='".$attr_id."' ORDER BY ".$ordering;
+        $where = '';
+        if (isset($filter['text_search'])) {
+            $word = addcslashes($db->escape($filter['text_search']), "_%");
+            $where .= " AND (LOWER(`".$lang->get("name")."`) LIKE ".$db->q('%'.$word.'%').")";
+        }
+        $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering 
+        FROM `#__jshopping_attr_values` where attr_id=".$db->q($attr_id)." ".$where."
+        ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();

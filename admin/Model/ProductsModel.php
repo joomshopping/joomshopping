@@ -1218,6 +1218,7 @@ class ProductsModel extends BaseadminModel{
 		}
 		$product->date_modify = Helper::getJsDate();
 		extract(Helper::js_add_trigger(get_defined_vars(), "beforeStore"));
+        $app->triggerEvent('onBeforeProductGroupUpdateStore', array(&$product, &$post));
 		$product->store();
 	}
 

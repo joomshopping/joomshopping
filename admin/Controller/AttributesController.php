@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -31,10 +31,11 @@ class AttributesController extends BaseadminController{
         $context = "jshoping.list.admin.attributes";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "A.attr_ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
+        $filter = array_filter($app->getUserStateFromRequest($context.'filter', 'filter', [], 'array'));
         
     	$attributes = JSFactory::getModel("attribut");
     	$attributesvalue = JSFactory::getModel("attributvalue");
-        $rows = $attributes->getAllAttributes(0, null, $filter_order, $filter_order_Dir);
+        $rows = $attributes->getAllAttributes(0, null, $filter_order, $filter_order_Dir, [], $filter);
         foreach($rows as $key => $value){
             $rows[$key]->values = Helper::splitValuesArrayObject($attributesvalue->getAllValues($rows[$key]->attr_id), 'name');
             $rows[$key]->count_values = count($attributesvalue->getAllValues($rows[$key]->attr_id));
@@ -44,11 +45,10 @@ class AttributesController extends BaseadminController{
         $view->set('rows', $rows);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
+        $view->filter = $filter;
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-
-        $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onBeforeDisplayAttributes', array(&$view));
+        $app->triggerEvent('onBeforeDisplayAttributes', array(&$view));
         $view->displayList();
     }
 

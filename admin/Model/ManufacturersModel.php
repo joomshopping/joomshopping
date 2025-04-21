@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 14.09.2022
+* @version      5.6.1 14.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -23,15 +23,23 @@ class ManufacturersModel extends BaseadminModel{
     protected $nameTable = 'manufacturer';
     protected $tableFieldPublish = 'manufacturer_publish';
 
-    function getAllManufacturers($publish=0, $order=null, $orderDir=null){
+    function getAllManufacturers($publish=0, $order=null, $orderDir=null, $filter = []){
         $db = Factory::getDBO();
-        $lang = JSFactory::getLang(); 
-        $query_where = ($publish)?(" WHERE manufacturer_publish = '1'"):("");  
-        $queryorder = '';        
+        $lang = JSFactory::getLang();         
+        $query_where = '';
+        if ($publish){
+            $query_where .= " AND  manufacturer_publish=1";
+        }
+        if (isset($filter['text_search'])) {
+            $word = addcslashes($db->escape($filter['text_search']), "_%");
+            $query_where .= " AND (LOWER(`".$lang->get("name")."`) LIKE ".$db->q('%'.$word.'%')." OR LOWER(`".$lang->get('short_description')."`) LIKE '%" . $word . "%' OR LOWER(`".$lang->get('description')."`) LIKE '%" . $word . "%')";
+        }
+        $queryorder = '';
         if ($order && $orderDir){
             $queryorder = "order by ".$order." ".$orderDir;
         }
-        $query = "SELECT manufacturer_id, manufacturer_url, manufacturer_logo, manufacturer_publish, ordering, `".$lang->get('name')."` as name FROM `#__jshopping_manufacturers` $query_where ".$queryorder;
+        $query = "SELECT manufacturer_id, manufacturer_url, manufacturer_logo, manufacturer_publish, ordering, `".$lang->get('name')."` as name
+                FROM `#__jshopping_manufacturers` WHERE 1 ".$query_where." ".$queryorder;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
