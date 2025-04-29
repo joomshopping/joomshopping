@@ -13,7 +13,11 @@ use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
-class StaticTextModel extends BaseadminModel{ 
+class StatictextModel extends BaseadminModel{
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList($filters['use_for_return_policy'] ?? 0);
+	}
     
     function getList($use_for_return_policy = 0){
         $lang = JSFactory::getLang();

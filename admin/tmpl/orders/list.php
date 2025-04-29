@@ -5,7 +5,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.6.0 15.09.2018
+* @version      5.6.2 19.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -42,10 +42,10 @@ $jshopConfig = JSFactory::getConfig();
             </div>
             <?php }?>
             <div>
-                <?php echo HTMLHelper::_('calendar', $this->filter['date_from'], 'date_from', 'date_from', $jshopConfig->field_birthday_format, array('class'=>'inputbox middle2', 'size'=>'5', 'maxlength'=>'10', 'placeholder'=> Text::_('JSHOP_DATE_FROM')));?>                
+                <?php echo HTMLHelper::_('calendar', $this->filter['date_from'], 'date_from', 'date_from', $jshopConfig->store_date_format, array('class'=>'inputbox middle2', 'size'=>'5', 'maxlength'=>'10', 'placeholder'=> Text::_('JSHOP_DATE_FROM')));?>                
             </div>
             <div>                
-                <?php echo HTMLHelper::_('calendar', $this->filter['date_to'], 'date_to', 'date_to', $jshopConfig->field_birthday_format, array('class'=>'inputbox middle2', 'size'=>'5', 'maxlength'=>'10', 'placeholder'=> Text::_('JSHOP_DATE_TO')));?>
+                <?php echo HTMLHelper::_('calendar', $this->filter['date_to'], 'date_to', 'date_to', $jshopConfig->store_date_format, array('class'=>'inputbox middle2', 'size'=>'5', 'maxlength'=>'10', 'placeholder'=> Text::_('JSHOP_DATE_TO')));?>
             </div>
             <?php print $this->tmp_html_filter_before_btn ?? '';?>
             <div>
@@ -215,7 +215,7 @@ $jshopConfig = JSFactory::getConfig();
                     <?php if ($display_info_order && $row->order_created){
                         echo HTMLHelper::_('select.genericlist', $lists['status_orders'], 'select_status_id['.$row->order_id.']', 'class="inputbox form-control" style="width: 100px" id="status_id_'.$row->order_id.'"', 'status_id', 'name', $row->order_status);
                     }else{
-                        print $this->list_order_status[$row->order_status];
+                        print $this->list_order_status[$row->order_status] ?? '';
                     }
                     ?>
                     <?php print $row->_tmp_ext_info_status?>

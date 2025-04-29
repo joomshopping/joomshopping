@@ -38,7 +38,7 @@ $attr_id=$this->attr_id;
         <div><img src="<?php echo $this->config->image_attributes_live_path."/".$this->attributValue->image?>" alt=""/></div>
         <div style="padding-bottom:5px;" class="link_delete_foto">
             <a class="btn btn-micro btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoAttribValue('<?php echo $this->attributValue->value_id?>');return false;">
-                <img src="components/com_jshopping/images/publish_x.png"> <?php print Text::_('JSHOP_DELETE_IMAGE')?></a>
+                <?php print Text::_('JSHOP_DELETE_IMAGE')?></a>
             </div>
     </div>
     <?php }?>

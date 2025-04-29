@@ -33,8 +33,9 @@ class ManufacturersController extends BaseadminController{
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         $filter = array_filter($app->getUserStateFromRequest($context.'filter', 'filter', [], 'array'));
 
-        $manufacturer = JSFactory::getModel("manufacturers");        
-        $rows = $manufacturer->getAllManufacturers(0, $filter_order, $filter_order_Dir, $filter);
+        $manufacturer = JSFactory::getModel("manufacturers");
+        $rows = $manufacturer->getListItems($filter, ['order' => $filter_order, 'dir'=>$filter_order_Dir]);
+
         $view = $this->getView("manufacturer", 'html');
         $view->setLayout("list");
         $view->set('rows', $rows);

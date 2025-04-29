@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 13.03.2025
+* @version      5.6.2 13.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -25,7 +25,7 @@ class CountriesController extends BaseadminController{
         HelperAdmin::addSubmenu("other");
     }
 
-    function display($cachable = false, $urlparams = false){  	        		
+    function display($cachable = false, $urlparams = false){
         $app = Factory::getApplication();
 		$context = "jshoping.list.admin.countries";
         $limit = $app->getUserStateFromRequest( $context.'limit', 'limit', $app->getCfg('list_limit'), 'int' );
@@ -43,9 +43,14 @@ class CountriesController extends BaseadminController{
             $filters['text_search'] = $text_search;
         }
 		$countries = JSFactory::getModel("countries");
-        $total = $countries->getCountPublishCountries($filters);
+        $total = $countries->getCountItems($filters);
         $pageNav = new Pagination($total, $limitstart, $limit);		
-        $rows = $countries->getAllCountries($filters, $pageNav->limitstart,$pageNav->limit, 0, $filter_order, $filter_order_Dir);
+        $rows = $countries->getListItems(
+            $filters, 
+            ['order' => $filter_order, 'dir' => $filter_order_Dir], 
+            ['limitstart' =>$pageNav->limitstart, 'limit' => $pageNav->limit], 
+            ['orderConfig' => 0]
+        );
         $filter = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(4), 'publish', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $publish);
                 
 		$view = $this->getView("countries", 'html');

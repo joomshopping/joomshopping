@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.4 02.05.2023
+* @version      5.6.2 02.05.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,6 +16,10 @@ defined('_JEXEC') or die;
 class ReviewsModel extends BaseadminModel{
     
     protected $nameTable = 'review';
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllReviews($filters['category_id'] ?? null, $filters['product_id'] ?? null,$limit['limitstart'] ?? null, $limit['limit'] ?? null, $filters['text_search'] ?? null, $params['result'] ?? 'list', $filters['vendor_id'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+	}
 
      function getAllReviews($category_id = null, $product_id = null, $limitstart = null, $limit = null, $text_search = null, $result = "list", $vendor_id = 0, $order = null, $orderDir = null) {
 

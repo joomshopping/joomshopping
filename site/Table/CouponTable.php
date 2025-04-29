@@ -32,7 +32,7 @@ class CouponTable extends ShopbaseTable{
     function getEnableCode($code){
         $JshopConfig = JSFactory::getConfig();
         $db = Factory::getDBO();
-        if(!$JshopConfig->use_rabatt_code) {
+        if (!$JshopConfig->use_rabatt_code) {
             $this->error = Text::_('JSHOP_RABATT_NON_SUPPORT');
             return 0;
         }
@@ -42,7 +42,7 @@ class CouponTable extends ShopbaseTable{
         $db->setQuery($query);
         $row = $db->loadObJect();
         
-        if(!isset($row->coupon_id)) {
+        if (!isset($row->coupon_id)) {
             $this->error = Text::_('JSHOP_RABATT_NON_CORRECT');
             return 0;
         }
@@ -57,7 +57,7 @@ class CouponTable extends ShopbaseTable{
             return 0;
         }
         
-        if($row->used) {
+        if ($row->used) {
             $this->error = Text::_('JSHOP_RABATT_USED');
             return 0;
         }

@@ -147,7 +147,7 @@ class ManufacturerTable extends MultilangTable{
     public function delete($manufacturer_id = null){
         $db = Factory::getDBO();
         $result = false;
-        if(is_null($manufacturer_id)){
+        if (is_null($manufacturer_id)){
             $manufacturer_id = $this->manufacturer_id;
         }
         $query = $db->getQuery(true);
@@ -155,7 +155,7 @@ class ManufacturerTable extends MultilangTable{
         $query->from('#__jshopping_products');
         $query->where("product_manufacturer_id='".$db->escape($manufacturer_id)."'");
         $db->setQuery($query);
-        if((int)$db->loadResult() == 0){
+        if ((int)$db->loadResult() == 0){
             $result = parent::delete($pk);
         }else{
             $this->setError(sprintf(Text::_('JSHOP_NOT_EMPTY_MANUFACTURER_DELETE_ERROR'), $manufacturer_id));

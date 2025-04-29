@@ -39,7 +39,8 @@ class AttributesController extends BaseadminController{
         foreach($rows as $key => $value){
             $rows[$key]->values = Helper::splitValuesArrayObject($attributesvalue->getAllValues($rows[$key]->attr_id), 'name');
             $rows[$key]->count_values = count($attributesvalue->getAllValues($rows[$key]->attr_id));
-        }        
+            $rows[$key]->count_products = $attributes->getProductCount($rows[$key]->attr_id);
+        }
         $view = $this->getView("attributes", 'html');
         $view->setLayout("list");
         $view->set('rows', $rows);

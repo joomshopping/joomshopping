@@ -36,6 +36,9 @@ class ProductFieldsController extends BaseadminController{
         
         $_productfields = JSFactory::getModel("productfields");
 		$rows = $_productfields->getList(0, $filter_order, $filter_order_Dir, $filter, 1);
+	    foreach ($rows as $k => $row){
+		    $rows[$k]->count_products = $_productfields->getProductCount($row->id);
+	    }
         
         $_productfieldvalues = JSFactory::getModel("productfieldvalues");
         $vals = $_productfieldvalues->getAllList(2);

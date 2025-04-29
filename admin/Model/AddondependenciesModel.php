@@ -20,6 +20,10 @@ defined('_JEXEC') or die();
 
 class AddondependenciesModel extends BaseadminModel{
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []) {
+		return $this->getList($filters);
+	}
+
     public function getList($filter = []){
         $db = Factory::getDbo();
         $query = $db->getQuery(true);

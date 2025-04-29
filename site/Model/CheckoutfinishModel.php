@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,7 +17,7 @@ class CheckoutFinishModel  extends CheckoutModel{
 	public function getFinishStaticText(){
 		$statictext = JSFactory::getTable("statictext");
         $rowstatictext = $statictext->loadData("order_finish_descr");
-        $text = $rowstatictext->text;
+        $text = $rowstatictext->text ?? '';
 		if (trim(strip_tags($text))==""){
             $text = '';
         }

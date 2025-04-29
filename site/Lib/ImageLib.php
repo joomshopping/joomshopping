@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.1 19.09.2023
+* @version      5.6.2 24.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -234,6 +234,8 @@ class ImageLib{
             $image = imagecreatefromwebp($img);
         }elseif ($ext=="png"){
             $image = imagecreatefrompng($img);
+        }elseif ($ext=="avif"){
+            $image = imagecreatefromavif($img);
         }else{
             return 0;
         }
@@ -245,7 +247,7 @@ class ImageLib{
         
         if ($fill_flag){
             if ($fill_flag==2){
-                if ($ext=="png"){
+                if ($ext=="png" || $ext=="avif" || $ext=="webp"){
                     imagealphablending($thumb, false);
                     imagesavealpha($thumb, true);
                     $trnprt_color = imagecolorallocatealpha($thumb, 255, 255, 255, 127);
@@ -303,6 +305,9 @@ class ImageLib{
 		if ($ext=="webp") {
 			imagewebp($thumb, $name, $qty);
 		}
+        if ($ext=="avif") {
+			imageavif($thumb, $name, $qty);
+		}
 		
 		return 1;	
 	}
@@ -346,7 +351,8 @@ class ImageLib{
 			'image/png' => 'png',
 			'image/x-png' => 'png',			
 			'image/webp' => 'webp',
-		];
+            'image/avif' => 'avif'
+		];        
 		return $map[$mime] ?? $ext;		
 	}
 

@@ -19,6 +19,10 @@ class PaymentsModel extends BaseadminModel{
     
     protected $nameTable = 'paymentmethod';
     protected $tableFieldOrdering = 'payment_ordering';
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllPaymentMethods($filters['publish'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+	}
     
     function getAllPaymentMethods($publish = 1, $order = null, $orderDir = null) {
         $db = Factory::getDBO(); 
@@ -129,6 +133,22 @@ class PaymentsModel extends BaseadminModel{
 			$db->execute();
 		}        
         $dispatcher->triggerEvent('onAfterPublishPayment', array(&$cid, &$flag));
+    }
+
+    public function copyList(array $cid){
+        foreach($cid as $key=>$value){
+            $payment = $this->copy($value);
+        }
+    }
+
+    public function copy($id) {
+        $app = Factory::getApplication();
+        $table = JSFactory::getTable('paymentmethod');
+        $table->load($id);
+        $table->payment_id = 0;
+        $table->payment_class = $table->payment_class."_".rand(0,1000);
+        $app->triggerEvent('onBeforeCopyPayment', array(&$table));
+        return $table->store();
     }
     
 }

@@ -73,7 +73,7 @@ defined('_JEXEC') or die();
         <div class="info mb-3">
             <div class="img"><img src="components/com_jshopping/images/jshop_import_export_b.png"></div>
             <div>                
-                <div><a href="index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm1:demo_products_5.4.1.zip&back=<?php print urldecode("index.php?option=com_jshopping")?>">
+                <div><a href="index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm1:demo_products_5.6.0.zip&back=<?php print urldecode("index.php?option=com_jshopping")?>">
                         <b><?php print Text::_('JSHOP_LOAD_SAMPLE_DATA')?></b>
                     </a>
                 </div>

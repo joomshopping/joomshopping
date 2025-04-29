@@ -13,6 +13,10 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 class ImportExportModel extends BaseadminModel{
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList();
+	}
     
     function getList() {
         $db = Factory::getDBO();                

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,6 +16,10 @@ use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 
 class ConfigDisplayPriceModel extends BaseadminModel{
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList($params['loadCountiesInfo'] ?? 0);
+	}
+
     public function getList($loadCountiesInfo = 0){
         $db = Factory::getDBO(); 
         $query = "SELECT * FROM `#__jshopping_config_display_prices`";
@@ -30,7 +34,7 @@ class ConfigDisplayPriceModel extends BaseadminModel{
     
     protected function addCountryToListConfigPrices($rows){
         $countries = JSFactory::getModel("countries");
-        $list = $countries->getAllCountries(0);    
+        $list = $countries->getAllCountries(0);
         $countries_name = array();
         foreach($list as $v){
             $countries_name[$v->country_id] = $v->name;

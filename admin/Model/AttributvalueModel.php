@@ -19,6 +19,10 @@ defined('_JEXEC') or die();
 class AttributValueModel extends BaseadminModel{
     
     protected $tableFieldOrdering = 'value_ordering';
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []) {
+		return $this->getAllValues($filters['attr_id'] ?? null, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
+	}
     
     function getNameValue($value_id) {
         $db = Factory::getDBO();
@@ -28,7 +32,7 @@ class AttributValueModel extends BaseadminModel{
         return $db->loadResult();
     }
 
-    function getAllValues($attr_id, $order = null, $orderDir = null, $filter = []) {
+    function getAllValues($attr_id = null, $order = null, $orderDir = null, $filter = []) {
         $db = Factory::getDBO(); 
         $lang = JSFactory::getLang();
         $ordering = 'value_ordering, value_id';
@@ -36,12 +40,15 @@ class AttributValueModel extends BaseadminModel{
             $ordering = $order." ".$orderDir;
         }
         $where = '';
+        if (isset($attr_id)) {
+            $where .= " AND attr_id=".$db->q($attr_id);
+        }
         if (isset($filter['text_search'])) {
             $word = addcslashes($db->escape($filter['text_search']), "_%");
             $where .= " AND (LOWER(`".$lang->get("name")."`) LIKE ".$db->q('%'.$word.'%').")";
         }
         $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering 
-        FROM `#__jshopping_attr_values` where attr_id=".$db->q($attr_id)." ".$where."
+        FROM `#__jshopping_attr_values` where 1 ".$where."
         ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
@@ -198,4 +205,25 @@ class AttributValueModel extends BaseadminModel{
         $attributValue->image = "";
         $attributValue->store();
     }
+
+	public function getProductCount($attr_id, $value_id) {
+		$attribut = JSFactory::getTable('attribut');
+		$attribut->load($attr_id);
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true);
+		if($attribut->independent){
+			$query->select('COUNT(DISTINCT ' . $db->quoteName('product_id') . ')')
+			      ->from($db->quoteName('#__jshopping_products_attr2'))
+			      ->where($db->quoteName('attr_id') . ' = ' . $db->quote($attr_id))
+			      ->where($db->quoteName('attr_value_id') . ' = ' . $db->quote($value_id));
+		}else{
+			$field = 'attr_' . $attr_id;
+			$query->select('COUNT(DISTINCT ' . $db->quoteName('product_id') . ')')
+			      ->from($db->quoteName('#__jshopping_products_attr'))
+				->where($db->quoteName($field) . ' = ' . $db->quote($value_id));
+		}
+		$db->setQuery($query);
+		return $db->loadResult();
+	}
+
 }

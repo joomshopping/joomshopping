@@ -37,7 +37,7 @@ class ContentPageModel  extends BaseModel{
             }
             $listtext = array();
             foreach($list as $v){
-                $listtext[] = $v->text;
+                $listtext[] = $v->text ?? '';
             }
             $row = new \stdClass();
             $row->id = -1;
@@ -47,18 +47,18 @@ class ContentPageModel  extends BaseModel{
         }
                 
         if (!$row->id){
-			$this->setError(Text::_('JSHOP_PAGE_NOT_FOUND'));           
+			$this->setError(Text::_('JSHOP_PAGE_NOT_FOUND'));
             return false;
         }		
 		if ($jshopConfig->use_plugin_content){
             $obj = new \stdClass();
             $params = Factory::getApplication()->getParams('com_content');
-            $obj->text = $row->text;
+            $obj->text = $row->text ?? '';
             $obj->title = $this->seodata->title;
             $dispatcher->triggerEvent('onContentPrepare', array('com_content.article', &$obj, &$params, 0));
             $row->text = $obj->text;
         }
-        $text = $row->text;
+        $text = $row->text ?? '';
         $dispatcher->triggerEvent('onBeforeDisplayContent', array($page, &$text));
 		return $text;
 	}

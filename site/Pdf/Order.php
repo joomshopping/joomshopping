@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 10.03.2025
+* @version      5.6.2 10.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -422,7 +422,7 @@ class Order extends \TCPDF{
             $pdf->SetFont('freesans','',7);
             $pdf->SetXY(20, $y);
             $pdf->MultiCell(170, 4, $order->payment_name, '0','L');
-            $payment_descr = trim(trim($order->payment_information)."\n".$order->payment_description);
+            $payment_descr = trim(trim($order->payment_information ?? '')."\n".$order->payment_description ?? '');
             if ($payment_descr!=''){
                 $y = $y+4;
                 $pdf->SetXY(20, $y);

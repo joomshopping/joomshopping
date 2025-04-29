@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.1 25.08.2023
+* @version      5.6.2 25.08.2023
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -110,7 +110,7 @@ class ProductShopModel extends BaseModel{
             $this->all_attr_values = array();
         }
 		
-		$product->getExtendsData();
+		$product->getExtendsData($back_value['qty'] ?? 1);
 		
 		$product->product_basic_price_unit_qty = 1;
         if ($jshopConfig->admin_show_product_basic_price){
@@ -201,7 +201,7 @@ class ProductShopModel extends BaseModel{
             $product->product_tax = 0;
         }
 
-        if (trim($product->description) == "" && $jshopConfig->show_short_descr_insted_of == 1) {
+        if (trim($product->description ?? '') == "" && $jshopConfig->show_short_descr_insted_of == 1) {
 			$product->description = $product->short_description;
 		}
 		

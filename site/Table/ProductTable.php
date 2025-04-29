@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.4 21.12.2024
+* @version      5.6.2 19.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -599,11 +599,11 @@ class ProductTable extends MultilangTable{
         return $min_price;
     }
 
-    function getExtendsData() {
+    function getExtendsData($qty = 1) {
         //$this->getRelatedProducts();
         $this->getDescription();
         $this->getTax();
-        $this->getPricePreview();
+        $this->getPricePreview($qty);
         $this->getDeliveryTime();
     }
 
@@ -671,8 +671,8 @@ class ProductTable extends MultilangTable{
         return $this->description;
     }
 
-    function getPricePreview(){
-        $this->getPrice(1, 1, 1, 1);
+    function getPricePreview($qty = 1){
+        $this->getPrice($qty, 1, 1, 1);
         if ($this->product_is_add_price){
             foreach($this->product_add_prices as $v) {
                 $v->_tmp_var = "";

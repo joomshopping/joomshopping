@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.6 28.06.2022
+* @version      5.6.2 28.06.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -45,12 +45,18 @@ class UsereditModel  extends UserbaseModel{
 
     public function prepateData(&$post){
 		$jshopConfig = JSFactory::getConfig();
+		$fieldsint = ['title', 'd_title', 'country', 'd_country'];
+		foreach($fieldsint as $v) {
+			if (isset($post[$v]) && $post[$v] == '') {
+				$post[$v] = 0;
+			}
+		}
 		if (!isset($post['password'])) $post['password'] = '';
         if (!isset($post['password_2'])) $post['password_2'] = '';
 		if (isset($post['password2'])) $post['password_2'] = $post['password2'];
 		if ($post['password_2']!='') $post['password2'] = $post['password_2'];
-        if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = Helper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
-        if (isset($post['d_birthday']) && $post['d_birthday']) $post['d_birthday'] = Helper::getJsDateDB($post['d_birthday'], $jshopConfig->field_birthday_format);
+		$post['birthday'] = Helper::prepareDateBirthdayToSaveDb($post['birthday'] ?? null);
+		$post['d_birthday'] = Helper::prepareDateBirthdayToSaveDb($post['d_birthday'] ?? null);
         unset($post['user_id']);
 		if (!$this->admin_registration){
 			$post['lang'] = $jshopConfig->getLang();
@@ -134,6 +140,7 @@ class UsereditModel  extends UserbaseModel{
 	
 	public function save(){
 		if (!$this->userSave()){
+			$this->setError($this->user->getError());
 			return 0;
 		}
 		if (!$this->userJoomlaSave()){

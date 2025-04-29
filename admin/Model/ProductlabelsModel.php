@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.1 15.09.2018
+* @version      5.6.2 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,9 +16,13 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Lib\UploadFile;
 defined('_JEXEC') or die();
 
-class ProductLabelsModel extends BaseadminModel{
+class ProductlabelsModel extends BaseadminModel{
     
     protected $nameTable = 'productlabel';
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList($orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
+	}
 
     function getList($order = null, $orderDir = null, $filter = []){
         $db = Factory::getDBO();

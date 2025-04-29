@@ -17,6 +17,10 @@ class UsergroupsModel extends BaseadminModel{
     
     protected $nameTable = 'usergroup';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllUsergroups($orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
+	}
+
     function getAllUsergroups($order = null, $orderDir = null, $filter = []){
         $ordering = "usergroup_id";
         if ($order && $orderDir){

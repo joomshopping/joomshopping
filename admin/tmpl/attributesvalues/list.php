@@ -59,6 +59,11 @@ if ($saveOrder){
         <th align="left">
           <?php echo Text::_('JSHOP_IMAGE_ATTRIBUT_VALUE')?>
         </th>
+	    <?php if ($this->config->shop_mode == 1){?>
+            <th width="50" class="center">
+			    <?php echo Text::_('JSHOP_PRODUCTS')?>
+            </th>
+	    <?php }?>
         <th width="50" class="center">
             <?php echo Text::_('JSHOP_EDIT')?>
         </th>
@@ -81,14 +86,20 @@ if ($saveOrder){
        <td>
          <?php echo HTMLHelper::_('grid.id', $i, $row->value_id);?>
        </td>
-       <td>           
-         <a href="index.php?option=com_jshopping&controller=attributesvalues&task=edit&value_id=<?php echo $row->value_id; ?>&attr_id=<?php echo $attr_id?>"><?php echo $row->name;?></a>
+       <td>
+	       <?php if (!$row->count_products){?><i class="icon icon-exclamation-circle" title="<?php print Text::_('JSHOP_ITEM_NOT_USED')?>"></i><?php }?>
+           <a href="index.php?option=com_jshopping&controller=attributesvalues&task=edit&value_id=<?php echo $row->value_id; ?>&attr_id=<?php echo $attr_id?>"><?php echo $row->name;?></a>
        </td>
        <td>
          <?php if ($row->image) {?>
            <img src="<?php echo $this->config->image_attributes_live_path."/".$row->image?>"  alt="" width="20" height="20" />
          <?php }?>
        </td>
+        <?php if ($this->config->shop_mode == 1){?>
+            <td class="center">
+                <?php echo $row->count_products?>
+            </td>
+        <?php }?>
        <td class="center">
             <a class="btn btn-micro btn-nopad" href="index.php?option=com_jshopping&controller=attributesvalues&task=edit&value_id=<?php echo $row->value_id; ?>&attr_id=<?php echo $attr_id?>">
                 <i class="icon-edit"></i>

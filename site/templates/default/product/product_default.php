@@ -3,7 +3,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.4.2 13.05.2024
+* @version      5.6.2 15.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -11,7 +11,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 */ 
 defined('_JEXEC') or die();
 $product = $this->product;
-include(dirname(__FILE__)."/load.js.php");
+include(__DIR__."/load.js.php");
 ?>
 <div class="jshop productview" id="comjshop">
     <form class="productfull" name="product" method="post" action="<?php print $this->action?>" enctype="multipart/form-data" autocomplete="off">
@@ -21,7 +21,7 @@ include(dirname(__FILE__)."/load.js.php");
         <?php print $this->_tmp_product_html_start;?>
 
         <?php if ($this->config->display_button_print) print Helper::printContent();?>
-        <?php include(dirname(__FILE__)."/ratingandhits.php");?>
+        <?php include(__DIR__."/ratingandhits.php");?>
 
         <div class="row jshop">
             <div class="col-lg-4">
@@ -37,62 +37,26 @@ include(dirname(__FILE__)."/load.js.php");
 							<?php }?>
 						</div>
 					<?php }?>
-					
-					<?php if (count($this->videos)){?>
-						<?php foreach($this->videos as $k=>$video){?>
-							<?php if ($video->video_code){ ?>
-								<div style="display:none" class="video_full" id="hide_video_<?php print $k?>"><?php echo $video->video_code?></div>
-							<?php } else { ?>
-								<a style="display:none" class="video_full" id="hide_video_<?php print $k?>" href=""></a>
-							<?php } ?>
-						<?php } ?>
-					<?php }?>
+
+					<?php include __DIR__ . '/block_video_middle.php';?>
 
 					<span id='list_product_image_middle'>
-						<?php print $this->_tmp_product_html_body_image?>
-						
-						<?php if (!count($this->images)){?>
-							<img id="main_image" src="<?php print $this->image_product_path?>/<?php print $this->noimage?>" alt="<?php print htmlspecialchars($this->product->name)?>" />
-						<?php }?>
-						
-						<?php foreach($this->images as $k=>$image){?>
-							<a class="lightbox" id="main_image_full_<?php print $image->image_id?>" href="<?php print $this->image_product_path?>/<?php print $image->image_full;?>" <?php if ($k!=0){?>style="display:none"<?php }?> title="<?php print htmlspecialchars($image->img_title)?>">
-								<img id="main_image_<?php print $image->image_id?>" class="image" src="<?php print $this->image_product_path?>/<?php print $image->image_name;?>" alt="<?php print htmlspecialchars($image->img_alt)?>" title="<?php print htmlspecialchars($image->img_title)?>" />
-								<div class="text_zoom">
-									<span class="icon-zoom-in"></span>
-									<?php print Text::_('JSHOP_ZOOM_IMAGE')?>
-								</div>
-							</a>
-						<?php }?>
+                        <?php include __DIR__ . '/block_image_middle.php';?>
 					</span>
-					
-					<?php print $this->_tmp_product_html_after_image;?>					
+
+					<?php print $this->_tmp_product_html_after_image;?>
 				</div>
 
                 <div class="image_thumb_list">
                     <?php print $this->_tmp_product_html_before_image_thumb;?>
 
                     <div id='list_product_image_thumb' class="row-fluid0">
-                        <?php if ( (count($this->images)>1) || (count($this->videos) && count($this->images)) ) {?>
-                            <?php foreach($this->images as $k=>$image){?>
-                                <div class="sblock0">
-                                    <img class="jshop_img_thumb" src="<?php print $this->image_product_path?>/<?php print $image->image_thumb?>" alt="<?php print htmlspecialchars($image->img_alt)?>" title="<?php print htmlspecialchars($image->img_title)?>" onclick="jshop.showImage(<?php print $image->image_id?>)">
-                                </div>
-                            <?php }?>
-                        <?php }?>
+	                    <?php include __DIR__ . '/block_image_thumb.php';?>
                     </div>
 
                     <?php print $this->_tmp_product_html_after_image_thumb;?>
 
-                    <?php if (count($this->videos)){?>
-                        <?php foreach($this->videos as $k=>$video){?>
-                            <?php if ($video->video_code) { ?>
-                                <a href="#" id="video_<?php print $k?>" onclick="jshop.showVideoCode(this.id);return false;"><img class="jshop_video_thumb" src="<?php print $this->video_image_preview_path."/"; if ($video->video_preview) print $video->video_preview; else print 'video.gif'?>" alt="video" /></a>
-                            <?php } else { ?>
-                                <a href="<?php print $this->video_product_path?>/<?php print $video->video_name?>" id="video_<?php print $k?>" onclick="jshop.showVideo(this.id, '<?php print $this->config->video_product_width;?>', '<?php print $this->config->video_product_height;?>'); return false;"><img class="jshop_video_thumb" src="<?php print $this->video_image_preview_path."/"; if ($video->video_preview) print $video->video_preview; else print 'video.gif'?>" alt="video" /></a>
-                            <?php } ?>
-                        <?php } ?>
-                    <?php }?>
+                    <?php include __DIR__ . '/block_video_thumb.php';?>
 
                     <?php print $this->_tmp_product_html_after_video;?>
                 </div>
@@ -113,7 +77,6 @@ include(dirname(__FILE__)."/load.js.php");
                         <a target="_blank" href="<?php print $this->product->product_url;?>"><?php print Text::_('JSHOP_READ_MORE')?></a>
                     </div>
                 <?php }?>
-
                 <?php if ($this->config->product_show_manufacturer && $this->product->manufacturer_info->name!=""){?>
                     <div class="manufacturer_name">
                         <?php print Text::_('JSHOP_MANUFACTURER')?>: <span><?php print $this->product->manufacturer_info->name?></span>
@@ -361,7 +324,7 @@ include(dirname(__FILE__)."/load.js.php");
 
     <?php print $this->_tmp_product_html_before_demofiles; ?>
     
-    <div id="list_product_demofiles"><?php include(dirname(__FILE__)."/demofiles.php");?></div>
+    <div id="list_product_demofiles"><?php include(__DIR__."/demofiles.php");?></div>
     
     <?php if ($this->config->product_show_button_back){?>
         <div class="button_back">
@@ -371,10 +334,10 @@ include(dirname(__FILE__)."/load.js.php");
     
     <?php
         print $this->_tmp_product_html_before_review;
-        include(dirname(__FILE__)."/review.php");
+        include(__DIR__."/review.php");
         
         print $this->_tmp_product_html_before_related;
-        include(dirname(__FILE__)."/related.php");
+        include(__DIR__."/related.php");
     ?>
     
     <?php print $this->_tmp_product_html_end;?>

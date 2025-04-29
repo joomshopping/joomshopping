@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -36,11 +36,13 @@ class CouponsController extends BaseadminController{
         
         $jshopConfig = JSFactory::getConfig();
         $coupons = JSFactory::getModel("coupons");
-        $total = $coupons->getCountCoupons($text_search);
-        
-        jimport('joomla.html.pagination');
-        $pageNav = new Pagination($total, $limitstart, $limit);        
-        $rows = $coupons->getAllCoupons($pageNav->limitstart, $pageNav->limit, $filter_order, $filter_order_Dir, $text_search);
+        $total = $coupons->getCountItems(['text_search' => $text_search]);
+        $pageNav = new Pagination($total, $limitstart, $limit);
+        $rows = $coupons->getListItems(
+            ['text_search' => $text_search],
+            ['order' => $filter_order, 'dir' => $filter_order_Dir],
+            ['limitstart'=> $pageNav->limitstart, 'limit' => $pageNav->limit]
+        );
 
         foreach ($rows as $row) {
             $row->tmp_extra_column_cells = "";

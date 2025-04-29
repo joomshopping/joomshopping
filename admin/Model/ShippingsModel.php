@@ -19,6 +19,10 @@ class ShippingsModel extends BaseadminModel{
     
     protected $nameTable = 'shippingmethod';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllShippings($filters['publish'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+	}
+
     public function getAllShippings($publish = 1, $order = null, $orderDir = null) {
         $db = Factory::getDBO();
         $query_where = ($publish)?("WHERE published = '1'"):("");

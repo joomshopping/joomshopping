@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.6 23.02.2025
+* @version      5.6.2 28.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -15,6 +15,14 @@ use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class OrdersModel extends BaseadminModel{
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllOrders($limit['limitstart'] ?? null, $limit['limit'] ?? null, $filters, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+	}
+
+	public function getCountItems(array $filters = [], array $params = []) {
+		return $this->getCountAllOrders($filters);
+	}
 
     function getCountAllOrders($filters) {
         $db = Factory::getDBO();
@@ -79,11 +87,11 @@ class OrdersModel extends BaseadminModel{
         if ($filters['notfinished'] == 2) $where .= "and O.order_created=0 ";
         if ($filters['notfinished'] < 1) $where .= "and O.order_created=1 ";
         if ($filters['date_from']){
-			$date = Helper::getJsDateDB($filters['date_from'], $jshopConfig->field_birthday_format);
+			$date = Helper::getJsDateDB($filters['date_from'], $jshopConfig->store_date_format);
 			$where .= ' and O.order_date>="'.$db->escape($date).'" ';
 		}
 		if ($filters['date_to']){
-			$date = Helper::getJsDateDB($filters['date_to'], $jshopConfig->field_birthday_format);
+			$date = Helper::getJsDateDB($filters['date_to'], $jshopConfig->store_date_format);
 			$where .= ' and O.order_date<="'.$db->escape($date).' 23:59:59" ';
 		}
         if (isset($filters['payment_id']) && $filters['payment_id']){
@@ -213,9 +221,9 @@ class OrdersModel extends BaseadminModel{
         $taxes = array();
         $total = 0;
         $AllTaxes = JSFactory::getAllTaxes();
-        $id_country = $data_order['d_country'];
+        $id_country = $data_order['d_country'] ?? 0;
         if (!$id_country){
-            $id_country = $data_order['country'];
+            $id_country = $data_order['country'] ?? 0;
         }
         if (!$id_country){
             $id_country = $jshopConfig->default_country;
@@ -238,7 +246,7 @@ class OrdersModel extends BaseadminModel{
         
         // payment
         if ($data_order['order_payment']!=0){
-            $price = $data_order['order_payment'];
+            $price = floatval($data_order['order_payment']);
             $payment_method_id = $data_order['payment_method_id'];
             $paym_method = JSFactory::getTable('paymentmethod');
             $paym_method->load($payment_method_id);
@@ -261,7 +269,7 @@ class OrdersModel extends BaseadminModel{
         
         // tax shipping
         if ($data_order['order_shipping']>0){
-            $price = $data_order['order_shipping'];
+            $price = floatval($data_order['order_shipping']);
             $shipping_taxes = $shipping_method_price->calculateShippingTaxList($price, $cart);
             foreach($shipping_taxes as $k=>$v){
                 $k = (string)floatval($k);
@@ -272,7 +280,7 @@ class OrdersModel extends BaseadminModel{
         }
         // tax package
         if ($data_order['order_package']>0){
-            $price = $data_order['order_package'];
+            $price = floatval($data_order['order_package']);
             $shipping_taxes = $shipping_method_price->calculatePackageTaxList($price, $cart);
             foreach($shipping_taxes as $k=>$v){
                 $k = (string)floatval($k);
@@ -522,9 +530,9 @@ class OrdersModel extends BaseadminModel{
             $update_product_stock = 0;
         }
         $order->order_m_date = Helper::getJsDate();
-        if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = Helper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
-        if (isset($post['d_birthday']) && $post['d_birthday']) $post['d_birthday'] = Helper::getJsDateDB($post['d_birthday'], $jshopConfig->field_birthday_format);
-		if (isset($post['invoice_date']) && $post['invoice_date']) $post['invoice_date'] = Helper::getJsDateDB($post['invoice_date'], $jshopConfig->store_date_format);
+        $post['birthday'] = Helper::prepareDateBirthdayToSaveDb($post['birthday'] ?? null);
+		$post['d_birthday'] = Helper::prepareDateBirthdayToSaveDb($post['d_birthday'] ?? null);
+        $post['invoice_date'] = Helper::prepareDateToSaveDb($post['invoice_date'] ?? null);
 
         if (!$jshopConfig->hide_tax){
             $post['order_tax'] = 0;
@@ -556,11 +564,19 @@ class OrdersModel extends BaseadminModel{
 				$post[$v] = Helper::saveAsPrice($post[$v]);
 			}
 		}
-		
+        $fields_int = ['title', 'd_title', 'country', 'd_country'];
+		foreach($fields_int as $v) {
+			if (isset($post[$v]) && $post[$v] == '') {
+				$post[$v] = 0;
+			}
+		}
 
         $order->bind($post);
 		$order->delivery_times_id = $post['order_delivery_times_id'] ?? 0;
-        $order->store();
+        if (!$order->store()){
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE')." ".$order->getError());
+            return 0;
+        }
         $order_id = $order->order_id;
         $order_items = $order->getAllItems();
         $this->saveOrderItem($order_id, $post, $order_items);

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.5 13.03.2024
+* @version      5.6.2 13.03.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -23,17 +23,26 @@ class ProductsModel extends BaseadminModel{
     
     protected $nameTable = 'product';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllProducts($filters, $limit['limitstart'] ?? null, $limit['limit'] ?? null, $orderBy['order'] ?? null, $orderBy['dir'] ?? null,$params);
+	}
+
+	public function getCountItems(array $filters = [], array $params = []) {
+		return $this->getCountAllProducts($filters);
+	}
+
     function _getAllProductsQueryForFilter($filter){
+        $jshopConfig = JSFactory::getConfig();
         $lang = JSFactory::getLang();
         $db = Factory::getDBO();
         $where = "";
         if (isset($filter['without_product_id']) && $filter['without_product_id']){
-            $where .= " AND pr.product_id <> '".$db->escape($filter['without_product_id'])."' ";
+            $where .= " AND pr.product_id <> ".$db->q($filter['without_product_id'])." ";
         }
         if (isset($filter['category_id']) && $filter['category_id']){
             $category_id = $filter['category_id'];
             if ($category_id > 0) {
-                $where .= " AND pr_cat.category_id = '".$db->escape($filter['category_id'])."' ";
+                $where .= " AND pr_cat.category_id = ".$db->q($filter['category_id'])." ";
             }
             if ($category_id == -9) {
                 $where .= " AND pr_cat.category_id IS NULL ";
@@ -41,39 +50,53 @@ class ProductsModel extends BaseadminModel{
         }
         if (isset($filter['text_search']) && $filter['text_search']){
             $text_search = $filter['text_search'];
+            $fields_search = [
+                "LOWER(pr.`" . $lang->get('name') . "`)",
+                "LOWER(pr.`" . $lang->get('short_description') . "`)",
+                "LOWER(pr.`" . $lang->get('description') . "`)",
+                "pr.product_ean",
+                "pr.product_id",
+                "pr.manufacturer_code",
+                "pr.real_ean"
+            ];
+            if ($jshopConfig->admin_products_search_in_attribute) {
+                $fields_search[] = 'PA.ean';
+                $fields_search[] = 'PA.manufacturer_code';
+                $fields_search[] = 'PA.real_ean';
+            }
             if (JSFactory::getConfig()->admin_products_search_by_words == 0) {
                 $word = addcslashes($db->escape($text_search), "_%");
-                $where .=  "AND (LOWER(pr.`".$lang->get('name')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('short_description')."`) LIKE '%" . $word . "%' OR LOWER(pr.`".$lang->get('description')."`) LIKE '%" . $word . "%' OR pr.product_ean LIKE '%" . $word . "%' OR pr.product_id LIKE '%" . $word . "%' OR pr.manufacturer_code LIKE '%" . $word . "%'  OR pr.real_ean LIKE '%" . $word . "%')";
+                $tmp = [];
+                foreach($fields_search as $fn) {
+                    $tmp[] = $fn." LIKE '%" . $word . "%'"."\n";
+                }
+                $where .=  "AND (".implode(' OR ', $tmp).")";
             } else {
                 $words = explode(' ', $text_search);
-                $where .= "AND (";
                 $search_conditions = [];
                 foreach ($words as $word) {
                     $escaped_word = addcslashes($db->escape($word), "_%");
-                    $search_conditions[] = "(LOWER(pr.`" . $lang->get('name') . "`) LIKE '%" . $escaped_word . "%'
-                    OR LOWER(pr.`" . $lang->get('short_description') . "`) LIKE '%" . $escaped_word . "%'
-                    OR LOWER(pr.`" . $lang->get('description') . "`) LIKE '%" . $escaped_word . "%'
-                    OR pr.product_ean LIKE '%" . $escaped_word . "%'
-                    OR pr.product_id LIKE '%" . $escaped_word . "%'
-                    OR pr.manufacturer_code LIKE '%" . $escaped_word . "%'
-                    OR pr.real_ean LIKE '%" . $escaped_word . "%')\n";
+                    $tmp = [];
+                    foreach($fields_search as $fn) {
+                        $tmp[] = $fn." LIKE '%" . $escaped_word . "%'"."\n";
+                    }
+                    $search_conditions[] = "\n(".implode(' OR ', $tmp).")\n";
                 }
-                $where .= implode(" AND ", $search_conditions);
-                $where .= ")";
+                $where .= " AND (" . implode(" AND ", $search_conditions) . ") ";
             }
         }
         if (isset($filter['manufacturer_id']) && $filter['manufacturer_id']){
-            $where .= " AND pr.product_manufacturer_id = '".$db->escape($filter['manufacturer_id'])."' ";
+            $where .= " AND pr.product_manufacturer_id = ".$db->q($filter['manufacturer_id'])." ";
         }
         if (isset($filter['label_id']) && $filter['label_id']){
-            $where .= " AND pr.label_id = '".$db->escape($filter['label_id'])."' ";
+            $where .= " AND pr.label_id = ".$db->q($filter['label_id'])." ";
         }
         if (isset($filter['publish']) && $filter['publish']){
             if ($filter['publish']==1) $_publish = 1; else $_publish = 0;
-            $where .= " AND pr.product_publish = '".$db->escape($_publish)."' ";
+            $where .= " AND pr.product_publish = ".$db->q($_publish)." ";
         }
         if (isset($filter['vendor_id']) && $filter['vendor_id'] >= 0){
-            $where .= " AND pr.vendor_id = '".$db->escape($filter['vendor_id'])."' ";
+            $where .= " AND pr.vendor_id = ".$db->q($filter['vendor_id'])." ";
         }
 		extract(Helper::js_add_trigger(get_defined_vars(), "after"));
     return $where;
@@ -100,15 +123,13 @@ class ProductsModel extends BaseadminModel{
             $limit_query = " LIMIT ".$limitstart.", ".$limit;
         }else{
             $limit_query = "";
-        }
-        if (isset($filter['category_id']))
-            $category_id = $filter['category_id'];
-        else
-            $category_id = '';
-
+        }        
+        $category_id = $filter['category_id'] ?? '';
         $where = $this->_getAllProductsQueryForFilter($filter);
 
-        $query_filed = ""; $query_join = "";
+        $show_cat_name_uniq = 0;
+        $query_filed = "";
+        $query_join = "";
         if ($jshopConfig->admin_show_vendors){
             $query_filed .= ", pr.vendor_id, V.f_name as v_f_name, V.l_name as v_l_name";
             $query_join .= " left join `#__jshopping_vendors` as V on pr.vendor_id=V.id ";
@@ -119,26 +140,40 @@ class ProductsModel extends BaseadminModel{
         if ($jshopConfig->admin_product_list_real_ean){
 			$query_filed .= ", pr.real_ean";
 		}
-        
-        $db->setQuery("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
-        $db->execute();
-
-        if ($category_id) {
-            $query = "SELECT pr.product_id, pr.product_publish, pr_cat.product_ordering, pr.`".$lang->get('name')."` as name, pr.`".$lang->get('short_description')."` as short_description, man.`".$lang->get('name')."` as man_name, pr.product_ean as ean, pr.product_quantity as qty, pr.image as image, pr.product_price, pr.currency_id, pr.hits, pr.unlimited, pr.product_date_added, pr.label_id $query_filed FROM `#__jshopping_products` AS pr
-                      LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat USING (product_id)
-                      LEFT JOIN `#__jshopping_manufacturers` AS man ON pr.product_manufacturer_id=man.manufacturer_id
-                      $query_join
-                      WHERE pr.parent_id=0 ".$where." ".$this->_allProductsOrder($order, $orderDir, $category_id)." ".$limit_query;
-        }else{
-            $spec_where = "GROUP_CONCAT(cat.`".$lang->get('name')."` SEPARATOR '<br>') AS namescats";            
-
-            $query = "SELECT pr.product_id, pr.product_publish, pr.`".$lang->get('name')."` as name, pr.`".$lang->get('short_description')."` as short_description, man.`".$lang->get('name')."` as man_name, ".$spec_where.", pr.product_ean as ean, pr.product_quantity as qty, pr.image as image, pr.product_price, pr.currency_id, pr.hits, pr.unlimited, pr.product_date_added, pr.label_id $query_filed FROM `#__jshopping_products` AS pr
-                      LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat USING (product_id)
-                      LEFT JOIN `#__jshopping_categories` AS cat ON pr_cat.category_id=cat.category_id
-                      LEFT JOIN `#__jshopping_manufacturers` AS man ON pr.product_manufacturer_id=man.manufacturer_id
-                      $query_join
-                      WHERE pr.parent_id=0 ".$where." GROUP BY pr.product_id ".$this->_allProductsOrder($order, $orderDir)." ".$limit_query;
+        if (($filter['text_search'] ?? '') && $jshopConfig->admin_products_search_in_attribute){
+            $query_join .= " left join `#__jshopping_products_attr` as PA on PA.product_id=pr.product_id ";
+            $show_cat_name_uniq = 1;
         }
+        
+        Helper::disableOnlyFullGroupByMysql();
+
+        $fields = [
+            'pr.product_id', 'pr.product_publish', "pr.`".$lang->get('name')."` as name", 
+            "pr.`".$lang->get('short_description')."` as short_description", "man.`".$lang->get('name')."` as man_name",
+            "pr.product_ean as ean", "pr.product_quantity as qty", "pr.image as image", "pr.product_price",
+            "pr.currency_id", "pr.hits", "pr.unlimited", "pr.product_date_added", "pr.label_id"
+        ];
+        if ($category_id) {
+            $fields[] = 'pr_cat.product_ordering';
+        } else {
+            if ($show_cat_name_uniq) {
+                $fields[] = "GROUP_CONCAT(Distinct cat.`".$lang->get('name')."` SEPARATOR '<br>') AS namescats";
+            } else {
+                $fields[] = "GROUP_CONCAT(cat.`".$lang->get('name')."` SEPARATOR '<br>') AS namescats";
+            }
+        }
+        $query_select_fields = implode(', ', $fields);
+        $query_select_fields .= $query_filed;
+
+        $query = "SELECT ".$query_select_fields." FROM `#__jshopping_products` AS pr
+                LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat ON pr_cat.product_id=pr.product_id
+                LEFT JOIN `#__jshopping_categories` AS cat ON pr_cat.category_id=cat.category_id
+                LEFT JOIN `#__jshopping_manufacturers` AS man ON pr.product_manufacturer_id=man.manufacturer_id
+                $query_join
+                WHERE pr.parent_id=0 ".$where." 
+                GROUP BY pr.product_id ".
+                $this->_allProductsOrder($order, $orderDir)." ".
+                $limit_query;
         
 		$dispatcher = Factory::getApplication();
         $obj = $this;
@@ -156,23 +191,30 @@ class ProductsModel extends BaseadminModel{
     }
 
     function getCountAllProducts($filter){
+        $jshopConfig = JSFactory::getConfig();
         $db = Factory::getDBO();
         if (isset($filter['category_id']))
             $category_id = $filter['category_id'];
         else
             $category_id = '';
 
+        $query_join = '';
         $where = $this->_getAllProductsQueryForFilter($filter);
+        $query_select_fields = "count(pr.product_id)";
         if ($category_id) {
-            $query = "SELECT count(pr.product_id) FROM `#__jshopping_products` AS pr
-                      LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat USING (product_id)
-                      LEFT JOIN `#__jshopping_manufacturers` AS man ON pr.product_manufacturer_id=man.manufacturer_id
-                      WHERE pr.parent_id=0 ".$where;
-        } else {
-            $query = "SELECT count(pr.product_id) FROM `#__jshopping_products` AS pr
-                      LEFT JOIN `#__jshopping_manufacturers` AS man ON pr.product_manufacturer_id=man.manufacturer_id
-                      WHERE pr.parent_id=0 ".$where;
+            $query_join .= " LEFT JOIN `#__jshopping_products_to_categories` AS pr_cat USING (product_id) ";
         }
+        if (($filter['text_search'] ?? '') && $jshopConfig->admin_products_search_in_attribute){
+            $query_join .= " left join `#__jshopping_products_attr` as PA on PA.product_id=pr.product_id ";
+            $query_select_fields = "count(distinct pr.product_id)";
+        }
+        
+        $query = "SELECT ".$query_select_fields." FROM `#__jshopping_products` AS pr
+                  LEFT JOIN `#__jshopping_manufacturers` AS man ON pr.product_manufacturer_id=man.manufacturer_id
+                  ".$query_join."
+                  WHERE pr.parent_id=0 ".
+                  $where;
+
 		$dispatcher = Factory::getApplication();
         $obj = $this;
         $dispatcher->triggerEvent('onBeforeDisplayListProductsGetCountAllProducts', array(&$obj, &$query, $filter));
@@ -257,11 +299,11 @@ class ProductsModel extends BaseadminModel{
         $_lang = JSFactory::getModel("languages");
         $languages = $_lang->getAllLanguages(1);
         foreach($languages as $lang){
-            $post['name_'.$lang->language] = trim($post['name_'.$lang->language]);
+            $post['name_'.$lang->language] = trim($post['name_'.$lang->language] ?? '');
             if ($jshopConfig->create_alias_product_category_auto && $post['alias_'.$lang->language]==""){
                 $post['alias_'.$lang->language] = $post['name_'.$lang->language];
             }
-            $post['alias_'.$lang->language] = ApplicationHelper::stringURLSafe($post['alias_'.$lang->language]);
+            $post['alias_'.$lang->language] = ApplicationHelper::stringURLSafe($post['alias_'.$lang->language] ?? '');
             if ($post['alias_'.$lang->language]!="" && !$_alias->checkExistAlias2Group($post['alias_'.$lang->language], $lang->language, $post['product_id'])){
                 $post['alias_'.$lang->language] = "";
                 JSError::raiseWarning("", Text::_('JSHOP_ERROR_ALIAS_ALREADY_EXIST'));
@@ -273,7 +315,7 @@ class ProductsModel extends BaseadminModel{
     }
 
     function save(array $post){
-        $jshopConfig = JSFactory::getConfig();        
+        $jshopConfig = JSFactory::getConfig();
 
         $dispatcher = Factory::getApplication();
         $product = JSFactory::getTable('product');
@@ -289,8 +331,8 @@ class ProductsModel extends BaseadminModel{
         if (!isset($post['product_publish'])) $post['product_publish'] = 0;
         if (!isset($post['product_is_add_price'])) $post['product_is_add_price'] = 0;
         if (!isset($post['unlimited'])) $post['unlimited'] = 0;
-        $post['product_price'] = Helper::saveAsPrice($post['product_price']);
-        $post['product_old_price'] = Helper::saveAsPrice($post['product_old_price']);
+        $post['product_price'] = Helper::saveAsPrice($post['product_price'] ?? 0);
+        $post['product_old_price'] = Helper::saveAsPrice($post['product_old_price'] ?? 0);
         if (isset($post['product_buy_price'])){
             $post['product_buy_price'] = Helper::saveAsPrice($post['product_buy_price']);
         }else{

@@ -28,8 +28,8 @@ defined('_JEXEC') or die();
                 </a>
             </div>
             <div class="link_delete_foto">
-                <a class="btn btn-mini" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_VIDEO')?>')) jshopAdmin.deleteVideoProduct('<?php echo $video->video_id?>');return false;">
-                    <img src="components/com_jshopping/images/publish_r.png"> <?php print Text::_('JSHOP_DELETE_VIDEO')?>
+                <a class="btn btn-sm btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_VIDEO')?>')) jshopAdmin.deleteVideoProduct('<?php echo $video->video_id?>');return false;">
+                    <?php print Text::_('JSHOP_DELETE_VIDEO')?>
                 </a>
             </div>
         </div>

@@ -29,12 +29,11 @@ class ExtTaxesModel extends BaseadminModel{
     public function save(array $post){
         $tax = JSFactory::getTable('taxExt');
         $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onBeforeSaveExtTax', array(&$post));        
+        $dispatcher->triggerEvent('onBeforeSaveExtTax', array(&$post));
         $tax->bind($post);
         $tax->setZones($post['countries_id']);
         if (!$tax->store()){
-            print $tax->getError();
-            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE')." ".$tax->getError());
             return 0; 
         }
         HelperAdmin::updateCountExtTaxRule();

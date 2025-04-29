@@ -23,6 +23,10 @@ class ManufacturersModel extends BaseadminModel{
     protected $nameTable = 'manufacturer';
     protected $tableFieldPublish = 'manufacturer_publish';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllManufacturers($filters['publish'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
+	}
+
     function getAllManufacturers($publish=0, $order=null, $orderDir=null, $filter = []){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();         
@@ -132,6 +136,8 @@ class ManufacturersModel extends BaseadminModel{
             $post['manufacturer_publish'] = 0;
         }
         $dispatcher->triggerEvent('onBeforeSaveManufacturer', array(&$post));
+        $post['products_page'] = isset($post['products_page']) ? intval($post['products_page']) : null;
+        $post['products_row'] = isset($post['products_row']) ? intval($post['products_row']) : null;
         $man->bind($post);
         if (!$post["manufacturer_id"]){
             $man->ordering = null;
@@ -151,7 +157,7 @@ class ManufacturersModel extends BaseadminModel{
             );
         }
         if (!$man->store()){
-            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE')." ".$man->getError());
             return 0;
         }
         $dispatcher->triggerEvent('onAfterSaveManufacturer', array(&$man));

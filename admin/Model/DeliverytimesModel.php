@@ -16,6 +16,14 @@ defined('_JEXEC') or die();
 
 class DeliveryTimesModel extends BaseadminModel{
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getDeliveryTimes($orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
+	}
+
+	public function getCountItems(array $filters = [], array $params = []) {
+		return $this->getCountDeliveryTimes();
+	}
+
     function getDeliveryTimes($order = null, $orderDir = null, $filter = []){
         $db = Factory::getDBO();    
         $lang = JSFactory::getLang();    
@@ -48,10 +56,11 @@ class DeliveryTimesModel extends BaseadminModel{
     public function save(array $post){
         $deliveryTimes = JSFactory::getTable('deliveryTimes');
         $dispatcher = Factory::getApplication();
-        $dispatcher->triggerEvent('onBeforeSaveDeliveryTime', array(&$post));        
+        $dispatcher->triggerEvent('onBeforeSaveDeliveryTime', array(&$post));
+        $post['days'] = isset($post['days']) ? (float)$post['days'] : null;
 		$deliveryTimes->bind($post);
 		if (!$deliveryTimes->store()){
-			$this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
+			$this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE')." ".$deliveryTimes->getError());
 			return 0;
 		}
         $dispatcher->triggerEvent('onAfterSaveDeliveryTime', array(&$deliveryTimes));

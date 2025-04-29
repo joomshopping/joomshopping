@@ -70,14 +70,14 @@ if ($saveOrder){
         <td>
           <a href="index.php?option=com_jshopping&controller=shippings&task=edit&shipping_id=<?php echo $shipping->shipping_id; ?>">
               <?php if ($shipping->count_shipping_price==0){?>
-                 <img src="components/com_jshopping/images/disabled.png" alt="disabled" title="<?php print Text::_('JSHOP_NOT_SET_PRICE')?>" />&nbsp;
+                  <i class="icon icon-exclamation-triangle" title="<?php print Text::_('JSHOP_NOT_SET_PRICE')?>"></i>&nbsp;
              <?php }?>
              <?php echo $shipping->name;?>
           </a>
         </td>
         <?php echo $shipping->tmp_extra_column_cells?>
         <td>
-         <a href="index.php?option=com_jshopping&controller=shippingsprices&shipping_id_back=<?php print $shipping->shipping_id;?>" class="btn btn-info"><?php echo Text::_('JSHOP_SHIPPING_PRICES')." (".$shipping->count_shipping_price.")"?> <img src="components/com_jshopping/images/tree.gif" border="0" /></a>
+         <a href="index.php?option=com_jshopping&controller=shippingsprices&shipping_id_back=<?php print $shipping->shipping_id;?>" class="btn btn-info"><?php echo Text::_('JSHOP_SHIPPING_PRICES')." (".$shipping->count_shipping_price.")"?></a>
         </td>
         <td class="center">
          <?php echo HTMLHelper::_('jgrid.published', $shipping->published, $i);?>

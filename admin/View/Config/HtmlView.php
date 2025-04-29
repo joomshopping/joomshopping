@@ -98,7 +98,7 @@ class HtmlView extends BaseHtmlView{
     function displayEditStatictext($tpl=null){
         $title = Text::_('JSHOP_STATIC_TEXT');
 
-        if (Text::_('JSHP_STPAGE_'.$this->row->alias) != 'JSHP_SEOPAGE_'.$this->row->alias) 
+        if (Text::_('JSHP_STPAGE_'.$this->row->alias) != 'JSHP_STPAGE_'.$this->row->alias) 
             $titleext = Text::_('JSHP_STPAGE_'.$this->row->alias); 
         else 
             $titleext = $this->row->alias;

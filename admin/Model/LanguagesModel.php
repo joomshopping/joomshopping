@@ -17,6 +17,10 @@ class LanguagesModel extends BaseadminModel{
     
     protected $nameTable = 'language';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllLanguages($filters['publish'] ?? 0);
+	}
+
     public function getAllLanguages($publish = 1) {
         $jshopConfig = JSFactory::getConfig();
         $db = Factory::getDBO();

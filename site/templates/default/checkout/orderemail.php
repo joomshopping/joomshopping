@@ -549,10 +549,10 @@ h3{
     <td valign="top" <?php if ($this->config->without_payment){?> colspan="2" <?php }?>>
         <?php if (!$this->config->without_shipping){?>
             <div style="padding-bottom:4px;">
-                <?php print nl2br($this->order->shipping_information);?>
+                <?php print nl2br($this->order->shipping_information ?? '');?>
             </div>
             <div style="font-size:12px;">
-                <?php print nl2br($this->order->shipping_params)?>
+                <?php print nl2br($this->order->shipping_params ?? '')?>
             </div>
             <?php if ($this->config->show_delivery_time_checkout && $this->order->order_delivery_time){
                 print "<div>".Text::_('JSHOP_ORDER_DELIVERY_TIME').": ".$this->order->order_delivery_time."</div>";

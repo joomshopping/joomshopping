@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.0 09.04.2024
+* @version      5.6.2 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,6 +12,7 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 include_once(JPATH_COMPONENT_SITE."/payments/payment.php");
@@ -33,7 +34,7 @@ class PaymentsController extends BaseadminController{
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "payment_ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         
-        $rows = $payments->getAllPaymentMethods(0, $filter_order, $filter_order_Dir);
+        $rows = $payments->getListItems([], ['order' => $filter_order, 'dir' => $filter_order_Dir]);
 
         foreach ($rows as $row) {
             $row->tmp_extra_column_cells = "";
@@ -48,7 +49,6 @@ class PaymentsController extends BaseadminController{
         $view->tmp_html_start = "";
         $view->tmp_extra_column_headers = "";
         $view->tmp_html_end = "";
-
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayPayments', array(&$view));
         $view->displayList();
@@ -113,6 +113,12 @@ class PaymentsController extends BaseadminController{
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeEditPayments', array(&$view));
         $view->displayEdit();
+    }
+
+    function copy(){
+        $cid = $this->input->getInt('cid');
+        $text = JSFactory::getModel("payments")->copyList($cid);
+        $this->setRedirect($this->getUrlListItems(), Text::_('JSHOP_ITEMS_WAS_COPIED'));
     }
 	   
 }

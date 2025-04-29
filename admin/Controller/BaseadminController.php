@@ -87,7 +87,7 @@ class BaseadminController extends BaseController{
         }else{
             $table = $model->save($post);
         }        
-        if (!$table){            
+        if (!$table){
             $app->enqueueMessage($model->getError(), 'error');
             $this->setRedirect($this->getUrlEditItem($post[$this->urlEditParamId]));
             return 0;
@@ -95,8 +95,8 @@ class BaseadminController extends BaseController{
         $messageSaveOk = $this->getMessageSaveOk($post);
         if ($messageSaveOk != ''){
             $app->enqueueMessage($messageSaveOk, 'message');
-        }        
-        $table_key = $table->getKeyName();        
+        }
+        $table_key = $table->getKeyName();
 		if ($this->getTask()=='apply'){
             $this->setRedirect($this->getUrlEditItem($table->$table_key));
         } elseif ($this->getTask()=='save2new') {

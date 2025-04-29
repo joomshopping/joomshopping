@@ -4,7 +4,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 19.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -136,8 +136,8 @@ $print = $this->print;
                 <?php echo Helper::formatdate($history->status_date_added, 1)?>
               </td>
               <td>
-                <?php $notify_customer=($history->customer_notify) ? ('tick.png'): ('publish_x.png');?>
-                <img src="components/com_jshopping/images/<?php echo $notify_customer?>" alt="notify_customer" border="0" />
+	              <?php $notify_customer=($history->customer_notify) ? ('icon-publish'): ('icon-unpublish');?>
+                  <i class="<?php echo $notify_customer?>"></i>
               </td>
               <td>
                 <?php echo $history->status_name?>
@@ -146,8 +146,8 @@ $print = $this->print;
                 <?php echo $history->comments?>
               </td>
 			  <td>
-				<?php $include_comment_img = ($history->include_comment) ? ('tick.png'): ('publish_x.png');?>
-                <img src="components/com_jshopping/images/<?php echo $include_comment_img?>" alt="include_comment" border="0" />
+				<?php $include_comment_img = ($history->include_comment) ? ('icon-publish'): ('icon-unpublish');?>
+                  <i class="<?php echo $include_comment_img?>"></i>
               </td>
               <?php if (isset($history->tmp_html_table_history_field)) echo $history->tmp_html_table_history_field?>
             </tr>
@@ -616,7 +616,7 @@ $print = $this->print;
     <?php if (!$this->config->without_shipping){?>
     <td valign="top">
         <div style="padding-bottom:4px;"><?php echo $order->shipping_info?></div>
-        <div><i><?php echo nl2br($order->shipping_params)?></i></div>
+        <div><i><?php echo nl2br($order->shipping_params ?? '')?></i></div>
         <?php if ($order->delivery_time_name){?>
         <div><?php echo Text::_('JSHOP_DELIVERY_TIME').": ".$order->delivery_time_name?></div>
         <?php }?>
@@ -628,7 +628,7 @@ $print = $this->print;
     <?php if (!$this->config->without_payment){?>
     <td valign="top">
         <div style="padding-bottom:4px;"><?php print $order->payment_name; ?></div>
-        <div><i><?php echo nl2br($order->payment_params)?></i></div>
+        <div><i><?php echo nl2br($order->payment_params ?? '')?></i></div>
     </td>
     <?php } ?>
     <td valign="top"><?php echo $order->order_add_info?></td>    

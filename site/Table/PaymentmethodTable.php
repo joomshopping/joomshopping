@@ -104,7 +104,7 @@ class PaymentMethodTable extends MultilangTable{
     
     function getTax(){        
         $taxes = JSFactory::getAllTaxes();        
-        return $taxes[$this->tax_id];
+        return $taxes[$this->tax_id] ?? 0;
     }
     
     function calculateTax($price = 0){

@@ -107,8 +107,7 @@ if ($saveOrder){
                         <?php if (isset($this->countproducts[$category->category_id])){?>
                         <a
                             href="index.php?option=com_jshopping&controller=products&category_id=<?php echo $category->category_id?>">
-                            (<?php print intval($this->countproducts[$category->category_id]);?>) <img
-                                src="components/com_jshopping/images/tree.gif" border="0" />
+                            (<?php print intval($this->countproducts[$category->category_id]);?>)
                         </a>
                         <?php }else{?>
                         (0)

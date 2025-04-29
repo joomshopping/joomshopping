@@ -13,11 +13,15 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Language\Text;
 
-class ProductFieldValuesModel extends BaseadminModel{
+class ProductfieldvaluesModel extends BaseadminModel{
     
     protected $nameTable = 'productfieldvalue';
 
-	public function getList($field_id, $order = null, $orderDir = null, $filter=array()){
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList($filters['field_id'] ?? null, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
+	}
+
+	public function getList($field_id = null, $order = null, $orderDir = null, $filter = []){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();
         $ordering = 'ordering';
@@ -25,12 +29,17 @@ class ProductFieldValuesModel extends BaseadminModel{
             $ordering = $order." ".$orderDir;
         }
         $where = '';
-		if ($filter['text_search']){
+        if (isset($field_id)) {
+            $where .= ' AND field_id='.$db->q($field_id);
+        }
+		if (isset($filter['text_search']) && $filter['text_search']) {
             $text_search = $filter['text_search'];
             $word = addcslashes($db->escape($text_search), "_%");
-            $where =  " and (LOWER(`".$lang->get('name')."`) LIKE '%".$word."%' OR id LIKE '%".$word."%')";
+            $where .= " and (LOWER(`".$lang->get('name')."`) LIKE '%".$word."%' OR id LIKE '%".$word."%')";
         }
-        $query = "SELECT id, `".$lang->get("name")."` as name, ordering FROM `#__jshopping_products_extra_field_values` where field_id='$field_id' ".$where." order by ".$ordering;
+        $query = "SELECT id, `".$lang->get("name")."` as name, ordering 
+                  FROM `#__jshopping_products_extra_field_values` 
+                  WHERE 1 ".$where." order by ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         return $db->loadObjectList();
@@ -201,4 +210,23 @@ class ProductFieldValuesModel extends BaseadminModel{
         $table->store();
         return $table->id;
     }
+
+	public function getProductCount($field_id, $value_id) {
+		$productfield = JSFactory::getTable('productfield');
+		$productfield->load($field_id);
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true);
+		$field = 'extra_field_' . $field_id;
+		if ($productfield->multilist){
+			$query->select('COUNT(product_id)')
+			      ->from($db->quoteName('#__jshopping_products_to_extra_fields'))
+			      ->where('FIND_IN_SET(' . $db->quote($value_id) . ', ' . $db->quoteName($field) . ')');
+		} else {
+			$query->select('COUNT(product_id)')
+			      ->from($db->quoteName('#__jshopping_products_to_extra_fields'))
+			      ->where($db->quoteName($field) . ' = ' . $db->quote($value_id));
+		}
+		$db->setQuery($query);
+		return $db->loadResult();
+	}
 }

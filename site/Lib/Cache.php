@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      5.4.0 08.04.2024
+ * @version      5.6.2 28.04.2025
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -23,6 +23,9 @@ class Cache
 
     public function setDir($dir): void
     {
+        if (!file_exists($dir)) {
+            mkdir($dir);
+        }
         $this->dir = $dir;
     }
 

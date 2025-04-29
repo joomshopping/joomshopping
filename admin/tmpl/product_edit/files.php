@@ -20,7 +20,7 @@ defined('_JEXEC') or die();
 						<?php if ($file->demo) { ?>
 							<a target="_blank" href="<?php print $jshopConfig->demo_product_live_path . "/" . $file->demo ?>"><?php print $file->demo ?></a>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<a href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE') ?>')) jshopAdmin.deleteFileProduct('<?php echo $file->id ?>','demo');return false;"><img src="components/com_jshopping/images/publish_r.png"> <?php print Text::_('JSHOP_DELETE') ?></a>
+							<a class="btn btn-sm btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE') ?>')) jshopAdmin.deleteFileProduct('<?php echo $file->id ?>','demo');return false;"><?php print Text::_('JSHOP_DELETE') ?></a>
 						<?php } ?>
 					</td>
 				</tr>
@@ -47,7 +47,7 @@ defined('_JEXEC') or die();
 								<?php print $file->file ?>
 							</a>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<a href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE') ?>')) jshopAdmin.deleteFileProduct('<?php echo $file->id ?>','file');return false;"><img src="components/com_jshopping/images/publish_r.png"> <?php print Text::_('JSHOP_DELETE') ?></a>
+							<a class="btn btn-sm btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE') ?>')) jshopAdmin.deleteFileProduct('<?php echo $file->id ?>','file');return false;"><?php print Text::_('JSHOP_DELETE') ?></a>
 						<?php } ?>
 					</td>
 				</tr>

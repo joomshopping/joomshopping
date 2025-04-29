@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.6 26.02.2024
+* @version      5.6.2 26.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,9 +14,13 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
-class ProductFieldsModel extends BaseadminModel{
+class ProductfieldsModel extends BaseadminModel{
     
     protected $nameTable = 'productfield';
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList($params['groupordering'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters, $params['printCatName'] ?? 0);
+	}
 	
 	public function getList($groupordering = 0, $order = null, $orderDir = null, $filter=array(), $printCatName = 0){
         $db = Factory::getDBO();
@@ -110,7 +114,7 @@ class ProductFieldsModel extends BaseadminModel{
             $productfield->ordering = $productfield->getNextOrder();
         }
         if (!$productfield->store()){
-            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE')." ".$productfield->getError());
             return 0; 
         }
         if (!$id){
@@ -230,5 +234,23 @@ class ProductFieldsModel extends BaseadminModel{
         $db->setQuery($query);
         return $db->loadColumn();
     }
+
+	public function getProductCount($field_id) {
+		$productfield = JSFactory::getTable('productfield');
+		$productfield->load($field_id);
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true);
+		$field = 'extra_field_' . $field_id;
+
+		$query->select('COUNT(product_id)')
+		      ->from($db->quoteName('#__jshopping_products_to_extra_fields'))
+		      ->where($db->quoteName($field) . ' != ' . $db->quote(''));
+
+		if ($productfield->type != 1) {
+			$query->where($db->quoteName($field) . ' != 0');
+		}
+		$db->setQuery($query);
+		return $db->loadResult();
+	}
 
 }

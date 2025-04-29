@@ -17,6 +17,14 @@ class CountriesModel extends BaseadminModel{
     
     protected $nameTable = 'country';
     protected $tableFieldPublish = 'country_publish';
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllCountries($filters, $limit['limitstart'] ?? null, $limit['limit'] ?? null, $params['orderConfig'] ?? 1, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+	}
+
+	public function getCountItems(array $filters = [], array $params = []) {
+		return $this->getCountPublishCountries($filters);
+	}
     
     /**
     * get list country
@@ -45,7 +53,7 @@ class CountriesModel extends BaseadminModel{
                 $where = " AND country_publish = 1 ";
             }
             if ($filter == 2) {
-                $where = " AND country_publish = 0 ";                
+                $where = " AND country_publish = 0 ";
             }
         }
         
@@ -94,7 +102,7 @@ class CountriesModel extends BaseadminModel{
                 $where = " AND country_publish = 1";
             }
             if ($filter == 0) {
-                $where = " AND country_publish = 0";                
+                $where = " AND country_publish = 0";
             }
         }
         $query = "SELECT COUNT(country_id) FROM `#__jshopping_countries` WHERE 1 ".$where;
@@ -104,7 +112,7 @@ class CountriesModel extends BaseadminModel{
     }
     
     public function save(array $post){
-        $dispatcher = Factory::getApplication();		
+        $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveCountry', array(&$post));
 		$country = JSFactory::getTable('country');
 		$country->bind($post);	

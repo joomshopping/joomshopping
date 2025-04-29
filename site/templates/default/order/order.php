@@ -607,7 +607,7 @@ $order=$this->order;
     
     <?php if ($this->allow_cancel){?>
         <div class="button_cancel">
-            <a href="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=cancelorder&order_id='.$order->order_id)?>" class="btn">
+            <a href="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=cancelorder&order_id='.$order->order_id)?>" class="btn btn-secondary">
                 <?php print Text::_('JSHOP_CANCEL_ORDER')?>
             </a>
         </div>

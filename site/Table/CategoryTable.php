@@ -171,7 +171,7 @@ class CategoryTable extends MultilangTable{
     function getDescriptionMainPage($preparePluginContent = 1){
         $statictext = JSFactory::getTable("statictext");
         $row = $statictext->loadData("home");
-        $this->description = $row->text;
+        $this->description = $row->text ?? '';
         
         $seo = JSFactory::getTable("seo");
         $row = $seo->loadData("category");

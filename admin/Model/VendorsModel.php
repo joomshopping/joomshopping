@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -15,6 +15,14 @@ defined('_JEXEC') or die;
 class VendorsModel extends BaseadminModel{
     
     protected $nameTable = 'vendor';
+    
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllVendors($limit['limitstart'] ?? null, $limit['limit'] ?? null, $filters['text_search'] ?? '');
+	}
+
+	public function getCountItems(array $filters = [], array $params = []) {
+		return $this->getCountAllVendors($filters['text_search'] ?? '');
+	}
 
     function getNamesVendors() {
         $db = Factory::getDBO();

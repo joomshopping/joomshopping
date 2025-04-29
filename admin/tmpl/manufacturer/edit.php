@@ -47,6 +47,7 @@ $jshopConfig=JSFactory::getConfig();
      <div id="<?php print $lang->language.'-page'?>" class="tab-pane<?php if ($i==1){?> active<?php }?>">
      <div class="col100">
      <table class="admintable">
+     <?php echo $this->{'plugin_template_top_description_'.$lang->language} ?? '';?>
        <tr>
          <td class="key">
            <?php echo Text::_('JSHOP_TITLE')?>*
@@ -157,8 +158,8 @@ $jshopConfig=JSFactory::getConfig();
         <div>
             <div><img src="<?php print $jshopConfig->image_manufs_live_path . '/' . $row->manufacturer_logo?>" /></div>
             <div class="link_delete_foto">
-                <a class="btn btn-micro" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoManufacturer('<?php echo $row->manufacturer_id?>');return false;">
-                    <img src="components/com_jshopping/images/publish_r.png"> <?php print Text::_('JSHOP_DELETE_IMAGE')?>
+                <a class="btn btn-sm btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoManufacturer('<?php echo $row->manufacturer_id?>');return false;">
+                    <?php print Text::_('JSHOP_DELETE_IMAGE')?>
                 </a>
             </div>
         </div>

@@ -82,7 +82,7 @@ if ($saveOrder){
        </td>
        <td align="center">
          <?php if ($row->required){?>
-         <img src="components/com_jshopping/images/icon-16-allow.png" >
+             <i class="icon-publish"></i>
          <?php }?>
        </td>
        <td class="center">

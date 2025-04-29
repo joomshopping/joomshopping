@@ -24,8 +24,7 @@ class CategoryController extends BaseController{
     }
     
     function display($cachable = false, $urlparams = false){
-        $app = Factory::getApplication();
-		$dispatcher = Factory::getApplication();
+		$app = Factory::getApplication();
         $jshopConfig = JSFactory::getConfig();
         $params = $app->getParams();
         $category_id = 0;
@@ -36,28 +35,28 @@ class CategoryController extends BaseController{
         
         $categories = $category->getChildCategories($category->getFieldListOrdering(), $category->getSortingDirection(), 1);
 
-        $dispatcher->triggerEvent('onBeforeDisplayMainCategory', array(&$category, &$categories, &$params));
+        $app->triggerEvent('onBeforeDisplayMainCategory', array(&$category, &$categories, &$params));
 
 		Metadata::mainCategory($category, $params);
 
         $view = $this->getView('category');
         $view->setLayout("maincategory");
-        $view->set('category', $category);
-        $view->set('image_category_path', $jshopConfig->image_category_live_path);
-        $view->set('noimage', $jshopConfig->noimage);
-        $view->set('categories', $categories);
-        $view->set('count_category_to_row', $category->getCountToRow());
-        $view->set('params', $params);
+        $view->category = $category;
+        $view->image_category_path = $jshopConfig->image_category_live_path;
+        $view->noimage = $jshopConfig->noimage;
+        $view->categories = $categories;
+        $view->count_category_to_row = $category->getCountToRow();
+        $view->params = $params;
         $view->_tmp_maincategory_html_start = ""; 
         $view->_tmp_maincategory_html_end = ""; 
-        $dispatcher->triggerEvent('onBeforeDisplayCategoryView', array(&$view) );
+        $app->triggerEvent('onBeforeDisplayCategoryView', array(&$view) );
         $view->display();
     }
 
     function view(){
         $user = Factory::getUser();
         $jshopConfig = JSFactory::getConfig();
-		$dispatcher = Factory::getApplication();        
+		$app = Factory::getApplication();        
         $category_id = (int)$this->input->getInt('category_id');
 
 		JSFactory::getModel('productShop', 'Site')->storeEndPages();
@@ -65,7 +64,7 @@ class CategoryController extends BaseController{
         $category = JSFactory::getTable('category');
         $category->load($category_id);
         $category->getDescription();
-        $dispatcher->triggerEvent('onAfterLoadCategory', array(&$category, &$user));
+        $app->triggerEvent('onAfterLoadCategory', array(&$category, &$user));
 
 		if (!$category->checkView($user)){            
 			throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
@@ -73,7 +72,7 @@ class CategoryController extends BaseController{
         }
         
         $sub_categories = $category->getChildCategories($category->getFieldListOrdering(), $category->getSortingDirection(), 1);
-        $dispatcher->triggerEvent('onBeforeDisplayCategory', array(&$category, &$sub_categories) );
+        $app->triggerEvent('onBeforeDisplayCategory', array(&$category, &$sub_categories) );
 		
 		Metadata::category($category);
 
@@ -97,36 +96,36 @@ class CategoryController extends BaseController{
 
         $view = $this->getView('category');
         $view->setLayout("category_".$category->category_template);
-        $view->set('config', $jshopConfig);
-        $view->set('template_block_list_product', $productlist->getTmplBlockListProduct());
-        $view->set('template_no_list_product', $productlist->getTmplNoListProduct());
-        $view->set('template_block_form_filter', $productlist->getTmplBlockFormFilter());
-        $view->set('template_block_pagination', $productlist->getTmplBlockPagination());
-        $view->set('path_image_sorting_dir', $jshopConfig->live_path.'images/'.$image_sort_dir);
-        $view->set('filter_show', 1);
-        $view->set('filter_show_category', 0);
-        $view->set('filter_show_manufacturer', 1);
-        $view->set('pagination', $pagenav);
-		$view->set('pagination_obj', $pagination);
-        $view->set('display_pagination', $pagenav!="");
-        $view->set('rows', $products);
-        $view->set('count_product_to_row', $productlist->getCountProductsToRow());
-        $view->set('image_category_path', $jshopConfig->image_category_live_path);
-        $view->set('noimage', $jshopConfig->noimage);
-        $view->set('category', $category);
-        $view->set('categories', $sub_categories);
-        $view->set('count_category_to_row', $category->getCountToRow());
-        $view->set('allow_review', $allow_review);
-        $view->set('product_count', $product_count_sel);
-        $view->set('sorting', $sorting_sel);
-        $view->set('action', $action);
-        $view->set('orderby', $orderby);
-        $view->set('manufacuturers_sel', $manufacuturers_sel);
-        $view->set('filters', $filters);
-        $view->set('willBeUseFilter', $willBeUseFilter);
-        $view->set('display_list_products', $display_list_products);
-        $view->set('shippinginfo', Helper::SEFLink($jshopConfig->shippinginfourl,1));
-        $view->set('total', $productlist->getTotal());
+        $view->config = $jshopConfig;
+        $view->template_block_list_product = $productlist->getTmplBlockListProduct();
+        $view->template_no_list_product = $productlist->getTmplNoListProduct();
+        $view->template_block_form_filter = $productlist->getTmplBlockFormFilter();
+        $view->template_block_pagination = $productlist->getTmplBlockPagination();
+        $view->path_image_sorting_dir = $jshopConfig->live_path.'images/'.$image_sort_dir;
+        $view->filter_show = 1;
+        $view->filter_show_category = 0;
+        $view->filter_show_manufacturer = 1;
+        $view->pagination = $pagenav;
+		$view->pagination_obj = $pagination;
+        $view->display_pagination = $pagenav != "";
+        $view->rows = $products;
+        $view->count_product_to_row = $productlist->getCountProductsToRow();
+        $view->image_category_path = $jshopConfig->image_category_live_path;
+        $view->noimage = $jshopConfig->noimage;
+        $view->category = $category;
+        $view->categories = $sub_categories;
+        $view->count_category_to_row = $category->getCountToRow();
+        $view->allow_review = $allow_review;
+        $view->product_count = $product_count_sel;
+        $view->sorting = $sorting_sel;
+        $view->action = $action;
+        $view->orderby = $orderby;
+        $view->manufacuturers_sel = $manufacuturers_sel;
+        $view->filters = $filters;
+        $view->willBeUseFilter = $willBeUseFilter;
+        $view->display_list_products = $display_list_products;
+        $view->shippinginfo = Helper::SEFLink($jshopConfig->shippinginfourl, 1);
+        $view->total = $productlist->getTotal();
         $view->_tmp_category_html_start = ""; 
         $view->_tmp_category_html_before_products = ""; 
         $view->_tmp_category_html_end = "";
@@ -134,7 +133,7 @@ class CategoryController extends BaseController{
         $view->_tmp_list_products_html_end = "";
         $view->_tmp_ext_filter_box = "";
         $view->_tmp_ext_filter = "";
-        $dispatcher->triggerEvent('onBeforeDisplayProductListView', array(&$view, &$productlist));
+        $app->triggerEvent('onBeforeDisplayProductListView', array(&$view, &$productlist));
         $view->display();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.1 19.10.2022
+* @version      5.6.2 19.10.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -48,7 +48,7 @@ class FiltersearchModel{
 		$filters['date_to'] = $date_to;
 		$filters['search_type'] = $search_type;
 		PluginHelper::importPlugin('jshoppingproducts');        
-		$app->triggerEvent('onAfterGetBuildFilterListProduct', array(&$filters, &$no_filter));
+		$app->triggerEvent('onAfterGetBuildFilterListProduct', array(&$filters, &$no_filter, &$contextfilter));
 		return $filters;
     }
 	

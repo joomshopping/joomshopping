@@ -82,6 +82,11 @@ if ($saveOrder){
         <th align="left">
           <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_GROUP'), 'groupname', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
+	    <?php if ($this->config->shop_mode == 1){?>
+            <th width="50" class="center">
+			    <?php echo Text::_('JSHOP_PRODUCTS')?>
+            </th>
+	    <?php }?>
         <th width="50" class="center">
             <?php echo Text::_('JSHOP_EDIT')?>
         </th>
@@ -105,7 +110,8 @@ if ($saveOrder){
             <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
         </td>
         <td>
-            <?php if (!$row->count_option && $row->type==0) {?><img src="components/com_jshopping/images/icon-16-denyinactive.png" alt="" /><?php }?>
+            <?php if (!$row->count_option && $row->type==0) {?><i class="icon icon-exclamation-triangle" title="<?php print Text::_('JSHOP_ITEM_HAS_NO_OPTIONS')?>"></i><?php }?>
+	        <?php if ($row->count_products==0 && ($row->count_option || $row->type != 0)){?><i class="icon icon-exclamation-circle" title="<?php print Text::_('JSHOP_ITEM_NOT_USED')?>"></i><?php }?>
             <a href="index.php?option=com_jshopping&controller=productfields&task=edit&id=<?php echo $row->id; ?>"><?php echo $row->name;?></a>
         </td>
         <td>
@@ -138,6 +144,11 @@ if ($saveOrder){
         <td>
         <?php print $row->groupname;?>
         </td>
+	    <?php if ($this->config->shop_mode == 1){?>
+            <td class="center">
+			    <?php echo $row->count_products?>
+            </td>
+	    <?php }?>
         <td class="center">
             <a class="btn btn-micro btn-nopad"  href='index.php?option=com_jshopping&controller=productfields&task=edit&id=<?php print $row->id;?>'>
                 <i class="icon-edit"></i>

@@ -49,9 +49,10 @@ $jshopConfig = $this->config;
                 $meta_keyword = "meta_keyword_" . $lang->language;
                 $meta_description = "meta_description_" . $lang->language;
             ?>
-                <div id="<?php print $lang->language . '-page' ?>" class="tab-pane<?php if ($i == 1) { ?> active<?php } ?>">
+                <div id="<?php print $lang->language . '-page' ?>" class="tab-pane<?php if ($i == 1) { ?> active<?php } ?>">                    
                     <div class="col100">
                         <table class="admintable">
+                            <?php echo $this->{'plugin_template_top_description_'.$lang->language} ?? '';?>
                             <tr>
                                 <td class="key" style="width:180px;">
                                     <?php echo Text::_('JSHOP_TITLE') ?>*

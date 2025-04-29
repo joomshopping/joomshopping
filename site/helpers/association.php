@@ -1,16 +1,17 @@
 <?php
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Menus\Administrator\Helper\MenusHelper;
+use Joomla\CMS\Language\LanguageHelper;
 
 /**
-* @version      5.0.0 14.09.2018
+* @version      5.6.2 05.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 defined('_JEXEC') or die();
-use Joomla\Component\Menus\Administrator\Helper\MenusHelper;
 
 abstract class JshoppingHelperAssociation{
 
@@ -26,11 +27,11 @@ abstract class JshoppingHelperAssociation{
         if (!$view){
             $view = $jinput->get('view');
         }
-        $languages = JLanguageHelper::getLanguages();
+        $languages = LanguageHelper::getLanguages();
         
         $app = Factory::getApplication();
         $menu = $app->getMenu();
-        $active = $menu->getActive();        
+        $active = $menu->getActive();
         $associations = MenusHelper::getAssociations($active->id);
         
         $urlparams = array('task', 'category_id', 'product_id', 'manufacturer_id', 'page', 'order_id', 'vendor_id', 'label_id');
@@ -56,11 +57,11 @@ abstract class JshoppingHelperAssociation{
         if ($enable){
             foreach($languages as $lang){
                 $return[$lang->lang_code] = 'index.php?option=com_jshopping&controller='.$view;
-                foreach($urlparamsData as $param=>$data){                                    
+                foreach($urlparamsData as $param=>$data){
                     if ($param=='view'){
                         continue;
                     }
-                    $return[$lang->lang_code] .= '&'.$param.'='.$data;                     
+                    $return[$lang->lang_code] .= '&'.$param.'='.$data;
                 }
 				$return[$lang->lang_code] .= '&lang='.$lang->lang_code;
                 if (isset($associations[$lang->lang_code])){

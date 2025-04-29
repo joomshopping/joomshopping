@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 15.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -9,6 +9,7 @@
 namespace Joomla\Component\Jshopping\Site\Table;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Factory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 defined('_JEXEC') or die();
 
@@ -93,6 +94,15 @@ abstract class ShopbaseTable extends Table{
 			}
 		}
 		return true;
+	}
+
+	public function store($updateNulls = false) {
+		$result = parent::store($updateNulls);
+		if (!$result) {
+			$msg = 'Error store '.$this->_tbl.". ".$this->getError();
+			Helper::saveToLog('error.log', $msg);
+		}
+		return $result;
 	}
     
 }

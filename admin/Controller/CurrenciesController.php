@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -38,8 +38,8 @@ class CurrenciesController extends BaseadminController{
             JSError::raiseWarning("",Text::_('JSHOP_ERROR_MAIN_CURRENCY_VALUE'));
         }
         
-        $currencies = JSFactory::getModel("currencies");
-        $rows = $currencies->getAllCurrencies(0, $filter_order, $filter_order_Dir);
+        $currencies = JSFactory::getModel("currencies");        
+        $rows = $currencies->getListItems([], ['order' => $filter_order, 'dir' => $filter_order_Dir]);
         
         $view = $this->getView("currencies", 'html');
         $view->setLayout("list");        

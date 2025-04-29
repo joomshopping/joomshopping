@@ -85,7 +85,7 @@ class ProductsController extends BaseadminController{
         );
 
         if ($show_vendor){
-            $lists['vendors'] = HTMLHelper::_('select.genericlist', SelectOptions::getVendors(), 'vendor_id','class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $vendor_id);
+            $lists['vendors'] = HTMLHelper::_('select.genericlist', SelectOptions::getVendors(), 'vendor_id','class="form-select" onchange="document.adminForm.submit();" default-value="-1"', 'id', 'name', $vendor_id);
         }
         $lists['treecategories'] = HTMLHelper::_('select.genericlist', SelectOptions::getCategories(1, 0, 1), 'category_id', 'class="form-select" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id );
         $lists['manufacturers'] = HTMLHelper::_('select.genericlist', SelectOptions::getManufacturers(), 'manufacturer_id','class="form-select" onchange="document.adminForm.submit();"', 'manufacturer_id', 'name', $manufacturer_id);

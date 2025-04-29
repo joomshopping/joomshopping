@@ -18,6 +18,14 @@ class CouponsModel extends BaseadminModel{
     protected $nameTable = 'coupon';
     protected $tableFieldPublish = 'coupon_publish';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllCoupons($limit['limitstart'] ?? 0, $limit['limit'] ?? 0,$orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters['text_search'] ?? '');
+	}
+
+	public function getCountItems(array $filters = [], array $params = []) {
+		return $this->getCountCoupons($filters['text_search'] ?? '');
+	}
+
     function getAllCoupons($limitstart, $limit, $order = null, $orderDir = null, $text_search = "") {
         $db = Factory::getDBO(); 
         $queryorder = 'ORDER BY C.used, C.coupon_id desc';
@@ -73,14 +81,20 @@ class CouponsModel extends BaseadminModel{
         if ($post['coupon_value']<0 || ($post['coupon_value']>100 && $post['coupon_type']==0)){
             $this->setError(Text::_('JSHOP_ERROR_COUPON_VALUE'));
             return 0;
-        }        
+        }
+        if (isset($post['coupon_start_date']) && $post['coupon_start_date'] == ''){
+            $post['coupon_start_date'] = '0000-00-00';
+        }
+        if (isset($post['coupon_expire_date']) && $post['coupon_expire_date'] == ''){
+            $post['coupon_expire_date'] = '0000-00-00';
+        }
         $coupon->bind($post);
         if ($coupon->getExistCode()){
             $this->setError(Text::_('JSHOP_ERROR_COUPON_EXIST'));
             return 0;
         }
         if (!$coupon->store()) {
-            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE')." ".$coupon->getError());
             return 0;
         }
         $dispatcher->triggerEvent('onAfterSaveCoupon', array(&$coupon));

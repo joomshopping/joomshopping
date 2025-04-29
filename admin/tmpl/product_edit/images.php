@@ -42,7 +42,7 @@ defined('_JEXEC') or die();
 			<label style="min-width: 50px;float:none;" for="set_main_image_<?php echo $image->image_id?>"><?php echo Text::_('JSHOP_SET_MAIN_IMAGE')?></label>
   			<?php if (isset($image->tmp_data_img)) print $image->tmp_data_img?>
             <div class="link_delete_foto">
-                <a class="btn btn-mini btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoProduct('<?php echo $image->image_id?>');return false;">
+                <a class="btn btn-sm btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoProduct('<?php echo $image->image_id?>');return false;">
                     <?php print Text::_('JSHOP_DELETE')?>
                 </a>
             </div>

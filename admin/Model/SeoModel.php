@@ -12,7 +12,11 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
-class SeoModel extends BaseadminModel{ 
+class SeoModel extends BaseadminModel{
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList();
+	}
 
     public function getList(){
         $lang = JSFactory::getLang();

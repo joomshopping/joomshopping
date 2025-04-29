@@ -20,6 +20,10 @@ class CurrenciesModel extends BaseadminModel{
     protected $tableFieldOrdering = 'currency_ordering';
     protected $tableFieldPublish = 'currency_publish';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllCurrencies($filters['publish'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+	}
+
     function getAllCurrencies($publish = 1, $order = null, $orderDir = null) {
         $db = Factory::getDBO();
         $query_where = ($publish)?("WHERE currency_publish = '1'"):("");

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -45,8 +45,7 @@ class CategoriesController extends BaseadminController{
 		
         $categories = $_categories->getTreeAllCategories($filter, $filter_order, $filter_order_Dir);
         $total = count($categories);
-
-        jimport('joomla.html.pagination');
+        
         $pagination = new Pagination($total, $limitstart, $limit);
         
         $countproducts = $_categories->getAllCatCountProducts();

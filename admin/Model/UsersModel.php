@@ -18,6 +18,13 @@ class UsersModel extends BaseadminModel{
     
     protected $nameTable = 'usershop';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllUsers($limit['limitstart'] ?? null, $limit['limit'] ?? null, $filters['text_search'] ?? '', $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
+	}
+	public function getCountItems(array $filters = [], array $params = []) {
+		return $this->getCountAllUsers($filters['text_search'] ?? '', $filters);
+	}
+
     function getAllUsers($limitstart, $limit, $text_search="", $order = null, $orderDir = null, $filter = array()) {
         $db = Factory::getDBO();
         $where = "";

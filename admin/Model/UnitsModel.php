@@ -17,6 +17,10 @@ class UnitsModel extends BaseadminModel{
     
     protected $nameTable = 'unit';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getUnits();
+	}
+
     function getUnits(){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();

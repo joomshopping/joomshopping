@@ -16,6 +16,10 @@ use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class FreeAttributModel extends BaseadminModel{
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAll($orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
+	}
     
     function getNameAttrib($id) {
         $db = Factory::getDBO();

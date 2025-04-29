@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,6 +17,10 @@ defined('_JEXEC') or die();
 class AttributModel extends BaseadminModel{
     
     protected $tableFieldOrdering = 'attr_ordering';
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []) {
+		return $this->getAllAttributes($params['result'] ?? null, $filters['categorys'] ?? null, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $params, $filters);
+	}
     
     public function getNameAttribut($attr_id) {
         $db = Factory::getDBO();
@@ -194,6 +198,25 @@ class AttributModel extends BaseadminModel{
 		$query = "delete from `#__jshopping_products_attr2` where `attr_id` = '".$db->escape($id)."' ";
 		$db->setQuery($query);
 		$db->execute();
+	}
+
+	public function getProductCount($attr_id) {
+		$attribut = JSFactory::getTable('attribut');
+		$attribut->load($attr_id);
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true);
+		if($attribut->independent){
+			$query->select('COUNT(DISTINCT ' . $db->quoteName('product_id') . ')')
+			      ->from($db->quoteName('#__jshopping_products_attr2'))
+			      ->where($db->quoteName('attr_id') . ' = ' . $db->quote($attr_id));
+		}else{
+			$field = 'attr_' . $attr_id;
+			$query->select('COUNT(DISTINCT ' . $db->quoteName('product_id') . ')')
+			      ->from($db->quoteName('#__jshopping_products_attr'))
+			      ->where($db->quoteName($field) . ' != 0');
+		}
+		$db->setQuery($query);
+		return $db->loadResult();
 	}
     
 }

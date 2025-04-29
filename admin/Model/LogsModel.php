@@ -16,6 +16,10 @@ defined('_JEXEC') or die();
 
 class LogsModel extends BaseadminModel{
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList();
+	}
+
     public function getList(){        
         $jshopConfig = JSFactory::getConfig();
         $list = array();

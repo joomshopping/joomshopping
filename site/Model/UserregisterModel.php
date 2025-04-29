@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 08.03.2025
+* @version      5.6.2 08.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -51,7 +51,7 @@ class UserregisterModel  extends UserbaseModel{
 		}
         if ($post['f_name']=="") $post['f_name'] = $post['email'];
         $post['name'] = $post['f_name'].' '.$post['l_name'];
-        if (isset($post['birthday']) && $post['birthday']) $post['birthday'] = Helper::getJsDateDB($post['birthday'], $jshopConfig->field_birthday_format);
+        $post['birthday'] = Helper::prepareDateBirthdayToSaveDb($post['birthday'] ?? null);
         $post['lang'] = $jshopConfig->getLang();
 		
         $dispatcher->triggerEvent('onBeforeRegister', array(&$post, &$this->default_usergroup, &$this->userparams));        

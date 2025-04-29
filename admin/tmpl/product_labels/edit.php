@@ -38,7 +38,7 @@ $row=$this->productLabel;
 					<div><img src="<?php echo $this->config->image_labels_live_path."/".$row->image?>" alt=""/></div>
 					<div style="padding-bottom:5px;" class="link_delete_foto">
                         <a class="btn btn-micro btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoLabel('<?php echo $row->id?>');return false;">
-                            <img src="components/com_jshopping/images/publish_r.png"> <?php print Text::_('JSHOP_DELETE_IMAGE')?>
+                            <?php print Text::_('JSHOP_DELETE_IMAGE')?>
                         </a>
                     </div>
 				</div>

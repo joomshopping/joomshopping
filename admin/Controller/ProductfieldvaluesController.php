@@ -44,6 +44,9 @@ class ProductfieldvaluesController extends BaseadminController{
         $filter = array("text_search"=>$text_search);
 
         $rows = $_productfieldvalues->getList($field_id, $filter_order, $filter_order_Dir, $filter);
+		foreach ($rows as $k => $row){
+			$rows[$k]->count_products = $_productfieldvalues->getProductCount($field_id, $row->id);
+		}
         $productfield = JSFactory::getTable('productfield');
         $productfield->load($field_id);
 

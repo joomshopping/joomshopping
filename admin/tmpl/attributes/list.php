@@ -4,6 +4,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 
 /**
 * @version      5.6.1 15.09.2018
@@ -16,6 +17,7 @@ defined('_JEXEC') or die();
 $rows = $this->rows;
 $i = 0; 
 $saveOrder = $this->filter_order_Dir=="asc" && $this->filter_order=="A.attr_ordering";
+$jshopConfig = JSFactory::getConfig();
 if ($saveOrder){
     $saveOrderingUrl = 'index.php?option=com_jshopping&controller=attributes&task=saveorder&tmpl=component&ajax=1';
 	Joomla\CMS\HTML\HTMLHelper::_('draggablelist.draggable');
@@ -63,6 +65,11 @@ if ($saveOrder){
         <th align = "left">
             <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_GROUP'), 'groupname', $this->filter_order_Dir, $this->filter_order);?>
         </th>
+	    <?php if ($jshopConfig->shop_mode == 1){?>
+            <th width="50" class="center">
+			    <?php echo Text::_('JSHOP_PRODUCTS')?>
+            </th>
+	    <?php }?>
         <th width="50" class="center">
             <?php echo Text::_('JSHOP_EDIT')?>
         </th>
@@ -86,8 +93,9 @@ if ($saveOrder){
          <?php echo HTMLHelper::_('grid.id', $i, $row->attr_id);?>
        </td>
        <td>
-        <?php if (!$row->count_values) {?><img src="components/com_jshopping/images/disabled.png" alt="" /><?php }?>
-         <a href="index.php?option=com_jshopping&controller=attributes&task=edit&attr_id=<?php echo $row->attr_id; ?>"><?php echo $row->name;?></a>
+        <?php if (!$row->count_values) {?><i class="icon icon-exclamation-triangle" title="<?php print Text::_('JSHOP_ITEM_HAS_NO_OPTIONS')?>"></i><?php }?>
+        <?php if (!$row->count_products && $row->count_values){?><i class="icon icon-exclamation-circle" title="<?php print Text::_('JSHOP_ITEM_NOT_USED')?>"></i><?php }?>
+        <a href="index.php?option=com_jshopping&controller=attributes&task=edit&attr_id=<?php echo $row->attr_id; ?>"><?php echo $row->name;?></a>
        </td>
        <td>
          <a href="index.php?option=com_jshopping&controller=attributesvalues&task=show&attr_id=<?php echo $row->attr_id?>"><?php echo Text::_('JSHOP_OPTIONS')?></a>
@@ -103,6 +111,11 @@ if ($saveOrder){
        <td>
         <?php print $row->groupname?>
        </td>
+	    <?php if ($jshopConfig->shop_mode == 1){?>
+            <td class="center">
+			    <?php echo $row->count_products?>
+            </td>
+	    <?php }?>
        <td class="center">
             <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=attributes&task=edit&attr_id=<?php print $row->attr_id;?>'>
                 <i class="icon-edit"></i>

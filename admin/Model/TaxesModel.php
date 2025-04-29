@@ -17,6 +17,10 @@ class TaxesModel extends BaseadminModel{
     
     protected $nameTable = 'tax';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getAllTaxes($orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+	}
+
     function getAllTaxes($order = null, $orderDir = null) {
         $db = Factory::getDBO();
         $ordering = 'tax_name';

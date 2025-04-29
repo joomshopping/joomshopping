@@ -45,6 +45,9 @@ class AttributesValuesController extends BaseadminController{
         
 		$attributValues = JSFactory::getModel("attributvalue");
 		$rows = $attributValues->getAllValues($attr_id, $filter_order, $filter_order_Dir, $filter);
+	    foreach ($rows as $k => $row) {
+		    $rows[$k]->count_products = $attributValues->getProductCount($attr_id, $row->value_id);
+	    }
 		$attribut = JSFactory::getModel("attribut");
 		$attr_name = $attribut->getNameAttribut($attr_id);
         

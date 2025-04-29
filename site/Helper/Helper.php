@@ -840,7 +840,7 @@ class Helper{
                 $products[$key]->_label_name = Helper::getNameImageLabel($products[$key]->label_id, 2);
             }
             if ($jshopConfig->display_short_descr_multiline){
-                $products[$key]->short_description = nl2br($products[$key]->short_description);
+                $products[$key]->short_description = nl2br($products[$key]->short_description ?? '');
             }            
             if ($jshopConfig->product_use_main_category_id && isset($products[$key]->main_category_id) && $products[$key]->main_category_id && self::checkCategoryAccess($products[$key]->main_category_id)) {
                 $products[$key]->orig_category_id = $products[$key]->category_id;
@@ -1414,7 +1414,7 @@ class Helper{
         $dispatcher =Factory::getApplication();
         Factory::getApplication()->triggerEvent('onBeforeSprintExtraFieldsInOrder', array(&$extra_fields, $type));
         if ($type=="html"){
-            $html = nl2br($extra_fields);
+            $html = nl2br($extra_fields ?? '');
         }else{
             $html = $extra_fields;
         }
@@ -1512,6 +1512,23 @@ class Helper{
         }
     }
 
+    public static function prepareDateToSaveDb($date, $date_format = null){
+        if (isset($date)){
+            if ($date){
+                $jshopConfig = JSFactory::getConfig();
+                $date_format = $date_format ?? $jshopConfig->store_date_format;
+                $date = self::getJsDateDB($date, $date_format);
+            } else {
+                $date = '0000-00-00';
+            }
+        }
+        return $date;
+    }
+
+    public static function prepareDateBirthdayToSaveDb($date){
+        return self::prepareDateToSaveDb($date, JSFactory::getConfig()->field_birthday_format);
+    }
+
     public static function file_get_content_curl($url, $timeout = 5){
         if (function_exists('curl_init')){
             $ch = curl_init($url);
@@ -1606,6 +1623,12 @@ class Helper{
     public static function disableStrictMysql(){
         $db = Factory::getDBO();
         $db->setQuery("set @@sql_mode = ''");
+        $db->execute();
+    }
+
+    public static function disableOnlyFullGroupByMysql(){
+        $db = Factory::getDBO();
+        $db->setQuery("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
         $db->execute();
     }
 

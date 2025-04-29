@@ -17,6 +17,10 @@ defined('_JEXEC') or die;
 class ShippingExtPriceModel extends BaseadminModel{
     
     protected $nameTable = 'shippingext';
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList($filters['active'] ?? 0);
+	}
     
     function getList($active = 0){
         $db = Factory::getDBO();

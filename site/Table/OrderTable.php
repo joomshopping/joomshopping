@@ -1,17 +1,20 @@
 <?php
 /**
-* @version      5.3.1 08.09.2022
+* @version      5.6.2 19.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 namespace Joomla\Component\Jshopping\Site\Table;
+
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+
 defined('_JEXEC') or die();
 
 class OrderTable extends ShopbaseTable{
@@ -24,7 +27,7 @@ class OrderTable extends ShopbaseTable{
     
     public function store($updateNulls = false){
         if (isset($this->prepareOrderPrint)){
-            throw new Exception('Error JshopOrder::store()');
+            throw new \Exception('Error JshopOrder::store()');
         }
         $obj = $this;
         Factory::getApplication()->triggerEvent('onBeforeStoreTableOrder', array(&$obj));
@@ -288,7 +291,7 @@ class OrderTable extends ShopbaseTable{
             $order_item->delivery_times_id = $value['delivery_times_id'];
             $order_item->vendor_id = $value['vendor_id'];
             $order_item->manufacturer = $value['manufacturer'];
-			$order_item->basicprice = isset($value['basicprice']) ? $value['basicprice'] : "";
+			$order_item->basicprice = isset($value['basicprice']) ? $value['basicprice'] : 0;
             $order_item->basicpriceunit = isset($value['basicpriceunit']) ? $value['basicpriceunit'] : "";
             $order_item->params = isset($value['params']) ? $value['params'] : "";
             
@@ -315,7 +318,9 @@ class OrderTable extends ShopbaseTable{
             
             $dispatcher->triggerEvent('onBeforeSaveOrderItem', array(&$order_item, &$value) );
             
-            $order_item->store();
+            if (!$order_item->store()) {
+                JSError::raiseWarning(500, $order_item->getError());
+            }
         }
         return 1;
     }
@@ -579,8 +584,8 @@ class OrderTable extends ShopbaseTable{
             $this->d_birthday_date = $this->d_birthday;
         }
         
-        $this->title = Text::_($JshopConfig->user_field_title[$this->title_id]);
-        $this->d_title = Text::_($JshopConfig->user_field_title[$this->d_title_id]);
+        $this->title = Text::_($JshopConfig->user_field_title[intval($this->title_id)]);
+        $this->d_title = Text::_($JshopConfig->user_field_title[intval($this->d_title_id)]);
         $this->birthday = Helper::getDisplayDate($this->birthday_date, $JshopConfig->field_birthday_format);
         $this->d_birthday = Helper::getDisplayDate($this->d_birthday_date, $JshopConfig->field_birthday_format);
         $this->client_type_name = $this->getClientTypeName();
@@ -819,7 +824,7 @@ class OrderTable extends ShopbaseTable{
         $JshopConfig = JSFactory::getConfig();
         $statictext = JSFactory::getTable("statictext");
         $row = $statictext->loadData($alias);
-        $text = $row->text;
+        $text = $row->text ?? '';
         $text = str_replace("{name}", $this->f_name, $text);
         $text = str_replace("{family}", $this->l_name, $text);
         $text = str_replace("{email}", $this->email, $text);

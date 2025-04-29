@@ -306,5 +306,5 @@ defined('_JEXEC') or die();
    }   
    ?>
    <?php $pkey='plugin_template_attribute'; if ($this->$pkey){ print $this->$pkey;}?>
-   <a href="index.php?option=com_jshopping&controller=attributes" target="_blank"><img src="components/com_jshopping/images/jshop_attributes_s.png" border='0' align="left" style="margin-right:5px"><?php print Text::_('JSHOP_LIST_ATTRIBUTES')?></a>
+   <a class="btn btn-primary" href="index.php?option=com_jshopping&controller=attributes" target="_blank"><?php print Text::_('JSHOP_LIST_ATTRIBUTES')?></a>
 </div>

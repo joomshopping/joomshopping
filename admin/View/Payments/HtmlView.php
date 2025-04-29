@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.2 15.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,9 +16,10 @@ defined('_JEXEC') or die();
 
 class HtmlView extends BaseHtmlView{
     
-    function displayList($tpl=null){        
+    function displayList($tpl=null){
         ToolbarHelper::title( Text::_('JSHOP_LIST_PAYMENTS'), 'generic.png' ); 
         ToolbarHelper::addNew();
+        ToolbarHelper::custom('copy', 'copy', 'copy_f2.png', Text::_('JLIB_HTML_BATCH_COPY'));
         ToolbarHelper::publishList();
         ToolbarHelper::unpublishList();
         ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));

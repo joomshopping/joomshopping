@@ -3,7 +3,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.6.0 01.03.2025
+* @version      5.6.2 26.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -285,7 +285,7 @@ $config->checkout_step5_show_email = 0;
 $config->checkout_step5_show_phone = 0;
 $config->productDownloadFilePart8kb = 1;
 $config->show_short_descr_insted_of = 1;
-$config->allow_image_upload = ['jpeg','jpg','gif','png','webp'];
+$config->allow_image_upload = ['jpeg','jpg','gif','png','webp','avif'];
 $config->image_fill_colors = [0xffffff => 'white', 0x000000 => 'black'];
 $config->use_summ_for_calcule_payment_with_discount = 0;
 $config->product_related_order_by = 'relation.id';
@@ -301,6 +301,7 @@ $config->use_limit_request_cart_to = 1;
 $config->allow_limit_request_cart_to = ['cart', 'wishlist'];
 $config->order_change_status_reload_global_lang = 0;
 $config->admin_products_search_by_words = 0;
+$config->admin_products_search_in_attribute = 0;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';
@@ -408,7 +409,8 @@ $other_config = array(
     'list_products_calc_basic_price_from_product_price',
     'hide_from_basic_price','calc_basic_price_from_product_price',
     'user_discount_not_apply_prod_old_price',
-    'admin_products_search_by_words'
+    'admin_products_search_by_words',
+    'admin_products_search_in_attribute'
 );
 
 $other_config_checkbox = array(
@@ -432,7 +434,8 @@ $other_config_checkbox = array(
     'hide_from_basic_price',
     'calc_basic_price_from_product_price',
     'user_discount_not_apply_prod_old_price',
-    'admin_products_search_by_words'
+    'admin_products_search_by_words',
+    'admin_products_search_in_attribute'
 );
 $other_config_select = array(
     'cart_back_to_shop'=>array(

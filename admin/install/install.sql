@@ -2,15 +2,15 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_categories` (
 `category_id` int(11) NOT NULL auto_increment,
 `category_image` VARCHAR(255) NOT NULL default '',
 `category_parent_id` int(11) NOT NULL default 0,
-`category_publish` tinyint(1) unsigned NOT NULL default '1',
+`category_publish` tinyint(1) unsigned NOT NULL default 1,
 `category_template` varchar(64) NOT NULL default '',
 `ordering` int(3) NOT NULL default 0,
-`category_add_date` datetime NOT NULL default '0000-00-00 00:00:00',
-`products_page` int(8) NOT NULL default '12',
-`products_row` int(3) NOT NULL default '3',
-`access` int(3) NOT NULL default '1',
-`product_sorting` VARCHAR(4) NOT NULL,
-`product_sorting_direction` TINYINT NOT NULL DEFAULT '-1',
+`category_add_date` datetime DEFAULT NULL,
+`products_page` int(8) NOT NULL default 12,
+`products_row` int(3) NOT NULL default 3,
+`access` int(3) NOT NULL default 1,
+`product_sorting` VARCHAR(4) NOT NULL default '',
+`product_sorting_direction` TINYINT NOT NULL DEFAULT -1,
 `img_alt` varchar(255) NOT NULL default '',
 `img_title` varchar(255) NOT NULL default '',
 PRIMARY KEY  (`category_id`),
@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_countries` (
 `country_id` int(11) NOT NULL auto_increment,
 `country_publish` tinyint(4) NOT NULL default 0,
 `ordering` smallint(6) NOT NULL default 0,
-`country_code` varchar(5) NOT NULL default 0,
-`country_code_2` varchar(5) NOT NULL default 0,
+`country_code` varchar(5) NOT NULL default '',
+`country_code_2` varchar(5) NOT NULL default '',
 `name_en-GB` VARCHAR(255) NOT NULL default '',
 `name_de-DE` VARCHAR(255) NOT NULL default '',
 PRIMARY KEY (`country_id`)
@@ -30,10 +30,10 @@ PRIMARY KEY (`country_id`)
 
 CREATE TABLE IF NOT EXISTS `#__jshopping_currencies` (
 `currency_id` int(11) NOT NULL auto_increment,
-`currency_name` varchar(64) NOT NULL default 0,
-`currency_code` varchar(20) NOT NULL default 0,
-`currency_code_iso` varchar(3) NOT NULL default 0,
-`currency_code_num` varchar(3) NOT NULL default 0,
+`currency_name` varchar(64) NOT NULL default '',
+`currency_code` varchar(20) NOT NULL default '',
+`currency_code_iso` varchar(3) NOT NULL default '',
+`currency_code_num` varchar(3) NOT NULL default '',
 `currency_ordering` int(11) NOT NULL default 0,
 `currency_value` DECIMAL(14,6) NOT NULL default 0,
 `currency_publish` TINYINT(1) NOT NULL default 0,
@@ -55,8 +55,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products`(
 `product_quantity` DECIMAL(12,2) NOT NULL default 0,
 `unlimited` TINYINT(1) NOT NULL default 0,
 `product_availability` varchar(1) NOT NULL default '',
-`product_date_added` datetime NOT NULL default '0000-00-00 00:00:00',
-`date_modify` datetime NOT NULL default '0000-00-00 00:00:00',
+`product_date_added` datetime DEFAULT NULL,
+`date_modify` datetime DEFAULT NULL,
 `product_publish` TINYINT(1) NOT NULL default 0,
 `product_tax_id` tinyint(3) NOT NULL default 0,
 `currency_id` int(4) NOT NULL default 0,
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products_videos` (
 `video_id` int(11) NOT NULL auto_increment,
 `product_id` int(11) NOT NULL default 0,
 `video_name` VARCHAR(255) NOT NULL default '',
-`video_code` text NOT NULL,
+`video_code` text DEFAULT NULL,
 `video_preview` VARCHAR(255) NOT NULL default '',
 PRIMARY KEY  (`video_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -134,8 +134,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products_reviews` (
 `user_id` INT NOT NULL default 0,
 `user_name` VARCHAR(255) NOT NULL default '',
 `user_email` VARCHAR(255) NOT NULL default '',
-`time` datetime NOT NULL default '0000-00-00 00:00:00',
-`review` text NOT NULL,
+`time` datetime DEFAULT NULL,
+`review` text DEFAULT NULL,
 `mark` INT NOT NULL default 0,
 `publish` TINYINT(1) NOT NULL default 0,
 `ip` VARCHAR(20) NOT NULL default ''
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_configs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `config_id` int(11) NOT NULL,
   `key` varchar(100) NOT NULL,
-  `value` text NOT NULL,
+  `value` text DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -190,8 +190,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_coupons` (
 `tax_id` int(11) NOT NULL default 0,
 `used` int(11) NOT NULL default 0,
 `for_user_id` int(11) NOT NULL default 0,
-`coupon_start_date` date NOT NULL default '0000-00-00',
-`coupon_expire_date` date NOT NULL default '0000-00-00',
+`coupon_start_date` date DEFAULT NULL,
+`coupon_expire_date` date DEFAULT NULL,
 `finished_after_used` int(11) NOT NULL default 0,
 `coupon_publish` tinyint(4) NOT NULL default 0,
 PRIMARY KEY  (`coupon_id`)
@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_users` (
 `payment_id` INT NOT NULL default 0,
 `shipping_id` INT NOT NULL default 0,
 `u_name` VARCHAR(150) NOT NULL default '',
-`number` varchar(32) NOT NULL default 0,
+`number` varchar(32) NOT NULL default '',
 `title` TINYINT(1) NOT NULL default 0,
 `f_name` VARCHAR(255) NOT NULL default '',
 `l_name` VARCHAR(255) NOT NULL default '',
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_users` (
 `firma_code` VARCHAR(100) NOT NULL default '',
 `tax_number` VARCHAR(100) NOT NULL default '',
 `email` VARCHAR(255) NOT NULL default '',
-`birthday` DATE NOT NULL default '0000-00-00',
+`birthday` DATE DEFAULT NULL,
 `street` VARCHAR(255) NOT NULL default '',
 `street_nr` VARCHAR(16) NOT NULL default '',
 `home` VARCHAR(20) NOT NULL default '',
@@ -228,14 +228,14 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_users` (
 `ext_field_1` VARCHAR(255) NOT NULL default '',
 `ext_field_2` VARCHAR(255) NOT NULL default '',
 `ext_field_3` VARCHAR(255) NOT NULL default '',
-`delivery_adress` TINYINT ( 1 ) NOT NULL,
+`delivery_adress` TINYINT (1) NOT NULL default 0,
 `d_title` TINYINT(1) NOT NULL default 0,
 `d_f_name` VARCHAR(255) NOT NULL default '',
 `d_l_name` VARCHAR(255) NOT NULL default '',
 `d_m_name` VARCHAR(255) NOT NULL default '',
 `d_firma_name` VARCHAR(100) NOT NULL default '',
 `d_email` VARCHAR(255) NOT NULL default '',
-`d_birthday` DATE NOT NULL default '0000-00-00',
+`d_birthday` DATE DEFAULT NULL,
 `d_street` VARCHAR(255) NOT NULL default '',
 `d_street_nr` VARCHAR(16) NOT NULL default '',
 `d_home` varchar(20) NOT NULL default '',
@@ -262,9 +262,9 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_payment_method` (
 `payment_class` VARCHAR(100) NOT NULL default '',
 `scriptname` VARCHAR(100) NOT NULL default '',
 `payment_publish` TINYINT(1) NOT NULL default 0,
-`access` int(3) NOT NULL default '1',
+`access` int(3) NOT NULL default 1,
 `payment_ordering` INT NOT NULL default 0,
-`payment_params` text NOT NULL,
+`payment_params` text DEFAULT NULL,
 `payment_type` tinyint(4) NOT NULL default 0,
 `price` DECIMAL(12,2) NOT NULL default 0,
 `price_type` TINYINT(1) NOT NULL default 0,
@@ -272,18 +272,18 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_payment_method` (
 `image` VARCHAR(255) NOT NULL default '',
 `show_descr_in_email` TINYINT(1) NOT NULL default 0,
 `show_bank_in_order` TINYINT(1) NOT NULL DEFAULT 1,
-`order_description` text NOT NULL,
+`order_description` text DEFAULT NULL,
 `name_en-GB` VARCHAR(100) NOT NULL default '',
-`description_en-GB` text NOT NULL,
+`description_en-GB` text DEFAULT NULL,
 `name_de-DE` VARCHAR(100) NOT NULL default '',
-`description_de-DE` text NOT NULL
+`description_de-DE` text DEFAULT NULL
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jshopping_usergroups` (
 `usergroup_id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `usergroup_name` VARCHAR(64) NOT NULL default '',
 `usergroup_discount` DECIMAL(12,2) NOT NULL default 0,
-`usergroup_description` text NOT NULL,
+`usergroup_description` text DEFAULT NULL,
 `usergroup_is_default` TINYINT(1) NOT NULL default 0,
 `name_en-GB` VARCHAR(255) NOT NULL default '',
 `name_de-DE` VARCHAR(255) NOT NULL default ''
@@ -293,15 +293,15 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_shipping_method` (
 `shipping_id` int(11) NOT NULL auto_increment,
 `alias` VARCHAR(100) NOT NULL default '',
 `name_en-GB` VARCHAR(100) NOT NULL default '',
-`description_en-GB` text NOT NULL,
+`description_en-GB` text DEFAULT NULL,
 `name_de-DE` VARCHAR(100) NOT NULL default '',
-`description_de-DE` text NOT NULL,
+`description_de-DE` text DEFAULT NULL,
 `published` TINYINT(1) NOT NULL default 0,
 `access` int(3) NOT NULL default '1',
 `payments` VARCHAR(255) NOT NULL default '',
 `image` VARCHAR(255) NOT NULL default '',
 `ordering` int(6) NOT NULL default 0,
-`params` LONGtext NOT NULL,
+`params` LONGTEXT DEFAULT NULL,
 PRIMARY KEY (`shipping_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -309,9 +309,9 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_shipping_ext_calc`(
 `id` int(11) NOT NULL auto_increment,
 `name` VARCHAR(100) NOT NULL default '',
 `alias` VARCHAR(100) NOT NULL default '',
-`description` text NOT NULL,
-`params` LONGtext NOT NULL,
-`shipping_method` text NOT NULL,
+`description` text DEFAULT NULL,
+`params` LONGTEXT DEFAULT NULL,
+`shipping_method` text DEFAULT NULL,
 `published` TINYINT(1) NOT NULL default 0,
 `ordering` int(6) NOT NULL default 0,
 PRIMARY KEY (`id`)
@@ -325,7 +325,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_shipping_method_price` (
 `package_tax_id` int(11) NOT NULL default 0,
 `package_stand_price` DECIMAL(14,4) NOT NULL default 0,
 `delivery_times_id` int(11) NOT NULL default 0,
-`params` LONGtext NOT NULL
+`params` LONGTEXT DEFAULT NULL
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jshopping_shipping_method_price_weight` (
@@ -349,10 +349,10 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_order_history` (
 `order_history_id` int(11) NOT NULL auto_increment,
 `order_id` int(11) NOT NULL default 0,
 `order_status_id` TINYINT(1) NOT NULL default 0,
-`status_date_added` datetime NOT NULL default '0000-00-00 00:00:00',
+`status_date_added` datetime DEFAULT NULL,
 `customer_notify` int(1) NOT NULL default 0,
-`comments` text,
-`include_comment` TINYINT NOT NULL,
+`comments` text DEFAULT NULL,
+`include_comment` TINYINT NOT NULL DEFAULT 0,
 PRIMARY KEY  (`order_history_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -368,12 +368,12 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_order_item`(
 `product_quantity` DECIMAL(12,2) NOT NULL default 0,
 `product_item_price` DECIMAL(14,4) NOT NULL default 0,
 `product_tax` DECIMAL(14,4) NOT NULL default 0,
-`product_attributes` text NOT NULL,
-`product_freeattributes` text NOT NULL,
-`attributes` text NOT NULL,
-`freeattributes` text NOT NULL,
-`extra_fields` text NOT NULL,
-`files` text NOT NULL,
+`product_attributes` text DEFAULT NULL,
+`product_freeattributes` text DEFAULT NULL,
+`attributes` text DEFAULT NULL,
+`freeattributes` text DEFAULT NULL,
+`extra_fields` text DEFAULT NULL,
+`files` text DEFAULT NULL,
 `weight` DECIMAL(14,4) NOT NULL default 0,
 `thumb_image` VARCHAR(255) NOT NULL default '',
 `manufacturer` VARCHAR(255) NOT NULL default '',
@@ -381,7 +381,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_order_item`(
 `vendor_id` int(11) NOT NULL default 0,
 `basicprice` DECIMAL(12,2) NOT NULL default 0,
 `basicpriceunit` VARCHAR(255) NOT NULL default '',
-`params` text NOT NULL,
+`params` text DEFAULT NULL,
 PRIMARY KEY (`order_item_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -401,37 +401,37 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_orders`(
 `order_total` DECIMAL(14,4) NOT NULL default 0,
 `order_subtotal` DECIMAL(14,4) NOT NULL default 0,
 `order_tax` DECIMAL(14,4) NOT NULL default 0,
-`order_tax_ext` text NOT NULL,
+`order_tax_ext` text DEFAULT NULL,
 `order_shipping` DECIMAL(14,4) NOT NULL default 0,
 `order_payment` DECIMAL(14,4) NOT NULL default 0,
 `order_discount` DECIMAL(14,4) NOT NULL default 0,
 `shipping_tax` DECIMAL(12,4) NOT NULL default 0,
-`shipping_tax_ext` text NOT NULL,
+`shipping_tax_ext` text DEFAULT NULL,
 `payment_tax` DECIMAL(12,4) NOT NULL default 0,
-`payment_tax_ext` text NOT NULL,
+`payment_tax_ext` text DEFAULT NULL,
 `order_package` DECIMAL(12,2) NOT NULL default 0,
-`package_tax_ext` text NOT NULL,
+`package_tax_ext` text DEFAULT NULL,
 `currency_code` VARCHAR(20) NOT NULL default '',
 `currency_code_iso` VARCHAR(3) NOT NULL default '',
 `currency_exchange` DECIMAL(14,6) NOT NULL default 0,
 `order_status` tinyint(4) NOT NULL default 0,
 `order_created` TINYINT(1) NOT NULL default 0,
-`order_date` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-`invoice_date` datetime NOT NULL default '0000-00-00 00:00:00',
-`order_m_date` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+`order_date` DATETIME DEFAULT NULL,
+`invoice_date` datetime DEFAULT NULL,
+`order_m_date` DATETIME DEFAULT NULL,
 `shipping_method_id` int(11) NOT NULL default 0,
 `delivery_times_id` int(11) NOT NULL default 0,
 `payment_method_id` int(11) NOT NULL default 0,
-`payment_params` text NOT NULL,
-`payment_params_data` text NOT NULL,
-`shipping_params` text NOT NULL,
-`shipping_params_data` text NOT NULL,
+`payment_params` text DEFAULT NULL,
+`payment_params_data` text DEFAULT NULL,
+`shipping_params` text DEFAULT NULL,
+`shipping_params_data` text DEFAULT NULL,
 `delivery_time` VARCHAR(100) NOT NULL default '',
-`delivery_date` datetime NOT NULL default '0000-00-00 00:00:00',
+`delivery_date` datetime DEFAULT NULL,
 `coupon_id` int(11) NOT NULL default 0,
 `coupon_free_discount` DECIMAL(14,4) NOT NULL default 0,
-`ip_address` varchar(64) NOT NULL default 0,
-`order_add_info` text NOT NULL,
+`ip_address` varchar(64) NOT NULL default '',
+`order_add_info` text DEFAULT NULL,
 `title` TINYINT(1) NOT NULL default 0 ,
 `f_name` VARCHAR(255) NOT NULL default '',
 `l_name` VARCHAR(255) NOT NULL default '',
@@ -442,7 +442,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_orders`(
 `firma_code` VARCHAR(100) NOT NULL default '',
 `tax_number` VARCHAR(100) NOT NULL default '',
 `email` VARCHAR(255) NOT NULL default '',
-`birthday` DATE NOT NULL default '0000-00-00',
+`birthday` DATE DEFAULT NULL,
 `street` VARCHAR(100) NOT NULL default '',
 `street_nr` VARCHAR(16) NOT NULL default '',
 `home` VARCHAR(20) NOT NULL default '',
@@ -463,7 +463,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_orders`(
 `d_m_name` VARCHAR(255) NOT NULL default '',
 `d_firma_name` VARCHAR(255) NOT NULL default '',
 `d_email` VARCHAR(255) NOT NULL default '',
-`d_birthday` DATE NOT NULL default '0000-00-00',
+`d_birthday` DATE DEFAULT NULL,
 `d_street` VARCHAR(100) NOT NULL default '',
 `d_street_nr` VARCHAR(16) NOT NULL default '',
 `d_home` VARCHAR(20) NOT NULL default '',
@@ -481,13 +481,13 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_orders`(
 `pdf_file` VARCHAR(50) NOT NULL default '',
 `order_hash` varchar(32) NOT NULL default '',
 `file_hash` varchar(64) NOT NULL default '',
-`file_stat_downloads` text  NOT NULL,
-`order_custom_info` text NOT NULL,
+`file_stat_downloads` text DEFAULT NULL,
+`order_custom_info` text DEFAULT NULL,
 `display_price` TINYINT(1) NOT NULL default 0,
 `vendor_type` TINYINT(1) NOT NULL default 0,
 `vendor_id` int(11) NOT NULL default 0,
 `lang` VARCHAR(16) NOT NULL default '',
-`transaction` text NOT NULL,
+`transaction` text DEFAULT NULL,
 `product_stock_removed` TINYINT(1) NOT NULL default 0,
 PRIMARY KEY  (`order_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -498,7 +498,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_attr` (
 `attr_type` TINYINT( 1 ) NOT NULL default 0,
 `independent` TINYINT( 1 ) NOT NULL default 0,
 `allcats` TINYINT(1) NOT NULL default '1',
-`cats` text NOT NULL,
+`cats` text DEFAULT NULL,
 `group` tinyint(4) NOT NULL default 0,
 PRIMARY KEY (`attr_id`),
 KEY `group` (`group`)
@@ -548,8 +548,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_cart_temp` (
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `id_cookie` VARCHAR(255) NOT NULL default '',
 `user_id` INT NOT NULL default 0,
-`cart` text NOT NULL,
-`type_cart` varchar(32) NOT NULL
+`cart` text DEFAULT NULL,
+`type_cart` varchar(32) NOT NULL default ''
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jshopping_languages` (
@@ -565,8 +565,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_import_export` (
 `id` int(11) NOT NULL auto_increment,
 `name` VARCHAR(255) NOT NULL default '',
 `alias` VARCHAR(255) NOT NULL default '',
-`description` text NOT NULL,
-`params` text NOT NULL,
+`description` text DEFAULT NULL,
+`params` text DEFAULT NULL,
 `endstart` int(11) NOT NULL default 0,
 `steptime` int(11) NOT NULL default 0,
 PRIMARY KEY  (`id`)
@@ -592,7 +592,7 @@ PRIMARY KEY  (`id`)
 CREATE TABLE IF NOT EXISTS `#__jshopping_taxes_ext` (
 `id` int(11) NOT NULL auto_increment,
 `tax_id` int(11) NOT NULL default 0,
-`zones` text NOT NULL,
+`zones` text DEFAULT NULL,
 `tax` DECIMAL(12,2) NOT NULL default 0,
 `firma_tax` DECIMAL(12,2) NOT NULL default 0,
 PRIMARY KEY  (`id`)
@@ -600,7 +600,7 @@ PRIMARY KEY  (`id`)
 
 CREATE TABLE IF NOT EXISTS `#__jshopping_config_display_prices` (
 `id` int(11) NOT NULL auto_increment,
-`zones` text NOT NULL,
+`zones` text DEFAULT NULL,
 `display_price` TINYINT(1) NOT NULL default 0,
 `display_price_firma` TINYINT(1) NOT NULL default 0,
 PRIMARY KEY  (`id`)
@@ -609,7 +609,7 @@ PRIMARY KEY  (`id`)
 CREATE TABLE IF NOT EXISTS `#__jshopping_products_extra_fields` (
 `id` int(11) NOT NULL auto_increment,
 `allcats` TINYINT(1) NOT NULL default 0,
-`cats` text NOT NULL,
+`cats` text DEFAULT NULL,
 `type` TINYINT(1) NOT NULL default 0,
 `multilist` TINYINT(1) NOT NULL default 0,
 `group` tinyint(4) NOT NULL default 0,
@@ -644,7 +644,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_vendors`(
 `logo` VARCHAR(255) NOT NULL default '',
 `adress` VARCHAR(255) NOT NULL default '',
 `city` VARCHAR(100) NOT NULL default '',
-`zip` varchar(20) NOT NULL default 0,
+`zip` varchar(20) NOT NULL default '',
 `state` VARCHAR(100) NOT NULL default '',
 `country` int(11) NOT NULL default 0,
 `f_name` VARCHAR(255) NOT NULL default '',
@@ -653,18 +653,18 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_vendors`(
 `phone` VARCHAR(24) NOT NULL default '',
 `fax` VARCHAR(24) NOT NULL default '',
 `email` VARCHAR(255) NOT NULL default '',  
-`benef_bank_info` varchar(64) NOT NULL default 0,
-`benef_bic` varchar(64) NOT NULL default 0,
-`benef_conto` varchar(64) NOT NULL default 0,
-`benef_payee` varchar(64) NOT NULL default 0,
-`benef_iban` varchar(64) NOT NULL default 0,
-`benef_bic_bic` varchar(64) NOT NULL default 0,
-`benef_swift` varchar(64) NOT NULL default 0,
-`interm_name` varchar(64) NOT NULL default 0,
-`interm_swift` varchar(64) NOT NULL default 0,
-`identification_number` varchar(64) NOT NULL default 0,
-`tax_number` varchar(64) NOT NULL default 0,
-`additional_information` text NOT NULL,
+`benef_bank_info` varchar(64) NOT NULL default '',
+`benef_bic` varchar(64) NOT NULL default '',
+`benef_conto` varchar(64) NOT NULL default '',
+`benef_payee` varchar(64) NOT NULL default '',
+`benef_iban` varchar(64) NOT NULL default '',
+`benef_bic_bic` varchar(64) NOT NULL default '',
+`benef_swift` varchar(64) NOT NULL default '',
+`interm_name` varchar(64) NOT NULL default '',
+`interm_swift` varchar(64) NOT NULL default '',
+`identification_number` varchar(64) NOT NULL default '',
+`tax_number` varchar(64) NOT NULL default '',
+`additional_information` text DEFAULT NULL,
 `user_id` int(11) NOT NULL default 0,
 `main` TINYINT(1) NOT NULL default 0,
 `publish` TINYINT(1) NOT NULL default 0,
@@ -675,13 +675,13 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_addons` (
 `id` int(11) NOT NULL auto_increment,
 `alias` VARCHAR(255) NOT NULL default '',
 `name` VARCHAR(255) NOT NULL default '',
-`key` text NOT NULL,
+`key` text DEFAULT NULL,
 `usekey` TINYINT(1) NOT NULL default 0,
 `version` VARCHAR(255) NOT NULL default '',
 `uninstall` VARCHAR(255) NOT NULL default '',
-`params` longtext NOT NULL,
+`params` longtext DEFAULT NULL,
 `publish` TINYINT(1) NOT NULL default -1,
-`config` text NOT NULL,
+`config` text DEFAULT NULL,
 PRIMARY KEY  (`id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -730,8 +730,8 @@ PRIMARY KEY ( `id` )
 CREATE TABLE IF NOT EXISTS `#__jshopping_products_option` (
 `id` int(11) NOT NULL auto_increment,
 `product_id` int(11) NOT NULL default 0,
-`key` varchar(64) NOT NULL default 0,
-`value` text NOT NULL,
+`key` varchar(64) NOT NULL default '',
+`value` text DEFAULT NULL,
 PRIMARY KEY (`id`),
 UNIQUE KEY `prodkey` (`product_id`,`key`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -742,7 +742,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_payment_trx` (
 `transaction` VARCHAR(255) NOT NULL default '',
 `rescode` INT NOT NULL default 0,
 `status_id` INT NOT NULL default 0,
-`date` datetime NOT NULL default '0000-00-00 00:00:00'
+`date` datetime DEFAULT NULL
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jshopping_payment_trx_data` (
@@ -750,7 +750,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_payment_trx_data` (
 `trx_id` INT NOT NULL default 0,
 `order_id` INT NOT NULL default 0,
 `key` VARCHAR(255) NOT NULL default '',
-`value` text NOT NULL
+`value` text DEFAULT NULL
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 ALTER TABLE `#__jshopping_addons` ADD INDEX(`alias`);

@@ -345,7 +345,7 @@ class ConfigController extends BaseadminController{
 		    
 		    $config->transformPdfParameters();
 		    if (!$config->store()) {
-			    JSError::raiseWarning("",Text::_('JSHOP_ERROR_SAVE_DATABASE'));
+			    JSError::raiseWarning("", Text::_('JSHOP_ERROR_SAVE_DATABASE'));
 			    $this->setRedirect('index.php?option=com_jshopping&controller=config');
 			    return 0;
 		    }

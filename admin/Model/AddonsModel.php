@@ -21,6 +21,10 @@ class AddonsModel extends BaseadminModel{
 
     protected $nameTable = 'addon';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []) {
+		return $this->getList($params['details'] ?? 0, $filters);
+	}
+
     public function getList($details = 0, $filter = []){
         $db = Factory::getDBO();
         $jshopConfig = JSFactory::getConfig();

@@ -17,6 +17,10 @@ class ProductFieldGroupsModel extends BaseadminModel{
     
     protected $nameTable = 'productfieldgroup';
 
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
+		return $this->getList();
+	}
+
     function getList() {
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();

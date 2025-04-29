@@ -70,7 +70,7 @@ if ($saveOrder){
         <a href="index.php?option=com_jshopping&controller=taxes&task=edit&tax_id=<?php echo $row->tax_id; ?>"><?php echo $row->tax_name;?></a> (<?php echo $row->tax_value;?> %)
     </td>
     <td>
-    <a class="btn btn-mini btn-info" href="index.php?option=com_jshopping&controller=exttaxes&back_tax_id=<?php echo $row->tax_id; ?>">
+    <a class="btn btn-sm btn-info" href="index.php?option=com_jshopping&controller=exttaxes&back_tax_id=<?php echo $row->tax_id; ?>">
         <?php echo Text::_('JSHOP_EXTENDED_RULE_TAX')?>
     </a>
     </td>

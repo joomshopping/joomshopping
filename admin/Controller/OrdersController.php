@@ -19,7 +19,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 use Joomla\Component\Jshopping\Site\Helper\Selects;
-
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 
 defined('_JEXEC') or die();
 
@@ -425,7 +425,11 @@ class OrdersController extends BaseadminController{
         $client_id = $this->input->getInt('client_id', 0);
         $model = JSFactory::getModel("orders");
         $post = $model->getPrepareDataSave($this->input);
-        $order = $model->save($post);
+        if (!$order = $model->save($post)){
+            JSError::raiseWarning("500", $model->getError());
+            $this->setRedirect($this->getUrlListItems());
+            return 0;
+        }
         if ($this->getTask()=='apply'){
             $this->setRedirect("index.php?option=com_jshopping&controller=orders&task=edit&order_id=".$order->order_id.'&client_id='.$client_id);
         }else{

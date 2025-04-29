@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 15.09.2022
+* @version      5.6.2 21.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -24,22 +24,29 @@ class CategoriesModel extends BaseadminModel{
     
     protected $nameTable = 'category';
     protected $tableFieldPublish = 'category_publish';
+
+	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []) {
+		return $this->getAllList($params['display'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+	}
     
-    function getAllList($display=0){
+    function getAllList($display=0, $order = null, $orderDir = null){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();
+        $orderby = "ordering";
         if (isset($order) && $order=="id") $orderby = "`category_id`";
         if (isset($order) && $order=="name") $orderby = "`".$lang->get('name')."`";
         if (isset($order) && $order=="ordering") $orderby = "ordering";
-        if (isset($orderby) && !$orderby) $orderby = "ordering";
-        $query = "SELECT `".$lang->get('name')."` as name, category_id FROM `#__jshopping_categories` ORDER BY ordering";
+        if (isset($orderDir)) {
+            $orderby .= " ".$orderDir;
+        }
+        $query = "SELECT `".$lang->get('name')."` as name, category_id FROM `#__jshopping_categories` ORDER BY ".$orderby;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
-        $db->setQuery($query);        
+        $db->setQuery($query);
         $list = $db->loadObjectList();
         if ($display==1){
-            $rows = array();
-            foreach($list as $k=>$v){
-                $rows[$v->category_id] = $v->name;    
+            $rows = [];
+            foreach($list as $v){
+                $rows[$v->category_id] = $v->name;
             }
             unset($list);
             $list = $rows;
@@ -291,6 +298,12 @@ class CategoriesModel extends BaseadminModel{
         if ($post['category_parent_id']==$post['category_id']){
             $post['category_parent_id'] = 0;
         }
+        $fieldsint = ['products_page', 'products_row'];
+		foreach($fieldsint as $v) {
+			if (isset($post[$v]) && $post[$v] == '') {
+				$post[$v] = 0;
+			}
+		}
         
         Factory::getApplication()->triggerEvent('onBeforeSaveCategory', array(&$post));
 
@@ -312,7 +325,7 @@ class CategoriesModel extends BaseadminModel{
  
         Factory::getApplication()->triggerEvent('onBeforeStoreCategory', array(&$post, &$category));
         if (!$category->store()){
-            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE')." ".$category->getError());
             return 0;
         }
         
