@@ -9,7 +9,7 @@
 namespace Joomla\Component\Jshopping\Site\Lib;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;

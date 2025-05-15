@@ -689,6 +689,9 @@ div.avialable_version_update{
     border-radius: 5px;
     padding: 3px;
 }
+a.a_addon_update{
+    cursor: pointer;
+}
 
 .btn-nopad {
     padding: 0;

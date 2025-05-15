@@ -6,7 +6,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.6.0 13.03.2025
+* @version      5.6.3 13.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -90,13 +90,8 @@ $i=0;
     </th>
   </tr>
 </thead>  
-<?php
-foreach($rows as $row){
-    $finished=0; $date=date('Y-m-d');
-    if ($row->used) $finished=1;
-    if ($row->coupon_expire_date < $date && $row->coupon_expire_date!='0000-00-00' ) $finished=1;
-?>
-  <tr class="row<?php echo $i % 2;?>" <?php if ($finished) print "style='font-style:italic; color: #999;'"?>>
+<?php foreach($rows as $row){ ?>
+  <tr class="row<?php echo $i % 2;?>" <?php if ($row->_finished) print "style='font-style:italic; color: #999;'"?>>
    <td>
      <?php echo $pageNav->getRowOffset($i);?>
    </td>
@@ -111,10 +106,10 @@ foreach($rows as $row){
      <?php if ($row->coupon_type==0) print "%"; else print $this->currency;?>
    </td>
    <td>
-    <?php if ($row->coupon_start_date!='0000-00-00') print Helper::formatdate($row->coupon_start_date);?>
+    <?php print Helper::formatdate($row->coupon_start_date);?>
    </td>
    <td>
-    <?php if ($row->coupon_expire_date!='0000-00-00')  print Helper::formatdate($row->coupon_expire_date);?>
+    <?php print Helper::formatdate($row->coupon_expire_date);?>
    </td>
    <td class="center">
     <?php if ($row->finished_after_used) print Text::_('JSHOP_YES'); else print Text::_('JSHOP_NO')?>

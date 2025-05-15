@@ -3,7 +3,7 @@
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 /**
-* @version      5.6.0 08.03.2025
+* @version      5.6.3 08.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -71,6 +71,26 @@ defined('_JEXEC') or die();
                 <div class="small"><?php echo Text::_('JSHOP_DEFAULT').' '.Text::_('JSHOP_FOLDER_OVERRIDES').": ".$this->def_overrides_css?></div>
             </td>
         </tr>
+
+        <?php if (count($this->tmp_vars)) {?>
+        <tr>
+            <td class="key">
+                <b><?php echo Text::_('JSHOP_ADDON_POSITONS_VARS')?></b>
+            </td>
+        </tr>
+        <?php }?>
+
+        <?php foreach($this->tmp_vars as $k=>$v) {?>
+            <tr>
+                <td class="key">
+                    <?php echo $k?>
+                </td>
+                <td>
+                    <input type="text" class="form-control w-100" name="config[tmp_vars][<?php echo $k?>]" value="<?php echo $v;?>">
+                </td>
+            </tr>
+        <?php }?>
+
         <?php print $this->etemplatevar ?? '';?>
     </table>
 </fieldset>

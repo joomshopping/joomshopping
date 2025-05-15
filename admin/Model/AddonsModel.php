@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.1 01.03.2025
+* @version      5.7.0 01.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,6 +12,7 @@ namespace Joomla\Component\Jshopping\Administrator\Model;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 
@@ -22,10 +23,10 @@ class AddonsModel extends BaseadminModel{
     protected $nameTable = 'addon';
 
 	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []) {
-		return $this->getList($params['details'] ?? 0, $filters);
+		return $this->getList($params['details'] ?? 0, $filters, $params['domain'] ?? '', $params['back'] ?? '');
 	}
 
-    public function getList($details = 0, $filter = []){
+    public function getList($details = 0, $filter = [], $domain = '', $back = ''){
         $db = Factory::getDBO();
         $jshopConfig = JSFactory::getConfig();
         $where = '';
@@ -40,7 +41,9 @@ class AddonsModel extends BaseadminModel{
         
         if ($details){
             if ($jshopConfig->disable_admin['addons_catalog'] == 0) {
-                $versions = $this->getListWebLastVersions();
+                $catalog = JSFactory::getModel('addonscatalog');
+                $list_web = $catalog->getListByAlias();
+                $updateUrls = $catalog->getListInstallUrl($domain, $back);
             }
 
             foreach($rows as $k=>$v){
@@ -59,12 +62,16 @@ class AddonsModel extends BaseadminModel{
                 }else{
                     $rows[$k]->version_file_exist = 0;
                 }
-                if (isset($versions[$v->alias])) {
-                    $rows[$k]->last_version = $versions[$v->alias]->last_file->version ?? '';
-                    $rows[$k]->catalog_url = $versions[$v->alias]->url ?? '';
+                if (isset($list_web[$v->alias]) && isset($list_web[$v->alias]->last_file->version)) {
+                    $rows[$k]->last_version = $list_web[$v->alias]->last_file->version ?? '';
+                    $rows[$k]->catalog_url = $list_web[$v->alias]->url ?? '';
                     if (version_compare($rows[$k]->last_version, $v->version) > 0) {
                         $rows[$k]->avialable_version_update = 1;
                     }
+                    $rows[$k]->web_addon = $list_web[$v->alias];
+                }
+                if (isset($updateUrls[$v->alias])) {
+                    $rows[$k]->url_update = $updateUrls[$v->alias];
                 }
             }
         }
@@ -152,110 +159,4 @@ class AddonsModel extends BaseadminModel{
 		}
     }
 
-    public function getListWebCategory() {
-        $api = JSFactory::getModel('Addonswebapi');
-        $cats = $api->categorys();
-        return $cats;
-    }
-
-    public function getListWebTypes() {
-        return [
-            1 => Text::_('JSHOP_PAID_DOWNLOAD'),
-            2 => Text::_('JSHOP_FREE'),
-        ];
-    }
-
-    public function getListWebCount($filter = []) {
-        $api = JSFactory::getModel('Addonswebapi');
-        $rows = $api->products();
-        if (isset($filter['type'])) {
-            $filter['free'] = ($filter['type'] == 1) ? 0 : 1;
-        }
-        foreach($rows as $k => $v) {
-            if (isset($filter['category_id']) && $v->category_id != $filter['category_id']) {
-                unset($rows[$k]);
-                continue;
-            }
-            if (isset($filter['free']) && $v->free != $filter['free']) {
-                unset($rows[$k]);
-                continue;
-            }
-            if (isset($filter['text_search'])) {
-                if (!substr_count(strtolower($v->name." ".$v->descr), strtolower($filter['text_search']))) {
-                    unset($rows[$k]);
-                    continue;
-                }
-            }
-        }
-        return count($rows);
-    }
-
-    public function getListWeb($filter = [], $order = '', $orderDir = 'asc', $limitstart = 0, $limit = 0) {        
-        $api = JSFactory::getModel('Addonswebapi');
-        $rows = $api->products();
-        if (isset($filter['type'])) {
-            $filter['free'] = ($filter['type'] == 1) ? 0 : 1;
-        }
-        if ($order != '') {
-            usort($rows, function($a, $b) use ($order, $orderDir) {
-                if ($orderDir == 'asc') {
-                    return $a->$order <=> $b->$order;
-                } else {
-                    return $b->$order <=> $a->$order;
-                }
-            });
-        }
-        foreach($rows as $k => $v) {
-            if (isset($filter['category_id']) && $v->category_id != $filter['category_id']) {
-                unset($rows[$k]);
-                continue;
-            }
-            if (isset($filter['free']) && $v->free != $filter['free']) {
-                unset($rows[$k]);
-                continue;
-            }
-            if (isset($filter['text_search'])) {
-                if (!substr_count(strtolower($v->name." ".$v->descr), strtolower($filter['text_search']))) {
-                    unset($rows[$k]);
-                    continue;
-                }
-            }
-        }
-        $rows = array_slice($rows, $limitstart, $limit);
-        $config = $api->config();
-        $back_url = 'index.php?option=com_jshopping&controller=addons&task=listweb';
-        foreach($rows as $k => $v) {
-            if (isset($v->image)) {
-                $rows[$k]->image_url = $config->url . $config->product_image_folder . '/' . $v->image;                
-            }
-            if (isset($v->last_file->download)) {
-                $rows[$k]->download_url = $config->url . $config->download_folder . '/' . $v->last_file->download;                
-            }
-            if (isset($v->last_file->download)) {
-                $instalurl = 'index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm2:'.$v->last_file->download.'&back='.urlencode($back_url);
-                $rows[$k]->install_url = $instalurl;
-            }
-            $rows[$k]->url = $config->url . $config->redirect_url . $v->id;
-        }
-        return $rows;
-    }
-
-    public function getListWebLastVersions() {
-        $api = JSFactory::getModel('Addonswebapi');
-        $config = $api->config();
-        $rows = $api->products();
-        $list = [];
-        foreach($rows as $v) {
-            if ($v->addon_alias != '' && isset($v->last_file->version)) {
-                $v->url = $config->url . $config->redirect_url . $v->id;
-                $list[$v->addon_alias] = $v;
-            }
-        }
-        return $list;
-    }
-
-    public function listWebRefresh() {
-        $api = JSFactory::getModel('Addonswebapi');
-        $api->clearCache();
-    }
 }

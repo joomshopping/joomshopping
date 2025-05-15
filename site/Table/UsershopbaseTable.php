@@ -141,7 +141,7 @@ abstract class UsershopbaseTable extends ShopbaseTable{
     }
     
 	function loadDataFromEdit(){
-		$this->prepareBirthdayFormat();
+		//$this->prepareBirthdayFormat();
 		$this->updateCountryToDefault();
 		return $this;
 	}

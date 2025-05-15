@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.6.1 29.03.2025
+* @version      5.7.0 29.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -94,12 +94,19 @@ $i=0;
                         <a href='index.php?option=com_jshopping&controller=addons&task=info&id=<?php print $row->id?>'>
                             <div class="small"><i class="icon-info-circle"></i> <?php echo Text::_('JSHOP_DESCRIPTION')?></div>
                         </a>
-                    <?php }?>                    
+                    <?php }?>
                 </td>
                 <td>
                     <?php if (isset($row->avialable_version_update)) {?>
                         <div class="avialable_version_update">
-                            <?php print $row->version?>
+                            <?php if (isset($row->url_update)) {?>
+                                <a class="a_addon_update" xhref="<?php echo $row->url_update?>" j_ver="<?php echo $row->web_addon->last_file->j_ver ?? ''?>"  js_ver="<?php echo $row->web_addon->last_file->js_ver ?? ''?>">
+                                    <?php print $row->version?>
+                                    <i class="icon-refresh"></i>
+                                </a>
+                            <?php } else { ?>
+                                <?php print $row->version?>
+                            <?php } ?>
                         </div>
                     <?php } else {?>
                         <?php echo $row->version;?>
@@ -163,7 +170,7 @@ $i=0;
 
         <?php if ($this->config->disable_admin['addons_catalog'] == 0) {?>
             <div class="text-center mt-3">
-                <a class="btn btn-success" href="index.php?option=com_jshopping&controller=addons&task=listweb">
+                <a class="btn btn-success" href="index.php?option=com_jshopping&controller=addonscatalog">
                     <span class="icon-folder" aria-hidden="true"></span>
                     <?php echo Text::_('JSHOP_ADDONS_CATALOG')?>
                 </a>
@@ -176,6 +183,20 @@ $i=0;
         <?php print $this->tmp_html_end?>
     </form>
 </div>
+
+<?php 
+print \Joomla\CMS\HTML\HTMLHelper::_(
+      'bootstrap.renderModal',
+      'update_popup',
+      array(
+          'modal-dialog-scrollable' => true,
+          'title'       => Text::_('JSHOP_UPDATE'),          
+          'height'      => '400px',
+          'width'       => '600px',          
+          'modalWidth'  => 40,
+      ),
+      $this->loadTemplate('update_popup')
+);?>
 
 <script>
 jQuery(function() {

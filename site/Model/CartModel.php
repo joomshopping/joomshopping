@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.12.2023
+* @version      5.7.0 15.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -654,20 +654,21 @@ class CartModel{
 
     function updateCartProductPrice() {
 		$jshopConfig = JSFactory::getConfig();
+        $dispatcher = Factory::getApplication();
+        $obj = $this;
         foreach($this->products as $key=>$value) {
             $product = JSFactory::getTable('product');
             $product->load($this->products[$key]['product_id']);
             $attr_id = unserialize($value['attributes']);
             $freeattributes = unserialize($value['freeattributes']);
             $product->setAttributeActive($attr_id);
-            $product->setFreeAttributeActive($freeattributes);            
+            $product->setFreeAttributeActive($freeattributes);
             $this->products[$key]['price'] = $product->getPrice($this->products[$key]['quantity'], 1, 1, 1, $this->products[$key]);
 			if ($jshopConfig->cart_basic_price_show){
                 $this->products[$key]['basicprice'] = $product->getBasicPrice();
             }
+            $dispatcher->triggerEvent('onAfterUpdateCartProductPriceItem', array(&$obj, &$product, &$key, &$value));
         }
-        $dispatcher = Factory::getApplication();
-        $obj = $this;
         $dispatcher->triggerEvent('onAfterUpdateCartProductPrice', array(&$obj));
         $this->loadPriceAndCountProducts();
         $this->reloadRabatValue();

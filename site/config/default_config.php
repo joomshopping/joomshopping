@@ -302,6 +302,9 @@ $config->allow_limit_request_cart_to = ['cart', 'wishlist'];
 $config->order_change_status_reload_global_lang = 0;
 $config->admin_products_search_by_words = 0;
 $config->admin_products_search_in_attribute = 0;
+$config->admin_products_search_by_prod_id_range = 1; 
+$config->addonshop_api_key = '';
+$config->addonshop_api_get_my_paid_products_cache_time = 300;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';

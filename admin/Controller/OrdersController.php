@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 14.03.2024
+* @version      5.6.3 14.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -499,8 +499,8 @@ class OrdersController extends BaseadminController{
     
     function loadtaxorder(){
         $post = $this->input->post->getArray();
-        $data_order = (array)$post['data_order'];
-        $products = (array)$data_order['product'];
+        $data_order = (array)($post['data_order'] ?? []);
+        $products = (array)($data_order['product'] ?? []);
 
         $orders = JSFactory::getModel("orders");
         $taxes_array = $orders->loadtaxorder($data_order, $products);

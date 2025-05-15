@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.7.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,6 +12,8 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
+
 defined('_JEXEC') or die();
 
 class LicenseKeyAddonController extends BaseadminController{
@@ -27,11 +29,15 @@ class LicenseKeyAddonController extends BaseadminController{
         $alias = $this->input->getVar("alias");
 		$back = $this->input->getVar("back");
 		$addon = JSFactory::getTable('addon');
-		$addon->loadAlias($alias);		
+		$addon->loadAlias($alias);
+        
+        $domain = Helper::getClearHost();
+        $mypaid_addons = JSFactory::getModel('addonscatalog')->getListMyPaidAddonsAlias($domain);
 
 		$view = $this->getView("addonkey", 'html');
-        $view->set('row', $addon);
-        $view->set('back', $back);
+        $view->row = $addon;
+        $view->back = $back;
+        $view->btn_genrate = in_array($alias, $mypaid_addons);
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
         $dispatcher = Factory::getApplication();

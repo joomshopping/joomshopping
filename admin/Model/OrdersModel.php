@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 28.04.2025
+* @version      5.6.3 02.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -197,17 +197,17 @@ class OrdersModel extends BaseadminModel{
     function getCartProductsFromOrderProducts($items){
         $products = array();
         foreach($items as $k=>$v){
-            $prod = array();
-            $prod['product_id'] = $v['product_id'];
-            $prod['quantity'] = $v['product_quantity'];
-            $prod['tax'] = $v['product_tax'] ?? 0;
-            $prod['product_name'] = $v['product_name'];
-            $prod['thumb_image'] = $v['thumb_image'];
-            $prod['ean'] = $v['product_ean'];
-            $prod['weight'] = $v['weight'];
-            $prod['delivery_times_id'] = $v['delivery_times_id'];
-            $prod['vendor_id'] = $v['vendor_id'];
-            $prod['price'] = $v['product_item_price'];
+            $prod = [];
+            $prod['product_id'] = intval($v['product_id']);
+            $prod['quantity'] = floatval($v['product_quantity']);
+            $prod['tax'] = floatval($v['product_tax'] ?? 0);
+            $prod['product_name'] = $v['product_name'] ?? '';
+            $prod['thumb_image'] = $v['thumb_image'] ?? '';
+            $prod['ean'] = $v['product_ean'] ?? '';
+            $prod['weight'] = $v['weight'] ?? 0;
+            $prod['delivery_times_id'] = $v['delivery_times_id'] ?? 0;
+            $prod['vendor_id'] = $v['vendor_id'] ?? 0;
+            $prod['price'] = floatval($v['product_item_price']);
             $products[] = $prod;
         }
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
@@ -216,8 +216,8 @@ class OrdersModel extends BaseadminModel{
     
     function loadtaxorder($data_order, $products){
         $jshopConfig = JSFactory::getConfig();
-        $jshopConfig->display_price_front_current = $data_order['display_price'];
-        $display_price_front_current = $data_order['display_price'];
+        $jshopConfig->display_price_front_current = $data_order['display_price'] ?? 0;
+        $display_price_front_current = $data_order['display_price'] ?? 0;
         $taxes = array();
         $total = 0;
         $AllTaxes = JSFactory::getAllTaxes();
@@ -232,9 +232,9 @@ class OrdersModel extends BaseadminModel{
         // tax product
         foreach($products as $key=>$product){
             $tax = (string)floatval($product['product_tax']);
-            $price = $product['product_item_price'] * $product['product_quantity'];
-            $SumTax = (isset($taxes[$tax]))?$taxes[$tax]:0;
-            $taxes[$tax] =  $SumTax + Helper::getPriceTaxValue($price, $tax, $display_price_front_current);
+            $price = floatval($product['product_item_price']) * floatval($product['product_quantity']);
+            $SumTax = $taxes[$tax] ?? 0;
+            $taxes[$tax] =  $SumTax + floatval(Helper::getPriceTaxValue($price, $tax, $display_price_front_current));
             $total += $price;
         }
         
@@ -245,7 +245,7 @@ class OrdersModel extends BaseadminModel{
         $cart->loadPriceAndCountProducts();
         
         // payment
-        if ($data_order['order_payment']!=0){
+        if (floatval($data_order['order_payment'] ?? 0)!=0){
             $price = floatval($data_order['order_payment']);
             $payment_method_id = $data_order['payment_method_id'];
             $paym_method = JSFactory::getTable('paymentmethod');
@@ -254,38 +254,38 @@ class OrdersModel extends BaseadminModel{
             $payment_taxes = $paym_method->calculateTaxList($price);
             foreach($payment_taxes as $k=>$v){
                 $k = (string)floatval($k);
-                $SumTax = (isset($taxes[$k]))?$taxes[$k]:0;
-                $taxes[$k] = $SumTax + $v;
+                $SumTax = $taxes[$k] ?? 0;
+                $taxes[$k] = $SumTax + floatval($v);
             }
             $total += $price;
         }
         
         //shipping
         $shipping_method = JSFactory::getTable('shippingMethod');
-        $sh_pr_method_id = $shipping_method->getShippingPriceId($data_order['shipping_method_id'], $id_country);
+        $sh_pr_method_id = $shipping_method->getShippingPriceId($data_order['shipping_method_id'] ?? 0, $id_country);
         
         $shipping_method_price = JSFactory::getTable('shippingMethodPrice');
         $shipping_method_price->load($sh_pr_method_id);
         
         // tax shipping
-        if ($data_order['order_shipping']>0){
+        if (floatval($data_order['order_shipping'] ?? 0) > 0){
             $price = floatval($data_order['order_shipping']);
             $shipping_taxes = $shipping_method_price->calculateShippingTaxList($price, $cart);
             foreach($shipping_taxes as $k=>$v){
                 $k = (string)floatval($k);
-                $SumTax = (isset($taxes[$k]))?$taxes[$k]:0;
-                $taxes[$k] = $SumTax + $v;
+                $SumTax = $taxes[$k] ?? 0;
+                $taxes[$k] = $SumTax + floatval($v);
             }
             $total += $price;
         }
         // tax package
-        if ($data_order['order_package']>0){
+        if (floatval($data_order['order_package'] ?? 0) > 0){
             $price = floatval($data_order['order_package']);
             $shipping_taxes = $shipping_method_price->calculatePackageTaxList($price, $cart);
             foreach($shipping_taxes as $k=>$v){
                 $k = (string)floatval($k);
-                $SumTax = (isset($taxes[$k]))?$taxes[$k]:0;
-                $taxes[$k] = $SumTax + $v;
+                $SumTax = $taxes[$k] ?? 0;
+                $taxes[$k] = $SumTax + floatval($v);
             }
             $total += $price;
         }
@@ -297,10 +297,10 @@ class OrdersModel extends BaseadminModel{
             }
         }
         
-        if ($data_order['order_discount'] > 0 && $jshopConfig->calcule_tax_after_discount){
-            $discountPercent = $data_order['order_discount'] / $total;
+        if (floatval($data_order['order_discount'] ?? 0) > 0 && $jshopConfig->calcule_tax_after_discount){
+            $discountPercent = floatval($data_order['order_discount']) / $total;
             foreach($taxes_array as $k=>$v){
-                $taxes_array[$k]['value'] = $v['value'] * (1 - $discountPercent);
+                $taxes_array[$k]['value'] = floatval($v['value']) * (1 - $discountPercent);
             }
         }
 
@@ -310,16 +310,16 @@ class OrdersModel extends BaseadminModel{
     
     function loadshippingprice($data_order, $products){
         $jshopConfig = JSFactory::getConfig();
-        $jshopConfig->display_price_front_current = $data_order['display_price'];
+        $jshopConfig->display_price_front_current = $data_order['display_price'] ?? 0;
         $all_currency = JSFactory::getAllCurrency();
-        $currency_id = $data_order['currency_id'];
+        $currency_id = $data_order['currency_id'] ?? 0;
         if ($currency_id){
             $jshopConfig->currency_value = $all_currency[$currency_id]->currency_value;
         }
         
-        $id_country = $data_order['d_country'];
+        $id_country = $data_order['d_country'] ?? 0;
         if (!$id_country){
-            $id_country = $data_order['country'];
+            $id_country = $data_order['country'] ?? 0;
         }
         if (!$id_country){
             $id_country = $jshopConfig->default_country;
@@ -349,15 +349,18 @@ class OrdersModel extends BaseadminModel{
     
     function loadpaymentprice($data_order, $products){
         $jshopConfig = JSFactory::getConfig();
-        $jshopConfig->display_price_front_current = $data_order['display_price'];
+        $jshopConfig->display_price_front_current = $data_order['display_price'] ?? 0;
         $all_currency = JSFactory::getAllCurrency();
-        $currency_id = $data_order['currency_id'];
+        $currency_id = $data_order['currency_id'] ?? 0;
         if ($currency_id){
             $jshopConfig->currency_value = $all_currency[$currency_id]->currency_value;
         }
-        $id_country = $data_order['d_country'];
+        $id_country = $data_order['d_country'] ?? 0;
         if (!$id_country){
-            $id_country = $data_order['country'];
+            $id_country = $data_order['country'] ?? 0;
+        }
+        if (!$id_country){
+            $id_country = $jshopConfig->default_country;
         }
         $AllTaxes = JSFactory::getAllTaxes();
 
@@ -373,7 +376,7 @@ class OrdersModel extends BaseadminModel{
             $total = 0;
             foreach($products as $key=>$product){
                 $tax = floatval($product['product_tax']);
-                $product_price = $product['product_item_price'] * $product['product_quantity'];
+                $product_price = floatval($product['product_item_price']) * floatval($product['product_quantity']);
                 if ($data_order['display_price']){
                     $product_price = $product_price + $product_price * $tax / 100;    
                 }
@@ -385,8 +388,8 @@ class OrdersModel extends BaseadminModel{
             $shipping_method_price = JSFactory::getTable('shippingMethodPrice');
             $shipping_method_price->load($sh_pr_method_id);
             
-            $tax = floatval($AllTaxes[$shipping_method_price->shipping_tax_id]);
-            $shipping_price = $data_order['order_shipping'];
+            $tax = floatval($AllTaxes[$shipping_method_price->shipping_tax_id] ?? 0);
+            $shipping_price = floatval($data_order['order_shipping'] ?? 0);
             if ($data_order['display_price']){
                 $shipping_taxes = $shipping_method_price->calculateShippingTaxList($shipping_price, $cart);                
                 foreach($shipping_taxes as $k=>$v){
@@ -395,18 +398,18 @@ class OrdersModel extends BaseadminModel{
             }
             $total += $shipping_price;
             
-            $tax = floatval($AllTaxes[$shipping_method_price->package_tax_id]);
-            $package_price = $data_order['order_package'];
+            $tax = floatval($AllTaxes[$shipping_method_price->package_tax_id] ?? 0);
+            $package_price = floatval($data_order['order_package'] ?? 0);
             if ($data_order['display_price']){
                 $shipping_taxes = $shipping_method_price->calculatePackageTaxList($package_price, $cart);
                 foreach($shipping_taxes as $k=>$v){
-                    $package_price = $package_price + $v;    
+                    $package_price = $package_price + $v;   
                 }
             }
             $total += $package_price;
 
             $price = $total * $paym_method->price / 100;
-            if ($data_order['display_price']){
+            if ($data_order['display_price'] ?? 0){
                 $price = Helper::getPriceCalcParamsTax($price, $paym_method->tax_id, $cart->products);
             }
         }else{
@@ -418,7 +421,7 @@ class OrdersModel extends BaseadminModel{
     }
 
     function loaddiscountprice($data_order, $products){
-        $code = $data_order['coupon_code'];
+        $code = $data_order['coupon_code'] ?? '';
         if ($code == ''){
             return 0;
         }
@@ -430,16 +433,24 @@ class OrdersModel extends BaseadminModel{
         $coupon->load($coupon_id);
 
         $jshopConfig = JSFactory::getConfig();
-        $jshopConfig->display_price_front_current = $data_order['display_price'];
+        $jshopConfig->display_price_front_current = $data_order['display_price'] ?? 0;
         $all_currency = JSFactory::getAllCurrency();
-        $currency_id = $data_order['currency_id'];
+        $currency_id = $data_order['currency_id'] ?? 0;
         if ($currency_id){
             $jshopConfig->currency_value = $all_currency[$currency_id]->currency_value;
         }
-        $id_country = $data_order['d_country'];
+        $id_country = $data_order['d_country'] ?? 0;
         if (!$id_country){
-            $id_country = $data_order['country'];
+            $id_country = $data_order['country'] ?? 0;
         }
+        if (!$id_country){
+            $id_country = $jshopConfig->default_country;
+        }
+        $data_order['order_shipping'] = $data_order['order_shipping'] ?? 0;
+        $data_order['order_package'] = $data_order['order_package'] ?? 0;
+        $data_order['order_payment'] = $data_order['order_payment'] ?? 0;
+        $data_order['shipping_method_id'] = $data_order['shipping_method_id'] ?? 0;
+        $data_order['payment_method_id'] = $data_order['payment_method_id'] ?? 0;
 
         $cproducts = $this->getCartProductsFromOrderProducts($products);
         $cart = JSFactory::getModel('cart', 'Site');
@@ -451,7 +462,7 @@ class OrdersModel extends BaseadminModel{
         $cart->setShippingPrice($data_order['order_shipping']);
         $cart->setPackagePrice($data_order['order_package']);
         $cart->setPaymentPrice($data_order['order_payment']);
-        
+                
         $shipping_method = JSFactory::getTable('shippingMethod');
         $sh_pr_method_id = $shipping_method->getShippingPriceId($data_order['shipping_method_id'], $id_country);
         

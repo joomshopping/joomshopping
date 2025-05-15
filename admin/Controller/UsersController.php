@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.1 15.09.2018
+* @version      5.6.3 08.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -95,10 +95,17 @@ class UsersController extends BaseadminController{
         $user_id = $this->input->getInt("user_id");
         $user = JSFactory::getTable('usershop');
         $user->load($user_id);
+	    if (!$user_id){
+		    $model = JSFactory::getModel('userregister', 'Site');
+		    $user_data = (object)$model->getPostData();
+		    $user->bind($user_data);
+		    $model->clearPostData();
+	    }
+
         $user->loadDataFromEdit();
-		
+
         $user_site = new User($user_id);
-		
+
 		$lists['country'] = Selects::getCountry($user->country, 'class = "form-select"');
 		$lists['d_country'] = Selects::getCountry($user->d_country, 'class = "inputbox endes form-select"', 'd_country');
 		$lists['select_titles'] = Selects::getTitle($user->title, 'class = "form-select"');
@@ -112,8 +119,6 @@ class UsersController extends BaseadminController{
         $tmp_fields = $jshopConfig->getListFieldsRegister();
         $config_fields = $tmp_fields['editaccount'];
         $count_filed_delivery = $jshopConfig->getEnableDeliveryFiledRegistration('editaccount');
-        
-		//HTMLHelper::_('behavior.calendar');
 		
         $view=$this->getView("users", 'html');
         $view->setLayout("edit");

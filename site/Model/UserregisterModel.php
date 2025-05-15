@@ -89,7 +89,18 @@ class UserregisterModel  extends UserbaseModel{
     
     public function savePostData(){
         $session = Factory::getSession();
+        if (isset($this->post_data['birthday'])) {
+            $this->post_data['birthday'] = Helper::prepareDateBirthdayToSaveDb($this->post_data['birthday']);
+        }
+        if (isset($this->post_data['d_birthday'])) {
+            $this->post_data['d_birthday'] = Helper::prepareDateBirthdayToSaveDb($this->post_data['d_birthday']);
+        }
         $session->set('registrationdata', $this->post_data);
+    }
+
+    public function clearPostData(){
+        $this->post_data = null;
+        $this->savePostData();
     }
     
     public function getPostData(){

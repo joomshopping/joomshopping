@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.3 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -43,7 +43,15 @@ class CouponsModel extends BaseadminModel{
                 .$queryorder;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query, $limitstart, $limit);
-        return $db->loadObjectList();
+        $list = $db->loadObjectList();
+        $date = date('Y-m-d');
+        foreach($list as $k=>$row) {
+            $finished = 0;
+            if ($row->used) $finished = 1;
+            if ($row->coupon_expire_date < $date && !Helper::datenull($row->coupon_expire_date)) $finished = 1;
+            $list[$k]->_finished = $finished;
+        }
+        return $list;
     }
     
     function getCountCoupons($text_search=""){

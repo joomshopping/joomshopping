@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.0 19.01.2024
+* @version      5.6.3 10.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -42,6 +42,7 @@ class UpdateController extends BaseadminController{
         $installtype = $this->input->get('installtype');
         $back = $this->input->getVar('back');
         $backmain = "index.php?option=com_jshopping&controller=update";
+        $ct = $this->input->getInt('ct');
         $model = JSFactory::getModel('Update');
         if ($installtype == 'package') {
             $install_path = $this->input->files->get('install_path', null, 'raw');
@@ -49,7 +50,8 @@ class UpdateController extends BaseadminController{
             $install_path = $this->input->get('install_path', null, 'raw') ?? $this->input->get('install_url', null, 'raw');            
         }
         if (!($installtype == 'url' && preg_match('/^sm\d+:/', $install_path))) {
-            $this->checkToken();
+            $ct_type = $ct == 1 ? 'get' : 'post';
+            $this->checkToken($ct_type);
         }
         try {
 		    $model->install($install_path, $installtype);

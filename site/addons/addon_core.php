@@ -5,7 +5,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.6.0 08.03.2025
+* @version      5.6.3 08.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -21,6 +21,7 @@ class AddonCore{
     protected $table = null;
     public $debug = 0;
     public $log = 0;
+    public $tmp_vars = [];
 
     public function __construct($addon_alias = ''){
 		if ($addon_alias != ''){
@@ -29,6 +30,7 @@ class AddonCore{
         if ($this->addon_alias == ''){
             throw new Exception('addon_alias empty');
         }
+        $this->initTmpVars();
         if (JSFactory::getConfig()->shop_mode > 0) {
             $config = $this->getTable()->getConfig();
             if (isset($config['debug']) && $config['debug']) {
@@ -53,6 +55,11 @@ class AddonCore{
             print '</pre>';
         }
         return $this->addon_params;
+    }
+
+    public function getAddonParam($key, $default = null){
+        $params = $this->getAddonParams();
+        return $params[$key] ?? $default;
     }
 
     public function getAddonConfig(){
@@ -182,6 +189,15 @@ class AddonCore{
     public function checkLicKey(){
 		return Helper::compareX64(Helper::replaceWWW(Helper::getJHost().$this->addon_alias), $this->getTable()->key);
 	}
+
+    public function setTmpVar($name, $value){
+        $this->tmp_vars[$name] = $value;
+    }
+
+    protected function initTmpVars() {
+        $config = $this->getTable()->getConfig();
+        $this->tmp_vars = $config['tmp_vars'] ?? JSFactory::getConfig()->override_tmp_vars[$this->addon_alias] ?? [];
+    }
 
     protected function getJoomlaTemplate() {
         return Factory::getApplication()->getTemplate(true)->template;

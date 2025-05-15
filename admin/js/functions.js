@@ -1185,6 +1185,16 @@ var jshopAdminClass = function(){
         }
     }
 
+    this.getAddonKey = function(alias) {
+        jshopAdmin.ajaxLoadAnimate().show();
+        var url = 'index.php?option=com_jshopping&controller=addonscatalog&task=getaddonkey&alias='+alias+"&ajax=1";
+        jQuery.ajaxSetup({ cache: false });
+        jQuery.get(url, (data) => {
+            jQuery('input[name="key"]').val(data);
+            jshopAdmin.ajaxLoadAnimate().hide();
+        });
+    }
+
     this.ajaxLoadAnimate = function(){
         let ajaxLoadAnimate =  jQuery('#ajaxLoadAnimate');
         if (!ajaxLoadAnimate.length){
@@ -1257,6 +1267,24 @@ jQuery(document).ready(function(){
 
     jQuery('.prod_extrafields_search, .prod_extrafields_search_hide_unfilled').on('input', function(){
         jshopAdmin.productExtrafieldSearch();
+    });
+
+    jQuery('a.a_addon_update').on('click', function(){
+        let btn = jQuery(this);
+        if (btn.attr('j_ver')) {
+            jQuery('#update_popup .j-version span').html(btn.attr('j_ver'));
+            jQuery('#update_popup .j-version').show();
+        } else {
+            jQuery('#update_popup .j-version').hide();
+        }
+        if (btn.attr('js_ver')) {
+            jQuery('#update_popup .js-version span').html(btn.attr('js_ver'));
+            jQuery('#update_popup .js-version').show();
+        } else {
+            jQuery('#update_popup .js-version').hide();
+        }
+        jQuery('#update_popup a.btn_update').attr('href', btn.attr('xhref'));
+        jQuery('#update_popup').modal('show');
     });
 
 });

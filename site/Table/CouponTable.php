@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.6.3 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -47,7 +47,7 @@ class CouponTable extends ShopbaseTable{
             return 0;
         }
         
-        if ($row->coupon_expire_date < $date && $row->coupon_expire_date!="0000-00-00"){
+        if (!Helper::datenull($row->coupon_expire_date) && $row->coupon_expire_date < $date){
             $this->error = Text::_('JSHOP_RABATT_NON_CORRECT');
             return 0;
         }

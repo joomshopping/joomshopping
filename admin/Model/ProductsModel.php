@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 13.03.2024
+* @version      5.7.0 13.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -64,11 +64,14 @@ class ProductsModel extends BaseadminModel{
                 $fields_search[] = 'PA.manufacturer_code';
                 $fields_search[] = 'PA.real_ean';
             }
-            if (JSFactory::getConfig()->admin_products_search_by_words == 0) {
+            if ($jshopConfig->admin_products_search_by_words == 0) {
                 $word = addcslashes($db->escape($text_search), "_%");
                 $tmp = [];
                 foreach($fields_search as $fn) {
                     $tmp[] = $fn." LIKE '%" . $word . "%'"."\n";
+                }
+                if ($jshopConfig->admin_products_search_by_prod_id_range && preg_match('/^(\d+)\-(\d+)$/', $text_search, $matches)) {
+                    $tmp[] = "(pr.product_id>=".intval($matches[1])." AND pr.product_id<=".intval($matches[2]).")";
                 }
                 $where .=  "AND (".implode(' OR ', $tmp).")";
             } else {
@@ -79,6 +82,9 @@ class ProductsModel extends BaseadminModel{
                     $tmp = [];
                     foreach($fields_search as $fn) {
                         $tmp[] = $fn." LIKE '%" . $escaped_word . "%'"."\n";
+                    }
+                    if ($jshopConfig->admin_products_search_by_prod_id_range && preg_match('/^(\d+)\-(\d+)$/', $word, $matches)) {
+                        $tmp[] = "(pr.product_id>=".intval($matches[1])." AND pr.product_id<=".intval($matches[2]).")";
                     }
                     $search_conditions[] = "\n(".implode(' OR ', $tmp).")\n";
                 }
@@ -172,7 +178,7 @@ class ProductsModel extends BaseadminModel{
                 $query_join
                 WHERE pr.parent_id=0 ".$where." 
                 GROUP BY pr.product_id ".
-                $this->_allProductsOrder($order, $orderDir)." ".
+                $this->_allProductsOrder($order, $orderDir, $category_id)." ".
                 $limit_query;
         
 		$dispatcher = Factory::getApplication();

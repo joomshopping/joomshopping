@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 07.03.2025
+* @version      5.6.3 10.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -9,8 +9,8 @@
 namespace Joomla\Component\Jshopping\Site\Table;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 defined('_JEXEC') or die();
@@ -63,6 +63,19 @@ class AddonTable extends ShopbaseTable{
         }else{
             return [];
         }
+    }
+    
+    public function setTmpVars(array $vars = [], $only_new = 0) {
+        $config = $this->getConfig();
+        if ($only_new == 0) {
+            $config['tmp_vars'] = $vars;
+        } else {
+            $config['tmp_vars'] = $config['tmp_vars'] ?? [];
+            foreach($vars as $k=>$v) {
+                $config['tmp_vars'][$k] = $config['tmp_vars'][$k] ?? $v;
+            }
+        }
+        $this->setConfig($config);
     }
 
     public function loadAlias($alias){
@@ -355,6 +368,9 @@ class AddonTable extends ShopbaseTable{
         }
         if (isset($this->_publish) && (!$this->id || $this->publish == -1)) {
             $this->publish = $this->_publish;
+        }
+        if (isset($this->_tmp_vars)) {
+            $this->setTmpVars($this->_tmp_vars, 1);
         }
 		return parent::store($updateNulls);
 	}

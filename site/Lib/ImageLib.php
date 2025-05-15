@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 24.04.2025
+* @version      5.6.3 24.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -173,7 +173,7 @@ class ImageLib{
 	* @param int $color_fill (0xffffff - white)
     * @param int interlace - enable / disable	
 	*/
-	static function resizeImageMagic($img, $w, $h, $thumb_flag = 0, $fill_flag = 1, $name = "", $qty = 85, $color_fill = 0xffffff, $interlace = 1){
+	static function resizeImageMagic($img, $w, $h, $thumb_flag = 0, $fill_flag = 1, $name = "", $qty = 85, $color_fill = 0xffffff, $interlace = 1, $to_ext = ''){
         if ((int)ini_get("memory_limit")<120){
             ini_set("memory_limit", "120M");
         }
@@ -289,23 +289,27 @@ class ImageLib{
         if ($interlace){
 		    imageinterlace($thumb, 1);
         }
+		
+		if (!$to_ext) {
+            $to_ext = $ext;
+        }
 	
-		if ($ext=="png") {
+		if ($to_ext=="png") {
             imagepng($thumb, $name, 10-max(intval($qty/10),1));
         }
-		if ($ext=="gif"){
+		if ($to_ext=="gif"){
             if ($name)    
                 imagegif($thumb, $name);
             else
                 imagegif($thumb);    
         }		
-        if (($ext=="jpg")or($ext=="jpeg")) {
+        if (($to_ext=="jpg")or($to_ext=="jpeg")) {
 			imagejpeg($thumb, $name, $qty);
 		}
-		if ($ext=="webp") {
+		if ($to_ext=="webp") {
 			imagewebp($thumb, $name, $qty);
 		}
-        if ($ext=="avif") {
+        if ($to_ext=="avif") {
 			imageavif($thumb, $name, $qty);
 		}
 		

@@ -23,7 +23,7 @@ $i = 0;
 <div class="col-md-12">
 <div id="j-main-container" class="j-main-container">
     <?php HelperAdmin::displaySubmenuOptions('addons');?>
-    <form action="index.php?option=com_jshopping&controller=addons&task=listweb" method="post" name="adminForm" id="adminForm">
+    <form action="index.php?option=com_jshopping&controller=addonscatalog" method="post" name="adminForm" id="adminForm">
 		
 		<div class="js-filters">
 			<div>
@@ -65,7 +65,7 @@ $i = 0;
                 <th>
                     <?php echo HTMLHelper::_( 'grid.sort', Text::_('JSHOP_LATEST')." ".Text::_('JSHOP_VERSION'), 'date', $this->filter_order_Dir, $this->filter_order);?>
                 </th>                
-                <th class="center">
+                <th class="center" width="110">
                     <?php echo Text::_('JSHOP_DOWNLOAD')?>
                 </th>
 				<th width="40" class="center">
@@ -121,7 +121,7 @@ $i = 0;
                     <a class="tbody-icon" href="<?php echo $row->url;?>" target="_blank"><i class="icon-basket"></i></a>
                 <?php } ?>
                 <?php if (isset($row->install_url)) {?>
-                    <a class="ms-2 tbody-icon" href="<?php echo $row->install_url;?>" title="<?php echo Text::_('JSHOP_INSTALL')?>"><i class="icon-flash"></i></a>
+                    <a class="ms-1 tbody-icon" href="<?php echo $row->install_url;?>" title="<?php echo Text::_('JSHOP_INSTALL')?>"><i class="icon-flash"></i></a>
                 <?php }?>
 			</td>
 			<td class="center">

@@ -9,7 +9,7 @@
 namespace Joomla\Component\Jshopping\Site\Helper;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Installer\Installer;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -205,6 +205,9 @@ class Helper{
     }
 
     public static function formatdate($date, $showtime = 0){
+        if (self::datenull($date)) {
+            return '';
+        }
         $jshopConfig = JSFactory::getConfig();
         $format = $jshopConfig->store_date_format;
         if ($showtime) $format = $format." %H:%M:%S";
@@ -263,7 +266,6 @@ class Helper{
     * @param int $client (0 - site, 1 - admin)
     */
     public static function getAllLanguages($client=0){
-        jimport('joomla.filesystem.folder');
         $pattern = '#(.*?)\(#is';
         $rows = [];
         $path = JPATH_ROOT.'/language';
@@ -434,6 +436,10 @@ class Helper{
 
     public static function getJHost(){
         return $_SERVER["HTTP_HOST"];
+    }
+
+    public static function getClearHost(){
+        return self::replaceWWW($_SERVER["HTTP_HOST"]);
     }
 
     public static function searchChildCategories($category_id,$all_categories,&$cat_search) {
@@ -1015,6 +1021,19 @@ class Helper{
     return $price;
     }
 
+    public static function getPriceCalcSite($price, $currency_id = 0, $tax_id = 0, $discount = 0) {
+        if ($currency_id) {
+            $price = self::getPriceFromCurrency($price, $currency_id);
+        }
+        if ($tax_id) {
+            $price = self::getPriceCalcParamsTax($price, $tax_id);
+        }
+        if ($discount != 0) {
+		    $price = self::getPriceDiscount($price, $discount);
+        }
+		return $price;
+    }
+
     public static function changeDataUsePluginContent(&$data, $type){
         $app =Factory::getApplication();
         PluginHelper::importPlugin('content');
@@ -1064,9 +1083,9 @@ class Helper{
 
     public static function getPriceTaxValue($price, $tax, $price_netto = 0){
         if ($price_netto==0){
-            $tax_value = $price * $tax / (100 + $tax);
+            $tax_value = floatval($price) * floatval($tax) / (100 + floatval($tax));
         }else{
-            $tax_value = $price * $tax / 100;
+            $tax_value = floatval($price) * floatval($tax) / 100;
         }
     return $tax_value;
     }

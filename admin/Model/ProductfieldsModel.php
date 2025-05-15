@@ -69,7 +69,7 @@ class ProductfieldsModel extends BaseadminModel{
                     $catsnames = array();
                     $_cats = unserialize($v->cats);
                     foreach($_cats as $cat_id){
-                        $catsnames[] = $listCats[$cat_id];
+                        $catsnames[] = $listCats[$cat_id] ?? '';
                         $rows[$k]->printcat = implode(", ", $catsnames);
                     }
                 }

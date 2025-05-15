@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.0 08.04.2024
+* @version      5.7.0 08.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,7 +22,7 @@ class HtmlView extends BaseHtmlView{
         ToolbarHelper::unpublishList();
         ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
         if ($this->config->disable_admin['addons_catalog'] == 0) {
-            ToolbarHelper::custom("listweb", 'folder', 'folder', Text::_('JSHOP_ADDONS_CATALOG'), false);
+            ToolbarHelper::custom("addonscatalog.display", 'folder', 'folder', Text::_('JSHOP_ADDONS_CATALOG'), false);
         }
         HelperAdmin::btnHome();
         parent::display($tpl);
@@ -62,13 +62,5 @@ class HtmlView extends BaseHtmlView{
         ToolbarHelper::cancel();
         parent::display($tpl);
     }
-
-    function displayListWeb($tpl=null){
-        ToolbarHelper::title(Text::_('JSHOP_ADDONS_CATALOG'), 'generic.png');
-        ToolbarHelper::custom("back", 'arrow-left', 'arrow-left', Text::_('JSHOP_ADDONS'), false);
-        HelperAdmin::btnHome();
-        ToolbarHelper::custom("listwebrefresh", 'icon-refresh', 'icon-refresh', Text::_('JSHOP_REFRESH'), false);
-        parent::display($tpl);
-	}
 
 }
