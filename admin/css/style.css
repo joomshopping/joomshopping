@@ -689,8 +689,15 @@ div.avialable_version_update{
     border-radius: 5px;
     padding: 3px;
 }
+html[data-bs-theme="dark"] div.avialable_version_update, 
+html[data-bs-theme="dark"] div.avialable_version_update a{
+    color: #000 !important
+}
 a.a_addon_update{
     cursor: pointer;
+}
+.icon-print.print-html{
+    color: #ce9210;
 }
 
 .btn-nopad {

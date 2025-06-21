@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.0 09.04.2024
+* @version      5.8.0 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -137,6 +137,18 @@ class ShippingMethodTable extends MultilangTable{
         if ($shippingForm){
             ob_start();
             $shippingForm->showForm($shipping_id, $shippinginfo, $params);
+            $html = ob_get_contents();
+            ob_get_clean();
+        }
+        return $html;
+    }
+
+    function loadShippingFormAdmin($order, $shipping_id, $shippinginfo, $params){
+        $shippingForm = $this->getShippingForm($shippinginfo->alias);
+        $html = "";
+        if ($shippingForm){
+            ob_start();
+            $shippingForm->showFormAdmin($order, $shipping_id, $shippinginfo, $params);
             $html = ob_get_contents();
             ob_get_clean();
         }

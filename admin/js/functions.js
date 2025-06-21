@@ -740,7 +740,7 @@ var jshopAdminClass = function(){
     };
 
     this.addOrderTaxRow = function(){
-        var html="<tr>";
+        var html="<tr class='tax-manual'>";
         html+='<td class="right"><input type="text" class="form-control small3" name="tax_percent[]"/> %</td>';
         html+='<td class="left"><input type="text" class="form-control small3" name="tax_value[]" onkeyup="jshopAdmin.updateOrderTotalValue();"/></td>';
         html+='</tr>';
@@ -759,7 +759,7 @@ var jshopAdminClass = function(){
         });
 
         jQuery("input[name=order_subtotal]").val(result);
-        this.updateOrderTotalValue();
+        this.order_tax_calculate();
     };
 
     this.updateOrderTotalValue = function() {
@@ -781,21 +781,32 @@ var jshopAdminClass = function(){
         jQuery("input[name=order_total]").val(result);
     };
 
-    this.changeVideoFileField = function(obj) {
+    this.changeVideoFileField = function(obj, type) {
         isChecked = jQuery(obj).is(':checked');
-        var td_inputs = jQuery(obj).parents('td:first');
+        var td_inputs = jQuery(obj).closest('td');
+        td_inputs.find("textarea[name^='product_video_code_']").val('');
+        td_inputs.find("textarea[name^='product_video_code_']").hide();
+        td_inputs.find("input[name^='product_video_']").val('');
+        td_inputs.find("input[name^='product_video_']").hide();
+        td_inputs.find("input[name^='product_folder_video_']").val('');
+        td_inputs.find(".product_folder_video").hide();
         if (isChecked) {
-            td_inputs.find("input[name^='product_video_']").val('').hide();
-            td_inputs.find("textarea[name^='product_video_code_']").show();
+            if (type == 'code') {
+                td_inputs.find("textarea[name^='product_video_code_']").show();
+                td_inputs.find(".pvf_sel input[type=checkbox]").prop('checked', false);
+            }
+            if (type == 'folder') {
+                td_inputs.find(".product_folder_video").show();
+                td_inputs.find(".pvf_code input[type=checkbox]").prop('checked', false);
+            }
         } else {
-            td_inputs.find("textarea[name^='product_video_code_']").val('').hide();
             td_inputs.find("input[name^='product_video_']").show();
         }
     };
 
     this.updateAllVideoFileField = function() {
-        jQuery("table.admintable input[name^='product_insert_code_']").each(function(){
-            that.changeVideoFileField(this);
+        jQuery("table.admintable .pvf_code input[type=checkbox]").each(function(){
+            that.changeVideoFileField(this, 'code');
         });
     };
 
@@ -849,6 +860,21 @@ var jshopAdminClass = function(){
     this.setImageFromFolder = function(filename){
         jQuery("input[name='product_folder_image_" + this.cElName + "']").val(filename);
         jQuery('#aModal').modal('hide');
+    };
+
+    this.setVideoFromFolder = function(filename){
+        jQuery("input[name='product_folder_video_" + this.cElName + "']").val(filename);
+        jQuery('#videosModal').modal('hide');
+    };
+
+    this.setDemofileFromFolder = function(filename){
+        jQuery("input[name='product_demo_file_name_" + this.cElName + "']").val(filename);
+        jQuery('#demofilesModal').modal('hide');
+    };
+
+    this.setSalefileFromFolder = function(filename){
+        jQuery("input[name='product_file_name_" + this.cElName + "']").val(filename);
+        jQuery('#salefilesModal').modal('hide');
     };
 
     this.product_images_prevAjaxQuery = null;
@@ -953,7 +979,11 @@ var jshopAdminClass = function(){
             data: {'data_order': data_order},
             dataType : "json"
         }).done(function(json) {
-            jQuery('input[name="tax_percent[]"]').parent().parent().remove();
+            jQuery('input[name="tax_percent[]"]').each(function() {
+                if (!jQuery(this).closest('tr').hasClass('tax-manual')) {
+                    jQuery(this).closest('tr').remove();
+                }
+            });
             for (var i=0;i<json.length;i++){
                 var html="<tr class='bold'>";
                 html+='<td class="right"><input type="text" class="small3 form-control" name="tax_percent[]" value="'+json[i]['tax']+'"/> %</td>';
@@ -988,7 +1018,7 @@ var jshopAdminClass = function(){
                 jQuery('input[name="order_shipping"]').val('');
                 jQuery('input[name="order_package"]').val('');
             }
-            that.updateOrderTotalValue();
+            that.order_tax_calculate();
         });
     };
 
@@ -1009,7 +1039,7 @@ var jshopAdminClass = function(){
             dataType : "json"
         }).done(function(json){
             jQuery('input[name="order_payment"]').val(json.price);
-            that.updateOrderTotalValue();
+            that.order_tax_calculate();
         });
     };
 
@@ -1030,7 +1060,7 @@ var jshopAdminClass = function(){
             dataType : "json"
         }).done(function(json){
             jQuery('input[name="order_discount"]').val(json.price);
-            that.updateOrderTotalValue();
+            that.order_tax_calculate();
         });
     };
 
@@ -1210,6 +1240,16 @@ var jshopAdminClass = function(){
         window.open(url, name, 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=800,height=600,directories=no,location=no');
     }
 
+    this.toggleOrderEditShippingSelect = function() {
+        let sid = jQuery('.order_edit #shipping_method_id').val();
+        jQuery('.order_edit #shipping_forms_container .shipping_forms').hide();
+        jQuery('.order_edit #shipping_forms_container #shipping_form_' + sid).show();
+        if (jQuery('.order_edit #shipping_forms_container #shipping_form_' + sid).length) {
+            jQuery('.order_edit textarea[name=shipping_params]').hide();
+        } else {
+            jQuery('.order_edit textarea[name=shipping_params]').show();
+        }
+    }
 }
 
 var jshopAdmin = new jshopAdminClass();
@@ -1286,5 +1326,10 @@ jQuery(document).ready(function(){
         jQuery('#update_popup a.btn_update').attr('href', btn.attr('xhref'));
         jQuery('#update_popup').modal('show');
     });
+
+    jshopAdmin.toggleOrderEditShippingSelect()
+    jQuery('.order_edit #shipping_method_id').on('change', function(){
+        jshopAdmin.toggleOrderEditShippingSelect(); 
+    });    
 
 });

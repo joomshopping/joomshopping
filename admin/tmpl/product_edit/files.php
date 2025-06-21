@@ -1,4 +1,6 @@
 <?php
+
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 /**
@@ -90,8 +92,15 @@ defined('_JEXEC') or die();
 						<?php if ($jshopConfig->product_file_upload_via_ftp != 1) { ?>
 							<input type="file" name="product_demo_file_<?php print $i; ?>" />
 						<?php } ?>
+						<?php if ($jshopConfig->product_file_upload_via_ftp == 2) { ?>
+							<div class="small"> - <?php echo Text::_('JSHOP_OR')?> -</div>
+						<?php } ?>
 						<?php if ($jshopConfig->product_file_upload_via_ftp) { ?>
-							<div style="padding-top:3px;"><input size="34" type="text" name="product_demo_file_name_<?php print $i; ?>" title="<?php print Text::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" /></div>
+							<div class="pt-1">
+								<input type="text" class="form-control form-control-inline" name="product_demo_file_name_<?php print $i; ?>" title="<?php print Text::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" />
+								<input type="button" value="<?php echo Text::_('JSHOP_FILE_SELECT')?>" class="btn btn-primary"
+                        		data-bs-toggle="modal" data-bs-target="#demofilesModal" onclick="jshopAdmin.cElName=<?php echo $i?>">
+							</div>
 						<?php } ?>
 					</td>
 				</tr>
@@ -116,8 +125,15 @@ defined('_JEXEC') or die();
 						<?php if ($jshopConfig->product_file_upload_via_ftp != 1) { ?>
 							<input type="file" name="product_file_<?php print $i; ?>" />
 						<?php } ?>
+						<?php if ($jshopConfig->product_file_upload_via_ftp == 2) { ?>
+							<div class="small"> - <?php echo Text::_('JSHOP_OR')?> -</div>
+						<?php } ?>
 						<?php if ($jshopConfig->product_file_upload_via_ftp) { ?>
-							<div style="padding-top:3px;"><input size="34" type="text" name="product_file_name_<?php print $i; ?>" title="<?php print Text::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" /></div>
+							<div class="pt-1">
+								<input type="text" class="form-control form-control-inline" name="product_file_name_<?php print $i; ?>" title="<?php print Text::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" />
+								<input type="button" value="<?php echo Text::_('JSHOP_FILE_SELECT')?>" class="btn btn-primary"
+                        		data-bs-toggle="modal" data-bs-target="#salefilesModal" onclick="jshopAdmin.cElName=<?php echo $i?>">
+							</div>
 						<?php } ?>
 					</td>
 				</tr>
@@ -161,4 +177,32 @@ defined('_JEXEC') or die();
 			<?php print sprintf(Text::_('JSHOP_SIZE_FILES_INFO'), ini_get("upload_max_filesize"), ini_get("post_max_size")); ?>
 		</div>
 	</div>
+
+	<?php print HTMLHelper::_(
+        'bootstrap.renderModal',
+        'demofilesModal',
+        array(
+            'title'       => Text::_('JSHOP_FILE_SELECT'),
+            'backdrop'    => 'static',
+            'url'         => 'index.php?option=com_jshopping&controller=productimages&task=demofiles&tmpl=component',
+            'height'      => '400px',
+            'width'       => '800px',
+            'bodyHeight'  => 70,
+            'modalWidth'  => 80
+        )
+    );?>
+
+	<?php print HTMLHelper::_(
+        'bootstrap.renderModal',
+        'salefilesModal',
+        array(
+            'title'       => Text::_('JSHOP_FILE_SELECT'),
+            'backdrop'    => 'static',
+            'url'         => 'index.php?option=com_jshopping&controller=productimages&task=salefiles&tmpl=component',
+            'height'      => '400px',
+            'width'       => '800px',
+            'bodyHeight'  => 70,
+            'modalWidth'  => 80
+        )
+    );?>
 </div>

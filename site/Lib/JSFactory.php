@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.4 18.01.2025
+* @version      5.8.0 22.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -159,7 +159,7 @@ class JSFactory{
 		return Factory::getLanguage()->load('com_jshopping', JPATH_ROOT.'/components/com_jshopping', $langtag, $reload);
     }
 
-    public static function loadExtLanguageFile($extname, $langtag = ""){
+    public static function loadExtLanguageFile($extname, $langtag = "", $reload = true){
         $lang = Factory::getLanguage();
         if ($langtag==""){
             $langtag = $lang->getTag();
@@ -172,14 +172,14 @@ class JSFactory{
         }elseif (file_exists($langpatch.$extname.'/en-GB.php')){
             include_once($langpatch.$extname.'/en-GB.php');
         }
-		$lang->load($extname, JPATH_ROOT.'/components/com_jshopping', $langtag);
+		$lang->load($extname, JPATH_ROOT.'/components/com_jshopping', $langtag, $reload);
     }
 
     public static function loadAdminLanguageFile($langtag = null, $reload = false){
         return Factory::getLanguage()->load('com_jshopping', JPATH_ROOT.'/administrator/components/com_jshopping', $langtag, $reload);
     }
 
-    public static function loadExtAdminLanguageFile($extname, $langtag = ""){
+    public static function loadExtAdminLanguageFile($extname, $langtag = "", $reload = true){
         $lang = Factory::getLanguage();
         if ($langtag==""){
             $langtag = $lang->getTag();
@@ -192,7 +192,7 @@ class JSFactory{
         }elseif (file_exists($langpatch.$extname.'/en-GB.php')){
             include_once($langpatch.$extname.'/en-GB.php');
         }
-		$lang->load($extname, JPATH_ROOT.'/administrator/components/com_jshopping', $langtag);
+		$lang->load($extname, JPATH_ROOT.'/administrator/components/com_jshopping', $langtag, $reload);
     }
 
     public static function getLang($langtag = ""){
@@ -294,12 +294,18 @@ class JSFactory{
     return $alias[$langtag];
     }
 
-    public static function getAllAttributes($resformat = 0){
-    static $attributes;
-        if (!isset($attributes)){
+    public static function getAllAttributes($resformat = 0, $publish = null){
+        static $list;
+        $list = $list ?? [];
+        if (!isset($list[$publish])){
             $_attrib = JSFactory::getTable("attribut");
-            $attributes = $_attrib->getAllAttributes();
+            $filter = [];
+            if (isset($publish)) {
+                $filter['publish'] = $publish;
+            }
+            $list[$publish] = $_attrib->getAllAttributes(1, $filter);
         }
+        $attributes = $list[$publish];
         if ($resformat==0){
             return $attributes;
         }
@@ -473,38 +479,53 @@ class JSFactory{
     return $rows;
     }
 
-    public static function getAllProductExtraField(){
-    static $list;
-        if (!isset($list)){
+    public static function getAllProductExtraField($publish = null){
+        static $list;
+        $list = $list ?? [];
+        if (!isset($list[$publish])){
             $productfield = JSFactory::getTable('productfield');
-            $list = $productfield->getList();
+            $filter = [];
+            if (isset($publish)) {
+                $filter['publish'] = $publish;
+            }
+            $list[$publish] = $productfield->getList(1, $filter);
         }
-    return $list;
+    return $list[$publish];
     }
 
-    public static function getAllProductExtraFieldValue(){
-    static $list;
-        if (!isset($list)){
+    public static function getAllProductExtraFieldValue($publish = null){
+        static $list;
+        $list = $list ?? [];
+        if (!isset($list[$publish])){
             $productfieldvalue = JSFactory::getTable('productfieldvalue');
-            $list = $productfieldvalue->getAllList(1);
+            $filter = [];
+            if (isset($publish)) {
+                $filter['publish'] = $publish;
+            }
+            $list[$publish] = $productfieldvalue->getAllList(1, $filter);
         }
-    return $list;
+    return $list[$publish];
     }
 
-    public static function getAllProductExtraFieldValueDetail(){
-    static $list;
-        if (!isset($list)){
+    public static function getAllProductExtraFieldValueDetail($publish = null){
+        static $list;
+        $list = $list ?? [];
+        if (!isset($list[$publish])){
             $productfieldvalue = JSFactory::getTable('productfieldvalue');
-            $list = $productfieldvalue->getAllList(2);
+            $filter = [];
+            if (isset($publish)) {
+                $filter['publish'] = $publish;
+            }
+            $list[$publish] = $productfieldvalue->getAllList(2, $filter);
         }
-    return $list;
+    return $list[$publish];
     }
 
-    public static function getDisplayListProductExtraFieldForCategory($cat_id){
+    public static function getDisplayListProductExtraFieldForCategory($cat_id, $publish = null){
     static $listforcat;
-        if (!isset($listforcat[$cat_id])){
-            $fields = array();
-            $list = JSFactory::getAllProductExtraField();
+        if (!isset($listforcat[$cat_id][$publish])){
+            $fields = [];
+            $list = JSFactory::getAllProductExtraField($publish);
             foreach($list as $val){
                 if ($val->allcats){
                     $fields[] = $val->id;
@@ -518,16 +539,16 @@ class JSFactory{
             foreach($fields as $k=>$val){
                 if (!in_array($val, $config_list)) unset($fields[$k]);
             }
-            $listforcat[$cat_id] = $fields;
+            $listforcat[$cat_id][$publish] = $fields;
         }
-    return $listforcat[$cat_id];
+    return $listforcat[$cat_id][$publish];
     }
 
-    public static function getDisplayFilterExtraFieldForCategory($cat_id){
+    public static function getDisplayFilterExtraFieldForCategory($cat_id, $publish = null){
     static $listforcat;
-        if (!isset($listforcat[$cat_id])){
-            $fields = array();
-            $list = JSFactory::getAllProductExtraField();
+        if (!isset($listforcat[$cat_id][$publish])){
+            $fields = [];
+            $list = JSFactory::getAllProductExtraField($publish);
             foreach($list as $val){
                 if ($val->allcats){
                     $fields[] = $val->id;
@@ -541,9 +562,9 @@ class JSFactory{
             foreach($fields as $k=>$val){
                 if (!in_array($val, $config_list)) unset($fields[$k]);
             }
-            $listforcat[$cat_id] = $fields;
+            $listforcat[$cat_id][$publish] = $fields;
         }
-    return $listforcat[$cat_id];
+    return $listforcat[$cat_id][$publish];
     }
 
     public static function getAllCurrency(){
@@ -614,14 +635,15 @@ class JSFactory{
     
     public static function getWebAssetManager() {
         if (JSFactory::getConfig()->use_web_asset_manager) {
-            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+			$doc = Factory::getApplication()->getDocument() ?? Factory::getDocument();
+			$wa = $doc->getWebAssetManager();
         } else {
             $wa = new Legacywebassetmanager();
         }
         return $wa;
     }
 
-    public static function getTable($type, $prefix = 'Joomla\\Component\\Jshopping\\Site\\Table\\', $config = array()){        
+    public static function getTable($type, $prefix = 'Joomla\\Component\\Jshopping\\Site\\Table\\', $config = array()){
         if (strtolower($prefix)=='jshop'){
             $prefix = 'Joomla\\Component\\Jshopping\\Site\\Table\\';
         }

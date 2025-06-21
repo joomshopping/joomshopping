@@ -47,7 +47,7 @@ class AttributValueModel extends BaseadminModel{
             $word = addcslashes($db->escape($filter['text_search']), "_%");
             $where .= " AND (LOWER(`".$lang->get("name")."`) LIKE ".$db->q('%'.$word.'%').")";
         }
-        $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering 
+        $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering, publish
         FROM `#__jshopping_attr_values` where 1 ".$where."
         ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));

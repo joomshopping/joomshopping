@@ -37,7 +37,7 @@ class ProductfieldvaluesModel extends BaseadminModel{
             $word = addcslashes($db->escape($text_search), "_%");
             $where .= " and (LOWER(`".$lang->get('name')."`) LIKE '%".$word."%' OR id LIKE '%".$word."%')";
         }
-        $query = "SELECT id, `".$lang->get("name")."` as name, ordering 
+        $query = "SELECT id, `".$lang->get("name")."` as name, ordering, publish
                   FROM `#__jshopping_products_extra_field_values` 
                   WHERE 1 ".$where." order by ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));

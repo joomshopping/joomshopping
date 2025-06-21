@@ -500,6 +500,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_attr` (
 `allcats` TINYINT(1) NOT NULL default '1',
 `cats` text DEFAULT NULL,
 `group` tinyint(4) NOT NULL default 0,
+`publish` TINYINT(1) NOT NULL default 1,
+`required` tinyint(1) NOT NULL default 1,
 PRIMARY KEY (`attr_id`),
 KEY `group` (`group`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -508,6 +510,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_attr_values` (
 `value_id` int(11) NOT NULL auto_increment,
 `attr_id` int(11) NOT NULL default 0,
 `value_ordering` int(11) NOT NULL default 0,
+`publish` TINYINT(1) NOT NULL default 1,
 `image` VARCHAR(255) NOT NULL default '',
 PRIMARY KEY (`value_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -614,6 +617,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products_extra_fields` (
 `multilist` TINYINT(1) NOT NULL default 0,
 `group` tinyint(4) NOT NULL default 0,
 `ordering` int(6) NOT NULL default 0,
+`publish` TINYINT(1) NOT NULL default 1,
 PRIMARY KEY  (`id`),
 KEY `group` (`group`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -622,6 +626,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products_extra_field_values` (
 `id` int(11) NOT NULL auto_increment,
 `field_id` int(11) NOT NULL default 0,
 `ordering` int(6) NOT NULL default 0,
+`publish` TINYINT(1) NOT NULL default 1,
 PRIMARY KEY  (`id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -700,7 +705,8 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_free_attr` (
 `id` INT NOT NULL AUTO_INCREMENT,
 `ordering` INT NOT NULL default 0,
 `required` TINYINT(1) NOT NULL default 0,
-`type` TINYint(3) NOT NULL default 0,
+`type` TINYINT(3) NOT NULL default 0,
+`publish` TINYINT(1) NOT NULL default 1,
 PRIMARY KEY ( `id` )
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -1384,4 +1390,5 @@ INSERT INTO `#__jshopping_configs` (`id`, `config_id`, `key`, `value`) VALUES
 (136, 1, 'delivery_order_depends_delivery_product', '0'),
 (137, 1, 'show_delivery_time_step5', '0'),
 (138, 1, 'other_config', ''),
-(139, 1, 'shop_mode', '0');
+(139, 1, 'shop_mode', '0'),
+(140, 1, 'product_file_upload_via_ftp', '2');

@@ -237,5 +237,24 @@ class ShippingsModel extends BaseadminModel{
         $obj->publish($cid, $flag);
         $dispatcher->triggerEvent('onAfterPublishShipping', array(&$cid, &$flag));
     }
+	
+    public function getListForms($filter, $order) {
+        $forms = [];
+        $list = $this->getListItems($filter);
+        foreach($list as $item) {
+            $_shipping = JSFactory::getTable('shippingMethod');
+            $_shipping->load($item->shipping_id);
+            if ($item->shipping_id == $order->shipping_method_id) {
+                $sh_params = $order->getShippingParamsData();
+            } else {
+                $sh_params = [];
+            }
+            $form = $_shipping->loadShippingFormAdmin($order, $item->shipping_id, $_shipping, $sh_params);
+            if ($form) {
+                $forms[$item->shipping_id] = $form;
+            }
+        }
+        return $forms;
+    }
 
 }

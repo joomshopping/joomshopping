@@ -172,7 +172,7 @@ defined('_JEXEC') or die();
             ?>
                 <tr>
                     <td class="key"><?php echo $value->name?></td>
-                    <td><?php echo $value->values_select;?></td>
+                    <td><?php echo $value->values_select;?></td><?php echo $value->tmp_after_values_select ?? '';?>
                 </tr>    
             <?php }
             }
@@ -293,7 +293,7 @@ defined('_JEXEC') or die();
             <td width="120"><?php print $ind_attr->price_modification_select;?></td>
             <td width="120"><input type="text" class='small3 form-control' id="attr_ind_price_tmp_<?php print $ind_attr->attr_id?>" value="0"></td>
             <?php if (isset($this->ind_attr_td_footer[$ind_attr->attr_id])) print $this->ind_attr_td_footer[$ind_attr->attr_id]?>
-            <td><?php print $ind_attr->submit_button;?></td>
+            <td><?php print $ind_attr->submit_button;?></td><?php print $ind_attr->tmp_after_submit_button ?? '';?>
         </tr>
         </table>
         </div>

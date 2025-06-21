@@ -283,4 +283,6 @@ $countprod=count($this->products);
     </div>
 <?php endif; ?>
 
+<?php print $this->_tmp_ext_html_after_discount?>
+
 </div>

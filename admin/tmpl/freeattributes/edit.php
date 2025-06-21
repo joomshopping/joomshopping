@@ -2,7 +2,7 @@
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.2.1 15.09.2018
+* @version      5.8.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -15,7 +15,16 @@ defined('_JEXEC') or die();
 <?php print $this->tmp_html_start?>
 <div class="col100">
 <fieldset class="adminform">
-<table class="admintable" width="100%" >     
+<table class="admintable" width="100%" >
+    <tr>
+        <td class="key">
+            <?php echo Text::_('JSHOP_PUBLISH') ?>
+        </td>
+        <td>
+            <input type="hidden" name="publish" value="0">
+            <input type="checkbox" name="publish" value="1" <?php if ($this->attribut->publish) echo 'checked="checked"'?>>
+        </td>
+    </tr>
     <?php 
     foreach($this->languages as $lang){
     $name="name_".$lang->language;

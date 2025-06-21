@@ -3,7 +3,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.2.1 15.09.2023
+* @version      5.8.0 17.06.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -48,7 +48,7 @@ jshopAdmin.userinfo_fields = {};
 jshopAdmin.userinfo_ajax = null;
 jshopAdmin.userinfo_link = "<?php print "index.php?option=com_jshopping&controller=users&task=get_userinfo&ajax=1"?>";
 </script>
-<div class="jshop_edit form-horizontal">
+<div class="jshop_edit order_edit form-horizontal">
 <form action="index.php?option=com_jshopping" method="post" name="adminForm" id="adminForm">
 <?php echo HTMLHelper::_('form.token');?>
 <?php print $this->tmp_html_start?>
@@ -576,6 +576,11 @@ jshopAdmin.userinfo_link = "<?php print "index.php?option=com_jshopping&controll
     <?php if (!$this->config->without_shipping){?>    
     <td valign="top">
     	<div style="padding-bottom:4px;"><?php echo $this->shippings_select?></div>
+        <div id="shipping_forms_container">
+            <?php foreach ($this->shippings_form as $sid => $shipping_form) { ?>
+            <div class="shipping_forms" id="shipping_form_<?php echo $sid?>"><?php echo $shipping_form?></div>
+            <?php }?>
+        </div>
     	<div><textarea class="form-control" name="shipping_params"><?php echo $order->shipping_params?></textarea></div>
     </td>
     <?php } ?>

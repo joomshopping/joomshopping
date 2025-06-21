@@ -522,6 +522,9 @@ class OrdersModel extends BaseadminModel{
 		$new_order = !$order_id;
         $order = JSFactory::getTable('order');
         $order->load($order_id);
+        $olang = $post['lang'] ?? $order->getLang();
+        JSFactory::loadLanguageFile($olang);
+		$lang = JSFactory::getLang($olang);
         if (!$order_id){
             $order->user_id = -1;
             $order->order_date = Helper::getJsDate();
@@ -584,6 +587,10 @@ class OrdersModel extends BaseadminModel{
 
         $order->bind($post);
 		$order->delivery_times_id = $post['order_delivery_times_id'] ?? 0;
+        if (isset($post['shipping_method_id']) && isset($post['params'][$post['shipping_method_id']])) {
+            $sh_params = $post['params'][$post['shipping_method_id']];
+            $order->setShippingParamsByForm($sh_params);
+        }
         if (!$order->store()){
             $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE')." ".$order->getError());
             return 0;
@@ -597,8 +604,6 @@ class OrdersModel extends BaseadminModel{
         $order->vendor_id = $vendor_id;
         $order->store();
 
-        JSFactory::loadLanguageFile($order->getLang());
-		$lang = JSFactory::getLang($order->getLang());
 		$order->items = null;
 
         if ($update_product_stock){

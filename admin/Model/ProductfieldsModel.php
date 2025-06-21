@@ -45,7 +45,10 @@ class ProductfieldsModel extends BaseadminModel{
 		if (count($_where)>0){
 			$where = " WHERE ".implode(" AND ",$_where);
 		}
-        $query = "SELECT F.id, F.`".$lang->get("name")."` as name, F.`".$lang->get("description")."` as description, F.allcats, F.type, F.cats, F.ordering, F.`group`, G.`".$lang->get("name")."` as groupname, multilist FROM `#__jshopping_products_extra_fields` as F left join `#__jshopping_products_extra_field_groups` as G on G.id=F.group ".$where." order by ".$ordering;
+        $query = "SELECT F.id, F.`".$lang->get("name")."` as name, F.`".$lang->get("description")."` as description, F.allcats, F.type, F.cats, F.ordering, F.`group`, G.`".$lang->get("name")."` as groupname, multilist, publish 
+                    FROM `#__jshopping_products_extra_fields` as F 
+                    left join `#__jshopping_products_extra_field_groups` as G on G.id=F.group ".
+                    $where." order by ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $rows = $db->loadObjectList();

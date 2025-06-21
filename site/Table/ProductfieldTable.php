@@ -39,14 +39,22 @@ class ProductFieldTable extends MultilangTable{
         }
     }
     
-    function getList($groupordering = 1){
+    function getList($groupordering = 1, $filter = []){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();
         $ordering = "F.ordering";
         if ($groupordering){
             $ordering = "G.ordering, F.ordering";
-        } 
-        $query = "SELECT F.id, F.`".$lang->get("name")."` as name, F.`".$lang->get("description")."` as description, F.allcats, F.type, F.cats, F.ordering, F.`group`, G.`".$lang->get("name")."` as groupname, multilist FROM `#__jshopping_products_extra_fields` as F left Join `#__jshopping_products_extra_field_groups` as G on G.id=F.group order by ".$ordering;
+        }
+        $where = '';
+        if (isset($filter['publish'])) {
+            $where .= ' AND F.publish='.$db->q($filter['publish']);
+        }
+        $query = "SELECT F.id, F.`".$lang->get("name")."` as name, F.`".$lang->get("description")."` as description, F.allcats, F.type, F.cats, F.ordering, F.`group`, G.`".$lang->get("name")."` as groupname, multilist, publish
+                  FROM `#__jshopping_products_extra_fields` as F 
+                  LEFT JOIN `#__jshopping_products_extra_field_groups` as G on G.id=F.group 
+                  WHERE 1 ".$where."
+                  ORDER BY ".$ordering;
         $db->setQuery($query);
         $rows = $db->loadObJectList();
         $list = array();        

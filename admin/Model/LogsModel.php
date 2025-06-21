@@ -17,7 +17,24 @@ defined('_JEXEC') or die();
 class LogsModel extends BaseadminModel{
 
 	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
-		return $this->getList();
+		$list = $this->getList();
+        usort($list, function($a, $b) use ($orderBy) {
+            if ($orderBy['order'] == 'date') {
+                $i = 1;
+            } else if ($orderBy['order'] == 'size') {
+                $i = 2;
+            } else {
+                $i = 0; // name
+            }
+            if ($orderBy['dir'] == 'desc') {
+                $ret = $b[$i] <=> $a[$i]; 
+            } else { // asc
+                $ret = $a[$i] <=> $b[$i]; 
+            }
+            return $ret;
+        });
+
+        return $list;
 	}
 
     public function getList(){        

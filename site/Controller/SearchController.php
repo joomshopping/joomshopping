@@ -122,9 +122,9 @@ class SearchController extends BaseController{
 		$jshopConfig = JSFactory::getConfig();		
 		if ($jshopConfig->admin_show_product_extra_field){
             $dispatcher = Factory::getApplication();
-            $characteristic_fields = JSFactory::getAllProductExtraField();			
-            $characteristic_fieldvalues = JSFactory::getAllProductExtraFieldValueDetail();
-            $characteristic_displayfields = JSFactory::getDisplayFilterExtraFieldForCategory($category_id);
+            $characteristic_fields = JSFactory::getAllProductExtraField(1);
+            $characteristic_fieldvalues = JSFactory::getAllProductExtraFieldValueDetail(1);
+            $characteristic_displayfields = JSFactory::getDisplayFilterExtraFieldForCategory($category_id, 1);
 
             $view = $this->getView("search");
             $view->setLayout("characteristics");

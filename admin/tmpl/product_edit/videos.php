@@ -1,4 +1,6 @@
 <?php
+
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 /**
@@ -40,12 +42,36 @@ defined('_JEXEC') or die();
     <table class="admintable" >
         <?php for ($i=0; $i < $jshopConfig->product_video_upload_count; $i++){?>
         <tr>
-            <td class="key" style="width:250px;"><?php print Text::_('JSHOP_UPLOAD_VIDEO')?></td>
+            <td class="key" style="width:250px;">
+                <?php print Text::_('JSHOP_UPLOAD_VIDEO')?>
+            </td>
             <td>
-            <input type="file" name="product_video_<?php print $i;?>" /><textarea rows="5" cols="22" name="product_video_code_<?php print $i;?>" style="display: none;"></textarea>
-			<?php if ($jshopConfig->show_insert_code_in_product_video) { ?>
-            <div style="padding-top:3px;"><input type="checkbox" value="1" name="product_insert_code_<?php print $i;?>" id="product_insert_code_<?php print $i;?>" onclick="jshopAdmin.changeVideoFileField(this);"/><label for="product_insert_code_<?php print $i;?>"><?php print Text::_('JSHOP_INSERT_CODE')?></label></div>
-			<?php } ?>
+                <div class="pvf_file">
+                    <input type="file" name="product_video_<?php print $i;?>" />
+                </div>
+                <?php if ($jshopConfig->show_insert_code_in_product_video) { ?>
+                    <div class="mt-1 pvf_code">
+                        <textarea rows="5" cols="22" name="product_video_code_<?php print $i;?>" style="display: none;"></textarea>                    
+                        <div class="pt-1">
+                            <label>
+                                <input type="checkbox" onclick="jshopAdmin.changeVideoFileField(this, 'code');">
+                                <?php print Text::_('JSHOP_INSERT_CODE')?>
+                            </label>
+                        </div>
+                    </div>
+                <?php } ?>
+                <div class="mt-1 pvf_sel">
+                    <div class="product_folder_video" style="display:none;">
+                        <input type="text" class="form-control form-control-inline" name="product_folder_video_<?php print $i;?>" >
+                        <input type="button" value="<?php echo Text::_('JSHOP_VIDEO_SELECT')?>" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#videosModal" onclick="jshopAdmin.cElName=<?php echo $i?>">
+                    </div>
+                    <label>
+                        <input type="checkbox" onclick="jshopAdmin.changeVideoFileField(this, 'folder');">
+                        <?php print Text::_('JSHOP_VIDEO_SELECT')?>
+                    </label>
+                </div>
+            
             </td>
         </tr>
         <tr>
@@ -72,4 +98,18 @@ defined('_JEXEC') or die();
             <?php print sprintf(Text::_('JSHOP_SIZE_FILES_INFO'), ini_get("upload_max_filesize"), ini_get("post_max_size"));?>
         </div>
     </div>
+
+    <?php print HTMLHelper::_(
+        'bootstrap.renderModal',
+        'videosModal',
+        array(
+            'title'       => Text::_('JSHOP_VIDEO_SELECT'),
+            'backdrop'    => 'static',
+            'url'         => 'index.php?option=com_jshopping&controller=productimages&task=videos&tmpl=component',
+            'height'      => '400px',
+            'width'       => '800px',
+            'bodyHeight'  => 70,
+            'modalWidth'  => 80
+        )
+    );?>
 </div>

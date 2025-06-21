@@ -148,7 +148,7 @@ $select_user = $this->select_user;
     <?php if (!$select_user) {?> 
     <td class="center">
         <a class="no_blank" href='index.php?option=com_jshopping&controller=orders&client_id=<?php print $row->user_id?>' target='_blank'>
-            <i class="icon-print"></i>
+            <i class="icon-list"></i>
         </a>
     </td>
     <td class="center">

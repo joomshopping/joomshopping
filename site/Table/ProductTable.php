@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 19.04.2025
+* @version      5.8.0 19.04.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,6 +13,8 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Site\Helper\Cart;
+
 defined('_JEXEC') or die();
 
 class ProductTable extends MultilangTable{
@@ -27,11 +29,13 @@ class ProductTable extends MultilangTable{
 		$db = Factory::getDBO();
         $app = Factory::getApplication();
         $JshopConfig = JSFactory::getConfig();
+        $obj = $this;
+		$app->triggerEvent('onBeforeSetAttributeActive', array(&$attribs, &$obj));
 		$this->setAttributeSubmitted($attribs, 1);
         $this->attribute_active = $attribs;
         if (is_array($this->attribute_active) && count($this->attribute_active)){
             $this->attribute_active_data = new \stdClass();
-            $allattribs = JSFactory::getAllAttributes(1);
+            $allattribs = JSFactory::getAllAttributes(1, 1);
             $dependent_attr = array();
             $independent_attr = array();
             foreach($attribs as $k=>$v){
@@ -44,11 +48,12 @@ class ProductTable extends MultilangTable{
                     $independent_attr[$k] = $v;
                 }
             }
-
             if (count($dependent_attr)){
                 $where = "";
                 foreach($dependent_attr as $k=>$v){
-                    $where.=" and PA.attr_".(int)$k." = ".(int)$v;
+					if ($v) {
+						$where.=" and PA.attr_".(int)$k." = ".(int)$v;
+					}
                 }
                 $query = "select PA.* from `#__jshopping_products_attr` as PA where PA.product_id=".(int)$this->product_id." ".$where;
                 $db->setQuery($query);
@@ -134,13 +139,12 @@ class ProductTable extends MultilangTable{
     }
 
     //get require attribute
-    function getRequireAttribute(){
+    function getRequireAttribute($check_attr_required = 0){
         $require = array();
         if (!JSFactory::getConfig()->admin_show_attributes){
 			return $require;
 		}
-
-        $allattribs = JSFactory::getAllAttributes(2);
+        $allattribs = JSFactory::getAllAttributes(2, 1);
         $dependent_attr = $allattribs['dependent'];
         $independent_attr = $allattribs['independent'];
 
@@ -149,6 +153,9 @@ class ProductTable extends MultilangTable{
             if (count($prodAttribVal)){
                 $prodAtrtib = $prodAttribVal[0];
                 foreach($dependent_attr as $attrib){
+                    if ($check_attr_required && !$attrib->required) {
+                        continue;
+                    }
                     $field = "attr_".(int)$attrib->attr_id;
                     if ($prodAtrtib->$field) $require[] = $attrib->attr_id;
                 }
@@ -158,12 +165,15 @@ class ProductTable extends MultilangTable{
         if (count($independent_attr)){
             $prodAttribVal2 = $this->getAttributes2();
             foreach($prodAttribVal2 as $attrib){
+                $_req = $independent_attr[$attrib->attr_id]->required ?? 0;
+                if ($check_attr_required && !$_req) {
+                    continue;
+                }
                 if (!in_array($attrib->attr_id, $require) && isset($independent_attr[$attrib->attr_id])){
                     $require[] = $attrib->attr_id;
                 }
             }
         }
-
         return $require;
     }
 
@@ -189,7 +199,7 @@ class ProductTable extends MultilangTable{
 	function getAttribValue($attr_id, $other_attr = array(), $onlyExistProduct = 0){
         $db = Factory::getDBO();
         $jshopConfig = JSFactory::getConfig();
-        $allattribs = JSFactory::getAllAttributes(1);
+        $allattribs = JSFactory::getAllAttributes(1, 1);
         $lang = JSFactory::getLang();
         if ($allattribs[$attr_id]->independent==0){
             $where = "";
@@ -207,7 +217,7 @@ class ProductTable extends MultilangTable{
             $query = "SELECT PA.$field as val_id, V.`".$lang->get("name")."` as value_name, V.image
                       FROM `#__jshopping_products_attr` as PA
 					  INNER JOIN #__jshopping_attr_values as V ON PA.$field=V.value_id
-                      WHERE PA.product_id=".(int)$this->product_id." ".$where."
+                      WHERE V.publish=1 AND PA.product_id=".(int)$this->product_id." ".$where."
 					  GROUP BY PA.$field
                       ORDER BY ".$sorting;
         }else{
@@ -219,7 +229,7 @@ class ProductTable extends MultilangTable{
             $query = "SELECT PA.attr_value_id as val_id, V.`".$lang->get("name")."` as value_name, V.image, price_mod, addprice
                       FROM `#__jshopping_products_attr2` as PA
 					  INNER JOIN #__jshopping_attr_values as V ON PA.attr_value_id=V.value_id
-                      WHERE PA.product_id=".(int)$this->product_id." and PA.attr_id=".(int)$attr_id."
+                      WHERE V.publish=1 AND PA.product_id=".(int)$this->product_id." and PA.attr_id=".(int)$attr_id."
                       ORDER BY ".$sorting;
         }
         extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
@@ -228,14 +238,22 @@ class ProductTable extends MultilangTable{
     }
 
     function getAttributesDatas($selected = array()){
+        $app = Factory::getApplication();
+        $obj = $this;
+		$app->triggerEvent('onBeforeGetAttributesDatas', array(&$selected, &$obj));
         $JshopConfig = JSFactory::getConfig();
         $data = array('attributeValues'=>array());
-        $requireAttribute = $this->getRequireAttribute();
+        $attr_list = JSFactory::getAllAttributes(1, 1);
+        $allAttribute = $this->getRequireAttribute();
+        $requireAttribute = $this->getRequireAttribute(1);
         $actived = array();
-        foreach($requireAttribute as $attr_id){
+        foreach($allAttribute as $attr_id){
             $options = $this->getAttribValue($attr_id, $actived, $JshopConfig->hide_product_not_avaible_stock);
             $data['attributeValues'][$attr_id] = $options;
-            if (!$JshopConfig->product_attribut_first_value_empty){
+			if ($attr_list[$attr_id]->required == 0) {
+				$actived[$attr_id] = 0;
+			}
+            if (!$JshopConfig->product_attribut_first_value_empty && $attr_list[$attr_id]->required){
                 $actived[$attr_id] = $options[0]->val_id ?? 0;
             }
             if (isset($selected[$attr_id])){
@@ -246,10 +264,10 @@ class ProductTable extends MultilangTable{
                 }
             }
         }
-        if (count($requireAttribute) == count($actived)){
+        if (Cart::hasAllAttributeRequired($requireAttribute, $actived)) {
             $data['attributeActive'] = $actived;
         }else{
-            $data['attributeActive'] = array();
+            $data['attributeActive'] = [];
         }
         $data['attributeSelected'] = $actived;
 		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
@@ -279,7 +297,7 @@ class ProductTable extends MultilangTable{
         $query = "SELECT FA.id, FA.required, FA.`".$lang->get("name")."` as name, FA.`".$lang->get("description")."` as description, FA.type
 				  FROM `#__jshopping_products_free_attr` as PFA
 				  left Join `#__jshopping_free_attr` as FA on FA.id=PFA.attr_id
-                  WHERE PFA.product_id=".(int)$this->product_id." order by FA.ordering";
+                  WHERE PFA.product_id=".(int)$this->product_id." AND FA.publish=1 order by FA.ordering";
         $db->setQuery($query);
         $this->freeattributes = $db->loadObJectList();
         return $this->freeattributes;
@@ -857,7 +875,7 @@ class ProductTable extends MultilangTable{
         $app->triggerEvent('onUpdateOtherPricesIncludeAllFactors', array(&$obj) );
     }
 
-	function getExtraFields($type = 1){
+	function getExtraFields($type = 1, $publish = null){
         $_cats = $this->getCategories();
         $cats = array();
         foreach($_cats as $v){
@@ -869,8 +887,8 @@ class ProductTable extends MultilangTable{
         $JshopConfig = JSFactory::getConfig();
         $hide_fields = $JshopConfig->getProductHideExtraFields();
         $cart_fields = $JshopConfig->getCartDisplayExtraFields();
-        $fieldvalues = JSFactory::getAllProductExtraFieldValue();
-        $listfield = JSFactory::getAllProductExtraField();
+        $fieldvalues = JSFactory::getAllProductExtraFieldValue(1);
+        $listfield = JSFactory::getAllProductExtraField(1);
         foreach($listfield as $val){
             if ($type==1 && in_array($val->id, $hide_fields)) continue;
             if ($type==2 && !in_array($val->id, $cart_fields)) continue;
@@ -900,6 +918,9 @@ class ProductTable extends MultilangTable{
                         if (isset($fieldvalues[$extrafiledvalueid])) {
                             $tmp[] = $fieldvalues[$extrafiledvalueid];
                         }
+                    }
+                    if (empty($tmp)) {
+                        continue;
                     }
                     $extra_field_value = implode($JshopConfig->multi_charactiristic_separator, $tmp);
                     $rows[] = array("id"=>$field_id, "name"=>$listfield[$field_id]->name, "description"=>$listfield[$field_id]->description, "value"=>$extra_field_value, "groupname"=>$listfield[$field_id]->groupname, 'field_value_ids'=>$listid, 'group_id' => $field->group);
@@ -989,7 +1010,7 @@ class ProductTable extends MultilangTable{
         $JshopConfig = JSFactory::getConfig();
         if (!$JshopConfig->admin_show_attributes) return array();
         $app = Factory::getApplication();
-        $attribs = JSFactory::getAllAttributes();
+        $attribs = JSFactory::getAllAttributes(0, 1);
         $selects = [];
 		$obj = $this;
         $app->triggerEvent('onBeforeBuildSelectAttribute', array(&$attributeValues, &$attributeActive, &$selects, &$attribs, &$obj));
@@ -1071,10 +1092,14 @@ class ProductTable extends MultilangTable{
         $model = JSFactory::getModel('productshop', 'Site');
 
         $options = $item->select_options;
-        if ($attr->attr_type==1 && $JshopConfig->product_attribut_first_value_empty){
-            $first = array();
-            $first[] = HTMLHelper::_('select.option', '0', Text::_('JSHOP_SELECT'), 'val_id', 'value_name');
-            $options = array_merge($first, $options);
+        if ($attr->required == 0 || ($attr->attr_type==1 && $JshopConfig->product_attribut_first_value_empty)){
+            $first = new \stdClass();
+            $first->val_id = 0;
+            $first->value_name = $attr->required ? Text::_('JSHOP_SELECT') : Text::_('JSHOP_NONE');
+            $first->image = '';
+            $first->addprice = 0;
+            $first->price_mod = '';
+            $options = array_merge([$first], $options);
         }
 
         $view = $model->getView("product");

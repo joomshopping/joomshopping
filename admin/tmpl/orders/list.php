@@ -5,7 +5,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.6.2 19.04.2025
+* @version      5.8.0 19.06.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -130,6 +130,9 @@ $jshopConfig = JSFactory::getConfig();
                     <th class="center">
                         <?php echo Text::_('JSHOP_EDIT')?>
                     </th>
+                    <th width="50" class="center">
+                        <?php echo HTMLHelper::_( 'grid.sort', 'JSHOP_ID', 'order_id', $this->filter_order_Dir, $this->filter_order); ?>
+                    </th>					
                 </tr>
             </thead>
             <?php 
@@ -188,7 +191,7 @@ $jshopConfig = JSFactory::getConfig();
                         <?php }?>
                     <?php }else{?>
                         <a class="js_window_popup" patch="index.php?option=com_jshopping&controller=orders&task=printOrder&order_id=<?php echo $row->order_id?>&tmpl=component">
-                            <i class="icon-address"></i>
+                            <i class="icon-print print-html"></i>
                         </a>
                     <?php }?>
                     <?php if (isset($row->_ext_order_info)) echo $row->_ext_order_info;?>
@@ -259,6 +262,9 @@ $jshopConfig = JSFactory::getConfig();
                     </a>
                     <?php }?>
                 </td>
+				<td class="center">
+					<?php print $row->order_id?>
+				</td>				
             </tr>
             <?php
             $i++;
@@ -279,7 +285,7 @@ $jshopConfig = JSFactory::getConfig();
                 <?php if ($jshopConfig->shop_mode==1){?>
                 <td></td>
                 <?php }?>
-                <td></td>
+                <td colspan="2"></td>
             </tr>
         </table>
 

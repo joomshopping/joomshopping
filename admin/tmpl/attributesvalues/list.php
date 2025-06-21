@@ -5,7 +5,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.6.1 15.09.2018
+* @version      5.8.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -53,10 +53,10 @@ if ($saveOrder){
         <th width="20">
           <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </th>
-        <th width="200" align="left">
+        <th align="left">
           <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_NAME_ATTRIBUT_VALUE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
-        <th align="left">
+        <th width="120" align="left">
           <?php echo Text::_('JSHOP_IMAGE_ATTRIBUT_VALUE')?>
         </th>
 	    <?php if ($this->config->shop_mode == 1){?>
@@ -64,6 +64,9 @@ if ($saveOrder){
 			    <?php echo Text::_('JSHOP_PRODUCTS')?>
             </th>
 	    <?php }?>
+        <th width="50" class="center">
+            <?php echo Text::_('JSHOP_PUBLISH')?>
+        </th>
         <th width="50" class="center">
             <?php echo Text::_('JSHOP_EDIT')?>
         </th>
@@ -80,7 +83,7 @@ if ($saveOrder){
                 <span class="icon-ellipsis-v" aria-hidden="true"></span>
             </span>
             <?php if ($saveOrder){ ?>
-                <input type="text" class="hidden" name="order[]" value="<?php echo  $row->value_ordering; ?>">
+                <input type="text" class="hidden" name="order[]" value="<?php echo $row->value_ordering; ?>">
             <?php } ?>
         </td>
        <td>
@@ -100,14 +103,17 @@ if ($saveOrder){
                 <?php echo $row->count_products?>
             </td>
         <?php }?>
-       <td class="center">
+        <td class="center">
+            <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
+        </td>
+        <td class="center">
             <a class="btn btn-micro btn-nopad" href="index.php?option=com_jshopping&controller=attributesvalues&task=edit&value_id=<?php echo $row->value_id; ?>&attr_id=<?php echo $attr_id?>">
                 <i class="icon-edit"></i>
             </a>
-       </td>
-       <td class="center">
-        <?php print $row->value_id;?>
-       </td>
+        </td>
+        <td class="center">
+            <?php print $row->value_id;?>
+        </td>
     </tr>
     <?php
     $i++;

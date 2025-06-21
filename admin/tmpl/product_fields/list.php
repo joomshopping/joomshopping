@@ -5,7 +5,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.3.4 24.02.2024
+* @version      5.8.0 24.02.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -88,6 +88,9 @@ if ($saveOrder){
             </th>
 	    <?php }?>
         <th width="50" class="center">
+            <?php echo Text::_('JSHOP_PUBLISH')?>
+        </th>
+        <th width="50" class="center">
             <?php echo Text::_('JSHOP_EDIT')?>
         </th>
         <th width="40" class="center">
@@ -149,6 +152,9 @@ if ($saveOrder){
 			    <?php echo $row->count_products?>
             </td>
 	    <?php }?>
+        <td class="center">
+            <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
+        </td>
         <td class="center">
             <a class="btn btn-micro btn-nopad"  href='index.php?option=com_jshopping&controller=productfields&task=edit&id=<?php print $row->id;?>'>
                 <i class="icon-edit"></i>

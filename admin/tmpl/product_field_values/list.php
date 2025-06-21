@@ -5,7 +5,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.8.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -59,12 +59,16 @@ if ($saveOrder){
         </th>
         <th align="left">
           <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order); ?>
+          <?php print $this->tmp_html_name_sort_end?>
         </th>
 	    <?php if ($jshopConfig->shop_mode == 1){?>
             <th width="50" class="center">
 			    <?php echo Text::_('JSHOP_PRODUCTS')?>
             </th>
 	    <?php }?>
+        <th width="50" class="center">
+            <?php echo Text::_('JSHOP_PUBLISH')?>
+        </th>
         <th width="50" class="center">
             <?php echo Text::_('JSHOP_EDIT')?>
         </th>
@@ -87,23 +91,26 @@ if ($saveOrder){
        <td>
          <?php echo HTMLHelper::_('grid.id', $i, $row->id);?>
        </td>
-       <td>
+        <td>
 	       <?php if ($row->count_products==0){?><i class="icon icon-exclamation-circle" title="<?php print Text::_('JSHOP_ITEM_NOT_USED')?>"></i><?php }?>
            <a href="index.php?option=com_jshopping&controller=productfieldvalues&task=edit&field_id=<?php print $this->field_id?>&id=<?php echo $row->id; ?>"><?php echo $row->name;?></a>
-       </td>
+        </td>
 	    <?php if ($jshopConfig->shop_mode == 1){?>
             <td class="center">
 			    <?php echo $row->count_products?>
             </td>
 	    <?php }?>
-       <td class="center">
+        <td class="center">
+            <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
+        </td>
+        <td class="center">
             <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=productfieldvalues&task=edit&field_id=<?php print $this->field_id?>&id=<?php print $row->id;?>'>
                 <i class="icon-edit"></i>
             </a>
-       </td>
-       <td class="center">
-        <?php print $row->id;?>
-       </td>
+        </td>
+        <td class="center">
+            <?php print $row->id;?>
+        </td>
     </tr>
     <?php
     $i++;

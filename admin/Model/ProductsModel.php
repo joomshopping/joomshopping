@@ -548,14 +548,18 @@ class ProductsModel extends BaseadminModel{
     function getMinimalPrice($price, $attrib_prices, $attrib_ind_price_data, $is_add_price, $add_discounts){
         $minprice = Helper::saveAsPrice($price);
         if (is_array($attrib_prices)){
-            $minprice = min(array_map(array('\JSHelper','saveAsPrice'), $attrib_prices));
+            $minprice = min(array_map(array('Joomla\Component\Jshopping\Site\Helper\Helper','saveAsPrice'), $attrib_prices));
         }
 
         if (is_array($attrib_ind_price_data[0])){
+            $list_attr = JSFactory::getAllAttributes(1);
             $attr_ind_id = array_unique($attrib_ind_price_data[0]);
             $startprice = $minprice;
             foreach($attr_ind_id as $attr_id){
-                $tmpprice = array();
+                if ($list_attr[$attr_id]->required == 0) {
+                    continue;
+                }
+                $tmpprice = [];
                 foreach($attrib_ind_price_data[0] as $k=>$tmp_attr_id){
                     if ($tmp_attr_id==$attr_id){
 						$attrib_ind_price_data[2][$k] = Helper::saveAsPrice($attrib_ind_price_data[2][$k]);
@@ -610,61 +614,50 @@ class ProductsModel extends BaseadminModel{
     function uploadVideo($product, $product_id, $post){
         $app = Factory::getApplication();
         $jshopConfig = JSFactory::getConfig();
-        $image_prev_video = "";
-        for($i=0;$i<$jshopConfig->product_video_upload_count;$i++){
-			if (!(isset($post['product_insert_code_'.$i]) && ($post['product_insert_code_'.$i] == 1))) {
-				$upload = new UploadFile($_FILES['product_video_'.$i]);
-				$upload->setDir($jshopConfig->video_product_path);
-                $upload->setFileNameMd5(0);
-                $upload->setFilterName(1);
-				if ($upload->upload()){
-					$file_video = $upload->getName();
-					@chmod($jshopConfig->video_product_path."/".$file_video, 0777);
+        for($i=0; $i<$jshopConfig->product_video_upload_count; $i++){
+            $image_prev_video = "";
+            $file_video = '';
+            $code_video = (string)$app->input->get('product_video_code_'.$i, '', 'RAW');
+            $file_name_video = $post['product_folder_video_'.$i] ?? '';
 
-					$upload2 = new UploadFile($_FILES['product_video_preview_'.$i]);					
-                    $upload2->setAllowFile($jshopConfig->allow_image_upload);
-					$upload2->setDir($jshopConfig->video_product_path);
-                    $upload2->setFileNameMd5(0);
-                    $upload2->setFilterName(1);
-					if ($upload2->upload()){
-						$image_prev_video = $upload2->getName();
-						@chmod($jshopConfig->video_product_path."/".$image_prev_video, 0777);
-					}else{
-						if ($upload2->getError() != 4){
-							JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_VIDEO_PREVIEW'));
-							Helper::saveToLog("error.log", "SaveProduct - Error upload video preview. code: ".$upload2->getError());
-						}
-					}
-					unset($upload2);
-					$this->addToProductVideo($product_id, $file_video, $image_prev_video);
-				}else{
-					if ($upload->getError() != 4){
-						JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_VIDEO'));
-						Helper::saveToLog("error.log", "SaveProduct - Error upload video. code: ".$upload->getError());
-					}
-				}
-				unset($upload);
-			} else {
-                $code_video = (string)$app->input->get('product_video_code_'.$i, '', 'RAW');
-				if ($code_video) {
-					$upload2 = new UploadFile($_FILES['product_video_preview_'.$i]);
-                    $upload2->setAllowFile($jshopConfig->allow_image_upload);
-					$upload2->setDir($jshopConfig->video_product_path);
-                    $upload2->setFileNameMd5(0);
-                    $upload2->setFilterName(1);
-					if ($upload2->upload()){
-						$image_prev_video = $upload2->getName();
-						@chmod($jshopConfig->video_product_path."/".$image_prev_video, 0777);
-					}else{
-						if ($upload2->getError() != 4){
-							JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_VIDEO_PREVIEW'));
-							Helper::saveToLog("error.log", "SaveProduct - Error upload video preview. code: ".$upload2->getError());
-						}
-					}
-					unset($upload2);
-					$this->addToProductVideoCode($product_id, $code_video, $image_prev_video);
-				}
-			}
+            $upload2 = new UploadFile($_FILES['product_video_preview_'.$i]);
+            $upload2->setAllowFile($jshopConfig->allow_image_upload);
+            $upload2->setDir($jshopConfig->video_product_path);
+            $upload2->setFileNameMd5(0);
+            $upload2->setFilterName(1);
+            if ($upload2->upload()){
+                $image_prev_video = $upload2->getName();
+                @chmod($jshopConfig->video_product_path."/".$image_prev_video, 0777);
+            }else{
+                if ($upload2->getError() != 4){
+                    JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_VIDEO_PREVIEW'));
+                    Helper::saveToLog("error.log", "SaveProduct - Error upload video preview. code: ".$upload2->getError());
+                }
+            }
+            unset($upload2);
+
+            $upload = new UploadFile($_FILES['product_video_'.$i]);
+            $upload->setDir($jshopConfig->video_product_path);
+            $upload->setFileNameMd5(0);
+            $upload->setFilterName(1);
+            if ($upload->upload()){
+                $file_video = $upload->getName();
+                @chmod($jshopConfig->video_product_path."/".$file_video, 0777);
+            }else{
+                if ($upload->getError() != 4){
+                    JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_VIDEO'));
+                    Helper::saveToLog("error.log", "SaveProduct - Error upload video. code: ".$upload->getError());
+                }
+            }
+            unset($upload);
+
+            if ($code_video) {
+                $this->addToProductVideoCode($product_id, $code_video, $image_prev_video);
+            } elseif ($file_name_video) {
+                $this->addToProductVideo($product_id, $file_name_video, $image_prev_video);
+            } elseif ($file_video) {
+                $this->addToProductVideo($product_id, $file_video, $image_prev_video);
+            }
         }
     }
 
@@ -690,7 +683,7 @@ class ProductsModel extends BaseadminModel{
         $app = Factory::getApplication();
 
         for($i=0; $i<$jshopConfig->product_image_upload_count; $i++){
-            $upload = new UploadFile($_FILES['product_image_'.$i]);            
+            $upload = new UploadFile($_FILES['product_image_'.$i]);
             $upload->setAllowFile($jshopConfig->allow_image_upload);
             $upload->setDir($jshopConfig->image_product_path);
 			if ($jshopConfig->product_imagename_lowercase){

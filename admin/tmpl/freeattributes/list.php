@@ -5,7 +5,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.6.1 15.09.2018
+* @version      5.8.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -56,6 +56,9 @@ if ($saveOrder){
           <?php echo HTMLHelper::_('grid.sort', Text::_('JSHOP_REQUIRED'), 'required', $this->filter_order_Dir, $this->filter_order); ?>
         </th>
         <th width="50" class="center">
+            <?php echo Text::_('JSHOP_PUBLISH')?>
+        </th>
+        <th width="50" class="center">
             <?php echo Text::_('JSHOP_EDIT')?>
         </th>
         <th width="40" class="center">
@@ -85,6 +88,9 @@ if ($saveOrder){
              <i class="icon-publish"></i>
          <?php }?>
        </td>
+        <td class="center">
+            <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
+        </td>
        <td class="center">
             <a class="btn btn-micro  btn-nopad" href='index.php?option=com_jshopping&controller=freeattributes&task=edit&id=<?php print $row->id;?>'>
                 <i class="icon-edit"></i>

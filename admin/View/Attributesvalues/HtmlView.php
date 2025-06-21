@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.1 15.09.2018
+* @version      5.8.0 15.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,8 +18,10 @@ class HtmlView extends BaseHtmlView{
     
     function displayList($tpl=null){        
         ToolbarHelper::title($this->attr_name." / ".Text::_('JSHOP_LIST_ATTRIBUT_VALUES'), 'generic.png' );
-        ToolbarHelper::custom( "back", 'arrow-left', 'arrow-left', Text::_('JSHOP_RETURN_TO_ATTRIBUTES'), false);
-        ToolbarHelper::addNew();        
+        ToolbarHelper::custom("back", 'arrow-left', 'arrow-left', Text::_('JSHOP_RETURN_TO_ATTRIBUTES'), false);
+        ToolbarHelper::addNew();
+        ToolbarHelper::publishList();
+        ToolbarHelper::unpublishList();
         ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
         HelperAdmin::btnHome();
         parent::display($tpl);

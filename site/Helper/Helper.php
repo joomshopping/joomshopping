@@ -911,10 +911,13 @@ class Helper{
 
     public static function getProductExtraFieldForProduct($product){
         $fields = JSFactory::getAllProductExtraField();
-        $fieldvalues = JSFactory::getAllProductExtraFieldValue();
+        $fieldvalues = JSFactory::getAllProductExtraFieldValue(1);
         $displayfields = JSFactory::getDisplayListProductExtraFieldForCategory($product->category_id);
         $rows = [];
         foreach($displayfields as $field_id){
+            if ($fields[$field_id]->publish == 0) {
+                continue;
+            }
             $field_name = "extra_field_".$field_id;
             if ($fields[$field_id]->type != 1){
                 if ($product->$field_name!=0 && $product->$field_name!=''){
@@ -924,6 +927,9 @@ class Helper{
 						if (isset($fieldvalues[$extrafiledvalueid])) {
 							$tmp[] = $fieldvalues[$extrafiledvalueid];
 						}
+                    }
+                    if (empty($tmp)) {
+                        continue;
                     }
                     $extra_field_value = implode(", ", $tmp);
                     $rows[$field_id] = array("name"=>$fields[$field_id]->name, "description"=>$fields[$field_id]->description, "value"=>$extra_field_value);

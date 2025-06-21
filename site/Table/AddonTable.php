@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.3 10.05.2025
+* @version      5.8.0 24.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -237,6 +237,20 @@ class AddonTable extends ShopbaseTable{
             $query = "ALTER TABLE ".$db->quoteName($table)." ADD ".$db->quoteName($field)." ".$type;
             $db->setQuery($query);
             $db->execute();
+        }
+    }
+
+    public function addMultiLangFieldTable($table, $field, $type){
+        $db = Factory::getDBO();
+        $listfields = $db->getTableColumns($table);
+        $langs = JSFactory::getModel('languages')->getAllTags();
+        foreach($langs as $lang) {
+            $table_field = $field.'_'.$lang;
+            if (!isset($listfields[$table_field])){
+                $query = "ALTER TABLE ".$db->quoteName($table)." ADD ".$db->quoteName($table_field)." ".$type;
+                $db->setQuery($query);
+                $db->execute();
+            }
         }
     }
 	

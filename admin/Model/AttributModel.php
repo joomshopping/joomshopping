@@ -41,7 +41,7 @@ class AttributModel extends BaseadminModel{
         if (isset($filter['text_search'])) {
             $where .= " AND (A.`".$lang->get("name")."` LIKE ".$db->q('%'.$filter['text_search'].'%').")";
         }
-        $query = "SELECT A.attr_id, A.`".$lang->get("name")."` as name, A.attr_type, A.attr_ordering, A.independent, A.allcats, A.cats, G.`".$lang->get("name")."` as groupname
+        $query = "SELECT A.attr_id, A.`".$lang->get("name")."` as name, A.attr_type, A.attr_ordering, A.independent, A.allcats, A.cats, A.required, A.publish, G.`".$lang->get("name")."` as groupname
                   FROM `#__jshopping_attr` as A left join `#__jshopping_attr_groups` as G on A.`group`=G.id
                   WHERE 1 ".$where."
                   ORDER BY ".$ordering;

@@ -22,5 +22,12 @@ class Cart{
 	public static function checkView(){
 		return !JSFactory::getConfig()->user_as_catalog;
 	}
-	
+
+	public static function hasAllAttributeRequired($required_attr_id, $attr_active_vals) {
+        $attr_id_not_0 = array_keys(array_filter($attr_active_vals, function($value) {
+            return $value != 0;
+        }));
+        return empty(array_diff($required_attr_id, $attr_id_not_0));
+	}
+
 }

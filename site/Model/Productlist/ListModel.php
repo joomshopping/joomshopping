@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.4 18.01.2025
+* @version      5.8.0 18.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -225,7 +225,9 @@ class ListModel{
                 foreach($jshopConfig->product_search_fields as $field){
                     $tmp[] = "LOWER(".Helper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
                 }
-                $where_search = implode(' OR ', $tmp);
+				if ($tmp) {
+					$where_search = implode(' OR ', $tmp);
+				}
             }else{
                 $words = explode(" ", $filters['search']);
                 $search_word = array();
@@ -235,8 +237,10 @@ class ListModel{
                     foreach($jshopConfig->product_search_fields as $field){
                         $tmp[] = "LOWER(".Helper::getDBFieldNameFromConfig($field).") LIKE '%".$word."%'";
                     }
-                    $where_search_block = implode(' OR ', $tmp);
-                    $search_word[] = "(".$where_search_block.")";
+					if ($tmp) {
+						$where_search_block = implode(' OR ', $tmp);
+						$search_word[] = "(".$where_search_block.")";
+					}
                 }
                 if (isset($filters['search_type']) && $filters['search_type']=="any"){
                     $where_search = implode(" OR ", $search_word);

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 15.09.2018
+* @version      5.8.0 15.06.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,6 +14,9 @@ abstract class ShippingFormRoot{
 	private $_sh_params;
     
     abstract function showForm($shipping_id, $shippinginfo, $params);
+
+    public function showFormAdmin($order, $shipping_id, $shippinginfo, $params){
+    }  
     
     function check($params, $sh_method){
         return 1;

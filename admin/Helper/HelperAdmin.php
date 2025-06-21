@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.7 31.08.2022
+* @version      5.8.0 31.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -33,7 +33,7 @@ class HelperAdmin{
     }
 	
 	public static function tooltip($text) {
-		return '<span class="jsTooltip" title="'.htmlspecialchars($text, ENT_COMPAT, 'UTF-8').'"><img src="components/com_jshopping/images/jshop_info_s.png" alt="Tooltip"></span>';  
+		return '<span class="jsTooltip" title="'.htmlspecialchars($text, ENT_COMPAT, 'UTF-8').'"><span class="icon-info-circle" aria-hidden="true"></span></span>';  
     }
 
     public static function btnHome(){

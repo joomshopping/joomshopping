@@ -902,5 +902,22 @@ class OrderTable extends ShopbaseTable{
         $full_name = implode(' ', $name_parts);
         return $full_name;
     }
+	
+    public function setShippingParamsByForm($sh_params) {
+        if (is_array($sh_params)){
+            $sh_method = JSFactory::getTable('shippingMethod');
+            $sh_method->load($this->shipping_method_id);
+            $shippingForm = $sh_method->getShippingForm();
+            if ($shippingForm){
+                $shippingForm->setParams($sh_params);
+                $shipping_params_names = $shippingForm->getDisplayNameParams();
+                $this->shipping_params = Helper::getTextNameArrayValue($shipping_params_names, $sh_params);
+            }
+            $this->setShippingParamsData($sh_params);
+        } else {
+            $this->shipping_params = '';
+            $this->shipping_params_data = '';
+        }
+    }	
 
 }

@@ -17,10 +17,17 @@ class ProductFieldValueTable extends MultilangTable{
         parent::__construct('#__jshopping_products_extra_field_values', 'id', $_db );
     }
     
-    function getAllList($display = 0){
+    function getAllList($display = 0, $filter = []){
         $db = Factory::getDBO();
-        $lang = JSFactory::getLang(); 
-        $query = "SELECT id, `".$lang->get("name")."` as name, field_id FROM `#__jshopping_products_extra_field_values` order by ordering";
+        $lang = JSFactory::getLang();
+        $where = '';
+        if (isset($filter['publish'])) {
+            $where .= ' AND publish='.$db->q($filter['publish']);
+        }
+        $query = "SELECT id, `".$lang->get("name")."` as name, field_id 
+                  FROM `#__jshopping_products_extra_field_values` 
+                  WHERE 1 ".$where."
+                  order by ordering";
         $db->setQuery($query);
         if ($display==0){
             return $db->loadObJectList();

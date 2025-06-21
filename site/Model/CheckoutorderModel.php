@@ -121,14 +121,7 @@ class CheckoutOrderModel  extends CheckoutModel{
 
         $sh_params = $cart->getShippingParams();
         if (is_array($sh_params)){
-            $sh_method = $this->getShippingMethod();
-            $shippingForm = $sh_method->getShippingForm();
-            if ($shippingForm){
-				$shippingForm->setParams($sh_params);
-                $shipping_params_names = $shippingForm->getDisplayNameParams();
-                $order->shipping_params = Helper::getTextNameArrayValue($shipping_params_names, $sh_params);
-            }
-            $order->setShippingParamsData($sh_params);
+            $order->setShippingParamsByForm($sh_params);
         }
 
         $order->ip_address = $_SERVER['REMOTE_ADDR'];

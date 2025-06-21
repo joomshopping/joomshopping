@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.1 29.03.2025
+* @version      5.8.0 29.05.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,6 +22,8 @@ class HtmlView extends BaseHtmlView{
         if ($this->productfield->type != 2) {
             ToolbarHelper::addNew();
         }
+        ToolbarHelper::publishList();
+        ToolbarHelper::unpublishList();
         ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
         HelperAdmin::btnHome();
         if ($this->productfield->type != 2 && $this->productfield->multilist == 0) {

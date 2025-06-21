@@ -20,12 +20,23 @@ class LogsController extends BaseadminController{
     }
 
     function display($cachable = false, $urlparams = false){
+        $app = Factory::getApplication();
+        $context = "jshoping.list.admin.logs";
+        $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "name", 'cmd');
+        $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
+
         $model = JSFactory::getModel("logs");
-        $rows = $model->getList();
+        $rows = $model->getListItems(
+            [],
+            ['order' => $filter_order, 'dir' => $filter_order_Dir],
+            []
+        );
         
 		$view = $this->getView("logs", 'html');
         $view->setLayout("list");	
         $view->rows = $rows;
+        $view->filter_order = $filter_order;
+        $view->filter_order_Dir = $filter_order_Dir;        
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 

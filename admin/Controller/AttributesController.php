@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.1 15.09.2018
+* @version      5.7.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -58,6 +58,9 @@ class AttributesController extends BaseadminController{
         $attr_id = $this->input->getInt("attr_id");
         $attribut = JSFactory::getTable('attribut');
         $attribut->load($attr_id);
+        if (!$attr_id) {
+            $attribut->required = 1;
+        }
         if (!$attribut->independent){
             $attribut->independent = 0;
         }

@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Cart;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 defined('_JEXEC') or die();
 
@@ -706,7 +707,7 @@ class CartModel{
         $product->load($product_id);
 
         //check attributes
-        if ($this->type_cart != 'wishlist' && ((count($product->getRequireAttribute()) > count($attr_id)) || in_array(0, $attr_id))){
+        if ($this->type_cart != 'wishlist' && !Cart::hasAllAttributeRequired($product->getRequireAttribute(1), $attr_id)){
             $errors['101'] = Text::_('JSHOP_SELECT_PRODUCT_OPTIONS');
             if ($displayErrorMessage){
                 JSError::raiseNotice(101, $errors['101']);
@@ -874,11 +875,18 @@ class CartModel{
                 foreach($attr_id as $key=>$value){
                     $attr = JSFactory::getTable('attribut');
                     $attr_v = JSFactory::getTable('attributvalue');
+                    if ($value == 0 && $jshopConfig->attribut_in_cart_show_empty_val == 0) {
+                        continue;
+                    }
                     $temp_product['attributes_value'][$i] = new \stdClass();
 					$temp_product['attributes_value'][$i]->attr_id = $key;
 					$temp_product['attributes_value'][$i]->value_id = $value;
                     $temp_product['attributes_value'][$i]->attr = $attr->getName($key);
-                    $temp_product['attributes_value'][$i]->value = $attr_v->getName($value);
+                    if ($value) {
+                        $temp_product['attributes_value'][$i]->value = $attr_v->getName($value);
+                    } else {
+                        $temp_product['attributes_value'][$i]->value = Text::_('JSHOP_NONE');
+                    }
                     $i++;
                 }
             }

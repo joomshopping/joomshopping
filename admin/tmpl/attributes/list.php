@@ -7,7 +7,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 
 /**
-* @version      5.6.1 15.09.2018
+* @version      5.8.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -70,6 +70,12 @@ if ($saveOrder){
 			    <?php echo Text::_('JSHOP_PRODUCTS')?>
             </th>
 	    <?php }?>
+        <th width="50" align="left">
+            <?php echo Text::_('JSHOP_REQUIRED');?>
+        </th>
+        <th width="50" class="center">
+            <?php echo Text::_('JSHOP_PUBLISH')?>
+        </th>
         <th width="50" class="center">
             <?php echo Text::_('JSHOP_EDIT')?>
         </th>
@@ -116,14 +122,22 @@ if ($saveOrder){
 			    <?php echo $row->count_products?>
             </td>
 	    <?php }?>
-       <td class="center">
+        <td align="center">
+            <?php if ($row->required){?>
+            <i class="icon-publish"></i>
+            <?php }?>
+        </td>
+        <td class="center">
+            <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>
+        </td>
+        <td class="center">
             <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=attributes&task=edit&attr_id=<?php print $row->attr_id;?>'>
                 <i class="icon-edit"></i>
             </a>
-       </td>
-       <td class="center">
-        <?php print $row->attr_id;?>
-       </td>
+        </td>
+        <td class="center">
+            <?php print $row->attr_id;?>
+        </td>
     </tr>
     <?php
     $i++;

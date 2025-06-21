@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 09.04.2024
+* @version      5.8.0 18.06.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -146,6 +146,7 @@ class CartController extends BaseController{
         $view->_tmp_html_before_buttons = "";
         $view->_tmp_html_after_buttons = "";
         $view->_tmp_ext_html_before_discount = "";
+		$view->_tmp_ext_html_after_discount = '';
         $view->_tmp_ext_total = "";
         $view->_tmp_ext_discount_text = '';
         $view->_tmp_ext_discount = '';

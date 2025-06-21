@@ -364,7 +364,6 @@ class OrdersController extends BaseadminController{
             $order->display_price = $jshopConfig->display_price_front;
         }
 
-        
         $_currency = JSFactory::getModel("Currencies");
         $currency_list = $_currency->getAllCurrencies();
         $order_currency = 0;
@@ -377,7 +376,9 @@ class OrdersController extends BaseadminController{
         $payments_select = HTMLHelper::_('select.genericlist', SelectOptions::getPayments(), 'payment_method_id', 'class="form-select" onchange="jshopAdmin.order_payment_calculate()"', 'payment_id', 'name', $order->payment_method_id);
         $delivery_time_select = HTMLHelper::_('select.genericlist', SelectOptions::getDeliveryTimes('- - -'), 'order_delivery_times_id','class = "form-select"', 'id', 'name', $order->delivery_times_id);
         $users_list_select = HTMLHelper::_('select.genericlist', SelectOptions::getUsers(0, 1), 'user_id', 'class="form-select" onchange="jshopAdmin.updateBillingShippingForUser(this.value);"', 'user_id', 'name', $order->user_id);        
-        
+
+		$shippings_form = JSFactory::getModel("shippings")->getListForms([], $order);
+
         Helper::filterHTMLSafe($order);
         foreach($order_items as $k=>$v){
             OutputFilter::objectHTMLSafe($order_items[$k]);
@@ -405,6 +406,7 @@ class OrdersController extends BaseadminController{
         $view->set('select_language', $select_language);
         $view->set('delivery_time_select', $delivery_time_select);
         $view->set('users_list_select', $users_list_select);
+        $view->set('shippings_form', $shippings_form);
         $view->set('client_id', $client_id);
         $view->tmp_html_start = "";
         $view->display_info_only_product = "";

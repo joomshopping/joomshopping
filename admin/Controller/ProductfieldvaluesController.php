@@ -62,6 +62,7 @@ class ProductfieldvaluesController extends BaseadminController{
         $view->tmp_html_filter = "";
         $view->tmp_html_filter_end = "";
         $view->tmp_html_end = "";
+        $view->tmp_html_name_sort_end = "";
 
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayProductFieldValues', array(&$view));

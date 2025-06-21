@@ -18,6 +18,7 @@ class HtmlView extends BaseHtmlView{
     
     function displayList($tpl = null){        
         ToolbarHelper::title( Text::_('JSHOP_LOGS'), 'generic.png');
+        ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
         HelperAdmin::btnHome();
         parent::display($tpl);
 	}
