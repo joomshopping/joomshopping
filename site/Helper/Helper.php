@@ -564,7 +564,7 @@ class Helper{
     }
 
     public static function compareX64($a, $b, $comma_separated = 0){
-        if ($comma_separated) {
+        if ($comma_separated && $b) {
             $vals = base64_decode($b);
             $items = explode(',', $vals);
             return in_array($a, $items); 
