@@ -5,7 +5,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.6.3 08.03.2025
+* @version      5.8.1 02.08.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -127,7 +127,8 @@ class AddonCore{
         $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
         $config = $this->getAddonConfig();
         $dir = $dir ?? 'components/com_jshopping/css/addons';
-        $ovdir = $ovdir ?? $config['folder_overrides_css'] ?? 'templates/'.$template.'/css/addons';
+        $ovdir1 = $ovdir ?? $config['folder_overrides_css'] ?? 'templates/'.$template.'/css/addons/'.$this->addon_alias;
+        $ovdir2 = $ovdir ?? $config['folder_overrides_css'] ?? 'templates/'.$template.'/css/addons';
         if ($name_as_alias) {
             $filename = $this->addon_alias.$extname.'.css';
         } else {
@@ -137,15 +138,21 @@ class AddonCore{
             print '<pre>';
             print '#Addon '.$this->addon_alias.' loadCss: '.$filename."\n";
             print '#Addon '.$this->addon_alias.' loadCss dir: '.$dir."\n";
-            print '#Addon '.$this->addon_alias.' loadCss ovdir: '.$ovdir."\n";
+            print '#Addon '.$this->addon_alias.' loadCss ovdir1: '.$ovdir1."\n";
+            print '#Addon '.$this->addon_alias.' loadCss ovdir2: '.$ovdir2."\n";
             print '#Addon '.$this->addon_alias.' loadCss asset_name: '.$asset_name."\n";
-            print '</pre>';
         }
-        if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
-            $dir = $ovdir;
+        if (file_exists(JPATH_ROOT.'/'.$ovdir1.'/'.$filename)) {
+            $dir = $ovdir1;
+        }elseif (file_exists(JPATH_ROOT.'/'.$ovdir2.'/'.$filename)) {
+            $dir = $ovdir2;
         }
         if ($this->log) {
             Helper::saveToLog($this->addon_alias.".log", 'loadCss: '.$dir.'/'.$filename);
+        }
+        if ($this->debug) {
+            print '#Addon '.$this->addon_alias.' loaded Css: '.$dir.'/'.$filename."\n";
+            print '</pre>';
         }
         $wa = JSFactory::getWebAssetManager();
         $wap = $wap ?? JSFactory::getConfig()->getWebAssetParams('style', $asset_name);
@@ -157,7 +164,8 @@ class AddonCore{
         $asset_name = $this->getAssetName($extname, $dir, $ovdir, $name_as_alias);
         $config = $this->getAddonConfig();
         $dir = $dir ?? 'components/com_jshopping/js/addons';
-        $ovdir = $ovdir ?? $config['folder_overrides_js'] ?? 'templates/'.$template.'/js/addons';
+        $ovdir1 = $ovdir ?? $config['folder_overrides_js'] ?? 'templates/'.$template.'/js/addons/'.$this->addon_alias;
+        $ovdir2 = $ovdir ?? $config['folder_overrides_js'] ?? 'templates/'.$template.'/js/addons';
         if ($name_as_alias) {
             $filename = $this->addon_alias.$extname.'.js';
         } else {
@@ -167,15 +175,21 @@ class AddonCore{
             print '<pre>';
             print '#Addon '.$this->addon_alias.' loadJs: '.$filename."\n";
             print '#Addon '.$this->addon_alias.' loadJs dir: '.$dir."\n";
-            print '#Addon '.$this->addon_alias.' loadJs ovdir: '.$ovdir."\n";
+            print '#Addon '.$this->addon_alias.' loadJs ovdir1: '.$ovdir1."\n";
+            print '#Addon '.$this->addon_alias.' loadJs ovdir2: '.$ovdir2."\n";
             print '#Addon '.$this->addon_alias.' loadJs asset_name: '.$asset_name."\n";
-            print '</pre>';
         }
-        if (file_exists(JPATH_ROOT.'/'.$ovdir.'/'.$filename)) {
-            $dir = $ovdir;
+        if (file_exists(JPATH_ROOT.'/'.$ovdir1.'/'.$filename)) {
+            $dir = $ovdir1;
+        }elseif (file_exists(JPATH_ROOT.'/'.$ovdir2.'/'.$filename)) {
+            $dir = $ovdir2;
         }
         if ($this->log) {
             Helper::saveToLog($this->addon_alias.".log", 'loadJs: '.$dir.'/'.$filename);
+        }
+        if ($this->debug) {
+            print '#Addon '.$this->addon_alias.' loaded Js: '.$dir.'/'.$filename."\n";
+            print '</pre>';
         }
         $wa = JSFactory::getWebAssetManager();
         $wap = $wap ?? JSFactory::getConfig()->getWebAssetParams('script', $asset_name);
@@ -187,7 +201,7 @@ class AddonCore{
     }
     
     public function checkLicKey(){
-		return Helper::compareX64(Helper::replaceWWW(Helper::getJHost().$this->addon_alias), $this->getTable()->key);
+		return Helper::compareX64(Helper::replaceWWW(Helper::getJHost().$this->addon_alias), $this->getTable()->key, 1);
 	}
 
     public function setTmpVar($name, $value){

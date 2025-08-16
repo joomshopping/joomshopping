@@ -115,6 +115,7 @@ include(__DIR__."/load.js.php");
                                     </span>
                                 </div>
                             </div>
+                            <?php print $attribut->tmp_product_html_after_row ?? ''; ?>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
@@ -134,6 +135,7 @@ include(__DIR__."/load.js.php");
                                     <?php print $freeattribut->input_field;?>
                                 </div>
                             </div>
+                            <?php print $freeattribut->tmp_product_html_after_row ?? ''; ?>
                         <?php }?>
                         <?php if ($this->product->freeattribrequire) {?>
                             <div class="requiredtext">* <?php print Text::_('JSHOP_REQUIRED')?></div>
@@ -244,7 +246,7 @@ include(__DIR__."/load.js.php");
                                 <?php print $extra_field['value'];?>
                             </span>
                         </div>
-
+                        <?php print $extra_field['tmp_product_html_after_row'] ?? ''; ?>
                         <?php if ($extra_field['grshowclose']){?>
                             </div>
                         <?php }?>
@@ -292,7 +294,7 @@ include(__DIR__."/load.js.php");
                         </div>
 
                         <div class="prod_qty_input">
-                            <input type="<?php print $this->prod_qty_input_type?>" name="quantity" id="quantity" oninput="jshop.reloadPrices();" class="inputbox" value="<?php print $this->default_count_product?>" min="0" ><?php print $this->_tmp_qty_unit;?>
+                            <input type="<?php print $this->prod_qty_input_type?>" name="quantity" id="quantity" oninput="jshop.reloadPrices();" class="inputbox" value="<?php print $this->default_count_product?>" min="0" aria-label="quantity product" ><?php print $this->_tmp_qty_unit;?>
                         </div>
 
                         <div class="buttons product-buttons">

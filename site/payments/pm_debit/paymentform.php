@@ -16,7 +16,7 @@ defined('_JEXEC') or die();
        <?php echo Text::_('JSHOP_ACCOUNT_HOLDER')?>
      </td>
      <td>
-       <input type="text" class="inputbox" name="params[pm_debit][acc_holder]" id="params_pm_debit_acc_holder" value="<?php print $params['acc_holder']?>"/>
+       <input type="text" class="inputbox" name="params[pm_debit][acc_holder]" id="params_pm_debit_acc_holder" value="<?php print $params['acc_holder']?>" aria-label="<?php echo Text::_('JSHOP_ACCOUNT_HOLDER')?>"/>
      </td>
    </tr>
    <tr>
@@ -24,7 +24,7 @@ defined('_JEXEC') or die();
        <?php echo Text::_('JSHOP_IBAN')?>
      </td>
      <td>
-       <input type="text" class="inputbox" name="params[pm_debit][bank_iban]" id="params_pm_debit_bank_iban" value="<?php print $params['bank_iban']?>"/>
+       <input type="text" class="inputbox" name="params[pm_debit][bank_iban]" id="params_pm_debit_bank_iban" value="<?php print $params['bank_iban']?>" aria-label="<?php echo Text::_('JSHOP_IBAN')?>"/>
      </td>
    </tr>
    <tr>
@@ -32,7 +32,7 @@ defined('_JEXEC') or die();
        <?php echo Text::_('JSHOP_BIC_BIC')?>
      </td>
      <td>
-       <input type="text" class="inputbox" name="params[pm_debit][bank_bic]" id="params_pm_debit_bank_bic" value="<?php print $params['bank_bic']?>"/>
+       <input type="text" class="inputbox" name="params[pm_debit][bank_bic]" id="params_pm_debit_bank_bic" value="<?php print $params['bank_bic']?>" aria-label="<?php echo Text::_('JSHOP_BIC_BIC')?>"/>
      </td>
    </tr>
    <tr>
@@ -40,7 +40,7 @@ defined('_JEXEC') or die();
        <?php echo Text::_('JSHOP_BANK')?>
      </td>
      <td>
-       <input type="text" class="inputbox" name="params[pm_debit][bank]" id="params_pm_debit_bank" value="<?php print $params['bank']?>"/>
+       <input type="text" class="inputbox" name="params[pm_debit][bank]" id="params_pm_debit_bank" value="<?php print $params['bank']?>" aria-label="<?php echo Text::_('JSHOP_BANK')?>"/>
      </td>
    </tr>
 </table>

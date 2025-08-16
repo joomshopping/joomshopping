@@ -291,13 +291,14 @@ class ProductTable extends MultilangTable{
         }
     }
 
-    function getListFreeAttributes(){
+    function getListFreeAttributes($publish = 1){
         $lang = JSFactory::getLang();
         $db = Factory::getDBO();
+        $where = $publish ? " AND FA.publish=1" : "";
         $query = "SELECT FA.id, FA.required, FA.`".$lang->get("name")."` as name, FA.`".$lang->get("description")."` as description, FA.type
 				  FROM `#__jshopping_products_free_attr` as PFA
 				  left Join `#__jshopping_free_attr` as FA on FA.id=PFA.attr_id
-                  WHERE PFA.product_id=".(int)$this->product_id." AND FA.publish=1 order by FA.ordering";
+                  WHERE PFA.product_id=".(int)$this->product_id." $where order by FA.ordering";
         $db->setQuery($query);
         $this->freeattributes = $db->loadObJectList();
         return $this->freeattributes;

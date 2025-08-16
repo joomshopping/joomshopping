@@ -117,7 +117,7 @@ $countprod=count($this->products);
 				<?php if ($prod['not_qty_update']){?>
 					<span class="qtyval"><?php print $prod['quantity'] ?></span>
 				<?php }else{?>
-					<input type="number" name="quantity[<?php print $key_id ?>]" value="<?php print $prod['quantity'] ?>" class="inputbox" min="0">
+					<input type="number" name="quantity[<?php print $key_id ?>]" value="<?php print $prod['quantity'] ?>" class="inputbox" min="0" aria-label="quantity">
 				<?php }?>
                 <?php print $prod['_qty_unit']; ?>
 				<?php if (!$prod['not_qty_update']){?>

@@ -28,7 +28,7 @@ $countprod = count($this->products);
             <th class="single_price">
                 <?php print Text::_('JSHOP_SINGLEPRICE')?>
             </th>
-            <th class="remove_to_cart">
+            <th class="remove_to_cart" aria-label="remove">
             </th>
         </tr>
         <?php

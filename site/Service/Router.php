@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.0 17.10.2024
+* @version      5.8.1 15.07.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -110,7 +110,7 @@ class Router extends \Joomla\CMS\Component\Router\RouterBase{
 		if ($controller=="product" && $query['task']=="view" && isset($query['category_id']) && isset($query['product_id'])){
 			$prodalias = JSFactory::getAliasProduct($lang);
 			$catalias = JSFactory::getAliasCategory($lang);
-			if (isset($categoryitemidlist[$query['category_id']]) && $categoryitemidlist[$query['category_id']]==$query['Itemid'] && isset($prodalias[$query['product_id']])){
+			if (isset($categoryitemidlist[$query['category_id']]) && isset($query['Itemid']) && $categoryitemidlist[$query['category_id']]==$query['Itemid'] && isset($prodalias[$query['product_id']])){
 				unset($query['controller']);
 				unset($query['category_id']);
 				unset($query['task']);

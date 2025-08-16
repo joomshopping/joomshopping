@@ -279,7 +279,7 @@ class CheckoutModel extends BaseModel{
     return $view->loadTemplate();
     }
     
-	function removeWishlistItemToCart($number_id){
+	function removeWishlistItemToCart($number_id, $delete_from_wl = 1){
 		$jshopConfig = JSFactory::getConfig();
 		$dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeLoadWishlistRemoveToCart', array(&$number_id));
@@ -294,7 +294,9 @@ class CheckoutModel extends BaseModel{
         $cart->load("cart");
 		$qty = $jshopConfig->min_count_order_one_product > 0 ? $jshopConfig->min_count_order_one_product : 1;
         if ($cart->add($prod['product_id'], $qty, $attr, $freeattribut)) {
-            $wishlist->delete($number_id);
+            if ($delete_from_wl) {
+                $wishlist->delete($number_id);
+            }
             $cart->remove_to_cart = 1;
         } else {
             $cart->remove_to_cart = 0;

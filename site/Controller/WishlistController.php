@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 18.12.2023
+* @version      5.8.1 19.07.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -27,7 +27,7 @@ class WishlistController extends BaseController{
     }
 
     function view(){		
-	    $jshopConfig = JSFactory::getConfig();        
+	    $jshopConfig = JSFactory::getConfig();
         $ajax = $this->input->getInt('ajax');
 		$dispatcher = Factory::getApplication();
 		$cartpreview = JSFactory::getModel('cartPreview', 'Site');
@@ -76,7 +76,7 @@ class WishlistController extends BaseController{
         $ajax = $this->input->getInt('ajax');
         $number_id = $this->input->getInt('number_id');
 		
-        $cart = JSFactory::getModel('checkout', 'Site')->removeWishlistItemToCart($number_id);
+        $cart = JSFactory::getModel('checkout', 'Site')->removeWishlistItemToCart($number_id, JSFactory::getConfig()->wishlist_add_to_basket_del_prod);
 		
         if ($ajax){
             print Helper::getOkMessageJson($cart);

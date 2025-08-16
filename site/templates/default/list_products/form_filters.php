@@ -89,11 +89,11 @@ defined('_JEXEC') or die();
                     </div>
                     <div class="controls form-inline d-flex">
                         <span class="input-append">
-                            <input type="text" class="input form-control" name="fprice_from" id="price_from" size="7" placeholder="<?php print Text::_('JSHOP_FROM')?>" value="<?php if ($this->filters['price_from']>0) print $this->filters['price_from']?>" />
+                            <input aria-label="price from" type="text" class="input form-control" name="fprice_from" id="price_from" size="7" placeholder="<?php print Text::_('JSHOP_FROM')?>" value="<?php if ($this->filters['price_from']>0) print $this->filters['price_from']?>" />
                         </span>
                         <span class="price_ftspace mt-2">-</span>
                         <span class="input-append">
-                            <input type="text" class="input form-control" name="fprice_to"  id="price_to" size="7" placeholder="<?php print Text::_('JSHOP_TO')?>" value="<?php if ($this->filters['price_to']>0) print $this->filters['price_to']?>" />
+                            <input aria-label="price to" type="text" class="input form-control" name="fprice_to"  id="price_to" size="7" placeholder="<?php print Text::_('JSHOP_TO')?>" value="<?php if ($this->filters['price_to']>0) print $this->filters['price_to']?>" />
                         </span>
                     </div>
 

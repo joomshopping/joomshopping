@@ -313,7 +313,7 @@ class ProductsController extends BaseadminController{
         if ($jshopConfig->admin_show_freeattributes){
             $_freeattributes = JSFactory::getModel("freeattribut");
             $listfreeattributes = $_freeattributes->getAll();
-            $activeFreeAttribute = $product->getListFreeAttributes();
+            $activeFreeAttribute = $product->getListFreeAttributes(0);
             $listIdActiveFreeAttribute = [];
             foreach($activeFreeAttribute as $_obj){
                 $listIdActiveFreeAttribute[] = $_obj->id;

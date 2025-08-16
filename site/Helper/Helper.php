@@ -563,8 +563,14 @@ class Helper{
         return $fullurl;
     }
 
-    public static function compareX64($a,$b){
-    return base64_encode($a)==$b;
+    public static function compareX64($a, $b, $comma_separated = 0){
+        if ($comma_separated) {
+            $vals = base64_decode($b);
+            $items = explode(',', $vals);
+            return in_array($a, $items); 
+        } else {
+            return base64_encode($a)==$b;
+        }
     }
 
     public static function replaceNbsp($string) {
@@ -1283,7 +1289,7 @@ class Helper{
         if ($print==1)
             $html .= '<a onclick="window.print();return false;" href="#" title="'.Text::_('JSHOP_PRINT').'"><img src="'.Uri::root().'components/com_jshopping/images/print.png" alt=""  /></a>';
         else
-            $html .= '<a href="'.$link.$tmpl.'" title="'.Text::_('JSHOP_PRINT').'" onclick="window.open(this.href,\'win2\',\'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no\'); return false;" rel="nofollow"><img src="'.Uri::root().'components/com_jshopping/images/print.png" alt=""  /></a>';
+            $html .= '<a href="'.$link.$tmpl.'" title="'.Text::_('JSHOP_PRINT').'" onclick="window.open(this.href,\'win2\',\'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no\'); return false;" rel="nofollow"><img src="'.Uri::root().'components/com_jshopping/images/print.png" alt="Print"  /></a>';
         $html .= '</div>';
         print $html;
     }

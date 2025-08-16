@@ -12,8 +12,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Mail\MailHelper;
 defined('_JEXEC') or die();
 
-jimport('Joomla.mail.helper');
-
 class UsercheckfieldModel {
 
     private $_error = '';
@@ -69,8 +67,8 @@ class UsercheckfieldModel {
 				throw new \UnexpectedValueException(Text::sprintf('JGLOBAL_EMAIL_DOMAIN_NOT_ALLOWED', $emailDomain));
 			}
 		}
-		
-        return trim($val) != '' && MailHelper::isEmailAddress($val);
+
+		return trim($val) != '' && filter_var($val, FILTER_VALIDATE_EMAIL);
     }
 
     public function password($value){

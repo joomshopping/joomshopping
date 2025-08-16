@@ -143,17 +143,17 @@ class Selects{
 	
 	public static function getDataultProductsOrderingAttribs(){
 		$jshopConfig = JSFactory::getConfig();
-		return 'class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
+		return 'aria-label = "Products Ordering" class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
 	}
 	
 	public static function getDataultProductsCountAttribs(){
 		$jshopConfig = JSFactory::getConfig();
-		return 'class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
+		return 'aria-label = "Products Count" class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
 	}
 	
 	public static function getDataultFilterManufacturerAttribs(){
 		$jshopConfig = JSFactory::getConfig();
-		return 'class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
+		return 'aria-label = "Filter Manufacturer" class = "'.$jshopConfig->frontend_select_class_css.' submit_product_list_filter"';
 	}
 	
 	public static function getDataultFilterCategoryAttribs(){

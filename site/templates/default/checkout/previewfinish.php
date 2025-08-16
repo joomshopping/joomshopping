@@ -78,11 +78,11 @@ defined('_JEXEC') or die;
         <form name="form_finish" action="<?php print $this->action ?>" method="post" <?php if ($this->config->checkout_form_finish_multipart) {?>enctype="multipart/form-data"<?php }?>>
             <div class="pfinish_comment_block">             
                 <div class="name"><?php print Text::_('JSHOP_ADD_INFO')?></div>
-                <div class="field"><textarea class = "inputbox" id = "order_add_info" name = "order_add_info"></textarea></div>
+                <div class="field"><textarea aria-label="add info to order" class = "inputbox" id = "order_add_info" name = "order_add_info"></textarea></div>
 
                 <?php if ($this->config->display_agb){?>                 
                     <div class="row_agb">            
-                        <input type = "checkbox" name="agb" id="agb" />        
+                        <input type = "checkbox" name="agb" id="agb" aria-label="Terms of Service and Return policy confirm" />        
                         <a class = "policy" href="#" onclick="window.open('<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=content&task=view&page=agb&tmpl=component', 1);?>','window','width=800, height=600, scrollbars=yes, status=no, toolbar=no, menubar=no, resizable=yes, location=no');return false;"><?php print Text::_('JSHOP_AGB')?></a>
                         <?php print Text::_('JSHOP_AND')?>
                         <a class = "policy" href="#" onclick="window.open('<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=content&task=view&page=return_policy&tmpl=component&cart=1', 1);?>','window','width=800, height=600, scrollbars=yes, status=no, toolbar=no, menubar=no, resizable=yes, location=no');return false;"><?php print Text::_('JSHOP_RETURN_POLICY')?></a>
@@ -92,7 +92,7 @@ defined('_JEXEC') or die;
                 
                 <?php if($this->no_return){?>                
                     <div class="row_no_return">            
-                        <input type = "checkbox" name="no_return" id="no_return" />        
+                        <input type = "checkbox" name="no_return" id="no_return" aria-label="no return" />        
                         <?php print Text::_('JSHOP_NO_RETURN_DESCRIPTION')?>     
                     </div>
                 <?php }?>

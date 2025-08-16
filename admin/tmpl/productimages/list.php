@@ -11,7 +11,7 @@ use Joomla\CMS\Language\Text;
  */
 defined('_JEXEC') or die();
 ?>
-<form action="index.php?option=com_jshopping&controller=productimages&task=display&tmpl=component" method="post">
+<form action="<?php echo $this->action?>" method="post">
     <div class="js-stools clearfix jshop_block_filter mb-3 sticky-top py-1" style="background-color: var(--body-bg);">
         <div class="js-stools-container-bar">
             <div class="btn-toolbar" role="toolbar">
@@ -37,7 +37,7 @@ defined('_JEXEC') or die();
             <div class="col">
                 <div class="card border border-secondary h-100">
 					<?php
-					$img_url     = $this->config->image_product_live_path . '/thumb_' . $file;
+					$img_url     = $this->img_live_path . $file;
 					$img_attribs = [
 						'class'   => 'img-fluid select-image',
 						'loading' => 'lazy',
