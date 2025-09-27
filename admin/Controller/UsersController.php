@@ -119,6 +119,8 @@ class UsersController extends BaseadminController{
         $tmp_fields = $jshopConfig->getListFieldsRegister();
         $config_fields = $tmp_fields['editaccount'];
         $count_filed_delivery = $jshopConfig->getEnableDeliveryFiledRegistration('editaccount');
+        $user->birthday = Helper::dateOrNull($user->birthday);
+        $user->d_birthday = Helper::dateOrNull($user->d_birthday);
 		
         $view=$this->getView("users", 'html');
         $view->setLayout("edit");
@@ -142,6 +144,7 @@ class UsersController extends BaseadminController{
     
     function get_userinfo(){
         $db = Factory::getDBO();
+		$jshopConfig = JSFactory::getConfig();
         $id = $this->input->getInt('user_id');
         $copy_delivery_adress = $this->input->getInt('copy_empty_delivery_adress') ?? '0';
         if (!$id){
@@ -151,6 +154,14 @@ class UsersController extends BaseadminController{
         $query = 'SELECT * FROM `#__jshopping_users` WHERE `user_id`='.(int)$id;
         $db->setQuery($query);
         $user = $db->loadAssoc();
+            
+        if (Helper::datenull($user['birthday'])) {
+            $user['birthday'] = '';
+        }
+        if (Helper::datenull($user['d_birthday'])) {
+            $user['d_birthday'] = '';
+        }
+
         if ($copy_delivery_adress && !$user['delivery_adress']) {
             $user['d_title'] = $user['title'];
             $user['d_f_name'] = $user['f_name'];

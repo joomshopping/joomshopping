@@ -1542,6 +1542,10 @@ class Helper{
             return substr($date,0,1) == false;
         }
     }
+    
+    public static function dateOrNull($date){
+        return self::datenull($date) ? null : $date;
+    }
 
     public static function prepareDateToSaveDb($date, $date_format = null){
         if (isset($date)){

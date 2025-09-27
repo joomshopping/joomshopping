@@ -64,6 +64,9 @@ class CheckoutController extends BaseController{
 
         Helper::filterHTMLSafe($adv_user, ENT_QUOTES);
 
+        $adv_user->birthday = Helper::dateOrNull($adv_user->birthday);    
+        $adv_user->d_birthday = Helper::dateOrNull($adv_user->d_birthday);
+
         $view = $this->getView("checkout");
         $view->setLayout("adress");
         $view->set('select', $jshopConfig->user_field_title);

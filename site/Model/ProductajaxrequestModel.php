@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.8.2 15.09.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -71,6 +71,7 @@ class ProductAjaxRequestModel  extends BaseModel{
 		
 		$product = $this->product;
 		$product->load($this->product_id);
+        $product->_val['qty'] = $this->qty;
 		$dispatcher->triggerEvent('onBeforeLoadDisplayAjaxAttrib2', array(&$product));
 		
 		$attributes = $product->getInitLoadAttribute($this->attribs, $this->displayonlyattrtype);
@@ -89,7 +90,9 @@ class ProductAjaxRequestModel  extends BaseModel{
         $manufacturer_code = $product->getManufacturerCode();
         $real_ean = $product->getRealEan();
         $weight = Helper::formatweight($product->getWeight());
-        $basicprice = Helper::formatprice($product->getBasicPrice());
+        if ($jshopConfig->admin_show_product_basic_price){
+            $basicprice = Helper::formatprice($product->getBasicPrice());
+        }
         
         $rows['price'] = $price;
         $rows['pricefloat'] = $pricefloat;
@@ -129,6 +132,9 @@ class ProductAjaxRequestModel  extends BaseModel{
         if ($jshopConfig->hide_delivery_time_out_of_stock){
             $rows['showdeliverytime'] = $product->getDeliveryTimeId();
         }
+        if ($product->_val['used_discount_in_att_price'] ?? 0) {
+            $rows['used_discount_in_att_price'] = 1;
+        }
         
         if ($jshopConfig->use_extend_attribute_data){
             $template_path = $jshopConfig->template_path.$jshopConfig->template."/product";
@@ -159,7 +165,8 @@ class ProductAjaxRequestModel  extends BaseModel{
                 $view->setLayout("block_image_thumb");
                 $view->set('config', $jshopConfig);            
                 $view->set('images', $images);            
-                $view->set('videos', $videos);            
+                $view->set('videos', $videos);
+                $view->set('product', $product);
                 $view->set('image_product_path', $jshopConfig->image_product_live_path);            
                 $dispatcher->triggerEvent('onBeforeDisplayProductViewBlockImageThumb', array(&$view));
                 $block_image_thumb = $view->loadTemplate();

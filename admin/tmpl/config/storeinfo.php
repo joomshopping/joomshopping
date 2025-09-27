@@ -288,7 +288,7 @@ HTMLHelper::_('bootstrap.tooltip');
   </div>
 </div>
 
-
+<?php if ($jshopConfig->generate_pdf) { ?>
 <div class="card jshop_edit">
 <h3 class="card-header bg-primary text-white"><?php echo Text::_('JSHOP_PDF_CONFIG')?></h3>
   <div class="card-body">
@@ -362,6 +362,7 @@ HTMLHelper::_('bootstrap.tooltip');
 
   </div>
 </div>
+<?php } ?>
 
 <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
 <?php print $this->tmp_html_end?>

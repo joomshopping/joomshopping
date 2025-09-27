@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.7.0 13.05.2025
+* @version      5.8.2 13.09.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -42,7 +42,7 @@ class ProductsModel extends BaseadminModel{
         if (isset($filter['category_id']) && $filter['category_id']){
             $category_id = $filter['category_id'];
             if ($category_id > 0) {
-                $where .= " AND pr_cat.category_id = ".$db->q($filter['category_id'])." ";
+               $where .= " AND pr_cat.category_id = ".$db->q(intval($filter['category_id']))." ";
             }
             if ($category_id == -9) {
                 $where .= " AND pr_cat.category_id IS NULL ";

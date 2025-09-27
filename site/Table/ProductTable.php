@@ -263,6 +263,7 @@ class ProductTable extends MultilangTable{
                     $actived[$attr_id] = $selected[$attr_id];
                 }
             }
+            $app->triggerEvent('onForeachGetAttributesDatas', array(&$allAttribute, &$attr_id, &$actived, &$data, &$selected, &$obj));
         }
         if (Cart::hasAllAttributeRequired($requireAttribute, $actived)) {
             $data['attributeActive'] = $actived;
@@ -717,21 +718,17 @@ class ProductTable extends MultilangTable{
         $this->product_price_calculate = $this->getPriceWithParams();
         $obj = $this;
         $app->triggerEvent('onBeforeCalculatePriceProduct', array(&$quantity, &$enableCurrency, &$enableUserDiscount, &$enableParamsTax, &$obj, &$cartProduct));
-
         $this->product_add_prices = $this->getAddPrices();
         if ($quantity) {
-            foreach($this->product_add_prices as $key=>$value){
-                if (($quantity >= $value->product_quantity_start && $quantity <= $value->product_quantity_finish) || ($quantity >= $value->product_quantity_start && $value->product_quantity_finish==0)){
-                    $this->product_price_calculate = $value->price;
-					$this->product_price_wp = $value->price_wp;
-                }
+            if ($value = $this->getValInTableDiscount($this->product_add_prices, $quantity)){
+                $this->product_price_calculate = $value->price;
+				$this->product_price_wp = $value->price_wp;
             }
         }
 
         if ($enableCurrency){
             $this->product_price_calculate = Helper::getPriceFromCurrency($this->product_price_calculate, $this->currency_id);
 			$this->product_price_wp = Helper::getPriceFromCurrency($this->product_price_wp, $this->currency_id);
-
         }
 
         if ($enableParamsTax){
@@ -764,6 +761,7 @@ class ProductTable extends MultilangTable{
         $JshopConfig = JSFactory::getConfig();
         $units = JSFactory::getAllUnits();
         $unit = $units[$this->basic_price_unit_id];
+        if (!isset($unit)) return 0;
         if ($JshopConfig->calc_basic_price_from_product_price){
             $this->product_basic_price_wvu = $this->weight_volume_units;
         }else{
@@ -816,12 +814,19 @@ class ProductTable extends MultilangTable{
         return $this->product_basic_price_unit_name ?? '';
     }
 
+    function getAddPricesOrigin() {
+        if (!isset($this->_product_add_prices_orig)) {
+            $productprice = JSFactory::getTable('productprice');
+            $this->_product_add_prices_orig = $productprice->getAddPrices($this->product_id);
+        }
+        return $this->_product_add_prices_orig;
+    }
+
     function getAddPrices(){
         $this->product_add_prices = [];
         if ($this->product_is_add_price) {
             $JshopConfig = JSFactory::getConfig();
-            $productprice = JSFactory::getTable('productprice');
-            $this->product_add_prices = $productprice->getAddPrices($this->product_id);
+            $this->product_add_prices = $this->getAddPricesOrigin();
             $price = $this->product_price_calculate;
             $price_wp = $this->product_price_wp;
             foreach($this->product_add_prices as $k=>$v){
@@ -1054,11 +1059,18 @@ class ProductTable extends MultilangTable{
 
     function getBuildSelectAttributesOptions($attr_values){
         $JshopConfig = JSFactory::getConfig();
+        if ($this->product_is_add_price && $JshopConfig->product_price_qty_discount != 1) {
+            $_dicount = $this->getValInTableDiscount($this->getAddPricesOrigin(), $this->_val['qty'] ?? 1);
+        }
         $options = [];
         foreach($attr_values as $k2=>$v2){
             $options[$k2] = clone $v2;
             $attrimage[$v2->val_id] = $v2->image;
             $addPrice = isset($v2->addprice) ? $v2->addprice : 0;
+            if (isset($_dicount->discount)) {
+                $addPrice = Helper::getPriceDiscount($addPrice, $_dicount->discount);
+                $this->_val['used_discount_in_att_price'] = 1;
+            }
             $addPrice = Helper::getPriceFromCurrency($addPrice, $this->currency_id);
             $addPrice = Helper::getPriceCalcParamsTax($addPrice, $this->product_tax_id);
             if ($this->_product_user_percent_discount){
@@ -1138,5 +1150,15 @@ class ProductTable extends MultilangTable{
 			return 1;
 		}
 	}
+
+    protected function getValInTableDiscount($list_discount, $qty) {
+        $res = null;
+        foreach($list_discount as $v){
+            if (($qty >= $v->product_quantity_start && $qty <= $v->product_quantity_finish) || ($qty >= $v->product_quantity_start && $v->product_quantity_finish==0)){
+                $res = $v;
+            }
+        }
+        return $res;
+    }
 
 }

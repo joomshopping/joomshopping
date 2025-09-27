@@ -269,7 +269,10 @@ class UserController extends BaseController{
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayEditUser', array(&$adv_user));
         
-        Helper::filterHTMLSafe( $adv_user, ENT_QUOTES);      
+        Helper::filterHTMLSafe( $adv_user, ENT_QUOTES);
+    
+        $adv_user->birthday = Helper::dateOrNull($adv_user->birthday);    
+        $adv_user->d_birthday = Helper::dateOrNull($adv_user->d_birthday);
 
         $view = $this->getView('user');
         $view->setLayout("editaccount");        

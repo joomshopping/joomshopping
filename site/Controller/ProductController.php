@@ -49,6 +49,7 @@ class ProductController extends BaseController{
 
         $dispatcher->triggerEvent('onBeforeLoadProduct', array(&$product_id, &$category_id, &$back_value));
         $dispatcher->triggerEvent('onBeforeLoadProductList', array());
+        $default_count_product = $model->getDefaultCountProduct($back_value);
 
         $product = JSFactory::getTable('product');
         $product->load($product_id);
@@ -65,7 +66,7 @@ class ProductController extends BaseController{
 		
         $listcategory = $model->getCategories(1);
 		
-		$model->prepareView($back_value);
+		$model->prepareView($back_value, $default_count_product);
 		$model->clearBackValue();
 		
 		$attributes = $model->getAttributes();
@@ -83,13 +84,12 @@ class ProductController extends BaseController{
         Metadata::product($category, $product);
         
         $product->hit();
-        		
+
 		$allow_review = $model->getAllowReview();
 		$text_review = $model->getTextReview();
 
-        $hide_buy = $model->getHideBuy();        
+        $hide_buy = $model->getHideBuy();
         $available = $model->getTextAvailable();
-		$default_count_product = $model->getDefaultCountProduct($back_value);
         $displaybuttons = $model->getDisplayButtonsStyle();
         $product_images = $product->getImages();
         $product_videos = $product->getVideos();

@@ -821,6 +821,14 @@ var jshopAdminClass = function(){
     this.setBillingShippingFields = function(user){
         for(var field in user){
             jQuery(".jshop_address [name='" + field + "']").val(user[field]);
+            if (field=='birthday' || field=='d_birthday') {
+                var el = document.querySelector(".jshop_address [name='"+field+"']").closest(".field-calendar");
+                var calendar = el && el._joomlaCalendar;                
+                if (calendar) {
+                    calendar.setDate(new Date(user[field]));
+                    calendar.callHandler();
+                }
+            }
         }
     };
 
@@ -1332,4 +1340,31 @@ jQuery(document).ready(function(){
         jshopAdmin.toggleOrderEditShippingSelect(); 
     });    
 
+    jQuery('.jshop_edit .override_view').on('click', function(event) {
+        event.preventDefault();            
+        var addonName = jQuery(this).data('alias');
+        var fileType = jQuery(this).data('type');
+        var folder = jQuery(`input[name="config[folder_overrides_${fileType}]"]`).val();
+
+        jQuery.ajax({
+            url: 'index.php?option=com_jshopping&controller=addons&task=override',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                alias: addonName,
+                folder: folder,
+                type: fileType
+            },
+            success: function(response) {
+                if (!response.success) {
+                    alert('❌ ' + response.message);
+                } else {
+                    alert('✅ ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('AJAX error: ' + error);
+            }
+        });
+    });
 });

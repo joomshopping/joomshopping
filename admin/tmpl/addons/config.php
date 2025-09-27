@@ -3,7 +3,7 @@
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 /**
-* @version      5.6.3 08.03.2025
+* @version      5.8.2 08.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -46,9 +46,18 @@ defined('_JEXEC') or die();
                 <?php echo Text::_('JSHOP_FOLDER_OVERRIDES')?> (view)
             </td>
             <td>
-                <input type="text" class="form-control w-100" name="config[folder_overrides_view]" value="<?php echo $this->config['folder_overrides_view'] ?? ''?>">
-                <div class="small"><?php echo Text::_('JSHOP_DEFAULT').": ".$this->def_folder_view?></div>
-                <div class="small"><?php echo Text::_('JSHOP_DEFAULT').' '.Text::_('JSHOP_FOLDER_OVERRIDES').": ".$this->def_overrides_view?></div>
+                <div class="d-flex justify-content-between">
+                    <div class="flex-grow-1">
+                        <input type="text" class="form-control w-100" name="config[folder_overrides_view]" value="<?php echo $this->config['folder_overrides_view'] ?? ''?>">
+                        <div class="small"><?php echo Text::_('JSHOP_DEFAULT').": ".$this->def_folder_view?></div>
+                        <div class="small"><?php echo Text::_('JSHOP_DEFAULT').' '.Text::_('JSHOP_FOLDER_OVERRIDES').": ".$this->def_overrides_view?></div>
+                    </div>
+                    <div class="ms-3">
+                        <a class="btn btn-success override_view" href="#" data-type="view" data-alias="<?php echo $this->row->alias;?>" style="width:180px;">
+                            <span class="icon-new" aria-hidden="true"></span> <?php echo Text::_('JSHOP_CREATE_OVERRIDE')?>
+                        </a>
+                    </div>
+                </div>
             </td>
         </tr>
         <tr>
@@ -56,9 +65,18 @@ defined('_JEXEC') or die();
                 <?php echo Text::_('JSHOP_FOLDER_OVERRIDES')?> (js)
             </td>
             <td>
-                <input type="text" class="form-control w-100" name="config[folder_overrides_js]" value="<?php echo $this->config['folder_overrides_js'] ?? ''?>">
-                <div class="small"><?php echo Text::_('JSHOP_DEFAULT').": ".$this->def_folder_js?></div>
-                <div class="small"><?php echo Text::_('JSHOP_DEFAULT').' '.Text::_('JSHOP_FOLDER_OVERRIDES').": ".$this->def_overrides_js?></div>
+                <div class="d-flex justify-content-between">
+                    <div class="flex-grow-1">
+                        <input type="text" class="form-control w-100" name="config[folder_overrides_js]" value="<?php echo $this->config['folder_overrides_js'] ?? ''?>">
+                        <div class="small"><?php echo Text::_('JSHOP_DEFAULT').": ".$this->def_folder_js?></div>
+                        <div class="small"><?php echo Text::_('JSHOP_DEFAULT').' '.Text::_('JSHOP_FOLDER_OVERRIDES').": ".$this->def_overrides_js?></div>
+                    </div>
+                    <div class="ms-3">
+                        <a class="btn btn-success override_view" href="#" data-type="js" data-alias="<?php echo $this->row->alias;?>" style="width:180px;">
+                            <span class="icon-new" aria-hidden="true"></span> <?php echo Text::_('JSHOP_CREATE_OVERRIDE')?>
+                        </a>
+                    </div>
+                </div>               
             </td>
         </tr>
         <tr>
@@ -66,9 +84,18 @@ defined('_JEXEC') or die();
                 <?php echo Text::_('JSHOP_FOLDER_OVERRIDES')?> (css)
             </td>
             <td>
-                <input type="text" class="form-control w-100" name="config[folder_overrides_css]" value="<?php echo $this->config['folder_overrides_css'] ?? ''?>">
-                <div class="small"><?php echo Text::_('JSHOP_DEFAULT').": ".$this->def_folder_css?></div>
-                <div class="small"><?php echo Text::_('JSHOP_DEFAULT').' '.Text::_('JSHOP_FOLDER_OVERRIDES').": ".$this->def_overrides_css?></div>
+                <div class="d-flex justify-content-between">
+                    <div class="flex-grow-1">
+                        <input type="text" class="form-control w-100" name="config[folder_overrides_css]" value="<?php echo $this->config['folder_overrides_css'] ?? ''?>">
+                        <div class="small"><?php echo Text::_('JSHOP_DEFAULT').": ".$this->def_folder_css?></div>
+                        <div class="small"><?php echo Text::_('JSHOP_DEFAULT').' '.Text::_('JSHOP_FOLDER_OVERRIDES').": ".$this->def_overrides_css?></div>  
+                    </div>
+                    <div class="ms-3">
+                        <a class="btn btn-success override_view" href="#" data-type="css" data-alias="<?php echo $this->row->alias;?>" style="width:180px;">
+                            <span class="icon-new" aria-hidden="true"></span> <?php echo Text::_('JSHOP_CREATE_OVERRIDE')?>
+                        </a>
+                    </div>
+                </div>                
             </td>
         </tr>
 

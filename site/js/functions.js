@@ -211,6 +211,9 @@ var jshopClass = function(){
             data,
             function(json){
                 var reload_atribut = 0;
+                if (json.used_discount_in_att_price) {
+                    reload_atribut = 1;
+                }
                 for(var i=0;i<jshopParams.attr_list.length;i++){
                     var id = jshopParams.attr_list[i];
                     if (reload_atribut){

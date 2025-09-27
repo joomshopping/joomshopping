@@ -8,10 +8,12 @@
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
 
+use Exception;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Response\JsonResponse;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
@@ -176,6 +178,33 @@ class AddonsController extends BaseadminController{
 
     public function back(){
         $this->setRedirect("index.php?option=com_jshopping&controller=addons");
+    }
+
+    public function override() {
+        $app = Factory::getApplication();        
+        $input = $app->input;        
+        $alias = $input->getString('alias');
+        $customFolder = $input->getString('folder');
+        $fileType = $input->getString('type');
+        $model = JSFactory::getModel('addonsoverride');
+        try {
+            switch ($fileType) {
+                case 'view':
+                    $result = $model->overrideView($alias, $customFolder);
+                    break;
+                case 'js':
+                case 'css':
+                    $result = $model->overrideJsOrCss($alias, $customFolder, $fileType);
+                    break;
+                default:
+                    throw new Exception("Invalid file type: $fileType");
+                    return;            
+            }
+            echo new JsonResponse($result, "Override $fileType completed successfully.");
+        } catch (Exception $e) {
+            echo new JsonResponse(null, $e->getMessage(), true);
+        }
+        $app->close();
     }
 
 }

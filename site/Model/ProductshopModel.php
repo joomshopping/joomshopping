@@ -91,11 +91,12 @@ class ProductShopModel extends BaseModel{
 		return $this->product->getCategories(1);
 	}
 	
-	public function prepareView($back_value = array()){
+	public function prepareView($back_value = array(), $default_count_product = 1){
 		$jshopConfig = JSFactory::getConfig();
 		$product = $this->product;
         $product->product_price_default = 0;
-		
+		$product->_val['qty'] = $default_count_product;
+
 		if (!Helper::getDisplayPriceForProduct($product->product_price)){
             $jshopConfig->attr_display_addprice = 0;
         }
@@ -110,7 +111,7 @@ class ProductShopModel extends BaseModel{
             $this->all_attr_values = array();
         }
 		
-		$product->getExtendsData($back_value['qty'] ?? 1);
+		$product->getExtendsData($back_value['qty'] ?? $default_count_product);
 		
 		$product->product_basic_price_unit_qty = 1;
         if ($jshopConfig->admin_show_product_basic_price){
@@ -125,9 +126,9 @@ class ProductShopModel extends BaseModel{
 		
 		$_review = JSFactory::getTable('review');
 		$this->allow_review = $_review->getAllowReview();
-        if ($this->allow_review > 0){            
-            $this->text_review = '';            
-        } else {            
+        if ($this->allow_review > 0){
+            $this->text_review = '';
+        } else {
             $this->text_review = $_review->getText();
         }
 		

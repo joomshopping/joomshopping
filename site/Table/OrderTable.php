@@ -77,7 +77,11 @@ class OrderTable extends ShopbaseTable{
                   WHERE history.order_id = '" . $db->escape($this->order_id) . "'
                   ORDER BY history.status_date_added";
         $db->setQuery($query);
-        return $db->loadObJectList();
+        $list = $db->loadObJectList();
+        foreach ($list as $item) {
+            $item->comments = $item->comments ? $item->comments : '';
+        }
+        return $list;
     }
 
     function getStatusTime(){
