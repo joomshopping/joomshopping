@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.4 26.02.2023
+* @version      5.8.3 28.10.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,14 +17,18 @@ class AttributValueTable extends MultilangTable{
         parent::__construct('#__jshopping_attr_values', 'value_id', $_db);
     }
     
-    function getAllValues($attr_id, $ordering = null) {
+    function getAllValues($attr_id, $ordering = null, $filter = []) {
         $db = Factory::getDBO(); 
         $lang = JSFactory::getLang();
         if (!isset($ordering)) {
             $ordering = 'value_ordering, value_id';
         }
+        $where = '';
+        if (isset($filter['publish'])) {
+            $where .= ' AND `publish`='.$db->q($filter['publish']);
+        }
         $query = "SELECT value_id, image, `".$lang->get("name")."` as name, value_ordering, attr_id FROM `#__jshopping_attr_values` "
-                . "where attr_id=".(int)$attr_id." ORDER BY ".$ordering;
+                . "where attr_id=".(int)$attr_id." ".$where." ORDER BY ".$ordering;
         $db->setQuery($query);
         return $db->loadObJectList();
     }
@@ -35,10 +39,15 @@ class AttributValueTable extends MultilangTable{
     * 
     * @param mixed $resulttype
     */
-    function getAllAttributeValues($resulttype=0){
+    function getAllAttributeValues($resulttype=0, $filter = []){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();
-        $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering FROM `#__jshopping_attr_values` ORDER BY value_ordering, value_id";
+        $where = '';
+        if (isset($filter['publish'])) {
+            $where .= ' AND `publish`='.$db->q($filter['publish']);
+        }
+        $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering 
+        FROM `#__jshopping_attr_values` WHERE 1 ".$where." ORDER BY value_ordering, value_id";
         $db->setQuery($query);
         $attribs = $db->loadObJectList();
 

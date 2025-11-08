@@ -73,7 +73,11 @@ class AddonsController extends BaseadminController{
     }
     
     public function save(){
-		$post = $this->input->post->getArray(array(), null, 'RAW');
+		$post = $this->input->post->getArray();
+        $params = $this->input->post->get('params', null, 'RAW');
+        if (isset($params)) {
+            $post['params'] = $params;
+        }
 	 	if (isset($post['f-id'])){
 	    	$post['id'] = $post['f-id'];
         	unset($post['f-id']);

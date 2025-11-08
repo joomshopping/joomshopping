@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.3 30.05.2024
+* @version      5.8.3 11.10.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -777,9 +777,11 @@ class Helper{
             $products[$key]->product_price_wp = self::getPriceCalcParamsTax($products[$key]->product_price_wp, $products[$key]->tax_id);
 
             if ($products[$key]->user_discount && $use_userdiscount){
-                $products[$key]->product_price_default = $products[$key]->_original_product_price;
-                $products[$key]->product_price_default = self::getPriceFromCurrency($products[$key]->product_price_default, $products[$key]->currency_id);
-                $products[$key]->product_price_default = self::getPriceCalcParamsTax($products[$key]->product_price_default, $products[$key]->tax_id);
+                if ($products[$key]->user_discount > 0) {
+                    $products[$key]->product_price_default = $products[$key]->_original_product_price;
+                    $products[$key]->product_price_default = self::getPriceFromCurrency($products[$key]->product_price_default, $products[$key]->currency_id);
+                    $products[$key]->product_price_default = self::getPriceCalcParamsTax($products[$key]->product_price_default, $products[$key]->tax_id);
+                }
 
                 $products[$key]->product_price = self::getPriceDiscount($products[$key]->product_price, $products[$key]->user_discount);
                 $products[$key]->product_old_price = self::getPriceDiscount($products[$key]->product_old_price, $products[$key]->user_discount);

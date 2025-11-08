@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version      5.0.0 15.09.2018
+ * @version      5.8.3 15.10.2025
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,7 +16,7 @@ defined('_JEXEC') or die();
 
 class BaseController extends \Joomla\CMS\MVC\Controller\BaseController {
 
-    public function __construct($config = array(), \Joomla\CMS\MVC\Factory\MVCFactoryInterface $factory = null, $app = null, $input = null) {
+    public function __construct($config = array(), $factory = null, $app = null, $input = null) {
         parent::__construct($config, $factory, $app, $input);
         $this->init();
     }

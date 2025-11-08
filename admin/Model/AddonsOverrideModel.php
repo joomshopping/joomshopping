@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version      5.7.0 01.03.2025
+ * @version      5.8.3 01.03.2025
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,8 +12,8 @@ namespace Joomla\Component\Jshopping\Administrator\Model;
 
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
 
 defined('_JEXEC') or die();
 

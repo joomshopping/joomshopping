@@ -91,6 +91,7 @@ class ConfigController extends BaseadminController{
         $opt[] = HTMLHelper::_('select.option', 'PA.ean', Text::_('JSHOP_EAN_PRODUCT'), 'id','value');
         $opt[] = HTMLHelper::_('select.option', 'PA.count', Text::_('JSHOP_QUANTITY_PRODUCT'), 'id','value');
         $opt[] = HTMLHelper::_('select.option', 'PA.product_attr_id', Text::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'stock_price', Text::_('JSHOP_SORT_STOCK_PRICE'), 'id','value');
         $lists['attribut_dep_sorting_in_product'] = HTMLHelper::_('select.genericlist', $opt, 'attribut_dep_sorting_in_product','class="form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product);
         $lists['attribut_dep_sorting_in_product_dir'] = HTMLHelper::_('select.genericlist', $sortd, 'attribut_dep_sorting_in_product_dir','class="form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product_dir);
         

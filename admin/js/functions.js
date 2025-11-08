@@ -822,11 +822,14 @@ var jshopAdminClass = function(){
         for(var field in user){
             jQuery(".jshop_address [name='" + field + "']").val(user[field]);
             if (field=='birthday' || field=='d_birthday') {
-                var el = document.querySelector(".jshop_address [name='"+field+"']").closest(".field-calendar");
-                var calendar = el && el._joomlaCalendar;                
-                if (calendar) {
-                    calendar.setDate(new Date(user[field]));
-                    calendar.callHandler();
+                var element = document.querySelector(".jshop_address [name='"+field+"']");
+                if (element) {
+                    var el = element.closest(".field-calendar");
+                    var calendar = el && el._joomlaCalendar;                
+                    if (calendar) {
+                        calendar.setDate(new Date(user[field]));
+                        calendar.callHandler();
+                    }
                 }
             }
         }

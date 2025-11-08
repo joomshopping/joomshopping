@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.0 19.04.2025
+* @version      5.8.3 11.10.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -204,7 +204,9 @@ class ProductTable extends MultilangTable{
         if ($allattribs[$attr_id]->independent==0){
             $where = "";
             foreach($other_attr as $k=>$v){
-                $where.=" and PA.attr_".(int)$k."=".(int)$v;
+                if ($v > 0) {
+                    $where.=" and PA.attr_".(int)$k."=".(int)$v;
+                }
             }
             if ($onlyExistProduct) $where.=" and PA.count>0 ";
             $sorting = $jshopConfig->attribut_dep_sorting_in_product;
@@ -212,6 +214,7 @@ class ProductTable extends MultilangTable{
             $dir = $jshopConfig->attribut_dep_sorting_in_product_dir ? 'DESC' : 'ASC';
             if ($sorting=="") $sorting = "V.value_ordering";
 			if ($sorting=="PA.product_attr_id") $sorting = "min(PA.product_attr_id)";
+            if ($sorting=="stock_price") $sorting = '(PA.count<=0) asc, PA.price ';
             $sorting .= ' '.$dir;
             $field = "attr_".(int)$attr_id;
             $query = "SELECT PA.$field as val_id, V.`".$lang->get("name")."` as value_name, V.image
@@ -275,7 +278,7 @@ class ProductTable extends MultilangTable{
     return $data;
     }
 
-	function getInitLoadAttribute($selected = array(), $displayonlyattrtype = null){
+	function getInitLoadAttribute($selected = array(), $displayonlyattrtype = null){        
 		$this->setAttributeSubmitted($selected);
 		$attributesDatas = $this->getAttributesDatas($selected);
 		$this->product_attribute_datas = $attributesDatas;
@@ -737,7 +740,9 @@ class ProductTable extends MultilangTable{
         }
 
         if ($enableUserDiscount && $this->_product_user_percent_discount && $this->getUseUserDiscount()){
-			$this->product_price_default = $this->product_price_calculate;
+            if ($this->_product_user_percent_discount > 0) {
+			    $this->product_price_default = $this->product_price_calculate;
+            }
 			$this->product_price_calculate = Helper::getPriceDiscount($this->product_price_calculate, $this->_product_user_percent_discount);
 			$this->product_price_wp = Helper::getPriceDiscount($this->product_price_wp, $this->_product_user_percent_discount);
         }

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 19.04.2025
+* @version      5.8.3 08.11.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -366,9 +366,11 @@ class OrderTable extends ShopbaseTable{
             if (count($dependent_attr)){
                 $where="";
                 foreach($dependent_attr as $k=>$v){
-                    $where.=" and `attr_".(int)$k."`=".intval($v);
+                    if ($v > 0) {
+                        $where.=" and `attr_".(int)$k."`=".intval($v);
+                    }
                 }
-                $query = "update `#__jshopping_products_attr` set `count`=`count`  ".$change." ".$item->product_quantity." where product_id='".intval($item->product_id)."' ".$where;
+                $query = "update `#__jshopping_products_attr` set `count`=`count`  ".$change." ".$item->product_quantity." where product_id='".intval($item->product_id)."' ".$where." LIMIT 1";
                 $db->setQuery($query);
                 $db->execute();
                 
