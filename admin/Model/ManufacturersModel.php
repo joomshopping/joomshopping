@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.1 14.09.2022
+* @version      5.8.4 15.11.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -29,10 +29,13 @@ class ManufacturersModel extends BaseadminModel{
 
     function getAllManufacturers($publish=0, $order=null, $orderDir=null, $filter = []){
         $db = Factory::getDBO();
-        $lang = JSFactory::getLang();         
+        $lang = JSFactory::getLang();
         $query_where = '';
         if ($publish){
             $query_where .= " AND  manufacturer_publish=1";
+        }
+        if (isset($filter['publish'])) {
+            $query_where .= " AND  manufacturer_publish=".$db->q($filter['publish']);
         }
         if (isset($filter['text_search'])) {
             $word = addcslashes($db->escape($filter['text_search']), "_%");

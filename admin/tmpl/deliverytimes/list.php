@@ -22,9 +22,9 @@ $i=0;
 <form action="index.php?option=com_jshopping&controller=deliverytimes" method="post" name="adminForm" id="adminForm">
 <?php print $this->tmp_html_start?>
 <div class="js-filters">
-    <?php print $this->tmp_html_filter ?? ''?>
+    <?php print $this->tmp_html_filter ?? ''?>    
     <div>
-        <input name="filter[text_search]" value="<?php echo htmlspecialchars($this->filter['text_search'] ?? '');?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
+        <input name="filter[text_search]" value="<?php echo htmlspecialchars($this->ifilter['text_search'] ?? '');?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
     </div>
     <div>
         <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">

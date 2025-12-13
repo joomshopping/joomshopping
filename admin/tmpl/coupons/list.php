@@ -6,7 +6,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.6.3 13.03.2025
+* @version      5.8.4 13.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -27,9 +27,14 @@ $i=0;
 <div class="js-filters">
 
     <?php print $this->tmp_html_filter?>
-
     <div>
-        <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
+        <?php print $this->filterinput['publish']?>
+    </div>
+    <div>
+        <?php print $this->filterinput['used']?>
+    </div>
+    <div>
+        <input name="filter[text_search]" value="<?php echo htmlspecialchars($this->ifilter['text_search'] ?? '');?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
     </div>
     <div>
         <span class="input-group-append">

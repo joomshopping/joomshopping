@@ -1,0 +1,1 @@
+ALTER TABLE `#__jshopping_products_images` ADD `attrs` varchar(255) NOT NULL default '';

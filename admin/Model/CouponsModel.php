@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.3 15.09.2018
+* @version      5.8.4 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -19,23 +19,33 @@ class CouponsModel extends BaseadminModel{
     protected $tableFieldPublish = 'coupon_publish';
 
 	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
-		return $this->getAllCoupons($limit['limitstart'] ?? 0, $limit['limit'] ?? 0,$orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters['text_search'] ?? '');
+		return $this->getAllCoupons($limit['limitstart'] ?? 0, $limit['limit'] ?? 0,$orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
 	}
 
 	public function getCountItems(array $filters = [], array $params = []) {
-		return $this->getCountCoupons($filters['text_search'] ?? '');
+		return $this->getCountCoupons($filters);
 	}
 
-    function getAllCoupons($limitstart, $limit, $order = null, $orderDir = null, $text_search = "") {
+    function getAllCoupons($limitstart, $limit, $order = null, $orderDir = null, $filter = []) {
         $db = Factory::getDBO(); 
         $queryorder = 'ORDER BY C.used, C.coupon_id desc';
         if ($order && $orderDir){
             $queryorder = "ORDER BY ".$order." ".$orderDir;
         }
         $where = "";
-        if ($text_search){
-            $search = $db->escape($text_search);
+        if (isset($filter['text_search'])) {
+            $search = $db->escape($filter['text_search']);
             $where .= " and (C.coupon_code like '%".$search."%' or U.u_name like '%".$search."%' or U.f_name like '%".$search."%' or U.l_name like '%".$search."%' or U.email like '%".$search."%' ) ";
+        }
+        if (isset($filter['publish'])) {
+            $where .= ' AND coupon_publish='.$db->q($filter['publish']);
+        }
+        if (isset($filter['used'])) {
+            if ($filter['used']) {
+                $where .= ' AND C.used > 0 ';
+            } else {
+                $where .= ' AND C.used=0 ';
+            }
         }
         $query = "SELECT C.*, U.f_name, U.l_name  FROM `#__jshopping_coupons` as C "
                 . "left join #__jshopping_users as U on C.for_user_id=U.user_id "
@@ -54,12 +64,22 @@ class CouponsModel extends BaseadminModel{
         return $list;
     }
     
-    function getCountCoupons($text_search=""){
+    function getCountCoupons($filter = []){
         $db = Factory::getDBO();
         $where = "";
-        if ($text_search){
-            $search = $db->escape($text_search);
+        if (isset($filter['text_search'])) {
+            $search = $db->escape($filter['text_search']);
             $where .= " and (C.coupon_code like '%".$search."%' or U.u_name like '%".$search."%' or U.f_name like '%".$search."%' or U.l_name like '%".$search."%' or U.email like '%".$search."%' ) ";
+        }
+        if (isset($filter['publish'])) {
+            $where .= ' AND coupon_publish='.$db->q($filter['publish']);
+        }
+        if (isset($filter['used'])) {
+            if ($filter['used']) {
+                $where .= ' AND C.used > 0 ';
+            } else {
+                $where .= ' AND C.used=0 ';
+            }
         }
         $query = "SELECT count(C.coupon_id) FROM `#__jshopping_coupons` as C "
                 . "left join #__jshopping_users as U on C.for_user_id=U.user_id "

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 26.02.2024
+* @version      5.8.4 17.11.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,7 +22,7 @@ class ProductfieldsModel extends BaseadminModel{
 		return $this->getList($params['groupordering'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters, $params['printCatName'] ?? 0);
 	}
 	
-	public function getList($groupordering = 0, $order = null, $orderDir = null, $filter=array(), $printCatName = 0){
+	public function getList($groupordering = 0, $order = null, $orderDir = null, $filter=array(), $printCatName = 0, $params = []){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();
         $ordering = "F.ordering";
@@ -41,6 +41,9 @@ class ProductfieldsModel extends BaseadminModel{
             $text_search = $filter['text_search'];
             $word = addcslashes($db->escape($text_search), "_%");
             $_where[]=  "(LOWER(F.`".$lang->get('name')."`) LIKE '%" . $word . "%' OR LOWER(F.`".$lang->get('description')."`) LIKE '%" . $word . "%' OR F.id LIKE '%" . $word . "%')";
+        }
+        if (isset($filter['publish'])) {
+            $_where[] .= ' F.publish='.$db->q($filter['publish']);
         }
 		if (count($_where)>0){
 			$where = " WHERE ".implode(" AND ",$_where);
@@ -74,6 +77,20 @@ class ProductfieldsModel extends BaseadminModel{
                     foreach($_cats as $cat_id){
                         $catsnames[] = $listCats[$cat_id] ?? '';
                         $rows[$k]->printcat = implode(", ", $catsnames);
+                    }
+                }
+            }
+        }
+        if ($params['calculate_product_count'] ?? 0) {
+            foreach ($rows as $k => $row){
+                $rows[$k]->count_products = $this->getProductCount($row->id);
+            }
+            if (isset($filter['used'])) {
+                foreach ($rows as $k => $row){
+                    if ($filter['used'] && $row->count_products == 0) {
+                        unset($rows[$k]);
+                    } elseif (!$filter['used'] && $row->count_products > 0) {
+                        unset($rows[$k]);
                     }
                 }
             }
@@ -238,7 +255,7 @@ class ProductfieldsModel extends BaseadminModel{
         return $db->loadColumn();
     }
 
-	public function getProductCount($field_id) {
+	public function getProductCount($field_id, $product_ids = []) {
 		$productfield = JSFactory::getTable('productfield');
 		$productfield->load($field_id);
 		$db = Factory::getDbo();
@@ -246,12 +263,15 @@ class ProductfieldsModel extends BaseadminModel{
 		$field = 'extra_field_' . $field_id;
 
 		$query->select('COUNT(product_id)')
-		      ->from($db->quoteName('#__jshopping_products_to_extra_fields'))
-		      ->where($db->quoteName($field) . ' != ' . $db->quote(''));
-
+		      ->from($db->qn('#__jshopping_products_to_extra_fields'))
+		      ->where($db->qn($field) . ' != ' . $db->q(''));
 		if ($productfield->type != 1) {
-			$query->where($db->quoteName($field) . ' != 0');
+			$query->where($db->qn($field) . ' != 0');
 		}
+        if ($product_ids) {
+            $product_ids = array_map(function($item){return intval($item);}, $product_ids);
+            $query->where($db->qn('product_id')." IN (".implode(',', $product_ids).")");
+        }
 		$db->setQuery($query);
 		return $db->loadResult();
 	}

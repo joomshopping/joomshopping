@@ -110,7 +110,12 @@ class CategoriesModel extends BaseadminModel{
         $user = Factory::getUser();
         $lang = JSFactory::getLang();
 
+        $query_where = '';
+        if (isset($filter['publish'])) {
+            $query_where .= " AND  category_publish=".$db->q($filter['publish']);
+        }
         $query = "SELECT ordering, category_id, category_parent_id, `".$lang->get('name')."` as name, `".$lang->get('short_description')."` as short_description, `".$lang->get('description')."` as description, category_publish, category_image FROM `#__jshopping_categories`
+                  WHERE 1 ".$query_where."
                   ORDER BY category_parent_id, ". $this->_allCategoriesOrder($order, $orderDir);
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);

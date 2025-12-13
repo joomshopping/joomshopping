@@ -718,6 +718,17 @@ a.no_blank[target="_blank"]:before{
 .js_window_popup{
     cursor: pointer;
 }
+.product_image_attr_list{
+    max-height: 400px;
+    overflow: auto;
+}
+.product_image_attr_list .values_list{
+    max-height: 180px;
+    overflow: auto;
+    border:1px solid #eee;
+    padding: 2px 5px;
+}
+
 #ajaxLoadAnimate {
     position : fixed;
     left : 0;

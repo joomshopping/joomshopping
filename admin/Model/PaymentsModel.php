@@ -21,19 +21,30 @@ class PaymentsModel extends BaseadminModel{
     protected $tableFieldOrdering = 'payment_ordering';
 
 	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
-		return $this->getAllPaymentMethods($filters['publish'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+		return $this->getAllPaymentMethods($filters['publish'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
 	}
     
-    function getAllPaymentMethods($publish = 1, $order = null, $orderDir = null) {
-        $db = Factory::getDBO(); 
-        $query_where = $publish ? "WHERE payment_publish = 1" : "";
+    function getAllPaymentMethods($publish = 1, $order = null, $orderDir = null, $filter = []) {
+        $db = Factory::getDBO();
+        $lang = JSFactory::getLang();
+        $query_where = '';
+        if ($publish) {
+            $query_where .= " AND payment_publish=1";
+        }
+        if (isset($filter['publish'])) {
+            $query_where .= " AND payment_publish=".$db->q($filter['publish']);
+        }
+        if (isset($filter['text_search'])) {
+            $word = addcslashes($db->escape($filter['text_search']), "_%");
+            $query_where .= " AND (LOWER(`".$lang->get("name")."`) LIKE ".$db->q('%'.$word.'%').")";
+        }
         $lang = JSFactory::getLang();
         $ordering = 'payment_ordering';
         if ($order && $orderDir){
             $ordering = $order." ".$orderDir;
         }
         $query = "SELECT payment_id, `".$lang->get("name")."` as name, `".$lang->get("description")."` as description , payment_code, payment_class, scriptname, payment_publish, payment_ordering, payment_params, payment_type FROM `#__jshopping_payment_method`
-                  $query_where
+                  WHERE 1 ".$query_where."
                   ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);

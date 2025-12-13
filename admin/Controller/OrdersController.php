@@ -144,6 +144,7 @@ class OrdersController extends BaseadminController{
         $view->set('list_order_status', $list_order_status);
         $view->set('client_id', $client_id);
         $view->set('total', $total);
+        $view->config = $jshopConfig;
         $view->_tmp_order_list_html_end = '';
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
@@ -220,7 +221,7 @@ class OrdersController extends BaseadminController{
         
         $view = $this->getView("orders", 'html');
         $view->setLayout("show");
-        $view->set('config', $jshopConfig); 
+        $view->set('config', $jshopConfig);
         $view->set('order', $order); 
         $view->set('order_history', $order->history);
         $view->set('order_items', $order_items); 

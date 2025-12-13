@@ -3,7 +3,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.8.1 19.07.2025
+* @version      5.9.0 05.12.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -248,6 +248,9 @@ $config->category_sorting_direction = 'asc';
 $config->manufacturer_sorting_direction = 'asc';
 $config->get_vendors_order_query = 'shop_name';
 $config->order_notfinished_default = 0;
+$config->order_list_status_notify_user_default = 0;
+$config->order_status_notify_user_default = 1;
+$config->order_status_notify_inc_com_default = 1;
 $config->display_tax_0 = 0;
 $config->rating_star_width = 20;
 $config->video_html5 = 1;
@@ -307,6 +310,8 @@ $config->addonshop_api_key = '';
 $config->addonshop_api_get_my_paid_products_cache_time = 300;
 $config->attribut_in_cart_show_empty_val = 0;
 $config->wishlist_add_to_basket_del_prod = 0;
+$config->admin_extra_field_prod_medit_filed_calc = 1;
+$config->product_hide_img_without_attrs = 0;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';
@@ -415,7 +420,8 @@ $other_config = array(
     'hide_from_basic_price','calc_basic_price_from_product_price',
     'user_discount_not_apply_prod_old_price',
     'admin_products_search_by_words',
-    'admin_products_search_in_attribute'
+    'admin_products_search_in_attribute',
+    'update_username_joomla'
 );
 
 $other_config_checkbox = array(
@@ -440,7 +446,8 @@ $other_config_checkbox = array(
     'calc_basic_price_from_product_price',
     'user_discount_not_apply_prod_old_price',
     'admin_products_search_by_words',
-    'admin_products_search_in_attribute'
+    'admin_products_search_in_attribute',
+    'update_username_joomla'
 );
 $other_config_select = array(
     'cart_back_to_shop'=>array(

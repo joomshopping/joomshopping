@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_products_images` (
 `name` VARCHAR(255) NOT NULL default '',
 `title` VARCHAR(255) NOT NULL default '',
 `ordering` tinyint(4) NOT NULL default 0,
+`attrs` varchar(255) NOT NULL default '',
 PRIMARY KEY  (`image_id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 

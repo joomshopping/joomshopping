@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.3 11.10.2025
+* @version      5.9.0 02.12.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -134,6 +134,10 @@ class ProductTable extends MultilangTable{
         if (isset($this->attribute_active_data->ext_data) && isset($this->attribute_active_data->ext_data->$field) && $this->attribute_active_data->ext_data->$field!=''){
             return $this->attribute_active_data->ext_data->$field;
         }else{
+            if ($field == 'image' && ($this->attribute_active ?? []) && JSFactory::getConfig()->use_extend_attribute_data) {
+                $images = $this->getImages();
+                return $images[0]->image_name;
+            }
             return $this->$field;
         }
     }
@@ -278,7 +282,7 @@ class ProductTable extends MultilangTable{
     return $data;
     }
 
-	function getInitLoadAttribute($selected = array(), $displayonlyattrtype = null){        
+	function getInitLoadAttribute($selected = array(), $displayonlyattrtype = null){
 		$this->setAttributeSubmitted($selected);
 		$attributesDatas = $this->getAttributesDatas($selected);
 		$this->product_attribute_datas = $attributesDatas;
@@ -420,22 +424,55 @@ class ProductTable extends MultilangTable{
         }
     }
 
-    function getImages(){
+    protected function getShowImageForAttribute($img, $attribute_active) {        
+        $_attrs = $img->attrs == '' ? [] : explode(',' , $img->attrs);
+        if (!$_attrs) {
+            return 1;
+        }
+        $_all_attr_vals = JSFactory::getAllAttributeValues();
+        $attrs = [];
+        foreach($_attrs as $_vid) {
+            $aid = $_all_attr_vals[$_vid]->attr_id ?? 0;
+            if ($aid) {
+                $attrs[$aid][] = $_vid;
+            }
+        }
+        $show = 1;
+        foreach($attribute_active as $aid => $vid) {
+            if (isset($attrs[$aid]) && !in_array($vid, $attrs[$aid])) {
+                $show = 0;
+            }
+        }
+        return $show;
+    }
+
+    function getImages($byattr = 1){
         $db = Factory::getDBO();
         $jshopConfig = JSFactory::getConfig();
         if (isset($this->attribute_active_data->ext_data) && $this->attribute_active_data->ext_data){
-            $list = $this->attribute_active_data->ext_data->getImages();
+            $list = $this->attribute_active_data->ext_data->getImages($byattr);
             if (count($list)){
                 return $list;
             }
         }
+
+        $active_attr_vals = $this->attribute_active ?? [];
+        $checkbyAttr = $byattr && $active_attr_vals && $jshopConfig->use_extend_attribute_data;
 
         $query = "SELECT I.*, IF(P.image=I.image_name,0,1) as sort FROM `#__jshopping_products_images` as I
 				 left Join `#__jshopping_products` as P on P.product_id=I.product_id
                  WHERE I.product_id=".(int)$this->product_id." ORDER BY sort, I.ordering";
         $db->setQuery($query);
         $list = $db->loadObJectList();
+        $_used_img_for_attrs = 0;
         foreach($list as $k=>$v){
+            if ($checkbyAttr && !$this->getShowImageForAttribute($v, $active_attr_vals)) {
+                unset($list[$k]);
+                continue;
+            }
+            if ($v->attrs) {
+                $_used_img_for_attrs = 1;
+            }
             $list[$k]->img_alt = $v->name;
             $list[$k]->img_title = $v->title;
             if ($v->name) {
@@ -452,6 +489,19 @@ class ProductTable extends MultilangTable{
             $list[$k]->image_thumb = Helper::getPatchProductImage($v->image_name, 'thumb');
             $list[$k]->image_full = Helper::getPatchProductImage($v->image_name, 'full');
         }
+        if ($checkbyAttr && $_used_img_for_attrs && $jshopConfig->product_hide_img_without_attrs) {
+            foreach($list as $k=>$v) {
+                if ($v->attrs == '') {
+                    unset($list[$k]);
+                    continue;
+                }
+            }
+        }
+        if ($checkbyAttr) {
+            $list = array_values($list);
+        }
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onAfterGetImagesProduct', array(&$obj, &$list, &$byattr));
     return $list;
     }
 

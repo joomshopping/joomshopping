@@ -20,12 +20,23 @@ class ShippingsModel extends BaseadminModel{
     protected $nameTable = 'shippingmethod';
 
 	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
-		return $this->getAllShippings($filters['publish'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
+		return $this->getAllShippings($filters['publish'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
 	}
 
-    public function getAllShippings($publish = 1, $order = null, $orderDir = null) {
+    public function getAllShippings($publish = 1, $order = null, $orderDir = null, $filter = []) {
         $db = Factory::getDBO();
-        $query_where = ($publish)?("WHERE published = '1'"):("");
+        $lang = JSFactory::getLang();
+        $query_where = '';
+        if ($publish) {
+            $query_where .= " AND published=1";
+        }
+        if (isset($filter['publish'])) {
+            $query_where .= " AND published=".$db->q($filter['publish']);
+        }
+        if (isset($filter['text_search'])) {
+            $word = addcslashes($db->escape($filter['text_search']), "_%");
+            $query_where .= " AND (LOWER(`".$lang->get("name")."`) LIKE ".$db->q('%'.$word.'%').")";
+        }
         $lang = JSFactory::getLang();
         $ordering = 'ordering';
         if ($order && $orderDir){
@@ -33,7 +44,7 @@ class ShippingsModel extends BaseadminModel{
         }
         $query = "SELECT shipping_id, `".$lang->get('name')."` as name, `".$lang->get("description")."` as description, published, ordering
                   FROM `#__jshopping_shipping_method`
-                  $query_where
+                  WHERE 1 ".$query_where."
                   ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);

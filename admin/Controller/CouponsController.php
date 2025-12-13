@@ -32,14 +32,24 @@ class CouponsController extends BaseadminController{
         $limitstart = $app->getUserStateFromRequest( $context.'limitstart', 'limitstart', 0, 'int' );
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "C.coupon_code", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
-        $text_search = $app->getUserStateFromRequest( $context.'text_search', 'text_search', '' );
+        $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', [], 'array');
+        $filter = [];
+        if ($ifilter['text_search'] ?? '') {
+            $filter['text_search'] = $ifilter['text_search'];
+        }
+        if ($ifilter['publish'] ?? 0) {
+            $filter['publish'] = $ifilter['publish'] % 2;
+        }
+        if ($ifilter['used'] ?? 0) {
+            $filter['used'] = $ifilter['used'] % 2;
+        }
         
         $jshopConfig = JSFactory::getConfig();
         $coupons = JSFactory::getModel("coupons");
-        $total = $coupons->getCountItems(['text_search' => $text_search]);
+        $total = $coupons->getCountItems($filter);
         $pageNav = new Pagination($total, $limitstart, $limit);
         $rows = $coupons->getListItems(
-            ['text_search' => $text_search],
+            $filter,
             ['order' => $filter_order, 'dir' => $filter_order_Dir],
             ['limitstart'=> $pageNav->limitstart, 'limit' => $pageNav->limit]
         );
@@ -50,6 +60,10 @@ class CouponsController extends BaseadminController{
         
         $currency = JSFactory::getTable('currency');
         $currency->load($jshopConfig->mainCurrency);
+
+        $filterinput = [];
+        $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
+        $filterinput['used'] = HTMLHelper::_('select.genericlist', SelectOptions::getUsed(), 'filter[used]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['used'] ?? 0);
                         
 		$view = $this->getView("coupons", 'html');
         $view->setLayout("list");		
@@ -58,7 +72,8 @@ class CouponsController extends BaseadminController{
         $view->set('pageNav', $pageNav);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
-        $view->set('text_search', $text_search);
+        $view->ifilter = $ifilter;
+        $view->filterinput = $filterinput;
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
         $view->tmp_html_filter_end = "";

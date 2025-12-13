@@ -38,7 +38,15 @@ if ($saveOrder){
 
         <div>
             <?php print $lists['treecategories']?>
-        </div>  
+        </div>
+
+        <div>
+            <?php print $lists['publish']?>
+        </div>
+
+        <div>
+            <?php print $lists['used']?>
+        </div>
 
         <div>
             <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">

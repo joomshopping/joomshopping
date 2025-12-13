@@ -5,7 +5,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.8.0 19.06.2025
+* @version      5.8.4 19.06.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,7 +16,7 @@ defined('_JEXEC') or die();
 $rows = $this->rows;
 $lists = $this->lists;
 $pageNav = $this->pageNav;
-$jshopConfig = JSFactory::getConfig();
+$jshopConfig = $this->config;
 ?>
 <div id="j-main-container" class="j-main-container">
     <form name="adminForm" id="adminForm" method="post" action="index.php?option=com_jshopping&controller=orders">
@@ -226,7 +226,7 @@ $jshopConfig = JSFactory::getConfig();
                     <?php if ($row->order_created && $display_info_order){?>
                     <div class="d-none update_status_panel">
                         <div>
-                            <input class="inputbox va-middle" type="checkbox" name="order_check_id[<?php echo $row->order_id?>]" id="order_check_id_<?php echo $row->order_id?>">
+                            <input class="inputbox va-middle" type="checkbox" name="order_check_id[<?php echo $row->order_id?>]" id="order_check_id_<?php echo $row->order_id?>" <?php if ($this->config->order_list_status_notify_user_default){?>checked<?php }?>>
                             <label class="fs-14" for="order_check_id_<?php echo $row->order_id?>"><?php echo Text::_('JSHOP_NOTIFY_CUSTOMER')?></label>
                         </div>
                         <input class="button btn btn-primary" type="button" name=""

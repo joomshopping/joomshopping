@@ -799,7 +799,7 @@ class ProductsModel extends BaseadminModel{
         }
 
         if (isset($post['old_image_descr'])){
-            $this->renameProductImageOld($post['old_image_descr'], $post['old_image_ordering'], $post['old_image_title'] ?? null);
+            $this->renameProductImageOld($post['old_image_descr'], $post['old_image_ordering'], $post['old_image_title'] ?? null, $post['old_image_attrs'] ?? null);
         }
         if (isset($post['old_image_name'])) {
             $this->renameFileProductImageOld($product, $post['old_image_name']);
@@ -837,12 +837,15 @@ class ProductsModel extends BaseadminModel{
         $image->store();
     }
 
-    function renameProductImageOld($image_descr, $image_ordering, $title = null){
+    function renameProductImageOld($image_descr, $image_ordering, $title = null, $attrs = null){
         $db = Factory::getDBO();
         foreach($image_descr as $id=>$v){
             $ext_query = '';
             if (isset($title[$id])) {
                 $ext_query = ', `title`='.$db->q($title[$id]);
+            }
+            if (isset($attrs[$id])) {
+                $ext_query = ', `attrs`='.$db->q($attrs[$id]);
             }
             $query = "update `#__jshopping_products_images` set `name`='".$db->escape($image_descr[$id])."', `ordering`='".$db->escape($image_ordering[$id])."' ".$ext_query." where `image_id`='".$db->escape($id)."'";
             $db->setQuery($query);
@@ -1710,6 +1713,28 @@ class ProductsModel extends BaseadminModel{
             }
         }
         return $attr;
+    }
+
+    public function getProductAttributesActiveByAData($lists){
+        $list_attr_active = [];        
+        foreach($lists['attribs_dep_active'] as $_attr_id) {
+            foreach($lists['attribs'] as $k=>$v) {
+                $list_attr_active[$_attr_id][] = $v->{'attr_'.$_attr_id};
+            }
+            $list_attr_active[$_attr_id] = array_unique($list_attr_active[$_attr_id]);
+        }       
+        foreach($lists['ind_attribs'] as $v) {
+            $list_attr_active[$v->attr_id][] = $v->attr_value_id;
+        }
+        $res = [];
+        foreach($list_attr_active as $aid => $v) {
+            $vals = [];
+            foreach($v as $vid) {
+                $vals[] = ['id' => $vid, 'name' => $lists['attribs_values'][$vid]->name ?? ''];
+            }
+            $res[$aid] = ['id'=> $aid, 'name' => $lists['attrib_names'][$aid] ?? '', 'vals' => $vals];
+        }
+        return $res;
     }
 
 }

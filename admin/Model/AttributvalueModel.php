@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.8.4 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -32,7 +32,7 @@ class AttributValueModel extends BaseadminModel{
         return $db->loadResult();
     }
 
-    function getAllValues($attr_id = null, $order = null, $orderDir = null, $filter = []) {
+    function getAllValues($attr_id = null, $order = null, $orderDir = null, $filter = [], $params = []) {
         $db = Factory::getDBO(); 
         $lang = JSFactory::getLang();
         $ordering = 'value_ordering, value_id';
@@ -47,12 +47,30 @@ class AttributValueModel extends BaseadminModel{
             $word = addcslashes($db->escape($filter['text_search']), "_%");
             $where .= " AND (LOWER(`".$lang->get("name")."`) LIKE ".$db->q('%'.$word.'%').")";
         }
+        if (isset($filter['publish'])) {
+            $where .= ' AND publish='.$db->q($filter['publish']);
+        }
         $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering, publish
         FROM `#__jshopping_attr_values` where 1 ".$where."
         ORDER BY ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
-        return $db->loadObjectList();
+        $rows = $db->loadObjectList();
+        if ($params['calculate_product_count'] ?? 0) {
+            foreach ($rows as $k => $row) {
+                $rows[$k]->count_products = $this->getProductCount($attr_id, $row->value_id);
+            }
+            if (isset($filter['used'])) {
+                foreach ($rows as $k => $row){
+                    if ($filter['used'] && $row->count_products == 0) {
+                        unset($rows[$k]);
+                    } elseif (!$filter['used'] && $row->count_products > 0) {
+                        unset($rows[$k]);
+                    }
+                }
+            }
+        }
+        return $rows;
     }
     
     /**
@@ -61,10 +79,15 @@ class AttributValueModel extends BaseadminModel{
     * 
     * @param mixed $resulttype
     */
-    function getAllAttributeValues($resulttype=0){
+    function getAllAttributeValues($resulttype=0, $publish = null){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();
-        $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering FROM `#__jshopping_attr_values` ORDER BY value_ordering, value_id";
+        if (isset($publish)) {
+            $adv_query = " WHERE `publish`=".$db->q($publish);
+        } else {
+            $adv_query = "";
+        }
+        $query = "SELECT value_id, image, `".$lang->get("name")."` as name, attr_id, value_ordering, publish FROM `#__jshopping_attr_values` ".$adv_query." ORDER BY value_ordering, value_id";
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $attribs = $db->loadObjectList();

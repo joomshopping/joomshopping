@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.8.4 29.11.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -23,15 +23,15 @@ class ImportExportController extends BaseadminController{
     }
 
     function display($cachable = false, $urlparams = false){
-        if ($this->getTask()!="" && $this->getTask()!="backtolistie" && $this->input->getInt("ie_id")){
+        if ($this->getTask()!="backtolistie" && $this->input->getInt("ie_id")){
             $this->view();
             return 1;
         }
-    	$importexport = JSFactory::getModel("importexport");    	
+    	$importexport = JSFactory::getModel("importexport");
         
-		$rows = $importexport->getList();		
+		$rows = $importexport->getList();
         $view = $this->getView("import_export_list", 'html');
-		$view->set('rows', $rows);
+		$view->rows = $rows;
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 
@@ -40,16 +40,16 @@ class ImportExportController extends BaseadminController{
         $view->display();
     }
     
-    function remove() {        
-        $cid = $this->input->getInt("cid");        
+    function remove() {
+        $cid = $this->input->getInt("cid");
         $_importexport = JSFactory::getTable('Importexport');
-        $_importexport->load($cid);        
-        $_importexport->delete();        
+        $_importexport->load($cid);
+        $_importexport->delete();
         $this->setRedirect('index.php?option=com_jshopping&controller=importexport', Text::_('JSHOP_ITEM_DELETED'));
     }
     
     function setautomaticexecution(){
-        $cid = $this->input->getInt("cid");        
+        $cid = $this->input->getInt("cid");
         $_importexport = JSFactory::getTable('Importexport');
         $_importexport->load($cid);
         if ($_importexport->steptime > 0){
@@ -79,11 +79,12 @@ class ImportExportController extends BaseadminController{
             'alias' => $alias,
             'params' => $_importexport->get('params')
         ));
-        $controller->execute( $this->input->getVar('task') );
+        $task = $this->input->getCmd('task', 'view');
+        $controller->execute($task);
     }
 
     public function save(){
         $this->display();
     }
-		      
+
 }

@@ -163,14 +163,14 @@ defined('_JEXEC') or die();
         <br/>
 
         <div class="col width-55">
-        <fieldset class="adminform" style="margin-left:0px;">
+        <fieldset class="adminform dep_attrs_form" style="margin-left:0px;">
         <legend><b><?php echo Text::_('JSHOP_ADD_ATTRIBUT')?></b></legend>
             <table class="admintable">
-            <?php 
+            <?php
             foreach($lists['all_attributes'] as $key => $value){
                 if (!isset($value->hidden_for_category) || $value->hidden_for_category == 0) {
             ?>
-                <tr>
+                <tr class="tr_dattrs" dattr_id="<?php echo $value->attr_id?>">
                     <td class="key"><?php echo $value->name?></td>
                     <td><?php echo $value->values_select;?></td><?php echo $value->tmp_after_values_select ?? '';?>
                 </tr>    

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.1 15.09.2018
+* @version      5.8.4 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -11,6 +11,8 @@ use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
 class ManufacturersController extends BaseadminController{
@@ -31,17 +33,27 @@ class ManufacturersController extends BaseadminController{
         $context = "jshopping.list.admin.manufacturers";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
-        $filter = array_filter($app->getUserStateFromRequest($context.'filter', 'filter', [], 'array'));
+        $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', [], 'array');
+        $filter = [];
+        if ($ifilter['text_search'] ?? '') {
+            $filter['text_search'] = $ifilter['text_search'];
+        }
+        if ($ifilter['publish'] ?? 0) {
+            $filter['publish'] = $ifilter['publish'] % 2;
+        }
 
         $manufacturer = JSFactory::getModel("manufacturers");
         $rows = $manufacturer->getListItems($filter, ['order' => $filter_order, 'dir'=>$filter_order_Dir]);
+        $filterinput = [];
+        $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
 
         $view = $this->getView("manufacturer", 'html');
         $view->setLayout("list");
         $view->set('rows', $rows);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
-        $view->filter = $filter;
+        $view->ifilter = $ifilter;
+        $view->filterinput = $filterinput;
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";        
         $app->triggerEvent('onBeforeDisplayManufacturers', array(&$view));

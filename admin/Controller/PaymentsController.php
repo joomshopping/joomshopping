@@ -33,8 +33,19 @@ class PaymentsController extends BaseadminController{
         $context = "jshoping.list.admin.payments";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "payment_ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
+        $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', [], 'array');
+        $filter = [];
+        if ($ifilter['text_search'] ?? '') {
+            $filter['text_search'] = $ifilter['text_search'];
+        }
+        if ($ifilter['publish'] ?? 0) {
+            $filter['publish'] = $ifilter['publish'] % 2;
+        }
         
-        $rows = $payments->getListItems([], ['order' => $filter_order, 'dir' => $filter_order_Dir]);
+        $rows = $payments->getListItems($filter, ['order' => $filter_order, 'dir' => $filter_order_Dir]);
+
+        $filterinput = [];
+        $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
 
         foreach ($rows as $row) {
             $row->tmp_extra_column_cells = "";
@@ -46,6 +57,8 @@ class PaymentsController extends BaseadminController{
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
         $view->set('config', $jshopConfig);
+        $view->ifilter = $ifilter;
+        $view->filterinput = $filterinput;
         $view->tmp_html_start = "";
         $view->tmp_extra_column_headers = "";
         $view->tmp_html_end = "";

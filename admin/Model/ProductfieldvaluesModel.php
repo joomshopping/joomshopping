@@ -18,10 +18,10 @@ class ProductfieldvaluesModel extends BaseadminModel{
     protected $nameTable = 'productfieldvalue';
 
 	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []){
-		return $this->getList($filters['field_id'] ?? null, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters);
+		return $this->getList($filters['field_id'] ?? null, $orderBy['order'] ?? null, $orderBy['dir'] ?? null, $filters, $params);
 	}
 
-	public function getList($field_id = null, $order = null, $orderDir = null, $filter = []){
+	public function getList($field_id = null, $order = null, $orderDir = null, $filter = [], $params = []){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();
         $ordering = 'ordering';
@@ -35,14 +35,32 @@ class ProductfieldvaluesModel extends BaseadminModel{
 		if (isset($filter['text_search']) && $filter['text_search']) {
             $text_search = $filter['text_search'];
             $word = addcslashes($db->escape($text_search), "_%");
-            $where .= " and (LOWER(`".$lang->get('name')."`) LIKE '%".$word."%' OR id LIKE '%".$word."%')";
+            $where .= " AND (LOWER(`".$lang->get('name')."`) LIKE '%".$word."%' OR id LIKE '%".$word."%')";
+        }
+        if (isset($filter['publish'])) {
+            $where .= ' AND publish='.$db->q($filter['publish']);
         }
         $query = "SELECT id, `".$lang->get("name")."` as name, ordering, publish
                   FROM `#__jshopping_products_extra_field_values` 
                   WHERE 1 ".$where." order by ".$ordering;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
-        return $db->loadObjectList();
+        $rows = $db->loadObjectList();
+        if ($params['calculate_product_count'] ?? 0) {
+            foreach ($rows as $k => $row){
+                $rows[$k]->count_products = $this->getProductCount($field_id, $row->id);
+            }
+            if (isset($filter['used'])) {
+                foreach ($rows as $k => $row){
+                    if ($filter['used'] && $row->count_products == 0) {
+                        unset($rows[$k]);
+                    } elseif (!$filter['used'] && $row->count_products > 0) {
+                        unset($rows[$k]);
+                    }
+                }
+            }
+        }
+        return $rows;
     }
 
     public function getAllList($display = 0, $ordering = 'ordering'){

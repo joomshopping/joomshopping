@@ -70,21 +70,39 @@ abstract class UsershopbaseTable extends ShopbaseTable{
 					return false;
 				}
             }
-        }        
+        }
+		
+		if (isset($config_fields['email2']['display']) && $config_fields['email2']['display'] && ($this->email && $this->email2) && $this->email != $this->email2){
+			$this->_error = Text::_('JSHOP_REGWARN_EMAIL_NOT_MATCH');
+			return false;
+		}
+
+		if ($this->email!='' && $check_exist_email){
+			$query = "SELECT id FROM #__users WHERE email=".$db->q($this->email)." AND id != ".(int)$this->user_id;
+            $obj = $this;
+            Factory::getApplication()->triggerEvent('onBeforeCheckUserEmailExistJshopUserShop', array(&$obj, &$type, &$config_fields, &$type2, &$query));
+			$db->setQuery($query);
+			if (intval($db->loadResult())){
+				$this->_error = (Text::_('JSHOP_REGWARN_EMAIL_INUSE'));
+				return false;
+			}
+		}
 		
 		if ($this->u_name!=''){
 			if (preg_match("#[<>\"'%;()&]#i", $this->u_name) || strlen($this->u_name) < 2) {
 				$this->_error = sprintf((Text::_('JSHOP_VALID_AZ09')),(Text::_('JSHOP_USERNAME')),2);
 				return false;
 			}
-			$query = "SELECT id FROM #__users WHERE username = '".$db->escape($this->u_name)."' AND id != ".(int)$this->user_id;
-            $obj = $this;
-			Factory::getApplication()->triggerEvent('onBeforeCheckUserNameExistJshopUserShop', array(&$obj, &$type, &$config_fields, &$type2, &$query));
-			$db->setQuery($query);
-			$xid = intval($db->loadResult());
-			if ($xid && $xid != intval($this->user_id)){
-				$this->_error = (Text::_('JSHOP_REGWARN_INUSE'));
-				return false;
+			if ($check_exist_email) {
+				$query = "SELECT id FROM #__users WHERE username=".$db->q($this->u_name)." AND id != ".(int)$this->user_id;
+				$obj = $this;
+				Factory::getApplication()->triggerEvent('onBeforeCheckUserNameExistJshopUserShop', array(&$obj, &$type, &$config_fields, &$type2, &$query));
+				$db->setQuery($query);
+				$xid = intval($db->loadResult());
+				if ($xid && $xid != intval($this->user_id)){
+					$this->_error = (Text::_('JSHOP_REGWARN_INUSE'));
+					return false;
+				}
 			}
 		}
 
@@ -95,26 +113,9 @@ abstract class UsershopbaseTable extends ShopbaseTable{
 			$this->_error = $checkfield->getLastErrorMsg();
 			return false;
 		}
-
 		if (isset($config_fields['password_2']['display']) && $config_fields['password_2']['display'] && ($this->password || $this->password2) && $this->password!=$this->password2){
 			$this->_error = Text::_('JSHOP_REGWARN_PASSWORD_NOT_MATCH');
 			return false;
-		}
-
-		if (isset($config_fields['email2']['display']) && $config_fields['email2']['display'] && ($this->email && $this->email2) && $this->email != $this->email2){
-			$this->_error = Text::_('JSHOP_REGWARN_EMAIL_NOT_MATCH');
-			return false;
-		}
-
-		if ($this->email!='' && $check_exist_email){
-			$query = "SELECT id FROM #__users WHERE email='".$db->escape($this->email)."' AND id != ".(int)$this->user_id;
-            $obj = $this;
-            Factory::getApplication()->triggerEvent('onBeforeCheckUserEmailExistJshopUserShop', array(&$obj, &$type, &$config_fields, &$type2, &$query));
-			$db->setQuery($query);
-			if (intval($db->loadResult())){
-				$this->_error = (Text::_('JSHOP_REGWARN_EMAIL_INUSE'));
-				return false;
-			}
 		}
         
 		return $return;

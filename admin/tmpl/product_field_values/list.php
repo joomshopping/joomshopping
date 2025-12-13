@@ -33,14 +33,20 @@ if ($saveOrder){
         <?php print $this->tmp_html_filter?>
 
         <div>
-            <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($this->text_search);?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
+            <?php echo $this->filterinput['publish']?>
         </div>
+        <div>
+            <?php echo $this->filterinput['used']?>
+        </div>
+        <div>
+            <input name="filter[search]" value="<?php echo htmlspecialchars($this->ifilter['search'] ?? '');?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
+        </div>        
         <div>
             <span class="input-group-btn">
                 <button type="submit" class="btn btn-secondary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">
                     <span class="icon-search" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-secondary hasTooltip js-stools-btn-clear" onclick="jQuery('#text_search').val('');this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                <button type="button" class="btn btn-secondary hasTooltip js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
             </span>
         </div>
 

@@ -36,6 +36,9 @@ class DeliveryTimesModel extends BaseadminModel{
         if (isset($filter['text_search'])) {
             $where .= " AND (`".$lang->get("name")."` LIKE ".$db->q('%'.$filter['text_search'].'%').")";
         }
+        if (isset($filter['publish'])) {
+            $where .= " AND publish=".$db->q($filter['publish']);
+        }
         $query = "SELECT id, `".$lang->get('name')."` as name 
         FROM `#__jshopping_delivery_times` 
         WHERE 1 ".$where."

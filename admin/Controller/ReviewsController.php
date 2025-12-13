@@ -36,13 +36,18 @@ class ReviewsController extends BaseadminController{
         $context = "jshoping.list.admin.reviews";
         $limit = $app->getUserStateFromRequest( $context.'limit', 'limit', $app->getCfg('list_limit'), 'int' );
         $limitstart = $app->getUserStateFromRequest( $context.'limitstart', 'limitstart', 0, 'int' );
-        $category_id = $app->getUserStateFromRequest( $context.'category_id', 'category_id', 0, 'int' );
-        $text_search = $app->getUserStateFromRequest( $context.'text_search', 'text_search', '');
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "pr_rew.review_id", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "desc", 'cmd');
+        $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', [], 'array');
+        $filter = [];        
+        $text_search = $filter['text_search'] = $ifilter['text_search'] ?? '';
+        if ($ifilter['publish'] ?? 0) {
+            $filter['publish'] = $ifilter['publish'] % 2;
+        }
+        $category_id = $ifilter['category_id'] ?? 0;
 
         if ($category_id){
-            $product_id = $app->getUserStateFromRequest( $context.'product_id', 'product_id', 0, 'int' );
+            $product_id = $app->getUserStateFromRequest($context.'product_id', 'product_id', 0, 'int' );
         } else {
             $product_id = null;
         }
@@ -58,31 +63,30 @@ class ReviewsController extends BaseadminController{
             $products_select = HTMLHelper::_('select.genericlist', $products, 'product_id', 'class="form-select" onchange="document.adminForm.submit();" ', 'product_id', 'name', $product_id);
         }
 
-        $total = $reviews_model->getAllReviews($category_id, $product_id, NULL, NULL, $text_search, "count", $id_vendor_cuser, $filter_order, $filter_order_Dir);
-
-        jimport('joomla.html.pagination');
+        $total = $reviews_model->getAllReviews($category_id, $product_id, NULL, NULL, $text_search, "count", $id_vendor_cuser, $filter_order, $filter_order_Dir, $filter);
         $pagination = new Pagination($total, $limitstart, $limit);
-
-        $reviews = $reviews_model->getAllReviews($category_id, $product_id, $pagination->limitstart, $pagination->limit, $text_search, "list", $id_vendor_cuser, $filter_order, $filter_order_Dir);
-
-        $categories = HTMLHelper::_('select.genericlist', SelectOptions::getCategories(Text::_('JSHOP_SELECT_CATEGORY')), 'category_id', 'class="form-select" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id);
+        $reviews = $reviews_model->getAllReviews($category_id, $product_id, $pagination->limitstart, $pagination->limit, $text_search, "list", $id_vendor_cuser, $filter_order, $filter_order_Dir, $filter);
+        
+        $filterinput = [];
+        $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
+        $filterinput['categories'] = HTMLHelper::_('select.genericlist', SelectOptions::getCategories(Text::_('JSHOP_SELECT_CATEGORY')), 'filter[category_id]', 'class="form-select" onchange="document.adminForm.submit();"', 'category_id', 'name', $ifilter['category_id'] ?? 0);
 
         foreach ($reviews as $review) {
             $review->_tmp_cols_14 = "";
         }
 
         $view = $this->getView("comments", 'html');
-        $view->setLayout("list");
-        $view->set('categories', $categories);
+        $view->setLayout("list");        
         $view->set('reviews', $reviews);
         $view->set('limit', $limit);
         $view->set('limitstart', $limitstart);
-        $view->set('text_search', $text_search);
         $view->set('pagination', $pagination);
         $view->set('products_select', $products_select);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
         $view->set('config', $jshopConfig);
+        $view->ifilter = $ifilter;
+        $view->filterinput = $filterinput;
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
         $view->tmp_html_filter_end = "";

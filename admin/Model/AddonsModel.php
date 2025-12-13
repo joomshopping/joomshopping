@@ -34,6 +34,9 @@ class AddonsModel extends BaseadminModel{
             $word = addcslashes($db->escape($filter['text_search']), "_%");
             $where .= " AND (`name` LIKE ".$db->q('%'.$word.'%').")";
         }
+        if (isset($filter['publish'])) {
+            $where .= ' AND publish='.$db->q($filter['publish']);
+        }
         $query = "SELECT * FROM `#__jshopping_addons` WHERE 1 ".$where;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);

@@ -4,7 +4,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.3.0 14.12.203
+* @version      5.8.4 15.11.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,7 +13,6 @@ use Joomla\CMS\Uri\Uri;
 defined('_JEXEC') or die();
 $categories = $this->categories;
 $i = 0;
-$text_search = $this->text_search;
 $count = count($categories); 
 $pageNav = $this->pagination;
 $saveOrder = $this->filter_order_Dir=="asc" && $this->filter_order=="ordering";
@@ -30,8 +29,10 @@ if ($saveOrder){
         <div class="js-filters">
             <?php print $this->tmp_html_filter?>
             <div>
-                <input name="text_search" id="text_search" value="<?php echo htmlspecialchars($text_search);?>"
-                    class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
+                <?php print $this->filterinput['publish']?>
+            </div>
+            <div>
+                <input name="filter[text_search]" value="<?php echo htmlspecialchars($this->ifilter['text_search'] ?? '');?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
             </div>
             <div>
                 <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">

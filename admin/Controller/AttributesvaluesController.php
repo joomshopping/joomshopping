@@ -11,6 +11,8 @@ use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
 class AttributesValuesController extends BaseadminController{
@@ -41,15 +43,28 @@ class AttributesValuesController extends BaseadminController{
         $context = "jshoping.list.admin.attr_values";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "value_ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
-        $filter = array_filter($app->getUserStateFromRequest($context.'filter', 'filter', [], 'array'));
+        $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', [], 'array');
+        $filter = [];
+        if ($ifilter['text_search'] ?? '') {
+            $filter['text_search'] = $ifilter['text_search'];
+        }
+        if ($ifilter['publish'] ?? 0) {
+            $filter['publish'] = $ifilter['publish'] % 2;
+        }
+        if ($ifilter['used'] ?? 0) {
+            $filter['used'] = $ifilter['used'] % 2;
+        }
         
 		$attributValues = JSFactory::getModel("attributvalue");
-		$rows = $attributValues->getAllValues($attr_id, $filter_order, $filter_order_Dir, $filter);
-	    foreach ($rows as $k => $row) {
-		    $rows[$k]->count_products = $attributValues->getProductCount($attr_id, $row->value_id);
-	    }
+		$rows = $attributValues->getAllValues($attr_id, $filter_order, $filter_order_Dir, $filter, ['calculate_product_count' => 1]);
+	    // foreach ($rows as $k => $row) {
+		//     $rows[$k]->count_products = $attributValues->getProductCount($attr_id, $row->value_id);
+	    // }
 		$attribut = JSFactory::getModel("attribut");
 		$attr_name = $attribut->getNameAttribut($attr_id);
+        $filterinput = [];
+        $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
+        $filterinput['used'] = HTMLHelper::_('select.genericlist', SelectOptions::getUsed(), 'filter[used]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['used'] ?? 0);
         
 		$view = $this->getView("attributesvalues", 'html');
         $view->setLayout("list");
@@ -59,7 +74,8 @@ class AttributesValuesController extends BaseadminController{
         $view->set('attr_name', $attr_name);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
-        $view->filter = $filter;
+        $view->ifilter = $ifilter;
+        $view->filterinput = $filterinput;
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
 

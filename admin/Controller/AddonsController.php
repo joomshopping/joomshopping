@@ -16,6 +16,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 
 defined('_JEXEC') or die();
 
@@ -29,13 +30,22 @@ class AddonsController extends BaseadminController{
     public function display($cachable = false, $urlparams = false){
         $app = Factory::getApplication();
         $context = "jshoping.list.admin.addons";
-        $filter = array_filter($app->getUserStateFromRequest($context.'filter', 'filter', [], 'array'));
+        $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', [], 'array');
+        $filter = [];
+        if ($ifilter['text_search'] ?? '') {
+            $filter['text_search'] = $ifilter['text_search'];
+        }
+        if ($ifilter['publish'] ?? 0) {
+            $filter['publish'] = $ifilter['publish'] % 2;
+        }
 
         $addons = JSFactory::getModel("addons");
         $back = "index.php?option=com_jshopping&controller=addons";
         $domain = Helper::getClearHost();
         $rows = $addons->getList(1, $filter, $domain, $back);
         $back64 = base64_encode($back);
+        $filterinput = [];
+        $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
 
         $view = $this->getView("addons", 'html');
         $view->setLayout("list");
@@ -44,7 +54,8 @@ class AddonsController extends BaseadminController{
         $view->config = JSFactory::getConfig();
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
-        $view->filter = $filter;
+        $view->ifilter = $ifilter;
+        $view->filterinput = $filterinput;
 
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeDisplayAddons', array(&$view));

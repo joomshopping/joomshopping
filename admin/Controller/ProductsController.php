@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.5 31.01.2025
+* @version      5.9.0 31.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -138,6 +138,9 @@ class ProductsController extends BaseadminController{
         if ($product_attr_id){
             $product_attr = JSFactory::getTable('productattribut');
             $product_attr->load($product_attr_id);
+            if (!$product_attr->product_attr_id) {
+                return;
+            }
 			if ($product_attr->ext_attribute_product_id){
                 $product_id = $product_attr->ext_attribute_product_id;
             }else{
@@ -241,6 +244,8 @@ class ProductsController extends BaseadminController{
 		foreach ($lists['attribs'] as $key => $attribs){
             $lists['attribs'][$key]->count = floatval($attribs->count);
         }
+
+        $lists['list_attribs_active'] = $products->getProductAttributesActiveByAData($lists);
 
         $first = [];
         $first[] = HTMLHelper::_('select.option', '0',Text::_('JSHOP_SELECT'), 'value_id','name');
@@ -487,7 +492,7 @@ class ProductsController extends BaseadminController{
 
 		//extra field
         if ($jshopConfig->admin_show_product_extra_field) {
-            $tmpl_extra_fields = $this->_getHtmlProductExtraFields([], null, 'list');
+            $tmpl_extra_fields = $this->_getHtmlProductExtraFields([], null, 'list', 0, $cid);
         }
         //
 
@@ -618,8 +623,7 @@ class ProductsController extends BaseadminController{
             }
         }
 
-        print $this->_getHtmlProductExtraFields($categorys, $product, $edittype);
-        die();
+        $this->_getHtmlProductExtraFields($categorys, $product, $edittype);
     }
 
     function product_extra_fields_hide(){
@@ -643,7 +647,7 @@ class ProductsController extends BaseadminController{
         die();
     }
 
-    function _getHtmlProductExtraFields($categorys = [], $product = null, $edittype = '', $hide = 0){
+    function _getHtmlProductExtraFields($categorys = [], $product = null, $edittype = '', $hide = 0, $pids = []){
         $jshopConfig = JSFactory::getConfig();
 		if ($product === null) $product = new \stdClass;
 		$_productfields = JSFactory::getModel("productfields");
@@ -715,6 +719,12 @@ class ProductsController extends BaseadminController{
                 } else {
                     $obj->values = "<input type='text' class='form-control' name='".$name."' value='".($product->$name ?? '')."' />";
                 }
+
+                if ($pids && $jshopConfig->admin_extra_field_prod_medit_filed_calc) {
+                    $filled = JSFactory::getModel('productfields')->getProductCount($v->id, $pids);
+                    $obj->filled = $filled;
+                }
+
                 $fields[] = $obj;
             }
         }

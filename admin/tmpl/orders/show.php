@@ -100,9 +100,9 @@ $print = $this->print;
                 <textarea id="comments" name="comments" class="form-control"></textarea>
               </td>
               <td style="padding-left:5px;">
-                <input type="checkbox" class="inputbox" name="notify" id="notify" value="1" checked>
+                <input type="checkbox" class="inputbox" name="notify" id="notify" value="1" <?php if ($this->config->order_status_notify_user_default){?>checked<?php }?>>
                 <label for="notify">  <?php echo Text::_('JSHOP_NOTIFY_USER')?></label><br>
-                <input type="checkbox" class="inputbox" name="include" id="include" value="1" checked>
+                <input type="checkbox" class="inputbox" name="include" id="include" value="1"  <?php if ($this->config->order_status_notify_inc_com_default){?>checked<?php }?>>
                 <label for="include">  <?php echo Text::_('JSHOP_INCLUDE_COMMENT')?></label>
               </td>
           </tr>

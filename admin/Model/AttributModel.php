@@ -41,13 +41,31 @@ class AttributModel extends BaseadminModel{
         if (isset($filter['text_search'])) {
             $where .= " AND (A.`".$lang->get("name")."` LIKE ".$db->q('%'.$filter['text_search'].'%').")";
         }
+        if (isset($filter['publish'])) {
+            $where .= ' AND A.publish='.$db->q($filter['publish']);
+        }
         $query = "SELECT A.attr_id, A.`".$lang->get("name")."` as name, A.attr_type, A.attr_ordering, A.independent, A.allcats, A.cats, A.required, A.publish, G.`".$lang->get("name")."` as groupname
                   FROM `#__jshopping_attr` as A left join `#__jshopping_attr_groups` as G on A.`group`=G.id
                   WHERE 1 ".$where."
-                  ORDER BY ".$ordering;
+                  ORDER BY ".$ordering;        
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
         $db->setQuery($query);
         $list = $db->loadObjectList();
+
+        if ($params['calculate_product_count'] ?? 0) {
+            foreach ($list as $k => $row){
+                $list[$k]->count_products = $this->getProductCount($row->attr_id);
+            }
+            if (isset($filter['used'])) {
+                foreach ($list as $k => $row){
+                    if ($filter['used'] && $row->count_products == 0) {
+                        unset($list[$k]);
+                    } elseif (!$filter['used'] && $row->count_products > 0) {
+                        unset($list[$k]);
+                    }
+                }
+            }
+        }
                 
         if (is_array($categorys) && count($categorys)){
             foreach($list as $k=>$v){

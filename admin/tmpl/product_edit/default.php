@@ -136,4 +136,5 @@ jshopAdmin.reloadDisplayProductExtraGroup();
 <?php if ($jshopConfig->product_use_main_category_id) {?>
 jshopAdmin.reloadSelectMainCategory(jQuery('select#category_id'));
 <?php }?>
+jshopAdmin.productEditFormLoaded();
 </script>

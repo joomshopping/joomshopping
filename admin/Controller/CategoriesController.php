@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 15.09.2018
+* @version      5.8.4 15.11.2015
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -39,9 +39,14 @@ class CategoriesController extends BaseadminController{
         $limitstart = $app->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int' );
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
-		$text_search = $app->getUserStateFromRequest($context.'text_search', 'text_search', '');
-		
-		$filter = array("text_search" => $text_search);
+        $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', [], 'array');
+        $filter = [];
+        if ($ifilter['text_search'] ?? '') {
+            $filter['text_search'] = $ifilter['text_search'];
+        }
+        if ($ifilter['publish'] ?? 0) {
+            $filter['publish'] = $ifilter['publish'] % 2;
+        }
 		
         $categories = $_categories->getTreeAllCategories($filter, $filter_order, $filter_order_Dir);
         $total = count($categories);
@@ -50,6 +55,8 @@ class CategoriesController extends BaseadminController{
         
         $countproducts = $_categories->getAllCatCountProducts();
         $categories = array_slice($categories, $pagination->limitstart, $pagination->limit);
+        $filterinput = [];
+        $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
 
         foreach ($categories as $category) {
             $category->tmp_html_col_after_title = "";
@@ -62,8 +69,8 @@ class CategoriesController extends BaseadminController{
         $view->set('pagination', $pagination);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
-		$view->set('text_search', $text_search);
-
+		$view->ifilter = $ifilter;
+        $view->filterinput = $filterinput;
         $view->tmp_html_start = "";
         $view->tmp_html_filter = "";
         $view->tmp_html_col_after_title = "";

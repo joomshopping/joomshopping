@@ -5,7 +5,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.8.0 15.09.2018
+* @version      5.8.4 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -25,9 +25,12 @@ if ($saveOrder){
     <form action="index.php?option=com_jshopping&controller=freeattributes" method="post" name="adminForm" id="adminForm">
     <?php print $this->tmp_html_start?>
     <div class="js-filters">
-        <?php print $this->tmp_html_filter ?? ''?>        
+        <?php print $this->tmp_html_filter ?? ''?>
         <div>
-            <input name="filter[text_search]" value="<?php echo htmlspecialchars($this->filter['text_search'] ?? '');?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
+            <?php print $this->filterinput['publish']?>
+        </div>
+        <div>
+            <input name="filter[text_search]" value="<?php echo htmlspecialchars($this->ifilter['text_search'] ?? '');?>" class="form-control" placeholder="<?php print Text::_('JSHOP_SEARCH')?>" type="text">
         </div>
         <div>          
             <button type="submit" class="btn btn-primary hasTooltip" title="<?php print Text::_('JSHOP_SEARCH')?>">

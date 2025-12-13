@@ -31,14 +31,19 @@ class ProductFieldsController extends BaseadminController{
         $group = $app->getUserStateFromRequest($context.'group', 'group', 0, 'int');
         $category_id = $app->getUserStateFromRequest($context.'category_id', 'category_id', 0, 'int');
         $text_search = $app->getUserStateFromRequest($context.'text_search', 'text_search', '');
+        $fpublish = $app->getUserStateFromRequest($context.'fpublish', 'fpublish', 0, 'int');
+        $fused = $app->getUserStateFromRequest($context.'fused', 'fused', 0, 'int');        
         
         $filter = array("group"=>$group, "text_search"=>$text_search, 'category_id'=>$category_id);
+        if ($fpublish) {
+            $filter['publish'] = $fpublish % 2;
+        }
+        if ($fused ?? 0) {
+            $filter['used'] = $fused % 2;
+        }
         
         $_productfields = JSFactory::getModel("productfields");
-		$rows = $_productfields->getList(0, $filter_order, $filter_order_Dir, $filter, 1);
-	    foreach ($rows as $k => $row){
-		    $rows[$k]->count_products = $_productfields->getProductCount($row->id);
-	    }
+		$rows = $_productfields->getList(0, $filter_order, $filter_order_Dir, $filter, 1, ['calculate_product_count' => 1]);	    
         
         $_productfieldvalues = JSFactory::getModel("productfieldvalues");
         $vals = $_productfieldvalues->getAllList(2);
@@ -58,6 +63,8 @@ class ProductFieldsController extends BaseadminController{
 		$lists = array();
         $lists['group'] = HTMLHelper::_('select.genericlist', SelectOptions::getProductFieldGroups(), 'group', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $group);
         $lists['treecategories'] = HTMLHelper::_('select.genericlist', SelectOptions::getCategories(), 'category_id', 'class="form-select" onchange="document.adminForm.submit();"', 'category_id', 'name', $category_id);
+        $lists['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'fpublish', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $fpublish ?? 0);
+        $lists['used'] = HTMLHelper::_('select.genericlist', SelectOptions::getUsed(), 'fused', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $fused ?? 0);
         $types = $_productfields->getTypes(1);
 
         $view = $this->getView("product_fields", 'html');

@@ -42,6 +42,12 @@ defined('_JEXEC') or die();
 			<label style="min-width: 50px;float:none;" for="set_main_image_<?php echo $image->image_id?>"><?php echo Text::_('JSHOP_SET_MAIN_IMAGE')?></label>
   			<?php if (isset($image->tmp_data_img)) print $image->tmp_data_img?>
             <div class="link_delete_foto">
+                <?php if ($jshopConfig->use_extend_attribute_data && count($lists['list_attribs_active'])){?>
+                <a class="btn btn-sm btn-primary" href="#" onclick="jshopAdmin.productImageAttrPopoup('<?php echo $image->image_id?>');return false;">
+                    <?php print Text::_('JSHOP_ATTRIBUTES')?>
+                </a>
+                <input type="hidden" name="old_image_attrs[<?php print $image->image_id?>]" value="<?php print ($image->attrs);?>" >
+                <?php } ?>
                 <a class="btn btn-sm btn-danger" href="#" onclick="if (confirm('<?php print Text::_('JSHOP_DELETE_IMAGE')?>')) jshopAdmin.deleteFotoProduct('<?php echo $image->image_id?>');return false;">
                     <?php print Text::_('JSHOP_DELETE')?>
                 </a>
@@ -159,5 +165,20 @@ defined('_JEXEC') or die();
             'modalWidth'  => 80
         )
     );?>
+
+    <?php
+    if ($jshopConfig->use_extend_attribute_data){
+        print HTMLHelper::_(
+            'bootstrap.renderModal',
+            'image_attr_popup',
+            array(
+                'modal-dialog-scrollable' => true,
+                'title'       => Text::_('JSHOP_IMAGE')." / ".Text::_('JSHOP_ATTRIBUTES'),            
+                'footer'      => '<button type="button" class="btn btn-primary btn-save">'.Text::_('JAPPLY').'</button>',
+            ),
+            $this->loadTemplate($this->_image_attr_popup ?? 'image_attr_popup')
+        );
+    }
+    ?>
 
 </div>

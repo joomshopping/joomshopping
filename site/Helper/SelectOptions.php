@@ -559,4 +559,15 @@ class SelectOptions{
         return $option;
     }
 
+    public static function getUsed($first = 1){
+        $f_option = array();
+        $first_name = self::getFirstNameOption($first, " - ".Text::_('JSHOP_USED')." - ");
+        if ($first!==0){
+            $f_option[] = HTMLHelper::_('select.option', '0', $first_name, 'id','name');
+        }
+        $f_option[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_USED'), 'id', 'name');
+        $f_option[] = HTMLHelper::_('select.option', 2, Text::_('JSHOP_NOT_USED'), 'id', 'name');
+        return $f_option;
+    }
+
 }

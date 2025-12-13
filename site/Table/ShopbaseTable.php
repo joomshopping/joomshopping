@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 15.04.2025
+* @version      5.9.0 03.12.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,6 +14,14 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 abstract class ShopbaseTable extends Table{
+    
+    public function __construct($table, $key, $db, $dispatcher = null) {
+		parent::__construct($table, $key, $db, $dispatcher);
+
+		if ($this->hasField('access')) {
+            $this->access = null;
+        }
+	}
     
     public function move($delta, $where = '', $field = 'ordering'){
     	$db = Factory::getDBO();

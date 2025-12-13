@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.0 15.09.2018
+* @version      5.8.4 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,6 +13,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
 class ProductfieldvaluesController extends BaseadminController{
@@ -39,22 +41,32 @@ class ProductfieldvaluesController extends BaseadminController{
         $context = "jshoping.list.admin.productfieldvalues";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
-        $text_search = $app->getUserStateFromRequest($context.'text_search', 'text_search', '');
+        $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', []);
 
-        $filter = array("text_search"=>$text_search);
+        $filter = [
+            "text_search" => $ifilter['search'] ?? '',
+        ];
+        if ($ifilter['publish'] ?? 0) {
+            $filter['publish'] = $ifilter['publish'] % 2;
+        }
+        if ($ifilter['used'] ?? 0) {
+            $filter['used'] = $ifilter['used'] % 2;
+        }
 
-        $rows = $_productfieldvalues->getList($field_id, $filter_order, $filter_order_Dir, $filter);
-		foreach ($rows as $k => $row){
-			$rows[$k]->count_products = $_productfieldvalues->getProductCount($field_id, $row->id);
-		}
+        $rows = $_productfieldvalues->getList($field_id, $filter_order, $filter_order_Dir, $filter, ['calculate_product_count' => 1]);
         $productfield = JSFactory::getTable('productfield');
         $productfield->load($field_id);
+
+        $filterinput = [];
+        $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
+        $filterinput['used'] = HTMLHelper::_('select.genericlist', SelectOptions::getUsed(), 'filter[used]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['used'] ?? 0);
 
         $view = $this->getView("product_field_values", 'html');
         $view->setLayout("list");
         $view->set('rows', $rows);
         $view->set('field_id', $field_id);
-		$view->set('text_search', $text_search);
+		$view->set('ifilter', $ifilter);
+        $view->set('filterinput', $filterinput);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
         $view->set('productfield', $productfield);

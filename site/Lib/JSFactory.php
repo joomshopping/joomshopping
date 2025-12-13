@@ -328,6 +328,15 @@ class JSFactory{
         }
     }
 
+    public static function getAllAttributeValues($publish = null){
+        static $list;
+        $list = $list ?? [];
+        if (!isset($list[$publish])){
+            $list[$publish] = JSFactory::getModel('attributvalue')->getAllAttributeValues(2, $publish);
+        }
+        return $list[$publish];
+    }
+
     public static function getAllUnits(){
     static $rows;
         if (!isset($rows)){

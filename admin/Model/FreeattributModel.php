@@ -42,6 +42,9 @@ class FreeAttributModel extends BaseadminModel{
             $word = addcslashes($db->escape($filter['text_search']), "_%");
             $where .= " AND (LOWER(`".$lang->get("name")."`) LIKE ".$db->q('%'.$word.'%')." OR LOWER(`".$lang->get('description')."`) LIKE '%" . $word . "%')";
         }
+        if (isset($filter['publish'])) {
+            $where .= " AND publish=".$db->q($filter['publish']);
+        }
         $query = "SELECT id, `".$lang->get("name")."` as name, ordering, required, publish 
             FROM `#__jshopping_free_attr` 
             WHERE 1 ".$where."

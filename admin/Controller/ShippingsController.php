@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.0 09.04.2024
+* @version      5.8.4 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -31,9 +31,20 @@ class ShippingsController extends BaseadminController{
         $context = "jshoping.list.admin.shippings";
         $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
+        $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', [], 'array');
+        $filter = [];
+        if ($ifilter['text_search'] ?? '') {
+            $filter['text_search'] = $ifilter['text_search'];
+        }
+        if ($ifilter['publish'] ?? 0) {
+            $filter['publish'] = $ifilter['publish'] % 2;
+        }
 
 		$shippings = JSFactory::getModel("shippings");
-		$rows = $shippings->getAllShippings(0, $filter_order, $filter_order_Dir);
+		$rows = $shippings->getAllShippings(0, $filter_order, $filter_order_Dir, $filter);
+
+        $filterinput = [];
+        $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
 
         $not_set_price = array();
         $rowsprices = $shippings->getAllShippingPrices(0);
@@ -63,6 +74,8 @@ class ShippingsController extends BaseadminController{
 		$view->set('rows', $rows);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
+        $view->ifilter = $ifilter;
+        $view->filterinput = $filterinput;
         $view->tmp_html_start = "";
         $view->tmp_extra_column_headers = "";
         $view->tmp_html_end = "";
