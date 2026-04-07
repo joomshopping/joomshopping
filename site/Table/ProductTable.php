@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.0 02.12.2025
+* @version      5.9.1 24.03.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -75,7 +75,7 @@ class ProductTable extends MultilangTable{
                 foreach($independent_attr as $k=>$v){
                     $query = "select addprice, price_mod from #__jshopping_products_attr2 where product_id=".(int)$this->product_id." and attr_id=".(int)$k." and attr_value_id=".(int)$v;
                     $db->setQuery($query);
-                    $attr_data2 = $db->loadObJect();
+                    $attr_data2 = $db->loadObject();
                     $obj = $this;
                     $app->triggerEvent('onSetAddPriceIndependentAttr', array(&$independent_attr, &$k, &$v, &$attr_data2, &$obj));
                     if ($attr_data2) {
@@ -186,7 +186,7 @@ class ProductTable extends MultilangTable{
         $db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_products_attr` WHERE product_id=".(int)$this->product_id." ORDER BY product_attr_id";
         $db->setQuery($query);
-        return $db->loadObJectList();
+        return $db->loadObjectList();
     }
 
     //get independent attributs
@@ -196,7 +196,7 @@ class ProductTable extends MultilangTable{
         $app = Factory::getApplication();
         $app->triggerEvent('onAfterQueryGetAttributes2', array(&$query));
         $db->setQuery($query);
-        return $db->loadObJectList();
+        return $db->loadObjectList();
     }
 
     //get attrib values
@@ -241,7 +241,7 @@ class ProductTable extends MultilangTable{
         }
         extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
         $db->setQuery($query);
-        return $db->loadObJectList();
+        return $db->loadObjectList();
     }
 
     function getAttributesDatas($selected = array()){
@@ -272,7 +272,7 @@ class ProductTable extends MultilangTable{
             }
             $app->triggerEvent('onForeachGetAttributesDatas', array(&$allAttribute, &$attr_id, &$actived, &$data, &$selected, &$obj));
         }
-        if (Cart::hasAllAttributeRequired($requireAttribute, $actived)) {
+        if ($JshopConfig->prod_attr_load_data_by_partial_selection || Cart::hasAllAttributeRequired($requireAttribute, $actived)) {
             $data['attributeActive'] = $actived;
         }else{
             $data['attributeActive'] = [];
@@ -308,7 +308,7 @@ class ProductTable extends MultilangTable{
 				  left Join `#__jshopping_free_attr` as FA on FA.id=PFA.attr_id
                   WHERE PFA.product_id=".(int)$this->product_id." $where order by FA.ordering";
         $db->setQuery($query);
-        $this->freeattributes = $db->loadObJectList();
+        $this->freeattributes = $db->loadObjectList();
         return $this->freeattributes;
     }
 
@@ -332,7 +332,7 @@ class ProductTable extends MultilangTable{
             $db = Factory::getDBO();
             $query = "SELECT * FROM `#__jshopping_products_to_categories` WHERE product_id=".(int)$this->product_id;
             $db->setQuery($query);
-            $this->product_categories = $db->loadObJectList();
+            $this->product_categories = $db->loadObjectList();
         }
         if ($type_result==1){
             $cats = array();
@@ -445,64 +445,85 @@ class ProductTable extends MultilangTable{
         }
         return $show;
     }
-
-    function getImages($byattr = 1){
-        $db = Factory::getDBO();
+    
+    public function getImages($byattr = 1) {
         $jshopConfig = JSFactory::getConfig();
-        if (isset($this->attribute_active_data->ext_data) && $this->attribute_active_data->ext_data){
+
+        if (isset($this->attribute_active_data->ext_data) && $this->attribute_active_data->ext_data) {
             $list = $this->attribute_active_data->ext_data->getImages($byattr);
-            if (count($list)){
-                return $list;
-            }
+            if (count($list)) return $list;
         }
 
-        $active_attr_vals = $this->attribute_active ?? [];
+        $active_attr_vals = isset($this->attribute_active) ? array_filter($this->attribute_active) : [];
         $checkbyAttr = $byattr && $active_attr_vals && $jshopConfig->use_extend_attribute_data;
 
-        $query = "SELECT I.*, IF(P.image=I.image_name,0,1) as sort FROM `#__jshopping_products_images` as I
-				 left Join `#__jshopping_products` as P on P.product_id=I.product_id
-                 WHERE I.product_id=".(int)$this->product_id." ORDER BY sort, I.ordering";
+        $list = $this->getImagesLoadAndEnrich($checkbyAttr, $active_attr_vals);
+
+        if ($checkbyAttr) {
+            $list = $this->getImagesApplyAttrFilter($list);
+        }
+
+        $obj = $this;
+        Factory::getApplication()->triggerEvent('onAfterGetImagesProduct', array(&$obj, &$list, &$byattr));
+        return $list;
+    }
+
+    protected function getImagesLoadAndEnrich($checkbyAttr, $active_attr_vals) {
+        $db = Factory::getDBO();
+        $jshopConfig = JSFactory::getConfig();
+
+        $query = "SELECT I.*, IF(P.image=I.image_name,0,1) as sort
+                  FROM `#__jshopping_products_images` as I
+                  LEFT JOIN `#__jshopping_products` as P ON P.product_id=I.product_id
+                  WHERE I.product_id=".(int)$this->product_id." ORDER BY sort, I.ordering";
         $db->setQuery($query);
-        $list = $db->loadObJectList();
-        $_used_img_for_attrs = 0;
-        foreach($list as $k=>$v){
-            if ($checkbyAttr && !$this->getShowImageForAttribute($v, $active_attr_vals)) {
-                unset($list[$k]);
-                continue;
-            }
-            if ($v->attrs) {
-                $_used_img_for_attrs = 1;
-            }
-            $list[$k]->img_alt = $v->name;
+        $list = $db->loadObjectList();
+
+        foreach ($list as $k => $v) {
+            $list[$k]->img_alt   = $v->name;
             $list[$k]->img_title = $v->title;
-            if ($v->name) {
-                $list[$k]->_title = $v->name;
-            } else {
-                $list[$k]->_title = $this->getName();
-            }
+            $list[$k]->_title    = $v->name ?: $this->getName();
             if (!$jshopConfig->product_img_seo) {
-                if (!$list[$k]->img_alt) {
-                    $list[$k]->img_alt = $this->getName();
-                }
+                if (!$list[$k]->img_alt) $list[$k]->img_alt = $this->getName();
                 $list[$k]->img_title = $list[$k]->img_alt;
             }
             $list[$k]->image_thumb = Helper::getPatchProductImage($v->image_name, 'thumb');
-            $list[$k]->image_full = Helper::getPatchProductImage($v->image_name, 'full');
-        }
-        if ($checkbyAttr && $_used_img_for_attrs && $jshopConfig->product_hide_img_without_attrs) {
-            foreach($list as $k=>$v) {
-                if ($v->attrs == '') {
-                    unset($list[$k]);
-                    continue;
-                }
+            $list[$k]->image_full  = Helper::getPatchProductImage($v->image_name, 'full');
+            if ($checkbyAttr) {
+                $list[$k]->show_img_for_attr = $this->getShowImageForAttribute($v, $active_attr_vals);
             }
         }
-        if ($checkbyAttr) {
-            $list = array_values($list);
+        return $list;
+    }
+
+    protected function getImagesApplyAttrFilter($list) {
+        $jshopConfig = JSFactory::getConfig();
+
+        $hasVisible = 0;
+        $hasMatched = 0;
+        foreach ($list as $v) {
+            if ($v->show_img_for_attr ?? 0) {
+                $hasVisible = 1;
+                if ($v->attrs != '') $hasMatched = 1;
+            }
         }
-        $obj = $this;
-        Factory::getApplication()->triggerEvent('onAfterGetImagesProduct', array(&$obj, &$list, &$byattr));
-    return $list;
+
+        // No images assigned to selected attr — show all
+        if (!$hasMatched && $jshopConfig->product_img_show_all_if_no_attr) {
+            return array_values($list);
+        }
+
+        // Remove images not matching selected attr
+        if ($hasVisible) {
+            $list = array_filter($list, function($v) { return $v->show_img_for_attr; });
+        }
+
+        // Remove unassigned images when explicit matches exist
+        if ($hasMatched && $jshopConfig->product_hide_img_without_attrs) {
+            $list = array_filter($list, function($v) { return $v->attrs != ''; });
+        }
+
+        return array_values($list);
     }
 
     function getVideos(){
@@ -513,7 +534,7 @@ class ProductTable extends MultilangTable{
 		}
         $query = "SELECT  video_name, video_id, video_preview, video_code FROM `#__jshopping_products_videos` WHERE product_id=".(int)$this->product_id;
         $db->setQuery($query);
-        return $db->loadObJectList();
+        return $db->loadObjectList();
     }
 
     function getFiles(){
@@ -529,7 +550,7 @@ class ProductTable extends MultilangTable{
 		$query = "SELECT * FROM `#__jshopping_products_files` WHERE product_id=".(int)$this->product_id." order by `ordering`";
 		extract(Helper::Js_add_trigger(get_defined_vars(), "beforeQuery"));
 		$db->setQuery($query);
-		return $db->loadObJectList();
+		return $db->loadObjectList();
     }
 
     function getDemoFiles(){
@@ -543,7 +564,7 @@ class ProductTable extends MultilangTable{
         $query = "SELECT * FROM `#__jshopping_products_files` WHERE product_id=".(int)$this->product_id." and demo!='' order by `ordering`";
 		extract(Helper::Js_add_trigger(get_defined_vars(), "beforeQuery"));
         $db->setQuery($query);
-		$list0 = $db->loadObJectList();
+		$list0 = $db->loadObjectList();
         return array_merge($list0, $list);
     }
 
@@ -559,7 +580,7 @@ class ProductTable extends MultilangTable{
 				  WHERE product_id=".(int)$this->product_id." and file!='' order by `ordering`";
 		extract(Helper::Js_add_trigger(get_defined_vars(), "beforeQuery"));
         $db->setQuery($query);
-		$list0 = $db->loadObJectList();
+		$list0 = $db->loadObjectList();
         return array_merge($list0, $list);
     }
 
@@ -616,7 +637,7 @@ class ProductTable extends MultilangTable{
         $db = Factory::getDBO();
         $query = "select count(*) as countattr, SUM(count) AS qty from `#__jshopping_products_attr` where product_id=".(int)$this->product_id;
         $db->setQuery($query);
-        $tmp = $db->loadObJect();
+        $tmp = $db->loadObject();
         if ($tmp->countattr>0){
             return $tmp->qty;
         }else{
@@ -631,14 +652,14 @@ class ProductTable extends MultilangTable{
 
         $query = "select count(*) as countattr, MIN(price) AS min_price from `#__jshopping_products_attr` where product_id=".(int)$this->product_id;
         $db->setQuery($query);
-        $tmp = $db->loadObJect();
+        $tmp = $db->loadObject();
         if ($tmp->countattr>0){
             $min_price = $tmp->min_price;
         }
 
         $query = "select * from `#__jshopping_products_attr2` where product_id=".(int)$this->product_id;
         $db->setQuery($query);
-        $product_attr_ind = $db->loadObJectList();
+        $product_attr_ind = $db->loadObjectList();
         if ($product_attr_ind){
             $tmpprice = array();
             foreach($product_attr_ind as $key=>$val){
@@ -1026,7 +1047,7 @@ class ProductTable extends MultilangTable{
         $db = Factory::getDBO();
         $query = "SELECT * FROM `#__jshopping_products_reviews` WHERE product_id=".(int)$this->product_id." and publish=1 order by review_id desc";
         $db->setQuery($query, $limitstart, $limit);
-        $rows = $db->loadObJectList();
+        $rows = $db->loadObjectList();
         $obj = $this;
         Factory::getApplication()->triggerEvent('onAfterGetReviewsProduct', array(&$obj, &$rows, &$limitstart, &$limit));
         return $rows;

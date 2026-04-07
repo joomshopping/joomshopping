@@ -49,6 +49,7 @@ class CheckoutShippingModel  extends CheckoutModel{
             }
             $prices = $shippingmethodprice->calculateSum($cart);
             $shippings[$key]->calculeprice = $prices['shipping']+$prices['package'];
+            $shippings[$key]->prices = $prices;
             $shippings[$key]->delivery = '';
             $shippings[$key]->delivery_date_f = '';
             if ($jshopConfig->show_delivery_time_checkout){

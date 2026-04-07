@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.9.1 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -32,7 +32,7 @@ class UsercheckfieldModel {
 		$domains = ComponentHelper::getParams('com_users')->get('domains');
 		if ($domains) {
 			$emailDomain = explode('@', $val);
-			$emailDomain = $emailDomain[1];
+			$emailDomain = $emailDomain[1] ?? '';
 			$emailParts  = array_reverse(explode('.', $emailDomain));
 			$emailCount  = \count($emailParts);
 			$allowed     = true;

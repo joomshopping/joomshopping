@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.0 18.06.2025
+* @version      5.9.1 29.01.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -202,11 +202,13 @@ class CartController extends BaseController{
             $dispatcher->triggerEvent('onBeforeDiscountSave', array(&$coupon, &$cart));
             $cart->setRabatt($coupon->coupon_id, $coupon->coupon_type, $coupon->coupon_value);
             $dispatcher->triggerEvent('onAfterDiscountSave', array(&$coupon, &$cart));
+            if ($coupon && $coupon->coupon_id && $coupon->coupon_value) {
+                JSError::raiseMessage('', Text::_('JSHOP_RABATT_APPLIED'));
+            }
             if ($ajax){
                 print Helper::getOkMessageJson($cart);
                 die();
             }
-            JSError::raiseMessage('', Text::_('JSHOP_RABATT_APPLIED'));
         }else{
             JSError::raiseWarning('', $coupon->error);
             if ($ajax){

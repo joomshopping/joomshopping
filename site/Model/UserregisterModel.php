@@ -161,8 +161,9 @@ class UserregisterModel  extends UserbaseModel{
 		if (!$fieldRegister['password']['display'] && !$this->getAdminRegistration()){
 			$post["password"] = '';
 		}
-        if ($post["password"]==""){
+        if ($post["password"]=="" && $jshopConfig->user_password_gen_in_shop){
             $post["password"] = substr(md5('up'.time()), 0, 8);
+            $post["password2"] = $post["password"];
         }
         $user = new User;
         $data = array();
@@ -172,19 +173,18 @@ class UserregisterModel  extends UserbaseModel{
         $data['password2'] = isset($post['password2']) ? $post['password2'] : null;
         $data['name'] = $post['f_name'].' '.$post['l_name'];
         $data['username'] = $post["u_name"];
-        $useractivation = $params->get('useractivation');        
+        $useractivation = $params->get('useractivation');
 
 		if ($this->admin_registration){
 			$data['block'] = $post['block'];
 		}else{
 			if ($useractivation == 1 || $useractivation == 2){
-				jimport('joomla.user.helper');
 				$data['activation'] = ApplicationHelper::getHash(UserHelper::genRandomPassword());
 				$data['block'] = 1;
 			}
 		}
         $this->userjoomla_data = $data;
-		extract(Helper::Js_add_trigger(get_defined_vars(), "beforeBind"));        
+		extract(Helper::Js_add_trigger(get_defined_vars(), "beforeBind"));
         $user->bind($data);
         if (!$user->save()){
             $this->user_joomla_id = 0;
@@ -208,8 +208,9 @@ class UserregisterModel  extends UserbaseModel{
         $this->user->number =  $this->user->getNewUserNumber();        
         if (!$db->insertObject($this->user->getTableName(), $this->user, $this->user->getKeyName())){
 			$this->savePostData();
-            Helper::saveToLog('error.log', $db->getErrorMsg());
-            $this->setError("Error insert in table ".$this->user->getTableName());
+            $msg = "Error insert in table ".$this->user->getTableName();
+            Helper::saveToLog('error.log', $msg);
+            $this->setError($msg);
             return 0;
         }else{
             return 1;

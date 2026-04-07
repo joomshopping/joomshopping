@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.4 17.11.2025
+* @version      5.9.1 06.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -166,7 +166,7 @@ class ProductfieldsModel extends BaseadminModel{
                 $res[$id] = false;
             }
         }
-        $app->triggerEvent('onAfterRemoveProductField', array(&$cid));
+        $app->triggerEvent('onAfterRemoveProductField', array(&$cid, &$res));
         return $res;
     }
 

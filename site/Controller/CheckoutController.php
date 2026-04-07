@@ -467,6 +467,7 @@ class CheckoutController extends BaseController{
         header("Cache-Control: no-cache, must-revalidate");
         $order_id = $checkout->getEndOrderId();
         $wmiframe = $this->input->getInt("wmiframe");
+        Helper::saveToLog("payment.log", "step6 ".$order_id);
 
         if (!$order_id){
             JSError::raiseWarning("", Text::_('JSHOP_SESSION_FINISH'));
@@ -568,7 +569,8 @@ class CheckoutController extends BaseController{
         $order_id = $checkout->getEndOrderId();
 		$text = $checkout->getFinishStaticText();
 		$text_end = '';
-		
+        Helper::saveToLog("payment.log", "finish ".$order_id);
+
         Metadata::checkoutFinish();
 
         Factory::getApplication()->triggerEvent('onBeforeDisplayCheckoutFinish', array(&$text, &$order_id, &$text_end));

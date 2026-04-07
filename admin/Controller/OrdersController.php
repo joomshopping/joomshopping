@@ -104,7 +104,7 @@ class OrdersController extends BaseadminController{
             $rows[$k]->display_info_order = $display_info_order;
             
             $blocked = 0;
-            if (HelperAdmin::orderBlocked($row) || !$display_info_order) $blocked = 1;
+            if (($jshopConfig->shop_mode == 0 && HelperAdmin::orderBlocked($row)) || !$display_info_order) $blocked = 1;
             $rows[$k]->blocked = $blocked;
 			
             $rows[$k]->payment_name = isset($payments_list[$row->payment_method_id]) ? $payments_list[$row->payment_method_id] : '';

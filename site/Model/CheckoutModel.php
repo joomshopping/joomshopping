@@ -70,6 +70,7 @@ class CheckoutModel extends BaseModel{
 			$sendmessage = 0;
         $this->changeStatusOrder($order_id, $status, $sendmessage, null, $sendmessage);
         Factory::getApplication()->triggerEvent('onAfterCancelPayOrderJshopCheckout', array(&$order_id, $status, $sendmessage));
+        Helper::saveToLog("payment.log", "cancel ".$order_id);
     }
     
     function setMaxStep($step){

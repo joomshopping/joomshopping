@@ -528,8 +528,7 @@ class OrdersModel extends BaseadminModel{
         if (!$order_id){
             $order->user_id = -1;
             $order->order_date = Helper::getJsDate();
-            $orderNumber = $jshopConfig->next_order_number;
-            $jshopConfig->updateNextOrderNumber();
+            $orderNumber = $jshopConfig->getNextOrderNumber(1);
             $order->order_number = $order->formatOrderNumber($orderNumber);
             $order->order_hash = md5(time().$order->order_total.$order->user_id);
             $order->file_hash = md5(time().$order->order_total.$order->user_id."hashfile");

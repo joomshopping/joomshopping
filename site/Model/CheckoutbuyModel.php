@@ -248,9 +248,7 @@ class CheckoutBuyModel  extends CheckoutModel{
 		}
         $order->saveTransactionData($rescode, $status, $transaction, $transactiondata);
 
-        if ($restext!=''){
-            Helper::saveToLog("payment.log", $restext);
-        }
+        Helper::saveToLog("payment.log", 'code: '.$rescode.", status: ".$status.', '.$restext);
 
 		if ($status) {
 			$need_create_order = (!in_array($status, $jshopConfig->payment_status_no_create_order));

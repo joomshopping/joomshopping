@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.0 15.09.2022
+* @version      5.9.1 15.09.2022
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -89,7 +89,7 @@ class ManufacturerTable extends MultilangTable{
     function getDescriptionMainPage($preparePluginContent = 1){
         $statictext = JSFactory::getTable("statictext");
         $rowstatictext = $statictext->loadData("manufacturer");
-        $this->description = $rowstatictext->text;
+        $this->description = $rowstatictext->text ?? '';
         if ($preparePluginContent && JSFactory::getConfig()->use_plugin_content){
             Helper::changeDataUsePluginContent($this, "manufacturer");
         }
@@ -156,7 +156,7 @@ class ManufacturerTable extends MultilangTable{
         $query->where("product_manufacturer_id='".$db->escape($manufacturer_id)."'");
         $db->setQuery($query);
         if ((int)$db->loadResult() == 0){
-            $result = parent::delete($pk);
+            $result = parent::delete($manufacturer_id);
         }else{
             $this->setError(sprintf(Text::_('JSHOP_NOT_EMPTY_MANUFACTURER_DELETE_ERROR'), $manufacturer_id));
         }
