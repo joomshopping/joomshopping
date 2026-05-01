@@ -45,26 +45,40 @@ class ReviewTable extends ShopbaseTable{
     }
 	
 	function check(){
-        $db = Factory::getDBO();
 		$res = 1;
-        if (!$this->product_id){
-            $res = 0;
+
+        if (!$this->review_id || $this->product_id !== null) {
+            if (!$this->product_id) {
+                $res = 0;
+            } else {
+                $db = Factory::getDBO();
+                $query = "SELECT product_id FROM `#__jshopping_products` WHERE product_id=" . intval($this->product_id);
+                $db->setQuery($query);
+                if (!intval($db->loadResult())) {
+                    $this->setError('Product not found');
+                    $res = 0;
+                }
+            }
         }
-        if ($this->user_name==''){
-            $res = 0;
+
+        if (!$this->review_id || $this->user_name !== null) {
+            if ($this->user_name == '') {
+                $res = 0;
+            }
         }
-        if ($this->user_email==''){
-            $res = 0;
+
+        if (!$this->review_id || $this->user_email !== null) {
+            if ($this->user_email == '') {
+                $res = 0;
+            }
         }
-        if ($this->review==''){
-            $res = 0;
-        }        
-        $query = "SELECT product_id FROM #__jshopping_products WHERE product_id=".intval($this->product_id);
-        $db->setQuery($query);
-        $pid = intval($db->loadResult());
-        if (!$pid){
-            $res = 0;
+
+        if (!$this->review_id || $this->review !== null) {
+            if ($this->review == '') {
+                $res = 0;
+            }
         }
+
 		extract(Helper::Js_add_trigger(get_defined_vars(), "after"));
         return $res;
     }

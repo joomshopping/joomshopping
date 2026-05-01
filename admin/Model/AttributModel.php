@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 15.09.2018
+* @version      5.9.2 25.04.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -143,9 +143,6 @@ class AttributModel extends BaseadminModel{
         if (!$attribut->store()){
             $this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE'));
             return 0;
-        }        
-        if ($attribut->independent == 0){
-            $attribut->addNewFieldProductsAttr();
         }
         $dispatcher->triggerEvent('onAfterSaveAttribut', array(&$attribut));
         return $attribut;

@@ -134,9 +134,9 @@ class ProductTable extends MultilangTable{
         if (isset($this->attribute_active_data->ext_data) && isset($this->attribute_active_data->ext_data->$field) && $this->attribute_active_data->ext_data->$field!=''){
             return $this->attribute_active_data->ext_data->$field;
         }else{
-            if ($field == 'image' && ($this->attribute_active ?? []) && JSFactory::getConfig()->use_extend_attribute_data) {
+            if ($field == 'image' && ($this->attribute_active ?? []) && JSFactory::getConfig()->use_extend_attribute_data) {                
                 $images = $this->getImages();
-                return $images[0]->image_name;
+                return $images[0]->image_name ?? '';
             }
             return $this->$field;
         }
@@ -161,7 +161,7 @@ class ProductTable extends MultilangTable{
                         continue;
                     }
                     $field = "attr_".(int)$attrib->attr_id;
-                    if ($prodAtrtib->$field) $require[] = $attrib->attr_id;
+                    if ($prodAtrtib->$field ?? 0) $require[] = $attrib->attr_id;
                 }
             }
         }

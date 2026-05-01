@@ -24,24 +24,17 @@ class CategoriesModel extends BaseadminModel{
     
     protected $nameTable = 'category';
     protected $tableFieldPublish = 'category_publish';
-
-	public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []) {
-		return $this->getAllList($params['display'] ?? 0, $orderBy['order'] ?? null, $orderBy['dir'] ?? null);
-	}
     
-    function getAllList($display=0, $order = null, $orderDir = null){
+    public function getAllList($display=0, $order = null, $orderDir = null, $limit = 0, $limitstart = 0){
         $db = Factory::getDBO();
         $lang = JSFactory::getLang();
-        $orderby = "ordering";
-        if (isset($order) && $order=="id") $orderby = "`category_id`";
-        if (isset($order) && $order=="name") $orderby = "`".$lang->get('name')."`";
-        if (isset($order) && $order=="ordering") $orderby = "ordering";
+        $orderby = '`'.$this->_resolveOrderField($order).'`';
         if (isset($orderDir)) {
             $orderby .= " ".$orderDir;
         }
         $query = "SELECT `".$lang->get('name')."` as name, category_id FROM `#__jshopping_categories` ORDER BY ".$orderby;
         extract(Helper::js_add_trigger(get_defined_vars(), "before"));
-        $db->setQuery($query);
+        $db->setQuery($query, $limitstart, $limit);
         $list = $db->loadObjectList();
         if ($display==1){
             $rows = [];
@@ -53,14 +46,71 @@ class CategoriesModel extends BaseadminModel{
         }
         return $list;
     }
-    
+
+    public function getListItems(array $filters = [], array $orderBy = [], array $limit = [], array $params = []) {
+        $db = Factory::getDbo();
+        $lang = JSFactory::getLang();
+        $tablename = '#__jshopping_categories';
+
+        $order = $this->_resolveOrderField($orderBy['order'] ?? null);
+        $orderDir = strtolower($orderBy['dir'] ?? '') === 'desc' ? 'desc' : 'asc';
+
+        $fields = [
+            'category_id',
+            'category_parent_id',
+            'ordering',
+            '`'.$lang->get('name').'` as name',
+            '`'.$lang->get('short_description').'` as short_description',
+            '`'.$lang->get('description').'` as description',
+            'category_publish',
+            'category_image',
+        ];
+        if (!empty($params['load_has_subcat'])) {
+            $fields[] = '(SELECT COUNT(*) FROM '.$db->qn($tablename).' AS sub WHERE sub.category_parent_id = '.$db->qn($tablename).'.category_id) AS has_subcat';
+        }
+
+        $query = $db->getQuery(true);
+        $query->select($fields);
+        $query->from($db->qn($tablename));
+        $this->_applyFilters($query, $filters);
+        $query->order($db->qn($order)." ".$orderDir);
+
+        $db->setQuery($query, $limit['limitstart'] ?? 0, $limit['limit'] ?? 0);
+        return $db->loadObjectList();
+    }
+
+    public function getCountItems(array $filters = [], array $params = []) {
+        $db = Factory::getDbo();
+        $tablename = '#__jshopping_categories';
+        $query = $db->getQuery(true);
+        $query->select('count(*)');
+        $query->from($db->qn($tablename));
+        $this->_applyFilters($query, $filters);
+        $db->setQuery($query);
+        return $db->loadResult();
+    }
+
+    protected function _applyFilters($query, array $filters) {
+        $db = Factory::getDbo();
+        $lang = JSFactory::getLang();
+        if (!empty($filters['text_search'])) {
+            $search = $db->quote('%'.$db->escape($filters['text_search']).'%');
+            $query->where('(`'.$lang->get('name').'` LIKE '.$search
+                .' OR `'.$lang->get('short_description').'` LIKE '.$search
+                .' OR `'.$lang->get('description').'` LIKE '.$search.')');
+        }
+        if (isset($filters['publish']) && $filters['publish'] !== '') {
+            $query->where('category_publish = '.(int)$filters['publish']);
+        }
+        if (isset($filters['category_parent_id']) && $filters['category_parent_id'] !== '') {
+            $query->where('category_parent_id = '.(int)$filters['category_parent_id']);
+        }
+    }
+
     function getSubCategories($parentId, $order = 'id', $ordering = 'asc') {
         $db = Factory::getDBO();        
         $lang = JSFactory::getLang();
-        if ($order=="id") $orderby = "`category_id`";
-        if ($order=="name") $orderby = "`".$lang->get('name')."`";
-        if ($order=="ordering") $orderby = "ordering";
-        if (!$orderby) $orderby = "ordering";
+        $orderby = '`'.$this->_resolveOrderField($order).'`';
         $query = "SELECT `".$lang->get('name')."` as name,`".$lang->get('short_description')."` as short_description, category_id, category_publish, ordering, category_image FROM `#__jshopping_categories`
                    WHERE category_parent_id = '".$db->escape($parentId)."'
                    ORDER BY ".$orderby." ".$ordering;
@@ -202,6 +252,17 @@ class CategoriesModel extends BaseadminModel{
         return $categories;
     }
    
+    protected function _resolveOrderField(?string $order): string {
+        $lang = JSFactory::getLang();
+        $map = [
+            'id'          => 'category_id',
+            'name'        => $lang->get('name'),
+            'description' => $lang->get('description'),
+            'ordering'    => 'ordering',
+        ];
+        return $map[$order] ?? 'ordering';
+    }
+
     function _allCategoriesOrder($order = null, $orderDir = null){
         $lang = JSFactory::getLang();
         if ($order && $orderDir){
@@ -401,6 +462,31 @@ class CategoriesModel extends BaseadminModel{
         @unlink($jshopConfig->image_category_path.'/'.$category->category_image);
         $category->category_image = "";
         $category->store();
+    }
+
+    public function getParentsCatsName($catid) {
+        $category = JSFactory::getTable("Category");
+        $category->load($catid);
+        $ids = $category->getTreeParentCategories(0, 0);
+        if (empty($ids)) {
+            return [];
+        }
+        $db = Factory::getDbo();
+        $lang = JSFactory::getLang();
+        $nameField = '`' . $lang->get('name') . '`';
+        $result = [];
+        foreach ($ids as $id) {
+            $query = $db->getQuery(true);
+            $query->select(['category_id as id', $nameField . ' as name']);
+            $query->from($db->qn('#__jshopping_categories'));
+            $query->where('category_id = ' . (int)$id);
+            $db->setQuery($query);
+            $row = $db->loadObject();
+            if ($row) {
+                $result[$row->id] = $row->name;
+            }
+        }
+        return $result;
     }
     
 }

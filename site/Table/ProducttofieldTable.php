@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.9.2 15.04.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,10 +16,10 @@ class ProductToFieldTable extends ShopbaseTable{
         parent::__construct('#__jshopping_products_to_extra_fields', 'product_id', $_db);
     }
 	
-	public function store($updateNulls = false){
+	public function store($updateNulls = false) {
 		$db = Factory::getDBO();
 		$this->delete();
-		$db->insertObject($this->_tbl, $this, $this->_tbl_keys[0]);
+		return $db->insertObject($this->_tbl, $this, $this->_tbl_keys[0]);
 	}
-    
+
 }

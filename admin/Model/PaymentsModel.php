@@ -97,7 +97,7 @@ class PaymentsModel extends BaseadminModel{
         $dispatcher->triggerEvent('onBeforeSavePayment', array(&$post));
 		$payment->bind($post);
         if (!$payment->payment_id){
-            $payment->payment_ordering = $this->getMaxOrdering() + 1;
+            $payment->payment_ordering = $payment->getNextOrder();
         }
         $payment->setConfigs($post['pm_params'] ?? []);
         if (!$payment->check()){

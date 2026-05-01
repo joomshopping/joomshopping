@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.1 06.03.2025
+* @version      5.9.2 06.04.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -58,7 +58,7 @@ class ProductfieldsModel extends BaseadminModel{
         if (isset($filter['category_id']) && $filter['category_id']){
             foreach($rows as $k=>$v){
                 if (!$v->allcats){
-                    $_cats = unserialize($v->cats);
+                    $_cats = (array)(unserialize($v->cats) ?? []);
                     if (!in_array($filter['category_id'], $_cats)){
                         unset($rows[$k]);
                     }
@@ -72,12 +72,14 @@ class ProductfieldsModel extends BaseadminModel{
                 if ($v->allcats){
                     $rows[$k]->printcat = Text::_('JSHOP_ALL');
                 }else{
+                    $printcat = '';
                     $catsnames = array();
-                    $_cats = unserialize($v->cats);
+                    $_cats = (array)(unserialize($v->cats) ?? []);
                     foreach($_cats as $cat_id){
                         $catsnames[] = $listCats[$cat_id] ?? '';
-                        $rows[$k]->printcat = implode(", ", $catsnames);
+                        $printcat = implode(", ", $catsnames);
                     }
+                    $rows[$k]->printcat = $printcat;
                 }
             }
         }
@@ -233,7 +235,7 @@ class ProductfieldsModel extends BaseadminModel{
             if ($v->allcats==1){
                 $insert = 1;
             } else {
-                $cats = unserialize($v->cats);
+                $cats = (array)(unserialize($v->cats) ?? []);
                 foreach($categorys as $catid){
                     if (in_array($catid, $cats)) $insert = 1;
                 }

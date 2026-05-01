@@ -30,14 +30,14 @@ class CategoriesController extends BaseadminController{
     }
     
     function display($cachable = false, $urlparams = false){
+        $jshopConfig = JSFactory::getConfig();
         $app = Factory::getApplication();
-        
-        $_categories = JSFactory::getModel("Categories");
-        
         $context = "jshopping.list.admin.category";
         $limit = $app->getUserStateFromRequest($context.'limit', 'limit', $app->getCfg('list_limit'), 'int' );
         $limitstart = $app->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int' );
-        $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');
+        $filter_catid = $app->getUserStateFromRequest($context.'catid', 'catid', 0, 'int');
+        $dtype = $app->getUserStateFromRequest($context.'dtype', 'dtype', $jshopConfig->admin_default_cat_dtype, 'int');
+        $filter_order = $app->getUserStateFromRequest($context.'filter_order', 'filter_order', "ordering", 'cmd');        
         $filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', "asc", 'cmd');
         $ifilter = $app->getUserStateFromRequest($context.'filter', 'filter', [], 'array');
         $filter = [];
@@ -47,28 +47,42 @@ class CategoriesController extends BaseadminController{
         if ($ifilter['publish'] ?? 0) {
             $filter['publish'] = $ifilter['publish'] % 2;
         }
-		
-        $categories = $_categories->getTreeAllCategories($filter, $filter_order, $filter_order_Dir);
-        $total = count($categories);
-        
-        $pagination = new Pagination($total, $limitstart, $limit);
-        
+        $_categories = JSFactory::getModel("Categories");
+
+        if ($dtype == 1) {
+            $filter['category_parent_id'] = $filter_catid;
+            $total = $_categories->getCountItems($filter);
+            $pagination = new Pagination($total, $limitstart, $limit);
+            $rows = $_categories->getListItems(
+                $filter, 
+                ['order' => $filter_order, 'dir'=>$filter_order_Dir], 
+                ['limitstart' => $pagination->limitstart, 'limit' => $pagination->limit],
+                ['load_has_subcat' => 1]
+            );
+            $active_name_tree = $_categories->getParentsCatsName($filter_catid);
+        } else {
+            $rows = $_categories->getTreeAllCategories($filter, $filter_order, $filter_order_Dir);
+            $total = count($rows);
+            $pagination = new Pagination($total, $limitstart, $limit);            
+            $rows = array_slice($rows, $pagination->limitstart, $pagination->limit);
+        }
         $countproducts = $_categories->getAllCatCountProducts();
-        $categories = array_slice($categories, $pagination->limitstart, $pagination->limit);
+
         $filterinput = [];
         $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);
 
-        foreach ($categories as $category) {
+        foreach ($rows as $category) {
             $category->tmp_html_col_after_title = "";
         }
         
         $view = $this->getView("category", 'html');
         $view->setLayout("list");
-        $view->set('categories', $categories);
+        $view->set('categories', $rows);
         $view->set('countproducts', $countproducts);
         $view->set('pagination', $pagination);
         $view->set('filter_order', $filter_order);
         $view->set('filter_order_Dir', $filter_order_Dir);
+        $view->active_name_tree = $active_name_tree ?? [];
 		$view->ifilter = $ifilter;
         $view->filterinput = $filterinput;
         $view->tmp_html_start = "";
@@ -77,6 +91,8 @@ class CategoriesController extends BaseadminController{
         $view->tmp_html_col_before_td_foot = "";
         $view->tmp_html_col_after_td_foot = "";
         $view->tmp_html_end = "";
+        $view->dtype = $dtype;
+        $view->config = $jshopConfig;
         Factory::getApplication()->triggerEvent('onBeforeDisplayListCategoryView', array(&$view));
         $view->displayList();
     }

@@ -12,6 +12,7 @@ use Joomla\CMS\Uri\Uri;
 */
 defined('_JEXEC') or die();
 $categories = $this->categories;
+$dtype = (int)($this->dtype ?? 0);
 $i = 0;
 $count = count($categories); 
 $pageNav = $this->pagination;
@@ -22,6 +23,14 @@ if ($saveOrder){
 }
 ?>
 <div id="j-main-container" class="j-main-container">
+    <?php if (!empty($this->active_name_tree)) { ?>
+    <div class="mb-2 cat-try-header">
+        <a href="index.php?option=com_jshopping&controller=categories&catid=0"><?php echo Text::_('JSHOP_CATEGORIES'); ?></a>
+        <?php foreach ($this->active_name_tree as $catId => $cat) { ?>
+        / <a href="index.php?option=com_jshopping&controller=categories&catid=<?php echo (int)$catId; ?>"><?php echo htmlspecialchars($cat); ?></a>
+        <?php } ?>
+    </div>
+    <?php } ?>
     <form action="index.php?option=com_jshopping&controller=categories" method="post" enctype="multipart/form-data"
         name="adminForm" id="adminForm">
         <?php print $this->tmp_html_start?>
@@ -43,6 +52,18 @@ if ($saveOrder){
                 <button type="button"
                     class="btn btn-primary js-stools-btn-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
             </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary hasTooltip<?php echo $dtype == 0 ? ' active' : ''; ?>"
+                    title="<?php echo Text::_('JSHOP_DISPLAY_TREE'); ?>"
+                    onclick="jshopSetDtype(0)">
+                    <span class="icon-tree" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-outline-primary hasTooltip<?php echo $dtype == 1 ? ' active' : ''; ?>"
+                    title="<?php echo Text::_('JSHOP_DISPLAY_LIST'); ?>"
+                    onclick="jshopSetDtype(1)">
+                    <span class="icon-list" aria-hidden="true"></span>
+                </button>
+            </div>
         </div>
 
         <table class="table table-striped">
@@ -54,6 +75,9 @@ if ($saveOrder){
                     <th width="20">
                         <input type="checkbox" name="checkall-toggle" value=""
                             title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+                    </th>
+                    <th width="93" align="left">
+                        <?php echo Text::_('JSHOP_IMAGE')?>
                     </th>
                     <th align="left">
                         <?php echo HTMLHelper::_('grid.sort', 'JSHOP_TITLE', 'name', $this->filter_order_Dir, $this->filter_order); ?>
@@ -83,8 +107,8 @@ if ($saveOrder){
                 data-direction="<?php echo strtolower($this->filter_order_Dir); ?>" data-nested="true" <?php endif; ?>>
                 <?php foreach($categories as $category) { ?>
                 <tr class="row<?php echo $i % 2; ?>" data-draggable-group="<?php print $category->category_parent_id?>"
-                    item-id="<?php echo $category->category_id; ?>" parents="<?php echo $category->parentsStr; ?>"
-                    level="<?php print $category->level?>">
+                    item-id="<?php echo $category->category_id; ?>" parents="<?php echo $category->parentsStr ?? ''; ?>"
+                    level="<?php print $category->level ?? '';?>">
                     <td class="order text-center d-none d-md-table-cell">
                         <span class="sortable-handler <?php if (!$saveOrder) echo 'inactive';?>">
                             <span class="icon-ellipsis-v" aria-hidden="true"></span>
@@ -97,8 +121,20 @@ if ($saveOrder){
                         <?php echo HTMLHelper::_('grid.id', $i, $category->category_id);?>
                     </td>
                     <td>
-                        <?php print $category->space; ?><a
+                        <?php if ($category->category_image) { ?>
+                        <a href="index.php?option=com_jshopping&controller=categories&task=edit&category_id=<?php echo $category->category_id; ?>">
+                            <img src="<?php echo $this->config->image_category_live_path . '/' . $category->category_image ?>" width="60" border="0" />
+                        </a>
+                        <?php } ?>
+                    </td>
+                    <td>
+                        <?php if ($dtype == 0) print $category->space ?? ''; ?><a
                             href="index.php?option=com_jshopping&controller=categories&task=edit&category_id=<?php echo $category->category_id; ?>"><?php echo $category->name;?></a>
+                        <?php if (!empty($category->has_subcat)) { ?>
+                        <a class="ms-2 btn btn-primary btn-sm" href="index.php?option=com_jshopping&controller=categories&catid=<?php echo $category->category_id; ?>">
+                            <span class="icon-tree" aria-hidden="true"></span>
+                        </a>
+                        <?php } ?>
                     </td>
                     <?php print $category->tmp_html_col_after_title?>
                     <td>
@@ -143,6 +179,7 @@ if ($saveOrder){
             <div class="jshop_limit_box"><?php echo $pageNav->getLimitBox(); ?></div>
         </div>
 
+        <input type="hidden" id="js-dtype" name="dtype" value="<?php echo $dtype; ?>" />
         <input type="hidden" name="filter_order" value="<?php echo $this->filter_order?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter_order_Dir?>" />
         <input type="hidden" name="task" value="" />
@@ -152,6 +189,10 @@ if ($saveOrder){
     </form>
 </div>
 <script>
+function jshopSetDtype(v) {
+    document.getElementById('js-dtype').value = v;
+    document.adminForm.submit();
+}
 jQuery(function() {
     jshopAdmin.setMainMenuActive(
         '<?php print Uri::base()?>index.php?option=com_jshopping&controller=categories&catid=0');

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.7.0 08.04.2024
+* @version      5.9.2 08.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -21,9 +21,6 @@ class HtmlView extends BaseHtmlView{
         ToolbarHelper::publishList();
         ToolbarHelper::unpublishList();
         ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
-        if ($this->config->disable_admin['addons_catalog'] == 0) {
-            ToolbarHelper::custom("addonscatalog.display", 'folder', 'folder', Text::_('JSHOP_ADDONS_CATALOG'), false);
-        }
         HelperAdmin::btnHome();
         parent::display($tpl);
 	}

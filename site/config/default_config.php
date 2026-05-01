@@ -315,6 +315,7 @@ $config->product_hide_img_without_attrs = 0;
 $config->product_img_show_all_if_no_attr = 1;
 $config->user_password_gen_in_shop = 1;
 $config->prod_attr_load_data_by_partial_selection = 0;
+$config->admin_default_cat_dtype = 0;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';

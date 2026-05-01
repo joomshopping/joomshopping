@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.0 06.04.2024
+* @version      5.9.2 06.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,7 +22,15 @@ $i = 0;
 <div class="row">
 <div class="col-md-12">
 <div id="j-main-container" class="j-main-container">
-    <?php HelperAdmin::displaySubmenuOptions('addons');?>
+    <?php HelperAdmin::displaySubmenuOptions('addonscatalog');?>
+    <?php if (empty($this->config->addonshop_api_key)) {?>
+        <div class="mb-3 alert alert-warning small">
+            <a href="index.php?option=com_jshopping&controller=addonscatalog&task=apikey">
+                <i class="icon-options"></i>
+                <?php echo Text::_('JSHOP_ENTER_KEY_FOR_MENAGE_ADDONS')?>
+            </a>
+        </div>
+    <?php } ?>
     <form action="index.php?option=com_jshopping&controller=addonscatalog" method="post" name="adminForm" id="adminForm">
 		
 		<div class="js-filters">

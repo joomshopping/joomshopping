@@ -33,7 +33,7 @@ class AddonscatalogController extends BaseadminController{
 		$category_id = $app->getUserStateFromRequest($context.'category_id', 'category_id', 0, 'int');
         $type = $app->getUserStateFromRequest($context.'type', 'type', 0, 'int');
 		$text_search = $app->getUserStateFromRequest($context.'text_search', 'text_search', '');
-		
+
         $model = JSFactory::getModel('addonscatalog');
 		
 		$filter = [];
@@ -64,6 +64,7 @@ class AddonscatalogController extends BaseadminController{
         $view->filter_order_Dir = $filter_order_Dir;
         $view->filter = $filter;
 		$view->pageNav = $pageNav;
+        $view->config = JSFactory::getConfig();
         $view->displayList();
     }
 

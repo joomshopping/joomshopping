@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.0 09.04.2024
+* @version      5.9.2 09.04.2024
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,6 +14,8 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class PaymentMethodTable extends MultilangTable{
+
+    protected $_columnAlias = ['ordering' => 'payment_ordering'];
 
     function __construct(&$_db){
         parent::__construct('#__jshopping_payment_method', 'payment_id', $_db);

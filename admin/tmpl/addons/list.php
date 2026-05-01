@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.7.0 29.03.2025
+* @version      5.9.2 29.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -171,7 +171,7 @@ $i=0;
         </table>
         <?php }?>
 
-        <?php if ($this->config->disable_admin['addons_catalog'] == 0) {?>
+        <?php if ($this->config->disable_admin['addons_catalog'] == 0 && $count < 5) {?>
             <div class="text-center mt-3">
                 <a class="btn btn-success" href="index.php?option=com_jshopping&controller=addonscatalog">
                     <span class="icon-folder" aria-hidden="true"></span>

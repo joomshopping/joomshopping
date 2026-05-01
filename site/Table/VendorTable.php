@@ -40,31 +40,36 @@ class VendorTable extends MultilangTable{
     }
     
 	function check(){
-        $db = Factory::getDBO();
-        Jimport('Joomla.mail.helper');
-            
-	    if(trim($this->f_name) == '') {	    	
-		    $this->setError(Text::_('JSHOP_REGWARN_NAME'));
-		    return false;
-	    }
-        
-        if( (trim($this->email == "")) || ! MailHelper::isEmailAddress($this->email)) {
-            $this->setError(Text::_('JSHOP_REGWARN_MAIL'));
-            return false;
+        if (!$this->id || $this->f_name !== null) {
+            if (trim($this->f_name) == '') {
+                $this->setError(Text::_('JSHOP_REGWARN_NAME'));
+                return false;
+            }
+        }
+        if (!$this->id || $this->email !== null) {
+            if (trim($this->email) == '' || !MailHelper::isEmailAddress($this->email)) {
+                $this->setError(Text::_('JSHOP_REGWARN_MAIL'));
+                return false;
+            }
         }
         if ($this->user_id){
-            $query = "SELECT id FROM #__jshopping_vendors WHERE `user_id`='".$db->escape($this->user_id)."' AND id!=".(int)$this->id;
-            $db->setQuery($query);
-            $xid = intval($db->loadResult());
+            $xid = $this->findByUserId($this->user_id, $this->id);
             if ($xid){
                 $this->setError(sprintf(Text::_('JSHOP_ERROR_SET_VENDOR_TO_MANAGER'), $this->user_id));
                 return false;
             }
         }
-        
-	return true;
+	    return true;
 	}
     
+    protected function findByUserId(int $userId, int $excludeId): int
+    {
+        $db = Factory::getDBO();
+        $query = "SELECT id FROM `#__jshopping_vendors` WHERE `user_id`=" . $db->q($userId) . " AND id!=" . $db->q($excludeId);
+        $db->setQuery($query);
+        return intval($db->loadResult());
+    }
+
     function getAllVendors($publish=1, $limitstart=0, $limit=0, $orderby = null) {
         $db = Factory::getDBO();
         $where = "";

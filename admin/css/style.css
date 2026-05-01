@@ -728,6 +728,16 @@ a.no_blank[target="_blank"]:before{
     border:1px solid #eee;
     padding: 2px 5px;
 }
+.alert.small a{
+    color:#444;
+}
+.cat-try-header{
+    font-size: 18px;
+    font-weight: bold;
+}
+.cat-try-header a{
+    color: var(--heading-color);
+}
 
 #ajaxLoadAnimate {
     position : fixed;

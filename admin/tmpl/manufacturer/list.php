@@ -54,6 +54,9 @@ if ($saveOrder){
             <th width="20">
               <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
             </th>
+            <th width="70" align="left">
+                <?php echo Text::_('JSHOP_IMAGE')?>
+            </th>
             <th align="left">
               <?php echo HTMLHelper::_( 'grid.sort', Text::_('JSHOP_TITLE'), 'name', $this->filter_order_Dir, $this->filter_order)?>
             </th>
@@ -81,6 +84,13 @@ if ($saveOrder){
         </td>
        <td>
          <?php echo HTMLHelper::_('grid.id', $i, $row->manufacturer_id);?>
+       </td>
+       <td>
+           <?php if ($row->manufacturer_logo) { ?>
+           <a href="index.php?option=com_jshopping&controller=manufacturers&task=edit&man_id=<?php echo $row->manufacturer_id; ?>">
+               <img src="<?php echo $this->config->image_manufs_live_path . '/' . $row->manufacturer_logo ?>" width="60" border="0" />
+           </a>
+           <?php } ?>
        </td>
        <td>
          <a href="index.php?option=com_jshopping&controller=manufacturers&task=edit&man_id=<?php echo $row->manufacturer_id; ?>"><?php echo $row->name;?></a>

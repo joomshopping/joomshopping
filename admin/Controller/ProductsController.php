@@ -296,7 +296,9 @@ class ProductsController extends BaseadminController{
         //currency
         $current_currency = $product->currency_id;
         if (!$current_currency) $current_currency = $jshopConfig->mainCurrency;
-        $lists['currency'] = HTMLHelper::_('select.genericlist', SelectOptions::getCurrencies(), 'currency_id','class = "inputbox middle form-select"','currency_id','currency_code', $current_currency);
+        /** @var \Joomla\Component\Jshopping\Administrator\Model\CurrenciesModel $currenciesModel */
+        $currenciesModel = JSFactory::getModel("currencies");
+        $lists['currency'] = HTMLHelper::_('select.genericlist', $currenciesModel->getAllCurrencies(0), 'currency_id','class = "inputbox middle form-select"','currency_id','currency_code', $current_currency);
 
         // vendors
         $display_vendor_select = 0;
@@ -480,7 +482,9 @@ class ProductsController extends BaseadminController{
         //currency
         $current_currency = $product->currency_id;
         if (!$current_currency) $current_currency = $jshopConfig->mainCurrency;
-        $lists['currency'] = HTMLHelper::_('select.genericlist', SelectOptions::getCurrencies(), 'currency_id','class = "inputbox form-select"','currency_id','currency_code', $current_currency);
+        /** @var \Joomla\Component\Jshopping\Administrator\Model\CurrenciesModel $currenciesModel */
+        $currenciesModel = JSFactory::getModel("currencies");
+        $lists['currency'] = HTMLHelper::_('select.genericlist', $currenciesModel->getAllCurrencies(0), 'currency_id','class = "inputbox form-select"','currency_id','currency_code', $current_currency);
 
         // vendors
         $display_vendor_select = 0;

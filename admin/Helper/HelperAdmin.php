@@ -187,6 +187,7 @@ class HelperAdmin{
         $menu['languages'] = array(Text::_('JSHOP_PANEL_LANGUAGES'), 'index.php?option=com_jshopping&controller=languages', 'jshop_languages_b.png', $jshopConfig->admin_show_languages && $adminaccess);
         $menu['importexport'] = array(Text::_('JSHOP_PANEL_IMPORT_EXPORT'), 'index.php?option=com_jshopping&controller=importexport', 'jshop_import_export_b.png', !$jshopConfig->disable_admin['importexport']);
         $menu['addons'] = array(Text::_('JSHOP_ADDONS'), 'index.php?option=com_jshopping&controller=addons', 'jshop_configuration_b.png', $adminaccess && !$jshopConfig->disable_admin['addons']);
+        $menu['addonscatalog'] = array(Text::_('JSHOP_ADDONS_CATALOG'), 'index.php?option=com_jshopping&controller=addonscatalog', 'jshop_configuration_b.png', $adminaccess && !$jshopConfig->disable_admin['addons_catalog']);
         $menu['statistic'] = array(Text::_('JSHOP_STATISTIC'), 'index.php?option=com_jshopping&controller=statistic', 'jshop_order_status_b.png', $adminaccess && !$jshopConfig->disable_admin['statistic']);
         $menu['logs'] = array(Text::_('JSHOP_LOGS'), 'index.php?option=com_jshopping&controller=logs', 'jshop_reviews_b.png', $jshopConfig->shop_mode==1 && $adminaccess);
         
@@ -227,6 +228,7 @@ class HelperAdmin{
         $menu['languages'] = array(Text::_('JSHOP_PANEL_LANGUAGES'), 'index.php?option=com_jshopping&controller=languages', 'jshop_languages_b.png', $jshopConfig->admin_show_languages && $adminaccess);
         $menu['importexport'] = array(Text::_('JSHOP_PANEL_IMPORT_EXPORT'), 'index.php?option=com_jshopping&controller=importexport', 'jshop_import_export_b.png', !$jshopConfig->disable_admin['importexport']);
         $menu['addons'] = array(Text::_('JSHOP_ADDONS'), 'index.php?option=com_jshopping&controller=addons', 'jshop_configuration_b.png', $adminaccess && !$jshopConfig->disable_admin['addons']);
+        $menu['addonscatalog'] = array(Text::_('JSHOP_ADDONS_CATALOG'), 'index.php?option=com_jshopping&controller=addonscatalog', 'jshop_configuration_b.png', $adminaccess && !$jshopConfig->disable_admin['addons_catalog']);
         $menu['statistic'] = array(Text::_('JSHOP_STATISTIC'), 'index.php?option=com_jshopping&controller=statistic', 'jshop_order_status_b.png', $adminaccess && !$jshopConfig->disable_admin['statistic']);
         $menu['logs'] = array(Text::_('JSHOP_LOGS'), 'index.php?option=com_jshopping&controller=logs', 'jshop_order_status_b.png', $jshopConfig->shop_mode==1 && $adminaccess);
         

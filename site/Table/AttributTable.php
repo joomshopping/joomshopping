@@ -93,4 +93,12 @@ class AttributTable extends MultilangTable{
 		return parent::reorder($where, 'attr_ordering');
     }
 
+    public function store($updateNulls = false) {
+		$result = parent::store($updateNulls);
+        if ($this->independent == 0){
+            $this->addNewFieldProductsAttr();
+        }
+		return $result;
+	}
+
 }

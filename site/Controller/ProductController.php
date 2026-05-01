@@ -239,10 +239,9 @@ class ProductController extends BaseController{
     
     function reviewsave(){
         Session::checkToken() or die('Invalid Token');
-
         $post = $this->input->post->getArray();
         $backlink = $this->input->getVar('back_link');
-		
+		$post['review_id'] = 0;
 		$model = JSFactory::getModel('productReview', 'Site');
 		$model->setData($post);
 		if (!$model->checkAllow()){

@@ -55,7 +55,8 @@ class ManufacturersController extends BaseadminController{
         $view->ifilter = $ifilter;
         $view->filterinput = $filterinput;
         $view->tmp_html_start = "";
-        $view->tmp_html_end = "";        
+        $view->tmp_html_end = "";
+        $view->set('config', JSFactory::getConfig());
         $app->triggerEvent('onBeforeDisplayManufacturers', array(&$view));
         $view->displayList();
     }
