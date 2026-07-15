@@ -1401,34 +1401,6 @@ jQuery(document).ready(function(){
         jshopAdmin.toggleOrderEditShippingSelect(); 
     });    
 
-    jQuery('.jshop_edit .override_view').on('click', function(event) {
-        event.preventDefault();            
-        var addonName = jQuery(this).data('alias');
-        var fileType = jQuery(this).data('type');
-        var folder = jQuery(`input[name="config[folder_overrides_${fileType}]"]`).val();
-
-        jQuery.ajax({
-            url: 'index.php?option=com_jshopping&controller=addons&task=override',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                alias: addonName,
-                folder: folder,
-                type: fileType
-            },
-            success: function(response) {
-                if (!response.success) {
-                    alert('❌ ' + response.message);
-                } else {
-                    alert('✅ ' + response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                alert('AJAX error: ' + error);
-            }
-        });
-    });
-
     jQuery(document).on('click', '#image_attr_popup .btn-save', function(){
         jshopAdmin.productImageAttrPopupSave();
     });

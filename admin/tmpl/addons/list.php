@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.9.2 29.03.2025
+* @version      5.9.3 29.03.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -66,12 +66,10 @@ $i=0;
                     </th>
                     <th width="60" class="center">
                         <?php echo Text::_('JSHOP_CONFIG')?>
-                    </th>
-                    <?php if ($this->config->shop_mode > 0) {?>
+                    </th>                    
                     <th width="50" class="center">
                         <?php echo Text::_('JSHOP_MAINTENANCE')?>
                     </th>
-                    <?php } ?>
                     <th width="50" class="center">
                         <?php echo Text::_('JSHOP_PUBLISH')?>
                     </th>
@@ -145,13 +143,11 @@ $i=0;
                     </a>
                     <?php }?>                    
                 </td>
-                <?php if ($this->config->shop_mode > 0) {?>
                 <td class="center">
                     <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=config&id=<?php print $row->id?>'>
                         <i class="icon-wrench"></i>
                     </a>
                 </td>
-                <?php }?>
                 <td class="center">
                     <?php if ($row->publish != -1) {?>
                     <?php echo HTMLHelper::_('jgrid.published', $row->publish, $i);?>

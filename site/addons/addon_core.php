@@ -88,9 +88,15 @@ class AddonCore{
 		$template = $this->getJoomlaTemplate();
         $config = $this->getAddonConfig();
 		$ovdir = $ovdir ?? $config['folder_overrides_view'] ?? 'templates/'.$template.'/html/com_jshopping/addons/'.$this->addon_alias;
+        if (!isset($config['folder_overrides_view']) && Factory::getApplication()->isClient('administrator')) {
+            $ovdir2 = 'administrator/templates/'.$template.'/html/com_jshopping/addons/'.$this->addon_alias;
+        }
 		$view_config = array("template_path" => JPATH_ROOT.'/'.$dir);
         $view = new Joomla\Component\Jshopping\Site\View\Addons\HtmlView($view_config);
 		$view->addTemplatePath(JPATH_ROOT.'/'.$ovdir);
+        if ($ovdir2 ?? '') {
+            $view->addTemplatePath(JPATH_ROOT.'/'.$ovdir2);
+        }
         if ($layout){
             $view->setLayout($layout);
         }
@@ -100,6 +106,9 @@ class AddonCore{
             print '#Addon '.$this->addon_alias.' getView: '.$layout."\n";
             print '#Addon '.$this->addon_alias.' getView dir: '.$dir."\n";
             print '#Addon '.$this->addon_alias.' getView ovdir: '.$ovdir."\n";
+            if ($ovdir2 ?? '') {
+                print '#Addon '.$this->addon_alias.' getView ovdir2: '.$ovdir2."\n";
+            }
             print '</pre>';
         }
         if ($this->log) {
@@ -129,6 +138,9 @@ class AddonCore{
         $dir = $dir ?? 'components/com_jshopping/css/addons';
         $ovdir1 = $ovdir ?? $config['folder_overrides_css'] ?? 'templates/'.$template.'/css/addons/'.$this->addon_alias;
         $ovdir2 = $ovdir ?? $config['folder_overrides_css'] ?? 'templates/'.$template.'/css/addons';
+        if (!isset($config['folder_overrides_css']) && Factory::getApplication()->isClient('administrator')) {
+            $ovdir3 = 'administrator/templates/'.$template.'/css/addons';
+        }
         if ($name_as_alias) {
             $filename = $this->addon_alias.$extname.'.css';
         } else {
@@ -140,12 +152,18 @@ class AddonCore{
             print '#Addon '.$this->addon_alias.' loadCss dir: '.$dir."\n";
             print '#Addon '.$this->addon_alias.' loadCss ovdir1: '.$ovdir1."\n";
             print '#Addon '.$this->addon_alias.' loadCss ovdir2: '.$ovdir2."\n";
+            if (isset($ovdir3)){
+                print '#Addon '.$this->addon_alias.' loadCss ovdir3: '.$ovdir3."\n";
+            }
             print '#Addon '.$this->addon_alias.' loadCss asset_name: '.$asset_name."\n";
         }
         if (file_exists(JPATH_ROOT.'/'.$ovdir1.'/'.$filename)) {
             $dir = $ovdir1;
         }elseif (file_exists(JPATH_ROOT.'/'.$ovdir2.'/'.$filename)) {
             $dir = $ovdir2;
+        }
+        if (isset($ovdir3) && file_exists(JPATH_ROOT.'/'.$ovdir3.'/'.$filename)) {
+            $dir = $ovdir3;
         }
         if ($this->log) {
             Helper::saveToLog($this->addon_alias.".log", 'loadCss: '.$dir.'/'.$filename);
@@ -166,6 +184,9 @@ class AddonCore{
         $dir = $dir ?? 'components/com_jshopping/js/addons';
         $ovdir1 = $ovdir ?? $config['folder_overrides_js'] ?? 'templates/'.$template.'/js/addons/'.$this->addon_alias;
         $ovdir2 = $ovdir ?? $config['folder_overrides_js'] ?? 'templates/'.$template.'/js/addons';
+        if (!isset($config['folder_overrides_js']) && Factory::getApplication()->isClient('administrator')) {
+            $ovdir3 = 'administrator/templates/'.$template.'/js/addons';
+        }
         if ($name_as_alias) {
             $filename = $this->addon_alias.$extname.'.js';
         } else {
@@ -177,12 +198,18 @@ class AddonCore{
             print '#Addon '.$this->addon_alias.' loadJs dir: '.$dir."\n";
             print '#Addon '.$this->addon_alias.' loadJs ovdir1: '.$ovdir1."\n";
             print '#Addon '.$this->addon_alias.' loadJs ovdir2: '.$ovdir2."\n";
+            if (isset($ovdir3)){
+                print '#Addon '.$this->addon_alias.' loadJs ovdir3: '.$ovdir3."\n";
+            }
             print '#Addon '.$this->addon_alias.' loadJs asset_name: '.$asset_name."\n";
         }
         if (file_exists(JPATH_ROOT.'/'.$ovdir1.'/'.$filename)) {
             $dir = $ovdir1;
         }elseif (file_exists(JPATH_ROOT.'/'.$ovdir2.'/'.$filename)) {
             $dir = $ovdir2;
+        }
+        if (isset($ovdir3) && file_exists(JPATH_ROOT.'/'.$ovdir3.'/'.$filename)) {
+            $dir = $ovdir3;
         }
         if ($this->log) {
             Helper::saveToLog($this->addon_alias.".log", 'loadJs: '.$dir.'/'.$filename);

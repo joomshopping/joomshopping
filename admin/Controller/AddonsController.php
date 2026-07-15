@@ -146,24 +146,35 @@ class AddonsController extends BaseadminController{
     }
 
     public function config(){
+        $jshopConfig = JSFactory::getConfig();
         $app = Factory::getApplication();
         $app->input->set('hidemainmenu', true);
 		$id = $this->input->getInt("id");
 		$row = JSFactory::getTable('addon');
 		$row->load($id);
         $config = $row->getConfig();
-        $def_folder_view =  'components/com_jshopping/templates/addons/'.$row->alias;
-        $def_folder_js =  'components/com_jshopping/js/addons';
-        $def_folder_css =  'components/com_jshopping/css/addons';
+        $def_folder_view = 'components/com_jshopping/templates/addons/'.$row->alias;
+        $def_folder_js   = 'components/com_jshopping/js/addons';
+        $def_folder_css  = 'components/com_jshopping/css/addons';
 
-        $def_overrides_view =  'templates/{YOUR_JOOMLA_TEMPLATE}/html/com_jshopping/addons/'.$row->alias;
-        $def_overrides_js =  'templates/{YOUR_JOOMLA_TEMPLATE}/js/addons';
-        $def_overrides_css =  'templates/{YOUR_JOOMLA_TEMPLATE}/css/addons';
+        $def_overrides_view = 'templates/{YOUR_JOOMLA_TEMPLATE}/html/com_jshopping/addons/'.$row->alias;
+        $def_overrides_js   = 'templates/{YOUR_JOOMLA_TEMPLATE}/js/addons';
+        $def_overrides_css  = 'templates/{YOUR_JOOMLA_TEMPLATE}/css/addons';
 
         $debug_options = [0 => Text::_('JNo'), 1 => Text::_('JYES')." L1", 2 => Text::_('JYES')." L2", 3 => Text::_('JYES')." L3"];
         $debug_select = HTMLHelper::_('select.genericlist', $debug_options, 'config[debug]','class="inputbox form-select"','id','name', $config['debug'] ?? 0);
 
         $tmp_vars = $config['tmp_vars'] ?? [];
+
+        $jsPath = JPATH_SITE . '/components/com_jshopping/';
+        $has_folder_view = is_dir($jsPath . 'templates/addons/' . $row->alias);
+        $has_file_js     = is_file($jsPath . 'js/addons/' . $row->alias . '.js');
+        $has_file_css    = is_file($jsPath . 'css/addons/' . $row->alias . '.css');
+        $has_overrides   = $has_folder_view || $has_file_js || $has_file_css;
+
+        $wa = JSFactory::getWebAssetManager();
+        $wap = $jshopConfig->getWebAssetParams('script', 'com.jshopping.admin.addonoverride');
+        $wa->registerAndUseScript('com.jshopping.admin.addonoverride', $jshopConfig->live_admin_path.'js/addonoverride.js', $wap['options'], $wap['attributes'], $wap['dependencies']);
 
 		$view = $this->getView("addons", 'html');
         $view->setLayout("config");
@@ -177,6 +188,10 @@ class AddonsController extends BaseadminController{
         $view->def_overrides_css = $def_overrides_css;
         $view->debug_select = $debug_select;
         $view->tmp_vars = $tmp_vars;
+        $view->has_folder_view = $has_folder_view;
+        $view->has_file_js = $has_file_js;
+        $view->has_file_css = $has_file_css;
+        $view->has_overrides = $has_overrides;
         $app->triggerEvent('onBeforeConfigAddons', array(&$view));
 		$view->displayConfig();
 	}
@@ -196,30 +211,89 @@ class AddonsController extends BaseadminController{
     }
 
     public function override() {
-        $app = Factory::getApplication();        
-        $input = $app->input;        
-        $alias = $input->getString('alias');
+        $app = Factory::getApplication();
+        $input = $app->input;
+        $id           = $input->getInt('id');
+        $templateName = $input->getString('template_name', '');
+        $templateId   = $input->getInt('template_id', 0);
+
+        $row = JSFactory::getTable('addon');
+        $row->load($id);
+        $config = $row->getConfig();
+
+        $model     = JSFactory::getModel('addonsoverride');
+        $templates = $model->getTemplates();
+
+        $selectedClientId = 0;
+        if (!$templateName) {
+            $default          = $model->getDefaultTemplate();
+            $templateName     = $default ? $default->template : '';
+            $templateId       = $default ? $default->id : 0;
+            $selectedClientId = $default ? (int) $default->client_id : 0;
+        } else {
+            foreach ($templates as $t) {
+                if ($t->id === $templateId) {
+                    $selectedClientId = (int) $t->client_id;
+                    break;
+                }
+            }
+        }
+        try {
+            $data = [
+                'alias'     => $row->alias,
+                'sources'   => $model->getSourceFiles($row->alias),
+                'templates' => $templates,
+                'overrides' => $model->getOverrideFiles($row->alias, $templateId, $templateName, $config, $selectedClientId),
+                'paths'     => $model->getPaths($row->alias, $templateName, $config, $selectedClientId),
+                'config'    => [
+                    'folder_overrides_view' => $config['folder_overrides_view'] ?? '',
+                    'folder_overrides_js'   => $config['folder_overrides_js'] ?? '',
+                    'folder_overrides_css'  => $config['folder_overrides_css'] ?? '',
+                ],
+                'selected_template_id'   => $templateId,
+                'selected_template_name' => $templateName,
+            ];
+            echo new JsonResponse($data);
+        } catch (Exception $e) {
+            echo new JsonResponse(null, $e->getMessage(), true);
+        }
+        $app->close();
+    }
+
+    public function overridesave() {
+        $this->checkToken();
+        $app = Factory::getApplication();
+        $input = $app->input;
+        $alias        = $input->getString('alias');
         $customFolder = $input->getString('folder');
-        $fileType = $input->getString('type');
-        $model = JSFactory::getModel('addonsoverride');
+        $fileType     = $input->getString('type');
+        $templateName = $input->getString('template_name');
+        $fileName     = $input->getString('file_name', '');
+        $model    = JSFactory::getModel('addonsoverride');
+        $clientId = 0;
+        foreach ($model->getTemplates() as $t) {
+            if ($t->template === $templateName) {
+                $clientId = (int) $t->client_id;
+                break;
+            }
+        }
         try {
             switch ($fileType) {
                 case 'view':
-                    $result = $model->overrideView($alias, $customFolder);
+                    $result = $model->overrideView($alias, $customFolder, $templateName, $fileName, $clientId);
                     break;
                 case 'js':
                 case 'css':
-                    $result = $model->overrideJsOrCss($alias, $customFolder, $fileType);
+                    $result = $model->overrideJsOrCss($alias, $customFolder, $fileType, $templateName, $fileName, $clientId);
                     break;
                 default:
                     throw new Exception("Invalid file type: $fileType");
-                    return;            
             }
             echo new JsonResponse($result, "Override $fileType completed successfully.");
         } catch (Exception $e) {
             echo new JsonResponse(null, $e->getMessage(), true);
         }
         $app->close();
-    }
+    }    
 
 }

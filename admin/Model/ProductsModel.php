@@ -385,6 +385,7 @@ class ProductsModel extends BaseadminModel{
         if (isset($post['productfields']) && is_array($post['productfields'])){
             foreach($post['productfields'] as $productfield=>$val){
                 if (is_array($val)){
+                    $val = array_filter($val);
                     $post[$productfield] = implode(',', $val);
                 }
             }
@@ -1232,6 +1233,7 @@ class ProductsModel extends BaseadminModel{
 					$_data = $post['productfields'][$_nef] ?? [];
 					$_data = array_diff($_data, [-1]);
 					if (count($_data)) {
+                        $_data = array_filter($_data);
 						$product_ef[$_nef] = implode(',', $_data);
 					}
 				} else {

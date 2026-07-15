@@ -702,6 +702,9 @@ class ProductsController extends BaseadminController{
                         if ($lv->field_id==$v->id) $tmp[] = $lv;
                     }
                     $obj->values = HTMLHelper::_('select.genericlist', array_merge($f_option, $tmp), 'productfields['.$name.'][]', $attr, 'id', 'name', explode(',', $product->$name ?? ''));
+                    if ($v->multilist==1 && $edittype != 'list') {
+                        $obj->values .= "<input type='hidden' name='productfields[".$name."][]' value='0'>";
+                    }
                     $view = $this->getView("product_edit", 'html');
                     $view->setLayout("extrafields_btn_add");
                     $view->title = Text::_('JSHOP_ADD_NEW_OPTION_FOR').' "'.$v->name.'"';
