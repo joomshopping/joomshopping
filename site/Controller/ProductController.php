@@ -183,7 +183,7 @@ class ProductController extends BaseController{
     function getfile(){
         $id = $this->input->getInt('id'); 
         $oid = $this->input->getInt('oid');
-        $hash = $this->input->getVar('hash');
+        $hash = $this->input->getCmd('hash');
         $rl = $this->input->getInt('rl');
 		
 		$model = JSFactory::getModel('productDownload', 'Site');
