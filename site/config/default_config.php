@@ -3,7 +3,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.9.1 06.03.2026
+* @version      5.10.0 19.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -61,7 +61,10 @@ $config->css_path = $config->path."css/";
 $config->css_live_path = $config->live_path."css/";
 
 $config->file_generete_pdf_order = '\\Joomla\\Component\\Jshopping\\Site\\Pdf\\Order';
-$config->system_addons = ['tcpdf' => ['alias' => 'lib_tcpdf', 'name' => 'Lib TcPdf', 'version' => '1.1.1']];
+$config->system_addons = [
+    'tcpdf' => ['alias' => 'lib_tcpdf', 'name' => 'Lib TcPdf', 'version' => '1.1.1', 'required' => 1],
+    'news' => ['alias' => 'addon_news', 'name' => 'JoomShopping News', 'version' => '1.0.0', 'required' => 0]
+];
 
 $config->website_addons_url = "https://www.webdesigner-profi.de/joomla-webdesign/shop.html";
 $config->xml_update_path = "http://www.webdesigner-profi.de/joomla-webdesign/update/update.xml";
@@ -175,6 +178,7 @@ $config->show_delivery_date = 0;
 $config->load_jquery_lightbox = 1;
 $config->load_javascript = 1;
 $config->load_css = 1;
+$config->use_fontawesome = 1;
 $config->tax = 1;
 $config->show_manufacturer_in_cart = 0;
 $config->count_products_to_page_tophits = 12;
@@ -298,7 +302,10 @@ $config->checkout_form_finish_multipart = 0;
 $config->product_admin_demo_file = 1;
 $config->product_admin_sale_file = 1;
 $config->admin_shop_lang_as_admin_lang = 1;
-$config->admin_display_extra_field_values_in_list_max = 100;
+$config->admin_display_extra_field_values_in_list_max = 10;
+$config->admin_display_attribute_values_in_list_max = 10;
+$config->admin_display_values_in_list_show_first = 1;
+$config->admin_display_values_in_list_name_length = 20;
 $config->admin_ordering_extra_field_values_in_select = 'ordering';
 $config->use_limit_request_cart_to = 1;
 $config->allow_limit_request_cart_to = ['cart', 'wishlist'];
@@ -316,6 +323,7 @@ $config->product_img_show_all_if_no_attr = 1;
 $config->user_password_gen_in_shop = 1;
 $config->prod_attr_load_data_by_partial_selection = 0;
 $config->admin_default_cat_dtype = 0;
+$config->meta_data_save_as_raw = 1;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';
@@ -352,7 +360,7 @@ $config->product_search_fields = array(
     'prod.real_ean'
 );
 
-$config->attribut_dep_sorting_in_product = "V.value_ordering"; // (V.value_ordering, value_name, PA.price, PA.ean, PA.count)
+$config->attribut_dep_sorting_in_product = "V.value_ordering"; // (V.value_ordering, value_name, PA.price, PA.ean, PA.count, PA.product_attr_id, stock, stock_price)
 $config->attribut_dep_sorting_in_product_dir = 0;
 $config->attribut_nodep_sorting_in_product = "V.value_ordering"; // (V.value_ordering, value_name, addprice)
 $config->attribut_nodep_sorting_in_product_dir = 0;
@@ -419,6 +427,7 @@ $other_config = array(
     "load_jquery_lightbox",
     "load_javascript",
     "load_css",
+    "use_fontawesome",
     "use_web_asset_manager",
     'list_products_calc_basic_price_from_product_price',
     'hide_from_basic_price','calc_basic_price_from_product_price',
@@ -443,6 +452,7 @@ $other_config_checkbox = array(
     "load_jquery_lightbox",
     "load_css",
     "load_javascript",
+    "use_fontawesome",
     "use_web_asset_manager",
     'set_old_price_after_group_set_price',
     'list_products_calc_basic_price_from_product_price',

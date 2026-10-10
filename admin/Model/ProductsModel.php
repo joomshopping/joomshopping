@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.2 13.09.2025
+* @version      5.10.0 13.09.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -95,7 +95,7 @@ class ProductsModel extends BaseadminModel{
             $where .= " AND pr.product_manufacturer_id = ".$db->q($filter['manufacturer_id'])." ";
         }
         if (isset($filter['label_id']) && $filter['label_id']){
-            $where .= " AND pr.label_id = ".$db->q($filter['label_id'])." ";
+            $where .= " AND pr.label_id = ".$db->q(intval($filter['label_id']))." ";
         }
         if (isset($filter['publish']) && $filter['publish']){
             if ($filter['publish']==1) $_publish = 1; else $_publish = 0;
@@ -316,6 +316,11 @@ class ProductsModel extends BaseadminModel{
             }
             $post['description_'.$lang->language] = $input->get('description'.$lang->id, '', 'RAW');
             $post['short_description_'.$lang->language] = $input->get('short_description_'.$lang->language, '', 'RAW');
+            if ($jshopConfig->meta_data_save_as_raw) {
+                $post['meta_title_'.$lang->language] = $input->get('meta_title_'.$lang->language, '', 'RAW');
+                $post['meta_description_'.$lang->language] = $input->get('meta_description_'.$lang->language, '', 'RAW');
+                $post['meta_keyword_'.$lang->language] = $input->get('meta_keyword_'.$lang->language, '', 'RAW');
+            }
         }
         return $post;
     }
@@ -764,8 +769,8 @@ class ProductsModel extends BaseadminModel{
                 }
 
                 if (!$error){
-                    $this->addToProductImage($product_id, $name_image, $post["product_image_descr_".$i], $post["product_image_title_".$i] ?? null);
-                    $dispatcher->triggerEvent('onAfterSaveProductImage', array($product_id, $name_image));
+                    $n_img_id = $this->addToProductImage($product_id, $name_image, $post["product_image_descr_".$i], $post["product_image_title_".$i] ?? null);
+                    $dispatcher->triggerEvent('onAfterSaveProductImage', array($product_id, $name_image, $n_img_id, $i));
                 }
             }else{
                 if ($upload->getError() != 4){
@@ -783,8 +788,8 @@ class ProductsModel extends BaseadminModel{
 					$name_image = $post['product_folder_image_'.$i];
 					$name_thumb = 'thumb_'.$name_image;
 					$name_full = 'full_'.$name_image;
-					$this->addToProductImage($product_id, $name_image, $post["product_image_descr_".$i], $post["product_image_title_".$i] ?? null);
-					$dispatcher->triggerEvent('onAfterSaveProductFolerImage', array($product_id, $name_full, $name_image, $name_thumb));
+                    $n_img_id = $this->addToProductImage($product_id, $name_image, $post["product_image_descr_".$i], $post["product_image_title_".$i] ?? null);
+					$dispatcher->triggerEvent('onAfterSaveProductFolerImage', array($product_id, $name_full, $name_image, $name_thumb, $n_img_id, $i));
 				}
 			}
 		}
@@ -836,6 +841,7 @@ class ProductsModel extends BaseadminModel{
         $image->set("title", $title);
         $image->set("ordering", $image->getNextOrder("product_id='".intval($product_id)."'"));
         $image->store();
+        return $image->image_id;
     }
 
     function renameProductImageOld($image_descr, $image_ordering, $title = null, $attrs = null){

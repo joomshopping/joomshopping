@@ -92,7 +92,7 @@ class OrdersController extends BaseadminController{
         
         $total = 0;
         foreach($rows as $k=>$row){
-            if ($row->vendor_id>0){
+            if ($row->vendor_id>0 && isset($row->v_name)){
                 $vendor_name = $row->v_fname." ".$row->v_name;
             }else{
                 $vendor_name = "-";

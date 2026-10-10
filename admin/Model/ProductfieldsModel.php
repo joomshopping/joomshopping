@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.2 06.04.2026
+* @version      5.9.5 06.04.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -276,6 +276,70 @@ class ProductfieldsModel extends BaseadminModel{
         }
 		$db->setQuery($query);
 		return $db->loadResult();
+	}
+
+	public function getProductsFieldValues($field_id, $product_ids = [], $ret = '') {
+		$productfield = JSFactory::getTable('productfield');
+		$productfield->load($field_id);
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true);
+		$field = 'extra_field_' . (int)$field_id;
+
+		$query->select('DISTINCT ' . $db->qn($field))
+		      ->from($db->qn('#__jshopping_products_to_extra_fields'));
+		if ($product_ids) {
+			$product_ids = array_map(function($item){return intval($item);}, $product_ids);
+			$query->where($db->qn('product_id') . " IN (" . implode(',', $product_ids) . ")");
+		}
+		$db->setQuery($query);
+		$rows = $db->loadColumn();
+
+		// products without a row in the table have no value for this field
+		$empty = false;
+		if ($product_ids) {
+			$product_ids = array_unique($product_ids);
+			$query = $db->getQuery(true);
+			$query->select('COUNT(DISTINCT ' . $db->qn('product_id') . ')')
+			      ->from($db->qn('#__jshopping_products_to_extra_fields'))
+			      ->where($db->qn('product_id') . " IN (" . implode(',', $product_ids) . ")");
+			$db->setQuery($query);
+			$empty = $db->loadResult() < count($product_ids);
+		}
+
+		$values = [];
+		if ($productfield->type == 1) {
+			foreach ($rows as $row) {
+				$values[] = (string)$row;
+			}
+			if ($empty) {
+				$values[] = '';
+			}
+			return array_values(array_unique($values));
+		}
+		if ($empty) {
+			$values[] = 0;
+		}
+
+		foreach ($rows as $row) {
+			if ($productfield->multilist) {
+				foreach (explode(',', (string)$row) as $value) {
+					$values[] = (int)$value;
+				}
+			} else {
+				$values[] = (int)$row;
+			}
+		}
+		$values = array_values(array_unique($values));
+		sort($values);
+        if ($ret == 'name') {
+            $names = JSFactory::getAllProductExtraFieldValue();
+            $res = [];
+            foreach ($values as $value) {
+                $res[] = $names[$value] ?? '';
+            }
+            return $res;
+        }
+        return $values;
 	}
 
 }

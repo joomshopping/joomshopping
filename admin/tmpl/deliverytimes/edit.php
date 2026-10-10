@@ -34,13 +34,21 @@ $edit=$this->edit;
    <?php }?>
    <tr>
      <td class="key">
+       <?php echo Text::_('JSHOP_MIN_DAYS')?>
+     </td>
+     <td>
+       <input type="text" class="inputbox form-control" name="min_days" value="<?php echo $row->min_days?>" />
+     </td>
+   </tr>
+   <tr>
+     <td class="key">
        <?php echo Text::_('JSHOP_DAYS')?>*
      </td>
      <td>
        <input type="text" class="inputbox form-control" name="days" value="<?php echo $row->days?>" />
      </td>
-   </tr>
-   <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>   
+   </tr>   
+   <?php $pkey="etemplatevar";if ($this->$pkey){print $this->$pkey;}?>
 </table>
 </fieldset>
 </div>

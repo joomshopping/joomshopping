@@ -3,7 +3,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Language\Text;
 
 /**
- * @version      5.0.0 15.09.2018
+ * @version      5.10.0 10.10.2026
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,7 +13,7 @@ defined('_JEXEC') or die();
 
 $countprod=count($this->products);
 ?>
-<div class="jshop" id="comjshop">
+<div class="jshop<?php if ($this->config->use_fontawesome) print " use_fontawesome"?>" id="comjshop">
 <?php print $this->checkout_navigator?>
 
 <form action="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=cart&task=refresh') ?>" method="post" name="updateCart" id="updateCart">
@@ -127,6 +127,7 @@ $countprod=count($this->products);
         </td>
         <td class="total_price">
             <div class="data">
+                <span class="mobile-cart-inline"><?php print Text::_('JSHOP_PRICE_TOTAL')?>:</span>
                 <?php print Helper::formatprice($prod['price'] * $prod['quantity']); ?>
                 <?php print $prod['_ext_price_total_html'] ?>
                 <?php if ($this->config->show_tax_product_in_cart && $prod['tax'] > 0) { ?>
@@ -139,8 +140,9 @@ $countprod=count($this->products);
                 <?php if ($prod['not_delete']) { ?>
                     <?php echo $prod['not_delete_html'] ? $prod['not_delete_html'] : '-'; ?>
                 <?php } else { ?>
-                    <a class="button-img btn btn-danger btn-sm" href="<?php print $prod['href_delete']?>" onclick="return confirm('<?php print Text::_('JSHOP_CONFIRM_REMOVE')?>')">
-                        <?php print Text::_('JSHOP_REMOVE')?>
+                    <a class="button-img btn btn-danger btn-sm" href="<?php print $prod['href_delete']?>" onclick="return confirm('<?php print Text::_('JSHOP_CONFIRM_REMOVE')?>')" title="<?php print Text::_('JSHOP_REMOVE')?>">
+                        <span class="fas fa-trash" aria-hidden="true"></span>
+                        <span class="btn_text"><?php print Text::_('JSHOP_REMOVE')?></span>
                     </a>
                 <?php } ?>
             </div>
@@ -156,6 +158,7 @@ $countprod=count($this->products);
     <?php if ($this->config->show_cart_clear){?>
         <div class="clear-cart">
             <a class="btn btn-danger clear-cart" href="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=cart&task=clear')?>" onclick="return confirm('<?php print Text::_('JSHOP_CONFIRM_REMOVE_ALL')?>')">
+                <span class="fas fa-trash" aria-hidden="true"></span>
                 <?php print Text::_('JSHOP_CLEAR_CART')?>
             </a>
         </div>
@@ -247,16 +250,21 @@ $countprod=count($this->products);
 
 <?php print $this->_tmp_html_before_buttons?>
 <div class="jshop cart_buttons">
+    <?php if ($countprod>0) : ?>
+        <div class="alert alert-warning cart_qty_changed" id="cart_qty_changed" style="display:none"><?php print Text::_('JSHOP_CART_QTY_NOT_UPDATED')?></div>
+    <?php endif; ?>
     <div id="checkout" class="d-flex justify-content-between">
         <div class="pull-left">
             <a href="<?php print $this->href_shop ?>" class="btn btn-arrow-left btn-secondary">
+                <span class="fas fa-arrow-left" aria-hidden="true"></span>
                 <?php print Text::_('JSHOP_BACK_TO_SHOP')?>
             </a>
         </div>
         <div class="pull-right">
         <?php if ($countprod>0) : ?>
-            <a href="<?php print $this->href_checkout ?>" class="btn btn-arrow-right btn-success">
+            <a href="<?php print $this->href_checkout ?>" class="btn btn-arrow-right btn-success" id="checkout_btn">
                 <?php print Text::_('JSHOP_CHECKOUT')?>
+                <span class="fas fa-arrow-right" aria-hidden="true"></span>
             </a>
         <?php endif; ?>
         </div>

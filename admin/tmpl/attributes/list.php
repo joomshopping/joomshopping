@@ -7,7 +7,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 
 /**
-* @version      5.8.4 15.11.2025
+* @version      5.9.4 24.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -111,7 +111,10 @@ if ($saveOrder){
         <a href="index.php?option=com_jshopping&controller=attributes&task=edit&attr_id=<?php echo $row->attr_id; ?>"><?php echo $row->name;?></a>
        </td>
        <td>
-         <a href="index.php?option=com_jshopping&controller=attributesvalues&task=show&attr_id=<?php echo $row->attr_id?>"><?php echo Text::_('JSHOP_OPTIONS')?></a>
+         <a href="index.php?option=com_jshopping&controller=attributesvalues&task=show&attr_id=<?php echo $row->attr_id?>">
+            <?php print $row->count_values?> x
+            <?php echo Text::_('JSHOP_OPTIONS')?>
+         </a>
          <?php echo $row->values;?>
        </td>
        <td>

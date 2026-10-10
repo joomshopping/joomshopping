@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.2.2 20.11.2023
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -289,6 +289,7 @@ class UserController extends BaseController{
         $view->set('config_fields', $config_fields);
         $view->set('cssreq_fields', $cssreq_fields);
         $view->set('count_filed_delivery', $count_filed_delivery);
+        $view->set('account_menu', JSFactory::getModel('usermyaccountmenu', 'Site')->getItems('editaccount'));
         $view->_tmpl_editaccount_html_1 = "";
         $view->_tmpl_editaccount_html_2 = "";
         $view->_tmpl_editaccount_html_3 = "";
@@ -354,6 +355,7 @@ class UserController extends BaseController{
         $view->set('orders', $orders);
         $view->set('image_path', $jshopConfig->live_path."images");
         $view->set('total', $total);
+        $view->set('account_menu', JSFactory::getModel('usermyaccountmenu', 'Site')->getItems('orders'));
         $view->_tmp_html_before_user_order_list = "";
         $view->_tmp_html_after_user_order_list = "";
         $dispatcher->triggerEvent('onBeforeDisplayOrdersView', array(&$view));
@@ -402,6 +404,7 @@ class UserController extends BaseController{
         $view->set('config_fields', $config_fields);
         $view->set('count_filed_delivery', $count_filed_delivery);
         $view->set('allow_cancel', $allow_cancel);
+        $view->set('account_menu', JSFactory::getModel('usermyaccountmenu', 'Site')->getItems('orders'));
         $view->_tmp_html_start = "";
         $view->_tmp_html_after_customer_info = "";
         $view->_tmpl_html_order_items_end = "";
@@ -469,6 +472,7 @@ class UserController extends BaseController{
         $view->set('href_edit_data', Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=editaccount', 1,0,$jshopConfig->use_ssl));
         $view->set('href_show_orders', Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=orders', 1,0,$jshopConfig->use_ssl));
         $view->set('href_logout', Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=logout', 1));
+        $view->set('account_menu', JSFactory::getModel('usermyaccountmenu', 'Site')->getItems('myaccount'));
         $view->tmpl_my_account_html_start = "";
         $view->tmpl_my_account_html_content = "";
         $view->tmpl_my_account_html_end = "";
@@ -489,6 +493,9 @@ class UserController extends BaseController{
         $view = $this->getView('user');
         $view->setLayout("groupsinfo");
         $view->set('rows', $list);
+        if (Factory::getUser()->id){
+            $view->set('account_menu', JSFactory::getModel('usermyaccountmenu', 'Site')->getItems('groupsinfo'));
+        }
         $view->_tmpl_start = '';
 		$view->_tmpl_end = '';
         $dispatcher->triggerEvent('onBeforeDisplayGroupsInfoView', array(&$view));

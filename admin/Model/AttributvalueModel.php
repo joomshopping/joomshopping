@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.4 15.09.2018
+* @version      5.9.4 30.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -248,5 +248,87 @@ class AttributValueModel extends BaseadminModel{
 		$db->setQuery($query);
 		return $db->loadResult();
 	}
+
+    public function getListRaw($attr_id, $db_filed_select = '*') {
+        $db = Factory::getDBO();
+        $query = $db->getQuery(true);
+        $query->select($db_filed_select)
+            ->from($db->qn('#__jshopping_attr_values'))
+            ->where($db->qn('attr_id') . '=' . $db->q($attr_id))
+            ->order('value_id');
+        $db->setQuery($query);
+        return $db->loadObjectList();
+    }
+
+    public function getIdByNames($attr_id, $names) {
+        $db = Factory::getDBO();
+        $query = $db->getQuery(true);
+        $query->select($db->qn('value_id'))
+            ->from($db->qn('#__jshopping_attr_values'))
+            ->where($db->qn('attr_id')."=".$db->q($attr_id))
+            ->order('value_id');
+        $count_name = 0;
+        foreach($names as $k => $v) {
+            if ($v != '' && preg_match('/name_([a-z]{2})-([A-Z]{2})/', $k)) {
+                $query->where($db->qn($k)."=".$db->q($v));
+                $count_name++;
+            }
+        }
+        if ($count_name == 0) {
+            return 0;
+        } else {
+            $db->setQuery($query);
+            return (int)$db->loadResult();
+        }
+    }
+
+    public function clearDoubleValues($attr_id) {
+        $list = $this->getListRaw($attr_id);
+        $langs = JSFactory::getModel('Languages')->getAllTags();
+        $updated = 0;
+        foreach($list as $item) {
+            $names = [];
+            foreach($langs as $lang) {
+                $field = 'name_'.$lang;
+                $names[$field] = $item->$field;
+            }
+            $first_id = $this->getIdByNames($attr_id, $names);
+            if ($first_id && $first_id != $item->value_id) {
+                Helper::saveToLog('attribute_clear_double.log', 'attrid: '.$attr_id.' oldval: '.$item->value_id.' newid: '.$first_id);
+                $this->updateAllProductsValue($attr_id, $item->value_id, $first_id);
+                $this->deleteAttributeValue($item->value_id);
+                $updated++;
+            }
+        }
+        return $updated;
+    }
+
+    public function updateAllProductsValue($attr_id, $old_val_id, $new_val_id) {
+        $db = Factory::getDBO();
+        $field = 'attr_'.(int)$attr_id;
+        $columns = $db->getTableColumns('#__jshopping_products_attr');
+        if (isset($columns[$field])) {
+            $query = $db->getQuery(true);
+            $query->update($db->qn('#__jshopping_products_attr'))
+                ->set($db->qn($field) . "=" . $db->q($new_val_id))
+                ->where($db->qn($field) . '=' . $db->q($old_val_id));
+            $db->setQuery($query);
+            $db->execute();
+        }
+
+        $query = "DELETE a FROM `#__jshopping_products_attr2` AS a
+            INNER JOIN `#__jshopping_products_attr2` AS b ON b.product_id=a.product_id AND b.attr_id=a.attr_id AND b.attr_value_id=".(int)$new_val_id."
+            WHERE a.attr_id=".(int)$attr_id." AND a.attr_value_id=".(int)$old_val_id;
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = $db->getQuery(true);
+        $query->update($db->qn('#__jshopping_products_attr2'))
+            ->set($db->qn('attr_value_id') . "=" . $db->q($new_val_id))
+            ->where($db->qn('attr_id') . '=' . $db->q($attr_id))
+            ->where($db->qn('attr_value_id') . '=' . $db->q($old_val_id));
+        $db->setQuery($query);
+        $db->execute();
+    }
 
 }

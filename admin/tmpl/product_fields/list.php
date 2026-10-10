@@ -5,7 +5,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.8.0 24.02.2024
+* @version      5.9.4 24.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -137,14 +137,10 @@ if ($saveOrder){
         <td>
             <?php if ($row->type != 1){ ?>
                 <a href="index.php?option=com_jshopping&controller=productfieldvalues&field_id=<?php echo $row->id?>">
-                    <?php if (count($this->vals[$row->id]) > $this->config->admin_display_extra_field_values_in_list_max) {?>
-                        <?php print count($this->vals[$row->id])?> x
-                    <?php }?>        
+                    <?php print count($this->vals[$row->id])?> x                    
                     <?php echo Text::_('JSHOP_OPTIONS')?>
                 </a>
-                <?php if (count($this->vals[$row->id]) <= $this->config->admin_display_extra_field_values_in_list_max) {?>
-                    (<?php echo implode(", ", $this->vals[$row->id]);?>)
-                <?php }?>                
+                <?php print $row->values?>                
             <?php }else{ ?>
                 -
             <?php } ?>

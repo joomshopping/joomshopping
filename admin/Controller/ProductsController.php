@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.0 31.01.2025
+* @version      5.9.5 31.01.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -730,6 +730,12 @@ class ProductsController extends BaseadminController{
                 if ($pids && $jshopConfig->admin_extra_field_prod_medit_filed_calc) {
                     $filled = JSFactory::getModel('productfields')->getProductCount($v->id, $pids);
                     $obj->filled = $filled;
+                    if ($filled) {
+                        $chv_names = JSFactory::getModel('productfields')->getProductsFieldValues($v->id, $pids, 'name');
+                        if (count($chv_names) == 1) {
+                            $obj->filled_value = $chv_names[0];
+                        }
+                    }
                 }
 
                 $fields[] = $obj;

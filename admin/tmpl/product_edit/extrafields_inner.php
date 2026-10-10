@@ -30,7 +30,10 @@ $groupname="";
     </td>
     <?php if ($field->filled ?? 0) {?>
     <td class="filled ps-2">
-        <i class="fa fa-check-circle" title="<?php print Text::_('JSHOP_FILLED')?>"></i>
+        <i class="fa fa-check-circle<?php print ($field->filled_value ?? '') ? ' text-success' : '';?>" title="<?php print Text::_('JSHOP_FILLED')?>"></i>
+        <?php if ($field->filled_value ?? '') {?>
+            <span><?php echo $field->filled_value;?></span>
+        <?php } ?>
     </td>
     <?php } ?>
 </tr>

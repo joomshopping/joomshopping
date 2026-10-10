@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 10.03.2025
+* @version      5.9.4 08.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -91,6 +91,7 @@ class ConfigController extends BaseadminController{
         $opt[] = HTMLHelper::_('select.option', 'PA.ean', Text::_('JSHOP_EAN_PRODUCT'), 'id','value');
         $opt[] = HTMLHelper::_('select.option', 'PA.count', Text::_('JSHOP_QUANTITY_PRODUCT'), 'id','value');
         $opt[] = HTMLHelper::_('select.option', 'PA.product_attr_id', Text::_('JSHOP_SPECIFIED_IN_PRODUCT'), 'id','value');
+        $opt[] = HTMLHelper::_('select.option', 'stock', Text::_('JSHOP_SORT_STOCK'), 'id','value');
         $opt[] = HTMLHelper::_('select.option', 'stock_price', Text::_('JSHOP_SORT_STOCK_PRICE'), 'id','value');
         $lists['attribut_dep_sorting_in_product'] = HTMLHelper::_('select.genericlist', $opt, 'attribut_dep_sorting_in_product','class="form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product);
         $lists['attribut_dep_sorting_in_product_dir'] = HTMLHelper::_('select.genericlist', $sortd, 'attribut_dep_sorting_in_product_dir','class="form-select"','id','value', $jshopConfig->attribut_dep_sorting_in_product_dir);
@@ -259,11 +260,21 @@ class ConfigController extends BaseadminController{
 		$lists['countries'] = HTMLHelper::_('select.genericlist', SelectOptions::getCountrys(3), 'country', 'class = "inputbox form-select"', 'country_id', 'name', $vendor->country);
         
         OutputFilter::objectHTMLSafe($vendor, ENT_QUOTES);
-        
+
+        $jshopConfig = JSFactory::getConfig();
+        $pdf_images = array('header'=>'', 'footer'=>'');
+        foreach($pdf_images as $k=>$v){
+            $file = $jshopConfig->path."images/".$k.".jpg";
+            if (file_exists($file)){
+                $pdf_images[$k] = $jshopConfig->live_path."images/".$k.".jpg?".filemtime($file);
+            }
+        }
+
     	$view = $this->getView("config", 'html');
         $view->setLayout("storeinfo");
-        $view->set("lists", $lists); 
+        $view->set("lists", $lists);
 		$view->set("vendor", $vendor);
+        $view->set("pdf_images", $pdf_images);
         $view->set('etemplatevar', '');
         $view->tmp_html_start = "";
         $view->tmp_html_end = "";
@@ -351,6 +362,13 @@ class ConfigController extends BaseadminController{
 			    return 0;
 		    }
             
+        }
+
+        if (!empty($post['delete_pdf_header'])){
+            @unlink($jshopConfig->path."images/".$extconf['imageheader']);
+        }
+        if (!empty($post['delete_pdf_footer'])){
+            @unlink($jshopConfig->path."images/".$extconf['imagefooter']);
         }
 
 		if (isset($_FILES['header'])){

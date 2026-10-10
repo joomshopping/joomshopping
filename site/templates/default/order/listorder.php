@@ -3,7 +3,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,6 +14,12 @@ defined('_JEXEC') or die();
 <div class="jshop myorders_list" id="comjshop">
 
     <h1><?php print Text::_('JSHOP_MY_ORDERS')?></h1>
+
+    <div class="row myaccount_layout">
+        <div class="col-lg-3">
+            <?php include(__DIR__."/../user/menu.php");?>
+        </div>
+        <div class="col-lg-9">
     
     <?php print $this->_tmp_html_before_user_order_list;?>
     
@@ -62,7 +68,7 @@ defined('_JEXEC') or die();
                             <?php print $order->_tmp_ext_prod_info;?>
                         </div>
                         <div class="col-lg-3 buttons">
-                            <a class="btn btn-primary" href="<?php print $order->order_href ?>"><?php print Text::_('JSHOP_DETAILS')?></a>
+                            <a class="btn btn-primary" href="<?php print $order->order_href ?>"><span class="fas fa-file-alt" aria-hidden="true"></span> <?php print Text::_('JSHOP_DETAILS')?></a>
                             <?php print $order->_tmp_ext_but_info;?>
                         </div>
                     </div>
@@ -83,4 +89,6 @@ defined('_JEXEC') or die();
     <?php } ?>
     
     <?php print $this->_tmp_html_after_user_order_list;?>
+        </div>
+    </div>
 </div>

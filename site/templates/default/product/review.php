@@ -4,7 +4,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -87,7 +87,10 @@ defined('_JEXEC') or die();
                 <div class = "row">
                     <div class = "col-lg-3"></div>
                     <div class = "col-lg-9">
-                        <input type="submit" class="btn btn-primary button validate" value="<?php print Text::_('JSHOP_REVIEW_SUBMIT')?>" />
+                        <button type="submit" class="btn btn-primary button validate">
+                            <span class="fas fa-comment" aria-hidden="true"></span>
+                            <?php print Text::_('JSHOP_REVIEW_SUBMIT')?>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.1 24.03.2026
+* @version      5.10.0 19.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -218,10 +218,11 @@ class ProductTable extends MultilangTable{
             $dir = $jshopConfig->attribut_dep_sorting_in_product_dir ? 'DESC' : 'ASC';
             if ($sorting=="") $sorting = "V.value_ordering";
 			if ($sorting=="PA.product_attr_id") $sorting = "min(PA.product_attr_id)";
+            if ($sorting=="stock") $sorting = '(PA.count<=0) asc, V.value_ordering ';
             if ($sorting=="stock_price") $sorting = '(PA.count<=0) asc, PA.price ';
             $sorting .= ' '.$dir;
             $field = "attr_".(int)$attr_id;
-            $query = "SELECT PA.$field as val_id, V.`".$lang->get("name")."` as value_name, V.image
+            $query = "SELECT PA.$field as val_id, V.`".$lang->get("name")."` as value_name, V.image, SUM(PA.count) as count_stock
                       FROM `#__jshopping_products_attr` as PA
 					  INNER JOIN #__jshopping_attr_values as V ON PA.$field=V.value_id
                       WHERE V.publish=1 AND PA.product_id=".(int)$this->product_id." ".$where."

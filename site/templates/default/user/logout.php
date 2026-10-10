@@ -3,7 +3,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -15,5 +15,8 @@ defined('_JEXEC') or die;
     <h1><?php print Text::_('JSHOP_LOGOUT')?></h1>
     <?php print $this->checkout_navigator?>
     
-    <input type="button" class="btn button" value="<?php print Text::_('JSHOP_LOGOUT')?>" onclick="location.href='<?php print Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=logout"); ?>'" />
+    <button type="button" class="btn button" onclick="location.href='<?php print Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=logout"); ?>'">
+        <span class="fas fa-sign-out-alt" aria-hidden="true"></span>
+        <?php print Text::_('JSHOP_LOGOUT')?>
+    </button>
 </div>

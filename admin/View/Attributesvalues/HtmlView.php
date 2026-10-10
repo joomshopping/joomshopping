@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.0 15.05.2025
+* @version      5.9.4 30.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -24,6 +24,7 @@ class HtmlView extends BaseHtmlView{
         ToolbarHelper::unpublishList();
         ToolbarHelper::deleteList(Text::_('JSHOP_DELETE_ITEM_CAN_BE_USED'));
         HelperAdmin::btnHome();
+        ToolbarHelper::custom("clear_double", 'folder', 'folder', Text::_('JSHOP_CLEAR_DUPLICATE_VALUE'), false);
         parent::display($tpl);
 	}
     

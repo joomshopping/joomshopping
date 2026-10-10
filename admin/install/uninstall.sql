@@ -43,6 +43,7 @@ DROP TABLE `#__jshopping_products_extra_field_values`;
 DROP TABLE `#__jshopping_products_extra_field_groups`;
 DROP TABLE `#__jshopping_products_to_extra_fields`;
 DROP TABLE `#__jshopping_addons`;
+DROP TABLE `#__jshopping_addons_dependencies`;
 DROP TABLE `#__jshopping_vendors`;
 DROP TABLE `#__jshopping_free_attr`;
 DROP TABLE `#__jshopping_products_free_attr`;

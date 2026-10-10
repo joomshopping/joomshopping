@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.0 31.05.2025
+* @version      5.9.4 24.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -377,5 +377,31 @@ class HelperAdmin{
             $url = $liveurlhost.$url;
         }
 		return $url;
+    }
+
+    public static function getListValuesText($names, $count_max, $show_first = 0, $name_length = 0){
+        $names = array_values($names);
+        $more = 0;
+        if (count($names) > $count_max){
+            if (!$show_first){
+                return '';
+            }
+            $names = array_slice($names, 0, $count_max);
+            $more = 1;
+        }
+        if (!count($names)){
+            return '';
+        }
+        if ($name_length > 0){
+            foreach($names as $k => $name){
+                if (mb_strlen($name) > $name_length){
+                    $names[$k] = mb_substr($name, 0, $name_length).'...';
+                }
+            }
+        }
+        if ($more){
+            $names[] = '...';
+        }
+        return '('.implode(', ', $names).')';
     }
 }

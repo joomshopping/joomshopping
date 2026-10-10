@@ -4,7 +4,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.3.5 09.03.2024
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -486,8 +486,10 @@ HTMLHelper::_('behavior.formvalidator');
             <div class="controls">
                 <div class="requiredtext">* <?php print Text::_('JSHOP_REQUIRED')?></div>
                 <?php echo $this->_tmpl_register_html_6?>
-                <input type="submit" value="<?php print Text::_('JSHOP_SEND_REGISTRATION')?>"
-                    class="btn btn-primary button" />
+                <button type="submit" class="btn btn-primary button">
+                    <span class="fas fa-user-plus" aria-hidden="true"></span>
+                    <?php print Text::_('JSHOP_SEND_REGISTRATION')?>
+                </button>
             </div>
         </div>
         <?php echo HTMLHelper::_('form.token');?>

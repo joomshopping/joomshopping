@@ -3,7 +3,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
- * @version      5.0.0 15.09.2018
+ * @version      5.10.0 10.10.2026
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,7 +14,7 @@ defined('_JEXEC') or die();
 $countprod = count($this->products);
 
 ?>
-<div class="jshop" id="comjshop">
+<div class="jshop<?php if ($this->config->use_fontawesome) print " use_fontawesome"?>" id="comjshop">
 
 <?php if ($countprod > 0) : ?>
     <table class="jshop cart cartwishlist" id="comjshop">
@@ -91,11 +91,13 @@ $countprod = count($this->products);
             </td>
             <td class="remove_to_cart">
                 <div class="data">
-                    <a class="btn btn-success" href="<?php print $prod['remove_to_cart'] ?>" >
-                        <?php print Text::_('JSHOP_REMOVE_TO_CART')?>
+                    <a class="btn btn-success btn-sm" href="<?php print $prod['remove_to_cart'] ?>" title="<?php print Text::_('JSHOP_REMOVE_TO_CART')?>">
+                        <span class="fas fa-cart-plus" aria-hidden="true"></span>
+                        <span class="btn_text"><?php print Text::_('JSHOP_REMOVE_TO_CART')?></span>
                     </a>
-                    <a class="button-img btn-danger btn" href="<?php print $prod['href_delete']?>" onclick="return confirm('<?php print Text::_('JSHOP_CONFIRM_REMOVE')?>')">
-                        <?php print Text::_('JSHOP_DELETE')?>
+                    <a class="button-img btn-danger btn btn-sm" href="<?php print $prod['href_delete']?>" onclick="return confirm('<?php print Text::_('JSHOP_CONFIRM_REMOVE')?>')" title="<?php print Text::_('JSHOP_DELETE')?>">
+                        <span class="fas fa-trash" aria-hidden="true"></span>
+                        <span class="btn_text"><?php print Text::_('JSHOP_DELETE')?></span>
                     </a>
                 </div>
             </td>
@@ -117,6 +119,7 @@ $countprod = count($this->products);
 
         <div class="pull-left">
             <a href="<?php print $this->href_shop ?>" class="btn btn-arrow-left btn-secondary">
+                <span class="fas fa-arrow-left" aria-hidden="true"></span>
                 <?php print Text::_('JSHOP_BACK_TO_SHOP')?>
             </a>
         </div>
@@ -124,6 +127,7 @@ $countprod = count($this->products);
         <div class="pull-right">
             <a href="<?php print $this->href_checkout ?>" class="btn btn-arrow-right btn-secondary">
                 <?php print Text::_('JSHOP_GO_TO_CART')?>
+                <span class="fas fa-arrow-right" aria-hidden="true"></span>
             </a>
         </div>
     </div>

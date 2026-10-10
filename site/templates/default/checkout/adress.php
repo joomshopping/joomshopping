@@ -4,7 +4,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.3.5 09.03.2024
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -784,8 +784,10 @@ HTMLHelper::_('behavior.formvalidator');
                     <?php echo $this->_tmpl_address_html_8?>
                     <div class="requiredtext">* <?php print Text::_('JSHOP_REQUIRED')?></div>
                     <?php echo $this->_tmpl_address_html_9?>
-                    <input type="submit" class="btn btn-success" name="next"
-                        value="<?php print Text::_('JSHOP_NEXT')?>" class="btn btn-primary button" />
+                    <button type="submit" class="btn btn-success button" name="next" value="<?php print Text::_('JSHOP_NEXT')?>">
+                        <?php print Text::_('JSHOP_NEXT')?>
+                        <span class="fas fa-arrow-right" aria-hidden="true"></span>
+                    </button>
                 </div>
             </div>
         </form>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.0 01.03.2025
+* @version      5.10.0 19.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -60,9 +60,10 @@ class AddondependenciesModel extends BaseadminModel{
                 Helper::saveToLog("install_dep.log", 'checkinstall ok '.$item->alias." ".$item->version);
                 $this->saveAutoInstallResult($item->id, 1);
             } elseif ($item->error == 0) {
-                $this->autoInstall($item, $msg = 1);
-            } elseif ($msg) {
+                $this->autoInstall($item, $msg);
+            } elseif ($msg && $this->checkDisplayMsg($item)) {
                 $this->msgInstall($item);
+                $this->saveDisplayCount($item->id);
             }
         }
     }
@@ -73,15 +74,28 @@ class AddondependenciesModel extends BaseadminModel{
 
     public function systemAddonsCheck(){
         $jshopConfig = JSFactory::getConfig();
-        $lib_file = JPATH_ROOT.'/components/com_jshopping/Lib/tcpdf/tcpdf.php';
-        if ($jshopConfig->generate_pdf && !file_exists($lib_file)) {
-            $data = $jshopConfig->system_addons['tcpdf'];
+        foreach($jshopConfig->system_addons as $key => $data){
+            if (!$this->checkNeedSystemAddon($key, $data)){
+                continue;
+            }
             $addonDep = JSFactory::getTable('addondependencies');
             $addonDep->loadAlias($data['alias'], '');
             $addonDep->name = $data['name'];
             $addonDep->version = $data['version'];
+            $addonDep->required = $data['required'] ?? 1;
             $addonDep->store();
         }
+    }
+
+    protected function checkNeedSystemAddon($key, $data){
+        $jshopConfig = JSFactory::getConfig();
+        $need = 1;
+        if ($key == 'tcpdf'){
+            $lib_file = JPATH_ROOT.'/components/com_jshopping/Lib/tcpdf/tcpdf.php';
+            $need = $jshopConfig->generate_pdf && !file_exists($lib_file);
+        }
+        Factory::getApplication()->triggerEvent('onCheckNeedSystemAddon', array(&$key, &$data, &$need));
+        return $need;
     }
 
     public function checkInstall($alias, $version) {
@@ -107,7 +121,7 @@ class AddondependenciesModel extends BaseadminModel{
         try {
             $version = $item->version;
             $file = $this->getSearchFileInstallWeb($item);
-            if (!$file || !$file->download) {
+            if (!$file || !($file->download ?? '')) {
                 $this->saveAutoInstallResult($item->id, 0);
                 JSError::raiseError(501, Text::_('JSHOP_ERROR_INSTALL').' '.$item->name." ".$version);
                 return 0;
@@ -158,9 +172,26 @@ class AddondependenciesModel extends BaseadminModel{
         $table->store();
     }
 
+    public function checkDisplayMsg($item) {
+        if ($item->required) {
+            return 1;
+        }
+        return $item->display_count < 1;
+    }
+
+    public function saveDisplayCount($id) {
+        $db = Factory::getDbo();
+        $query = $db->getQuery(true);
+        $query->update($db->qn('#__jshopping_addons_dependencies'));
+        $query->set($db->qn('display_count')." = ".$db->qn('display_count')." + 1");
+        $query->where($db->qn('id')."=".(int)$id);
+        $db->setQuery($query);
+        $db->execute();
+    }
+
     public function msgInstall($item) {
         JSError::raiseWarning(300, Text::_('JSHOP_PLEASE_INSTALL').' '.$item->name." ".$item->version);
-        $caturl = 'index.php?option=com_jshopping&controller=addons&task=listweb';
+        $caturl = 'index.php?option=com_jshopping&controller=addonscatalog';
         $site = JSFactory::getConfig()->website_addons_url;
         JSError::raiseWarning(300, Text::sprintf('JSHOP_ADDON_USE_CATALOG_OR_WEBSITE', $caturl, $site));
         

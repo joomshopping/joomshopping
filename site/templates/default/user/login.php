@@ -4,7 +4,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -57,13 +57,16 @@ $is_uname = $this->config_fields["u_name"]["display"];
                 
                 <div class="control-elms rowbutton">
                     <div class="controls">
-                        <input type="submit" class="btn btn-success button" value="<?php print Text::_('JSHOP_LOGIN')?>" />
+                        <button type="submit" class="btn btn-success button">
+                            <span class="fas fa-sign-in-alt" aria-hidden="true"></span>
+                            <?php print Text::_('JSHOP_LOGIN')?>
+                        </button>
                     </div>
                 </div>
                 
                 <div class="control-elms rowlostpassword">
                     <div class="controls">
-                        <a href = "<?php print $this->href_lost_pass ?>"><?php print Text::_('JSHOP_LOST_PASSWORD')?></a>
+                        <a href = "<?php print $this->href_lost_pass ?>"><span class="fas fa-key" aria-hidden="true"></span> <?php print Text::_('JSHOP_LOST_PASSWORD')?></a>
                     </div>
                 </div>
                 
@@ -75,7 +78,10 @@ $is_uname = $this->config_fields["u_name"]["display"];
 			<?php if ($this->config->shop_user_guest && $this->show_pay_without_reg) : ?>
 				<span class="text_pay_without_reg">
 					<div class="small_header"><?php print Text::_('JSHOP_ORDER_WITHOUT_REGISTER')?></div>
-					<a class="btn btn-primary" href="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step2',1,0, $this->config->use_ssl);?>"><?php print Text::_('JSHOP_GUEST_CHECKOUT')?></a>
+					<a class="btn btn-primary" href="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=checkout&task=step2',1,0, $this->config->use_ssl);?>">
+                        <span class="fas fa-shopping-cart" aria-hidden="true"></span>
+                        <?php print Text::_('JSHOP_GUEST_CHECKOUT')?>
+                    </a>
 				</span>
 			<?php endif; ?>
         </div>
@@ -86,7 +92,10 @@ $is_uname = $this->config_fields["u_name"]["display"];
 				<div class="logintext"><?php print Text::_('JSHOP_REGISTER')?></div>
 				<?php if (!$this->config->show_registerform_in_logintemplate){?>
 					<div class="block_button_register">
-						<input type="button" class="btn button btn-primary" value="<?php print Text::_('JSHOP_REGISTRATION')?>" onclick="location.href='<?php print $this->href_register ?>';" />
+						<button type="button" class="btn button btn-primary" onclick="location.href='<?php print $this->href_register ?>';">
+                            <span class="fas fa-user-plus" aria-hidden="true"></span>
+                            <?php print Text::_('JSHOP_REGISTRATION')?>
+                        </button>
 					</div>
 				<?php }else{?>
 					<?php $hideheaderh1 = 1; include(dirname(__FILE__)."/register.php"); ?>

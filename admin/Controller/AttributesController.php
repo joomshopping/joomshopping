@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.4 15.09.2018
+* @version      5.9.4 24.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -46,9 +46,11 @@ class AttributesController extends BaseadminController{
     	$attributes = JSFactory::getModel("attribut");
     	$attributesvalue = JSFactory::getModel("attributvalue");
         $rows = $attributes->getAllAttributes(0, null, $filter_order, $filter_order_Dir, ['calculate_product_count' => 1], $filter);
+        $jshopConfig = JSFactory::getConfig();
         foreach($rows as $key => $value){
-            $rows[$key]->values = Helper::splitValuesArrayObject($attributesvalue->getAllValues($rows[$key]->attr_id), 'name');
-            $rows[$key]->count_values = count($attributesvalue->getAllValues($rows[$key]->attr_id));
+            $values = $attributesvalue->getAllValues($rows[$key]->attr_id);
+            $rows[$key]->count_values = count($values);
+            $rows[$key]->values = HelperAdmin::getListValuesText(array_column($values, 'name'), $jshopConfig->admin_display_attribute_values_in_list_max, $jshopConfig->admin_display_values_in_list_show_first, $jshopConfig->admin_display_values_in_list_name_length);
         }
         $filterinput = [];
         $filterinput['publish'] = HTMLHelper::_('select.genericlist', SelectOptions::getPublish(), 'filter[publish]', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $ifilter['publish'] ?? 0);

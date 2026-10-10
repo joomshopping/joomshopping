@@ -5,7 +5,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.8.1 02.08.2025
+* @version      5.9.5 02.08.2025
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -84,16 +84,23 @@ class AddonCore{
     }
 
 	public function getView($layout = '', $dir = null, $ovdir = null){
+        $app = Factory::getApplication();
         $dir = $dir ?? 'components/com_jshopping/templates/addons/'.$this->addon_alias;
 		$template = $this->getJoomlaTemplate();
         $config = $this->getAddonConfig();
-		$ovdir = $ovdir ?? $config['folder_overrides_view'] ?? 'templates/'.$template.'/html/com_jshopping/addons/'.$this->addon_alias;
-        if (!isset($config['folder_overrides_view']) && Factory::getApplication()->isClient('administrator')) {
+		$ovdir = $ovdir ?? $config['folder_overrides_view'] ?? ($template ? 'templates/'.$template.'/html/com_jshopping/addons/'.$this->addon_alias : null);
+        if ($template && !isset($config['folder_overrides_view']) && $app->isClient('administrator')) {
             $ovdir2 = 'administrator/templates/'.$template.'/html/com_jshopping/addons/'.$this->addon_alias;
         }
 		$view_config = array("template_path" => JPATH_ROOT.'/'.$dir);
-        $view = new Joomla\Component\Jshopping\Site\View\Addons\HtmlView($view_config);
-		$view->addTemplatePath(JPATH_ROOT.'/'.$ovdir);
+        if (!$app->isClient('cli')){
+            $view = new Joomla\Component\Jshopping\Site\View\Addons\HtmlView($view_config);
+        } else {
+            $view = $this->getCliView($view_config);
+        }
+        if ($ovdir) {
+            $view->addTemplatePath(JPATH_ROOT.'/'.$ovdir);
+        }
         if ($ovdir2 ?? '') {
             $view->addTemplatePath(JPATH_ROOT.'/'.$ovdir2);
         }
@@ -105,7 +112,7 @@ class AddonCore{
             print '<pre>';
             print '#Addon '.$this->addon_alias.' getView: '.$layout."\n";
             print '#Addon '.$this->addon_alias.' getView dir: '.$dir."\n";
-            print '#Addon '.$this->addon_alias.' getView ovdir: '.$ovdir."\n";
+            print '#Addon '.$this->addon_alias.' getView ovdir: '.($ovdir ?? '-')."\n";
             if ($ovdir2 ?? '') {
                 print '#Addon '.$this->addon_alias.' getView ovdir2: '.$ovdir2."\n";
             }
@@ -114,10 +121,65 @@ class AddonCore{
         if ($this->log) {
             Helper::saveToLog($this->addon_alias.".log", 'getView: '.$layout);
             Helper::saveToLog($this->addon_alias.".log", 'getView dir: '.$dir);
-            Helper::saveToLog($this->addon_alias.".log", 'getView ovdir: '.$ovdir);
+            Helper::saveToLog($this->addon_alias.".log", 'getView ovdir: '.($ovdir ?? '-'));
         }
         return $view;
     }
+    
+    protected function getCliView($config = array()){
+		return new #[\AllowDynamicProperties] class($config) {
+
+			protected $paths = array();
+			protected $layout = 'default';
+
+			public function __construct($config = array()){
+				if (!empty($config['template_path'])){
+					$this->addTemplatePath($config['template_path']);
+				}
+			}
+
+			public function addTemplatePath($path){
+				foreach ((array)$path as $dir){
+					array_unshift($this->paths, rtrim($dir, '/\\').'/');
+				}
+			}
+
+			public function setLayout($layout){
+				$this->layout = $layout;
+				return $this;
+			}
+
+			public function getLayout(){
+				return $this->layout;
+			}
+
+			public function set($property, $value = null){
+				$this->$property = $value;
+				return $this;
+			}
+
+			public function get($property, $default = null){
+				return isset($this->$property) ? $this->$property : $default;
+			}
+
+			public function escape($value){
+				return htmlspecialchars((string)$value, ENT_COMPAT, 'UTF-8');
+			}
+			
+			public function loadTemplate($tpl = null){
+				$file = isset($tpl) ? $this->layout.'_'.$tpl : $this->layout;
+				$file = strtolower(preg_replace('/[^A-Z0-9_\.-]/i', '', $file)).'.php';
+				foreach ($this->paths as $dir){
+					if (is_file($dir.$file)){
+						ob_start();
+						include $dir.$file;
+						return ob_get_clean();
+					}
+				}
+				throw new Exception('Layout '.$file.' not found in '.implode(', ', $this->paths));
+			}
+		};
+	}
 
     public function loadLanguage($langtag = ""){
         if ($this->debug > 1) {
@@ -241,7 +303,11 @@ class AddonCore{
     }
 
     protected function getJoomlaTemplate() {
-        return Factory::getApplication()->getTemplate(true)->template;
+        $app = Factory::getApplication();		
+		if (method_exists($app, 'getTemplate')){
+			return $app->getTemplate(true)->template;
+		}
+        return null;
     }
 
     protected function getAssetName($extname, $dir, $ovdir, $name_as_alias) {

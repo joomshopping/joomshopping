@@ -3,7 +3,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -103,6 +103,7 @@ defined('_JEXEC') or die();
         </td>
         <td class="total_price">
             <div class="data">
+                <span class="mobile-cart-inline"><?php print Text::_('JSHOP_PRICE_TOTAL')?>:</span>
                 <?php print Helper::formatprice($prod['price']*$prod['quantity']);?>
                 <?php print $prod['_ext_price_total_html']?>
                 <?php if ($this->config->show_tax_product_in_cart && $prod['tax']>0){?>

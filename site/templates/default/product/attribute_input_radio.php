@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.5 08.03.2024
+* @version      5.9.4 19.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,7 +12,8 @@ defined('_JEXEC') or die();
 foreach($this->options as $el){?>
 <?php $id = 'jshop_attr_id'.$this->attr_id.$el->val_id;?>
 <?php if ($el->val_id == $this->active) $sel = ' checked="checked"'; else $sel = '';?>
-<span class="input_type_radio">
+<?php $notstock = isset($el->count_stock) && $el->count_stock<=0 && !$this->product->unlimited;?>
+<span class="input_type_radio<?php if ($notstock) print ' attr_not_stock';?>">
     <label>
         <input type="radio" name="jshop_attr_id[<?php print $this->attr_id?>]" id="<?php print $id?>" value="<?php print $el->val_id?>" onclick="jshop.setAttrValue('<?php print $this->attr_id?>', this.value);" <?php print $sel?>>
         <span class='radio_attr_label'>

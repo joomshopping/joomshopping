@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.1 15.09.2018
+* @version      5.9.4 30.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,6 +12,8 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
@@ -125,6 +127,15 @@ class AttributesValuesController extends BaseadminController{
         die();               
     }
     
+    public function clear_double() {
+        $attr_id = $this->input->getInt("attr_id");
+        $model = JSFactory::getModel('attributvalue');
+        if ($model->clearDoubleValues($attr_id)) {
+            JSError::raiseMessage(100, Text::_('JSHOP_DATA_SUCC_UPDATED'));
+        }
+        $this->setRedirect("index.php?option=com_jshopping&controller=attributesvalues&attr_id=".$attr_id);
+    }
+
     protected function getOrderWhere(){
         $attr_id = $this->input->getInt("attr_id");
         return 'attr_id='.(int)$attr_id;

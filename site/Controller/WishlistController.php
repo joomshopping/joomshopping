@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.1 19.07.2025
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -64,6 +64,7 @@ class WishlistController extends BaseController{
         $cart = JSFactory::getModel('cart', 'Site');
         $cart->load('wishlist');    
         $cart->delete($this->input->getInt('number_id'));
+        $cart->deleteUnpublishedProducts();
         if ($ajax){
             print Helper::getOkMessageJson($cart);
             die();

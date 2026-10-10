@@ -43,6 +43,7 @@ PRIMARY KEY  (`currency_id`)
 CREATE TABLE IF NOT EXISTS `#__jshopping_delivery_times` (
 `id` int(11) NOT NULL auto_increment,
 `days` DECIMAL(8,2) NOT NULL default 0,
+`min_days` DECIMAL(8,2) NOT NULL default 0,
 PRIMARY KEY  (`id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -697,8 +698,10 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_addons_dependencies` (
 `name` VARCHAR(255) NOT NULL default '',
 `parent` VARCHAR(255) NOT NULL default '',
 `version` VARCHAR(255) NOT NULL default '',
+`required` TINYINT(1) NOT NULL default 1,
 `installed` TINYINT(1) NOT NULL default 0,
 `error` TINYINT(1) NOT NULL DEFAULT 0,
+`display_count` INT(11) NOT NULL default 0,
 PRIMARY KEY  (`id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.7.0 15.05.2025
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -1341,6 +1341,8 @@ class CartModel{
             }
             if ($del) {
                 $this->loadPriceAndCountProducts();
+                $this->reloadRabatValue();
+                $this->saveToSession();
             }
         }
     }

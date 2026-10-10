@@ -3,7 +3,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -100,7 +100,10 @@ defined('_JEXEC') or die;
                 <?php print $this->_tmp_ext_html_previewfinish_agb?>
                 <div class="box_button"> 
 			        <?php print $this->_tmp_ext_html_previewfinish_before_button?>
-                    <input class="btn btn-success button" id="previewfinish_btn" type="submit" name="finish_registration" value="<?php print Text::_('JSHOP_ORDER_FINISH')?>" data-agb="<?php echo $this->config->display_agb;?>" data-noreturn="<?php echo $this->no_return?>">
+                    <button class="btn btn-success button" id="previewfinish_btn" type="submit" name="finish_registration" value="<?php print Text::_('JSHOP_ORDER_FINISH')?>" data-agb="<?php echo $this->config->display_agb;?>" data-noreturn="<?php echo $this->no_return?>">
+                        <span class="fas fa-check" aria-hidden="true"></span>
+                        <?php print Text::_('JSHOP_ORDER_FINISH')?>
+                    </button>
                 </div>
             </div> 
             <?php print $this->_tmp_ext_html_previewfinish_end?>

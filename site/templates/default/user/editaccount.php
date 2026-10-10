@@ -4,7 +4,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.3.5 09.03.2024
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,9 +18,16 @@ $config_fields = $this->config_fields;
 $cssreq = $this->cssreq_fields;
 HTMLHelper::_('behavior.formvalidator');
 ?>
-<div class="jshop editaccount_block max-500" id="comjshop">
+<div class="jshop editaccount_block" id="comjshop">
 
     <h1><?php print Text::_('JSHOP_EDIT_DATA') ?></h1>
+
+    <div class="row myaccount_layout">
+        <div class="col-lg-3">
+            <?php include(__DIR__."/menu.php");?>
+        </div>
+        <div class="col-lg-9">
+        <div class="max-500">
 
     <form action="<?php print $this->action ?>" method="post" name="loginForm" class="form-validate form-horizontal"
         enctype="multipart/form-data">
@@ -799,9 +806,14 @@ HTMLHelper::_('behavior.formvalidator');
                 <?php echo $this->_tmpl_editaccount_html_7 ?>
                 <div class="requiredtext">* <?php print Text::_('JSHOP_REQUIRED') ?></div>
                 <?php echo $this->_tmpl_editaccount_html_8 ?>
-                <input type="submit" name="next" value="<?php print Text::_('JSHOP_SAVE') ?>"
-                    class="btn btn-primary button" />
+                <button type="submit" name="next" value="<?php print Text::_('JSHOP_SAVE') ?>" class="btn btn-primary button">
+                    <span class="fas fa-save" aria-hidden="true"></span>
+                    <?php print Text::_('JSHOP_SAVE') ?>
+                </button>
             </div>
         </div>
     </form>
+        </div>
+        </div>
+    </div>
 </div>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.5.4 18.01.2025
+* @version      5.10.0 06.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -314,17 +314,17 @@ class ConfigTable{
 	
     function getNextOrderNumber($update = 0){
         $db = Factory::getDBO();
-		if ($update){
-			$db->lockTable('#__jshopping_configs');
-		}
-        $query = "select `value` from `#__jshopping_configs` where `key`='next_order_number' and  `config_id`=".intval($this->id);
-        $db->setQuery($query);
-        $next_order_number = $db->loadResult();
-		if ($update){
-			$this->updateNextOrderNumber();
-			$db->unlockTables();
-		}
-		return $next_order_number;
+        $where = "`key`='next_order_number' and `config_id`=".intval($this->id);
+        if ($update){
+            $db->setQuery("update `#__jshopping_configs` set `value`=LAST_INSERT_ID(`value`)+1 where ".$where);
+            $db->execute();
+            if ($db->getAffectedRows() == 1) {
+                $db->setQuery("select LAST_INSERT_ID()");
+                return $db->loadResult();
+            }
+        }
+        $db->setQuery("select `value` from `#__jshopping_configs` where ".$where);
+        return $db->loadResult();
     }
 
     function getVersion(){

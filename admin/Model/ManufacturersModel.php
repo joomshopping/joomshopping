@@ -81,6 +81,11 @@ class ManufacturersModel extends BaseadminModel{
             }
             $post['description_'.$lang->language] = $input->get('description'.$lang->id, '', 'RAW');
             $post['short_description_'.$lang->language] = $input->get('short_description_'.$lang->language, '', 'RAW');
+            if ($jshopConfig->meta_data_save_as_raw) {
+                $post['meta_title_'.$lang->language] = $input->get('meta_title_'.$lang->language, '', 'RAW');
+                $post['meta_description_'.$lang->language] = $input->get('meta_description_'.$lang->language, '', 'RAW');
+                $post['meta_keyword_'.$lang->language] = $input->get('meta_keyword_'.$lang->language, '', 'RAW');
+            }
         }
         return $post;
     }

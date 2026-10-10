@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.3 02.05.2025
+* @version      5.9.4 02.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -41,16 +41,20 @@ class OrdersModel extends BaseadminModel{
     }
 
     function getAllOrders($limitstart, $limit, $filters, $filter_order, $filter_order_Dir) {
-        $db = Factory::getDBO(); 
+        $jshopConfig = JSFactory::getConfig();
+        $db = Factory::getDBO();
         $where = $this->_getAllOrdersQueryForFilter($filters);
         $order = $filter_order." ".$filter_order_Dir;
         if (isset($filters['vendor_id']) && $filters['vendor_id']){
             $query = "SELECT distinct O.* FROM `#__jshopping_orders` as O
                   left join `#__jshopping_order_item` as OI on OI.order_id=O.order_id
                   where 1 $where ORDER BY ".$order;
-        }else{
+        }elseif ($jshopConfig->admin_show_vendors){
             $query = "SELECT O.*, V.l_name as v_name, V.f_name as v_fname, concat(O.f_name,' ',O.l_name) as name FROM `#__jshopping_orders` as O
                   left join `#__jshopping_vendors` as V on V.id=O.vendor_id
+                  where 1 $where ORDER BY ".$order;
+        }else{
+            $query = "SELECT O.*, concat(O.f_name,' ',O.l_name) as name FROM `#__jshopping_orders` as O
                   where 1 $where ORDER BY ".$order;
         }
         $app = Factory::getApplication();

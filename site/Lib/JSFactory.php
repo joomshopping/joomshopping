@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.0 22.05.2025
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -89,6 +89,14 @@ class JSFactory{
         $jshopConfig = JSFactory::getConfig();
         if (!$jshopConfig->load_css) return 0;
         if (!$load){
+            if ($jshopConfig->use_fontawesome){
+                $docwa = Factory::getApplication()->getDocument()->getWebAssetManager();
+                // core vendor asset has no font files, use the Joomla build (as Cassiopeia does)
+                if (strpos($docwa->getAsset('style', 'fontawesome')->getUri(false), 'vendor/fontawesome-free') !== false){
+                    $docwa->registerStyle('fontawesome', 'system/joomla-fontawesome.min.css');
+                }
+                $docwa->useStyle('fontawesome');
+            }
             $wa = JSFactory::getWebAssetManager();
 			if (file_exists($jshopConfig->css_path.$jshopConfig->template.'.css')){
                 $wap = $jshopConfig->getWebAssetParams('style', 'com.jshopping');

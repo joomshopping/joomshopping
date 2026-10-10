@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.9.4 24.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -47,6 +47,7 @@ class ProductFieldsController extends BaseadminController{
         
         $_productfieldvalues = JSFactory::getModel("productfieldvalues");
         $vals = $_productfieldvalues->getAllList(2);
+        $jshopConfig = JSFactory::getConfig();
     
         foreach($rows as $k=>$v){
             if (isset($vals[$v->id])){
@@ -58,7 +59,8 @@ class ProductFieldsController extends BaseadminController{
             }else{
                 $vals[$v->id] = [];
                 $rows[$k]->count_option = 0;
-            }    
+            }
+            $rows[$k]->values = HelperAdmin::getListValuesText($vals[$v->id], $jshopConfig->admin_display_extra_field_values_in_list_max, $jshopConfig->admin_display_values_in_list_show_first, $jshopConfig->admin_display_values_in_list_name_length);
         }
 		$lists = array();
         $lists['group'] = HTMLHelper::_('select.genericlist', SelectOptions::getProductFieldGroups(), 'group', 'class="form-select" onchange="document.adminForm.submit();"', 'id', 'name', $group);

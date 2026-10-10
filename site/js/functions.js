@@ -465,8 +465,17 @@ jQuery(document).ready(function(){
 	});
 
 	jQuery(document).on('click', '.jshop .cart .cart_reload', function(){
-       jQuery('.jshop form#updateCart').submit(); 
+       jQuery('.jshop form#updateCart').submit();
     });
+
+	jQuery(document).on('input change', '.jshop form#updateCart .quantity input', function(){
+		var changed = false;
+		jQuery('.jshop form#updateCart .quantity input').each(function(){
+			if (this.value != this.defaultValue) changed = true;
+		});
+		jQuery('#checkout_btn').toggleClass('btn-warning', changed).toggleClass('btn-success', !changed);
+		jQuery('#cart_qty_changed').toggle(changed);
+	});
 
 	jQuery('.jshop #payment_form').on('submit', function(){
 		return jshop.checkPaymentForm();

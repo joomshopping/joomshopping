@@ -2,7 +2,7 @@
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -41,7 +41,10 @@ defined('_JEXEC') or die();
             </div>
         
             <?php print $this->_tmp_ext_html_payment_end?>
-            <input type="submit" id="payment_submit" class="btn btn-success button" name="payment_submit" value="<?php print Text::_('JSHOP_NEXT')?>">
+            <button type="submit" id="payment_submit" class="btn btn-success button" name="payment_submit" value="<?php print Text::_('JSHOP_NEXT')?>">
+                <?php print Text::_('JSHOP_NEXT')?>
+                <span class="fas fa-arrow-right" aria-hidden="true"></span>
+            </button>
         </form>
     </div>
     <?php print $this->_tmp_html_end ?? ''?>

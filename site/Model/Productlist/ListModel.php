@@ -449,11 +449,11 @@ class ListModel{
     }
 	
     public function getProducts(){
-        return $this->products;
+        return $this->products ?? [];
     }
 	
     public function getPagination(){
-        return $this->pagination;
+        return $this->pagination ?? null;
     }
 	
     public function getPagenav(){

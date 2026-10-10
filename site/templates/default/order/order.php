@@ -4,7 +4,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 10.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,12 +14,19 @@ defined('_JEXEC') or die();
 $order=$this->order;
 ?>
 <div class="jshop myorderinfo">
+
+    <div class="row myaccount_layout">
+        <div class="col-lg-3">
+            <?php include(__DIR__."/../user/menu.php");?>
+        </div>
+        <div class="col-lg-9">
     
     <?php print $this->_tmp_html_start;?>
         
     <?php if ($this->config->order_send_pdf_client && $order->pdf_file && file_exists($this->config->pdf_orders_path."/".$order->pdf_file)) : ?>
         <div class="downlod_order_invoice">
             <a class="btn btn-secondary" target="_blank" href="<?php print $this->config->pdf_orders_live_path."/".$order->pdf_file;?>">
+                <span class="fas fa-file-pdf" aria-hidden="true"></span>
                 <?php print Text::_('JSHOP_DOWNLOAD_INVOICE')?>
             </a>
         </div>
@@ -608,10 +615,13 @@ $order=$this->order;
     <?php if ($this->allow_cancel){?>
         <div class="button_cancel">
             <a href="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=user&task=cancelorder&order_id='.$order->order_id)?>" class="btn btn-secondary">
+                <span class="fas fa-times" aria-hidden="true"></span>
                 <?php print Text::_('JSHOP_CANCEL_ORDER')?>
             </a>
         </div>
     <?php }?>
     
     <?php print $this->_tmp_html_end;?>
+        </div>
+    </div>
 </div>

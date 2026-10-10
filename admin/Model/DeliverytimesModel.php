@@ -61,6 +61,7 @@ class DeliveryTimesModel extends BaseadminModel{
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveDeliveryTime', array(&$post));
         $post['days'] = isset($post['days']) ? (float)$post['days'] : null;
+        $post['min_days'] = isset($post['min_days']) ? (float)$post['min_days'] : null;
 		$deliveryTimes->bind($post);
 		if (!$deliveryTimes->store()){
 			$this->setError(Text::_('JSHOP_ERROR_SAVE_DATABASE')." ".$deliveryTimes->getError());

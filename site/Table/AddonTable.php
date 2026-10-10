@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.1 24.03.2026
+* @version      5.10.0 19.09.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -387,6 +387,7 @@ class AddonTable extends ShopbaseTable{
 	            $addonDep->loadAlias($item['alias'], $item['parent'] ?? $this->alias);
 	            $addonDep->name = $item['name'];
 	            $addonDep->version = $item['version'];
+	            $addonDep->required = $item['required'] ?? 1;
 	            $addonDep->installed = $item['installed'] ?? 0;
 	            $addonDep->error = $item['error'] ?? 0;
 	            $addonDep->store();

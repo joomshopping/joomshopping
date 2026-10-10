@@ -6,7 +6,7 @@ use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.9.4 08.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -299,6 +299,15 @@ HTMLHelper::_('bootstrap.tooltip');
        <?php echo HelperAdmin::tooltip(Text::_('JSHOP_PDF_ONLYJPG'))?>
     </td>
     <td>
+        <?php if ($this->pdf_images['header']){?>
+            <div class="mb-2">
+                <img src="<?php print $this->pdf_images['header']?>" style="max-width:300px;max-height:150px;" alt="" />
+            </div>
+            <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" name="delete_pdf_header" id="delete_pdf_header" value="1" />
+                <label class="form-check-label" for="delete_pdf_header"><?php print Text::_('JSHOP_DELETE_IMAGE')?></label>
+            </div>
+        <?php }?>
         <input size="55" type="file" name="header" value="" />
     </td>
     </tr>
@@ -330,6 +339,15 @@ HTMLHelper::_('bootstrap.tooltip');
        <?php echo HelperAdmin::tooltip(Text::_('JSHOP_PDF_ONLYJPG'))?>
     </td>
     <td>
+        <?php if ($this->pdf_images['footer']){?>
+            <div class="mb-2">
+                <img src="<?php print $this->pdf_images['footer']?>" style="max-width:300px;max-height:150px;" alt="" />
+            </div>
+            <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" name="delete_pdf_footer" id="delete_pdf_footer" value="1" />
+                <label class="form-check-label" for="delete_pdf_footer"><?php print Text::_('JSHOP_DELETE_IMAGE')?></label>
+            </div>
+        <?php }?>
         <input size="55" type="file" name="footer" value="" />
     </td>
     </tr>
