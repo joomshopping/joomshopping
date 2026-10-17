@@ -1,0 +1,20 @@
+# Files in this directory are read from the web (images, video, pdf, export),
+# but scripts must never be served or executed here.
+<FilesMatch "(?i)\.(php\d?|phtml|pht|phar|phps|shtml?|cgi|pl|py|sh|asp|aspx|jsp)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
