@@ -130,7 +130,7 @@ class AddonsModel extends BaseadminModel{
         $adModel = JSFactory::getModel('Addondependencies');
         $row = JSFactory::getTable('addon');
         $row->load($id);
-        $used = $adModel->getList(['alias' => $row->alias]);
+        $used = $adModel->getList(['alias' => $row->alias, 'required' => 1]);
         if (count($used)) {
             if ($msg){
                 JSError::raiseWarning("", $row->name." - ".Text::_('JSHOP_ADDON_NO_DELETED'));

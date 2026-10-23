@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.1 15.09.2018
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -111,6 +111,11 @@ class CheckoutController extends BaseController{
 
 		$post = $this->input->post->getArray();
 		$back_url = $checkoutStep->getCheckoutUrl('2');
+        if (!Helper::checkFrontendToken('step2save')){
+            JSError::raiseWarning('', Text::_('JINVALID_TOKEN_NOTICE'));
+            $this->setRedirect($back_url);
+            return 0;
+        }
 
         $dispatcher->triggerEvent('onLoadCheckoutStep2save', array(&$post));
 

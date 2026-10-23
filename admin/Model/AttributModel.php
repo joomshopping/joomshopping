@@ -71,7 +71,7 @@ class AttributModel extends BaseadminModel{
             foreach($list as $k=>$v){
                 if (!$v->allcats){
                     if ($v->cats!=""){
-                        $cats = unserialize($v->cats);
+                        $cats = unserialize($v->cats, ['allowed_classes' => ['stdClass']]);
                     }else{
                         $cats = array();
                     }
@@ -180,7 +180,7 @@ class AttributModel extends BaseadminModel{
 		$attr_values = $this->getListAttributeValues($id);
 		foreach($attr_values as $attr_val){
 			if ($attr_val->image){
-				@unlink(JSFactory::getConfig()->image_attributes_path."/".$attr_val->image);
+				@unlink(JSFactory::getConfig()->image_attributes_path."/".Helper::getSafeFileName($attr_val->image));
 			}
 		}
 		

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.2 06.04.2024
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -23,7 +23,7 @@ $i = 0;
 <div class="col-md-12">
 <div id="j-main-container" class="j-main-container">
     <?php HelperAdmin::displaySubmenuOptions('addonscatalog');?>
-    <?php if (empty($this->config->addonshop_api_key)) {?>
+    <?php if (empty($this->config->addonshop_api_key) && !$this->config->apikey_edit_disable) {?>
         <div class="mb-3 alert alert-warning small">
             <a href="index.php?option=com_jshopping&controller=addonscatalog&task=apikey">
                 <i class="icon-options"></i>
@@ -74,7 +74,7 @@ $i = 0;
                     <?php echo HTMLHelper::_( 'grid.sort', Text::_('JSHOP_LATEST')." ".Text::_('JSHOP_VERSION'), 'date', $this->filter_order_Dir, $this->filter_order);?>
                 </th>                
                 <th class="center" width="110">
-                    <?php echo Text::_('JSHOP_DOWNLOAD')?>
+                    <?php echo Text::_($this->config->downloadaddon_disable ? 'JSHOP_INSTALL' : 'JSHOP_DOWNLOAD')?>
                 </th>
 				<th width="40" class="center">
 					<?php echo HTMLHelper::_( 'grid.sort', Text::_('JSHOP_ID'), 'id', $this->filter_order_Dir, $this->filter_order);?>
@@ -125,7 +125,7 @@ $i = 0;
             <td class="center">
                 <?php if (isset($row->download_url)) {?>
                     <a class="tbody-icon" href="<?php echo $row->download_url;?>" title="<?php echo Text::_('JSHOP_DOWNLOAD')?>"><i class="icon-download"></i></a>
-                <?php } else {?>
+                <?php } elseif (!isset($row->install_url)) {?>
                     <a class="tbody-icon" href="<?php echo $row->url;?>" target="_blank"><i class="icon-basket"></i></a>
                 <?php } ?>
                 <?php if (isset($row->install_url)) {?>

@@ -3,9 +3,10 @@ use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Session\Session;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -24,7 +25,7 @@ class IeSimpleImport extends IeController{
         $ie_id = $this->ie_id;
         $_importexport = JSFactory::getTable('ImportExport'); 
         $_importexport->load($ie_id);
-        $name = $_importexport->get('name');                        
+        $name = $_importexport->get('name');
             
         ToolbarHelper::title(Text::_('JSHOP_IMPORT'). ' "'.$name.'"', 'generic.png' ); 
         ToolbarHelper::custom("backtolistie", "arrow-left", 'arrow-left', Text::_('JSHOP_BACK_TO').' "'.Text::_('JSHOP_PANEL_IMPORT_EXPORT').'"', false );        
@@ -36,8 +37,11 @@ class IeSimpleImport extends IeController{
 
     function save(){
         $app = Factory::getApplication();
+        if ($app->isClient('administrator')){
+            Session::checkToken() or die('Invalid Token');
+        }
         $jshopConfig = JSFactory::getConfig();
-        
+
         $ie_id = $app->input->getInt("ie_id");
         if (!$ie_id) $ie_id = $this->get('ie_id');
         

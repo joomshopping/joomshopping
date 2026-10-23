@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.4 08.10.2026
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -590,6 +590,7 @@ class ConfigController extends BaseadminController{
 		$jshopConfig = JSFactory::getConfig();
         $config = new \stdClass();
 		include($jshopConfig->path.'config/default_config.php');
+        $other_config = array_values(array_diff($other_config, JSFactory::getTable('Config')->getServiceKeysDisabled()));
         $tax_rule_for = array();
         $tax_rule_for[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_FIRMA_CLIENT'), 'id', 'name' );
         $tax_rule_for[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_VAT_NUMBER'), 'id', 'name' );

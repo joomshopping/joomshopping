@@ -333,7 +333,7 @@ class CartModel{
             }
             foreach ($this->products as $k=>$prod){
                 if ($jshopConfig->admin_show_freeattributes){
-                    $freeattributes = unserialize($prod['freeattributes']);
+                    $freeattributes = unserialize($prod['freeattributes'], ['allowed_classes' => ['stdClass']]);
                     if (!is_array($freeattributes)) $freeattributes = array();
                     $free_attributes_value = array();
                     foreach($freeattributes as $id=>$text){
@@ -660,8 +660,8 @@ class CartModel{
         foreach($this->products as $key=>$value) {
             $product = JSFactory::getTable('product');
             $product->load($this->products[$key]['product_id']);
-            $attr_id = unserialize($value['attributes']);
-            $freeattributes = unserialize($value['freeattributes']);
+            $attr_id = unserialize($value['attributes'], ['allowed_classes' => ['stdClass']]);
+            $freeattributes = unserialize($value['freeattributes'], ['allowed_classes' => ['stdClass']]);
             $product->setAttributeActive($attr_id);
             $product->setFreeAttributeActive($freeattributes);
             $this->products[$key]['price'] = $product->getPrice($this->products[$key]['quantity'], 1, 1, 1, $this->products[$key]);
@@ -956,8 +956,8 @@ class CartModel{
                 if ($value < 0) $value = 0;
                 $product = JSFactory::getTable('product');
                 $product->load($this->products[$key]['product_id']);
-                $attr = unserialize($this->products[$key]['attributes']);
-                $free_attr = unserialize($this->products[$key]['freeattributes']);
+                $attr = unserialize($this->products[$key]['attributes'], ['allowed_classes' => ['stdClass']]);
+                $free_attr = unserialize($this->products[$key]['freeattributes'], ['allowed_classes' => ['stdClass']]);
                 $product->setAttributeActive($attr);
                 $product->setFreeAttributeActive($free_attr);
                 $qtyInStock = $product->getQtyInStock();
@@ -1018,7 +1018,7 @@ class CartModel{
 			if ($value['pid_check_qty_value']=='nocheck') continue;
             $product = JSFactory::getTable('product');
             $product->load($this->products[$key]['product_id']);
-            $attr = unserialize($this->products[$key]['attributes']);
+            $attr = unserialize($this->products[$key]['attributes'], ['allowed_classes' => ['stdClass']]);
             $product->setAttributeActive($attr);
             $qtyInStock = $product->getQtyInStock();
             $checkqty = $value["quantity"];

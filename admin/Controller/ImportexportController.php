@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.4 29.11.2025
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -11,6 +11,7 @@ use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 defined('_JEXEC') or die();
 include_once(JPATH_COMPONENT_ADMINISTRATOR."/importexport/iecontroller.php");
@@ -41,6 +42,7 @@ class ImportExportController extends BaseadminController{
     }
     
     function remove() {
+        (Session::checkToken() || Session::checkToken('get')) or die('Invalid Token');
         $cid = $this->input->getInt("cid");
         $_importexport = JSFactory::getTable('Importexport');
         $_importexport->load($cid);
@@ -49,6 +51,7 @@ class ImportExportController extends BaseadminController{
     }
     
     function setautomaticexecution(){
+        (Session::checkToken() || Session::checkToken('get')) or die('Invalid Token');
         $cid = $this->input->getInt("cid");
         $_importexport = JSFactory::getTable('Importexport');
         $_importexport->load($cid);

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.3 15.10.2025
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -108,7 +108,7 @@ class BaseadminController extends BaseController{
     
     public function remove(){
         if ($this->checkToken['remove']){
-            Session::checkToken() or die('Invalid Token');
+            (Session::checkToken() || Session::checkToken('get')) or die('Invalid Token');
         }
 		$cid = $this->input->get('cid', array(), 'array');
 		$this->getAdminModel()->deleteList($cid);

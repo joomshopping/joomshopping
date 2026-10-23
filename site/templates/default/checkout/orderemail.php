@@ -392,7 +392,7 @@ h3{
          <tr><td colspan="5" style="vertical-align:top;padding-bottom:10px;font-size:1px;"><div style="height:1px;border-top:1px solid #999;"></div></td></tr>
          <?php 
          foreach($this->products as $key_id=>$prod){
-             $files = unserialize($prod->files);
+             $files = unserialize($prod->files, ['allowed_classes' => ['stdClass']]);
          ?>
          <tr class="vertical">
            <td>

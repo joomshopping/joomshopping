@@ -19,6 +19,8 @@ defined('_JEXEC') or die();
 
 class OrderTable extends ShopbaseTable{
 
+    protected $_serialized_fields = ['order_tax_ext', 'shipping_tax_ext', 'package_tax_ext', 'payment_tax_ext', 'payment_params_data', 'shipping_params_data', 'file_stat_downloads'];
+
     function __construct(&$_db){
         parent::__construct('#__jshopping_orders', 'order_id', $_db);
         PluginHelper::importPlugin('jshoppingcheckout');
@@ -180,7 +182,7 @@ class OrderTable extends ShopbaseTable{
 	
 	function getFilesStatDownloads($fileinfo = 0){
         if ($this->file_stat_downloads == "") return array();
-        $rows = unserialize($this->file_stat_downloads);
+        $rows = unserialize($this->file_stat_downloads, ['allowed_classes' => ['stdClass']]);
         if ($fileinfo && count($rows)){
             $db = Factory::getDBO();
             $files_id = array_keys($rows);
@@ -214,7 +216,7 @@ class OrderTable extends ShopbaseTable{
     
     function getTaxExt(){
         if ($this->order_tax_ext == "") return array();
-        return unserialize($this->order_tax_ext);
+        return unserialize($this->order_tax_ext, ['allowed_classes' => ['stdClass']]);
     }
     
     function setTaxExt($array){
@@ -227,7 +229,7 @@ class OrderTable extends ShopbaseTable{
     
     function getShippingTaxExt(){
         if ($this->shipping_tax_ext == "") return array();
-        return unserialize($this->shipping_tax_ext);
+        return unserialize($this->shipping_tax_ext, ['allowed_classes' => ['stdClass']]);
     }
     
     function setPackageTaxExt($array){
@@ -236,7 +238,7 @@ class OrderTable extends ShopbaseTable{
     
     function getPackageTaxExt(){
         if ($this->shipping_tax_ext == "") return array();
-        return unserialize($this->package_tax_ext);
+        return unserialize($this->package_tax_ext, ['allowed_classes' => ['stdClass']]);
     }
 
     function setPaymentTaxExt($array){
@@ -245,12 +247,12 @@ class OrderTable extends ShopbaseTable{
     
     function getPaymentTaxExt(){
         if ($this->payment_tax_ext == "") return array();
-        return unserialize($this->payment_tax_ext);
+        return unserialize($this->payment_tax_ext, ['allowed_classes' => ['stdClass']]);
     }
     
     function getPaymentParamsData(){
         if ($this->payment_params_data == "") return array();
-        return unserialize($this->payment_params_data);
+        return unserialize($this->payment_params_data, ['allowed_classes' => ['stdClass']]);
     }
     
     function setPaymentParamsData($array){
@@ -349,7 +351,7 @@ class OrderTable extends ShopbaseTable{
             if ($item->unlimited) continue;
             
             if ($item->attributes!=""){
-                $attributes = unserialize($item->attributes);
+                $attributes = unserialize($item->attributes, ['allowed_classes' => ['stdClass']]);
             }else{
                 $attributes = array();
             }            
@@ -516,7 +518,7 @@ class OrderTable extends ShopbaseTable{
     
     function getShippingParamsData(){
         if ($this->shipping_params_data == "") return array();
-        return unserialize($this->shipping_params_data);
+        return unserialize($this->shipping_params_data, ['allowed_classes' => ['stdClass']]);
     }
     
     function prepareOrderPrint($page = '', $date_format = 0){
@@ -819,7 +821,7 @@ class OrderTable extends ShopbaseTable{
             $product = JSFactory::getTable('product');
             foreach($this->items as $k=>$v){
                 $product->product_id = $v->product_id;
-                $product->setAttributeActive(unserialize($v->attributes));
+                $product->setAttributeActive(unserialize($v->attributes, ['allowed_classes' => ['stdClass']]));
                 $files = $product->getSaleFiles();
                 $this->items[$k]->files = serialize($files);
             }

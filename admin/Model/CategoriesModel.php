@@ -293,7 +293,7 @@ class CategoriesModel extends BaseadminModel{
             $name = $upload->getName();
             Factory::getApplication()->triggerEvent('onAfterUploadCategoryImage', array(&$post, &$name));
             if ($post['old_image'] && $name!=$post['old_image']){
-                @unlink($jshopConfig->image_category_path."/".$post['old_image']);
+                @unlink($jshopConfig->image_category_path."/".Helper::getSafeFileName($post['old_image']));
             }
             @chmod($jshopConfig->image_category_path."/".$name, 0777);
             
@@ -439,7 +439,7 @@ class CategoriesModel extends BaseadminModel{
                 continue;
             }
             $this->deleteCategory($value);
-            @unlink($jshopConfig->image_category_path.'/'.$category->category_image);            
+            @unlink($jshopConfig->image_category_path.'/'.Helper::getSafeFileName($category->category_image));            
             if ($msg){
                 $app->enqueueMessage(sprintf(Text::_('JSHOP_CATEGORY_DELETED'), $name_category), 'message');
             }
@@ -464,7 +464,7 @@ class CategoriesModel extends BaseadminModel{
         $jshopConfig = JSFactory::getConfig();
         $category = JSFactory::getTable("category", "jshop");
         $category->load($id);
-        @unlink($jshopConfig->image_category_path.'/'.$category->category_image);
+        @unlink($jshopConfig->image_category_path.'/'.Helper::getSafeFileName($category->category_image));
         $category->category_image = "";
         $category->store();
     }

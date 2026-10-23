@@ -3,9 +3,10 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -77,5 +78,6 @@ $usergroup=$this->usergroup;
 <input type="hidden" name="task" value="save" />
 <input type="hidden" name="usergroup_id" value="<?php echo (int)$usergroup->usergroup_id;?>" />
 <?php print $this->tmp_html_end?>
+<?php print HTMLHelper::_('form.token');?>
 </form>
 </div>

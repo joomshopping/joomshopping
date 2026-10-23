@@ -12,6 +12,11 @@ defined('_JEXEC') or die();
 class File {
 
     public static function rename($dir, $old_file_name, $name_new, $autoname = 1) {
+        $old_file_name = Helper::getSafeFileName($old_file_name);
+        $name_new = Helper::getSafeFileName($name_new);
+        if ($old_file_name === '' || $name_new === '') {
+            return null;
+        }
         $pathinfo = pathinfo($old_file_name);
         $i = 0;
         if ($autoname) {

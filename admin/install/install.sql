@@ -702,6 +702,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_addons_dependencies` (
 `installed` TINYINT(1) NOT NULL default 0,
 `error` TINYINT(1) NOT NULL DEFAULT 0,
 `display_count` INT(11) NOT NULL default 0,
+`scriptinstall` VARCHAR(255) NOT NULL default '',
 PRIMARY KEY  (`id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 

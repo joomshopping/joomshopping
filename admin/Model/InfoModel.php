@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2012 webdesigner-profi.de. All rights reserved.
@@ -9,6 +9,7 @@
 namespace Joomla\Component\Jshopping\Administrator\Model;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 
 
 defined('_JEXEC') or die();
@@ -36,7 +37,9 @@ class InfoModel{
                         $result->file = (string)$v['file'];
                         $result->link = $jshopConfig->updates_site_path;
                         $result->text2 = sprintf(Text::_('JSHOP_UPDATE_TO'), (string)$v['newversion']);
-                        $result->link2 = 'index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm0:'.$result->file.'&back='.urlencode('index.php?option=com_jshopping&controller=info');
+                        if (!$jshopConfig->page_update_disable) {
+                            $result->link2 = 'index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm0:'.$result->file.'&back='.urlencode('index.php?option=com_jshopping&controller=info').'&'.Session::getFormToken().'=1&ct=1';
+                        }
                     }
                 }
             }

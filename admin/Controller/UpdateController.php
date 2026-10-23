@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.3 10.05.2025
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,6 +22,7 @@ class UpdateController extends BaseadminController{
     
     function init(){
         HelperAdmin::checkAccessController("update");
+        HelperAdmin::checkConfigDisable("page_update_disable");
         HelperAdmin::addSubmenu("update");
         $language = Factory::getLanguage(); 
         $language->load('com_installer');
@@ -49,10 +50,8 @@ class UpdateController extends BaseadminController{
         } else {
             $install_path = $this->input->get('install_path', null, 'raw') ?? $this->input->get('install_url', null, 'raw');            
         }
-        if (!($installtype == 'url' && preg_match('/^sm\d+:/', $install_path))) {
-            $ct_type = $ct == 1 ? 'get' : 'post';
-            $this->checkToken($ct_type);
-        }
+        $ct_type = $ct == 1 ? 'get' : 'post';
+        $this->checkToken($ct_type);
         try {
 		    $model->install($install_path, $installtype);
         } catch (Exception $e) {

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.4 24.09.2026
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -16,6 +16,7 @@ use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
 class ProductFieldsController extends BaseadminController{
+    protected $checkToken = array('save' => 1, 'remove' => 1);
     
     function init(){
         HelperAdmin::checkAccessController("productfields");

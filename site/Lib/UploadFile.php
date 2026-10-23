@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.3 15.09.2022
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -48,7 +48,9 @@ class UploadFile{
 
     /*install allow or forbid files ext*/
     var $allow_file = array();
-    var $forbid_file = array('php','php2','php3','php4','php5','js','html','htm');
+    var $forbid_file = array('php','php2','php3','php4','php5','php6','php7','php8','phtml','pht','phar','phps','shtml','shtm','cgi','pl','py','sh','asp','aspx','jsp','js','html','htm','xhtml','htaccess','htpasswd');
+    /*executable ext forbidden in any part of the name (file.php.jpg)*/
+    var $forbid_exec_file = array('php','php2','php3','php4','php5','php6','php7','php8','phtml','pht','phar','phps','shtml','cgi');
 
     /*set upload max file size (kb)*/
     var $maxSizeFile = 0;
@@ -193,8 +195,13 @@ class UploadFile{
     * get test file allow
     */
     function getTestFileAllow(){
+        $this->name = rtrim((string)$this->name, ". ");
+        if ($this->name === '' || substr($this->name, 0, 1) == '.'){
+            $this->error=12;
+            return 0;
+        }
         $mas=pathinfo($this->name);
-        $ext=strtolower($mas['extension']);
+        $ext=strtolower($mas['extension'] ?? '');
 
         if (count($this->allow_file)>0){
              if (!in_array($ext,$this->allow_file)) {
@@ -209,7 +216,13 @@ class UploadFile{
                  return 0;
              }
         }
-        
+
+        $parts = array_map('strtolower', array_slice(explode('.', $this->name), 1));
+        if (count(array_intersect($parts, $this->forbid_exec_file))>0){
+            $this->error=12;
+            return 0;
+        }
+
         if ($this->maxSizeFile!=0 && $this->size > $this->maxSizeFile*1024){
              $this->error=14;
             return 0;

@@ -3,9 +3,10 @@ use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Session\Session;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -64,7 +65,7 @@ foreach($rows as $row){
         <?php echo $row->description;?>
     </td>
     <td class="center">
-        <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=importexport&task=setautomaticexecution&cid=<?php print $row->id?>'>
+        <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=importexport&task=setautomaticexecution&cid=<?php print $row->id?>&<?php print Session::getFormToken()?>=1'>
             <?php if ($row->steptime>0){?>
                 <i class="icon-publish"></i>
             <?php }else{ ?>
@@ -73,7 +74,7 @@ foreach($rows as $row){
         </a>
     </td>
     <td class="center">
-        <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=importexport&task=remove&cid=<?php print $row->id?>' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>');">
+        <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=importexport&task=remove&cid=<?php print $row->id?>&<?php print Session::getFormToken()?>=1' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>');">
             <i class="icon-delete"></i>
         </a>
     </td>    
@@ -90,6 +91,7 @@ $i++;
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="hidemainmenu" value="0" />
 <input type="hidden" name="boxchecked" value="0" />
+<?php print HTMLHelper::_('form.token');?>
 <?php print $this->tmp_html_end?>
 </form>
 </div>

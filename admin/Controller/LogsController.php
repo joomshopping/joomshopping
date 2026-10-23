@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.5 26.03.2024
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 defined( '_JEXEC' ) or die();
 
 class LogsController extends BaseadminController{
+    protected $checkToken = array('save' => 1, 'remove' => 1);
     
     function init(){
         HelperAdmin::checkAccessController("logs");

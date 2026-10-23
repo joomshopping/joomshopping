@@ -1,8 +1,9 @@
 <?php
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -19,5 +20,5 @@ defined('_JEXEC') or die();
 <?php print Text::_('JSHOP_FILE')?> (*.csv):
 <input type="file" name="file">
 
-
+<?php print HTMLHelper::_('form.token');?>
 </form>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.4 24.09.2026
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -138,8 +138,8 @@ class HelperAdmin{
     public static function displayMainPanelIco(){
         $user =  Factory::getUser();        
         $adminaccess = $user->authorise('core.admin', 'com_jshopping');
-        $installaccess = $user->authorise('core.admin.install', 'com_jshopping');
-        
+        $installaccess = $user->authorise('core.admin.install', 'com_jshopping') && !JSFactory::getConfig()->page_update_disable;
+
         $menu = array();
         $menu['categories'] = array(Text::_('JSHOP_MENU_CATEGORIES'), 'index.php?option=com_jshopping&controller=categories&catid=0', 'jshop_categories_b.png', 1);
         $menu['products'] = array(Text::_('JSHOP_MENU_PRODUCTS'), 'index.php?option=com_jshopping&controller=products&category_id=0', 'jshop_products_b.png', 1);
@@ -314,6 +314,19 @@ class HelperAdmin{
             $app->redirect('index.php');
             return 0;
         }
+    }
+
+    // stops the task when the config flag (e.g. page_update_disable) is set
+    public static function checkConfigDisable($name, $back = 'index.php?option=com_jshopping'){
+        $disable = (bool)(JSFactory::getConfig()->$name ?? 0);
+        $app = Factory::getApplication();
+        $app->triggerEvent('onBeforeAdminCheckConfigDisable', array(&$name, &$disable, &$back));
+        if ($disable) {
+            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
+            $app->redirect($back);
+            return 0;
+        }
+        return 1;
     }
 
     public static function displaySubmenuOptions($active=""){

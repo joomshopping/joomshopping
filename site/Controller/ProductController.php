@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -227,6 +227,10 @@ class ProductController extends BaseController{
             return 0;
         }
         $file_name = $model->getFile($name);
+        if ($file_name == ""){
+            JSError::raiseWarning('', "Error download file");
+            return 0;
+        }
 
 		$model->storeStatDownloads();
         

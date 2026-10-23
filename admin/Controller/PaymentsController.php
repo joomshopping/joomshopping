@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 09.04.2024
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,6 +18,7 @@ defined('_JEXEC') or die();
 include_once(JPATH_COMPONENT_SITE."/payments/payment.php");
 
 class PaymentsController extends BaseadminController{
+    protected $checkToken = array('save' => 1, 'remove' => 1);
     
     protected $urlEditParamId = 'payment_id';
 

@@ -59,7 +59,7 @@ class ProductlabelsModel extends BaseadminModel{
             $upload->setFilterName(1);
             if ($upload->upload()){
                 if ($post['old_image']){
-                    @unlink($jshopConfig->image_labels_path."/".$post['old_image']);
+                    @unlink($jshopConfig->image_labels_path."/".Helper::getSafeFileName($post['old_image']));
                 }
                 $post['image'] = $upload->getName();
                 @chmod($jshopConfig->image_labels_path."/".$post['image'], 0777);
@@ -88,7 +88,7 @@ class ProductlabelsModel extends BaseadminModel{
 		foreach($cid as $id){
             $table = $this->getDefaultTable();
             $table->load($id);
-            @unlink($jshopConfig->image_labels_path."/".$productLabel->image);
+            @unlink($jshopConfig->image_labels_path."/".Helper::getSafeFileName($productLabel->image));
             $table->delete();			
             if ($msg){
                 $app->enqueueMessage(Text::_('JSHOP_ITEM_DELETED'), 'message');

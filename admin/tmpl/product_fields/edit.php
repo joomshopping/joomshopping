@@ -1,8 +1,9 @@
 <?php
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
- * @version      5.8.0 23.02.2024
+ * @version      5.9.4 17.10.2026
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -98,5 +99,6 @@ $row = $this->row;
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="f-id" value="<?php echo (int)$row->id ?>" />
         <?php print $this->tmp_html_end ?>
+    <?php print HTMLHelper::_('form.token');?>
     </form>
 </div>

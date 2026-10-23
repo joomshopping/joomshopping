@@ -288,8 +288,8 @@ class CheckoutModel extends BaseModel{
         $wishlist = JSFactory::getModel('cart', 'Site');
         $wishlist->load("wishlist");
         $prod = $wishlist->products[$number_id];
-        $attr = unserialize($prod['attributes']);
-        $freeattribut = unserialize($prod['freeattributes']);
+        $attr = unserialize($prod['attributes'], ['allowed_classes' => ['stdClass']]);
+        $freeattribut = unserialize($prod['freeattributes'], ['allowed_classes' => ['stdClass']]);
 
         $cart = JSFactory::getModel('cart', 'Site');
         $cart->load("cart");

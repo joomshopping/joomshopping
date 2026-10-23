@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.7.0 15.09.2018
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,6 +22,7 @@ class LicenseKeyAddonController extends BaseadminController{
         $this->registerTask( 'add',   'edit' );
         $this->registerTask( 'apply', 'save' );
         HelperAdmin::checkAccessController("licensekeyaddon");
+        HelperAdmin::checkConfigDisable("addonkey_edit_disable", "index.php?option=com_jshopping&controller=addons");
         HelperAdmin::addSubmenu("other");        
     }
 
@@ -58,6 +59,9 @@ class LicenseKeyAddonController extends BaseadminController{
 			$this->setRedirect("index.php?option=com_jshopping");
 			return 0;
 		}
+        // keys of addons bundled in this addon (package / template)
+        $addon->load($addon->id);
+        $addon->syncBundledKeys();
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onAfterSaveLicenseKeyAddons', array(&$addon));
         $this->setRedirect(base64_decode($post['back']));

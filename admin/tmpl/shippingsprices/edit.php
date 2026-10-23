@@ -1,9 +1,10 @@
 <?php
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -102,5 +103,6 @@ $jshopConfig=JSFactory::getConfig();
 <input type="hidden" name="sh_pr_method_id" value="<?php echo (int)$row->sh_pr_method_id?>" />
 <input type="hidden" name="task" value="" />
 <?php print $this->tmp_html_end?>
+<?php print HTMLHelper::_('form.token');?>
 </form>
 </div>

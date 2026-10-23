@@ -5,9 +5,10 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Session\Session;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -40,15 +41,19 @@ class IeSimpleExport extends IeController{
     }
 
     function save(){
-        $app = Factory::getApplication();        
-        
+        $app = Factory::getApplication();
+        if ($app->isClient('administrator')){
+            Session::checkToken() or die('Invalid Token');
+        }
+
         $ie_id = $this->get('ie_id');
-        $_importexport = JSFactory::getTable('ImportExport'); 
+        $_importexport = JSFactory::getTable('ImportExport');
         $_importexport->load($ie_id);
         $alias = $_importexport->get('alias');
-        $_importexport->set('endstart', time());        
-        $params = $app->input->getVar("params");        
-        if (is_array($params)){        
+        $_importexport->set('endstart', time());
+        $params = $app->input->getVar("params");
+        if (is_array($params) && $app->isClient('administrator')){
+            $params['filename'] = $this->getSafeFileName($params['filename'] ?? '');
             $paramsstr = Helper::parseArrayToParams($params);
             $_importexport->set('params', $paramsstr);
         }        
@@ -90,7 +95,7 @@ class IeSimpleExport extends IeController{
         }
         
         
-        $filename = $jshopConfig->importexport_path.$alias."/".$ie_params['filename'].".csv";
+        $filename = $jshopConfig->importexport_path.$alias."/".$this->getSafeFileName($ie_params['filename'] ?? '').".csv";
         
         $csv = new Csv();
         $csv->write($filename, $data);
@@ -104,16 +109,28 @@ class IeSimpleExport extends IeController{
     }
 
     function filedelete(){
+        Session::checkToken('get') or die('Invalid Token');
         $app = Factory::getApplication();
         $jshopConfig = JSFactory::getConfig();
         $ie_id = $app->input->getInt("ie_id");
-        $_importexport = JSFactory::getTable('ImportExport'); 
+        $_importexport = JSFactory::getTable('ImportExport');
         $_importexport->load($ie_id);
         $alias = $_importexport->get('alias');
-        $file = $app->input->getVar("file");
-        $filename = $jshopConfig->importexport_path.$alias."/".$file;
-        @unlink($filename);
+        // only a file from the list of this export folder
+        $file = $app->input->getString("file");
+        $dir = $jshopConfig->importexport_path.$alias;
+        if ($alias != '' && is_dir($dir) && in_array($file, Folder::files($dir, '.csv'), true)){
+            @unlink($dir."/".$file);
+        }
         $app->redirect("index.php?option=com_jshopping&controller=importexport&task=view&ie_id=".$ie_id);
+    }
+
+    protected function getSafeFileName($name){
+        $name = str_replace(array('.', '/', '\\'), '', (string)$name);
+        if ($name == ''){
+            $name = 'export';
+        }
+        return $name;
     }
     
 }

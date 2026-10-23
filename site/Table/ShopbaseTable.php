@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.0 03.12.2025
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,7 +14,13 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 defined('_JEXEC') or die();
 
 abstract class ShopbaseTable extends Table{
-    
+
+    // columns with serialize() data, checked before store
+    protected $_serialized_fields = [];
+
+    // columns with JSON data (old serialize() data is converted on store)
+    protected $_json_fields = [];
+
     public function __construct($table, $key, $db, $dispatcher = null) {
 		parent::__construct($table, $key, $db, $dispatcher);
 
@@ -105,6 +111,8 @@ abstract class ShopbaseTable extends Table{
 	}
 
 	public function store($updateNulls = false) {
+		$this->checkSerializedFields();
+		$this->convertJsonFields();
 		$result = parent::store($updateNulls);
 		if (!$result) {
 			$msg = 'Error store '.$this->_tbl.". ".$this->getError();
@@ -112,5 +120,44 @@ abstract class ShopbaseTable extends Table{
 		}
 		return $result;
 	}
-    
+
+	// columns of $_serialized_fields: data that is not a safe serialize() string is replaced by an empty array
+	protected function checkSerializedFields() {
+		foreach ($this->_serialized_fields as $field) {
+			if (isset($this->$field) && !Helper::isSafeSerialized($this->$field)) {
+				Helper::saveToLog('error.log', 'Not allowed serialized data in '.$this->_tbl.'.'.$field);
+				$this->$field = serialize(array());
+			}
+		}
+	}
+
+	protected function encodeData($data){
+		return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+	}
+
+	// JSON or old serialize() data (only arrays, scalars, stdClass)
+	protected function decodeData($data){
+		$data = (string)$data;
+		if ($data === ''){
+			return [];
+		}
+		if ($data[0] === '{' || $data[0] === '['){
+			$value = json_decode($data, true);
+			return is_array($value) ? $value : [];
+		}
+		$value = Helper::unserializeData($data);
+		return $value === false ? [] : $value;
+	}
+
+	// columns of $_json_fields are always stored as JSON
+	protected function convertJsonFields(){
+		foreach ($this->_json_fields as $field){
+			if (!isset($this->$field) || $this->$field === ''){
+				continue;
+			}
+			$value = $this->decodeData($this->$field);
+			$this->$field = $this->encodeData(is_array($value) ? $value : []);
+		}
+	}
+
 }

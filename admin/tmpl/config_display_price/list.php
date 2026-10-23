@@ -4,7 +4,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -81,5 +81,6 @@ $i++;
 <input type="hidden" name="hidemainmenu" value="0" />
 <input type="hidden" name="boxchecked" value="0" />
 <?php print $this->tmp_html_end?>
+<?php print HTMLHelper::_('form.token');?>
 </form>
 </div>

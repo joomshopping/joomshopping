@@ -49,7 +49,7 @@ defined('_JEXEC') or die();
                     <?php print Text::_('JSHOP_SEARCH_CATEGORIES')?>
                 </div>
                 <div class = "controls">
-                    <div><?php print Selects::getSearchCategory(null, 'class="inputbox form-control"');?></div>
+                    <div><?php print Selects::getSearchCategory(null, 'class="inputbox form-control form-select"');?></div>
                     <div>
                         <input type = "checkbox" name = "include_subcat" id = "include_subcat" value = "1" />
                         <label for = "include_subcat"><?php print Text::_('JSHOP_SEARCH_INCLUDE_SUBCAT')?></label>
@@ -61,7 +61,7 @@ defined('_JEXEC') or die();
                     <?php print Text::_('JSHOP_SEARCH_MANUFACTURERS')?>    
                 </div>
                 <div class = "controls">
-                    <div><?php print Selects::getManufacturer(null, 'class="inputbox form-control"');?></div>
+                    <div><?php print Selects::getManufacturer(null, 'class="inputbox form-control form-select"');?></div>
                 </div>
             </div>
             <?php if (Helper::getDisplayPriceShop()){?>

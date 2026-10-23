@@ -102,7 +102,7 @@ class ManufacturersModel extends BaseadminModel{
         $upload->setFilterName(1);
         if ($upload->upload()){            
             if ($post['old_image']){
-                @unlink($jshopConfig->image_manufs_path."/".$post['old_image']);
+                @unlink($jshopConfig->image_manufs_path."/".Helper::getSafeFileName($post['old_image']));
             }
             $name = $upload->getName();
             @chmod($jshopConfig->image_manufs_path."/".$name, 0777);
@@ -176,7 +176,7 @@ class ManufacturersModel extends BaseadminModel{
         $jshopConfig = JSFactory::getConfig();
         $manuf = JSFactory::getTable('manufacturer');
         $manuf->load($id);
-        @unlink($jshopConfig->image_manufs_path.'/'.$manuf->manufacturer_logo);
+        @unlink($jshopConfig->image_manufs_path.'/'.Helper::getSafeFileName($manuf->manufacturer_logo));
         $manuf->manufacturer_logo = "";
         $manuf->store();
     }
@@ -191,7 +191,7 @@ class ManufacturersModel extends BaseadminModel{
             $manuf->load($value);
             if($manuf->delete()){
                 if($manuf->manufacturer_logo){
-                    @unlink(JSFactory::getConfig()->image_manufs_path.'/'.$manuf->manufacturer_logo);
+                    @unlink(JSFactory::getConfig()->image_manufs_path.'/'.Helper::getSafeFileName($manuf->manufacturer_logo));
                 }
                 if($msg){
                     $app->enqueueMessage(sprintf(Text::_('JSHOP_MANUFACTURER_DELETED'), $value), 'message');

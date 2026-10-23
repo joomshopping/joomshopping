@@ -14,6 +14,8 @@ defined('_JEXEC') or die();
 
 class ShippingMethodTable extends MultilangTable{
 
+    protected $_json_fields = ['params'];
+
     function __construct(&$_db){
         parent::__construct('#__jshopping_shipping_method', 'shipping_id', $_db);
     }
@@ -104,15 +106,11 @@ class ShippingMethodTable extends MultilangTable{
     }
 	
 	function setParams($params){
-        $this->params = serialize($params);
+        $this->params = $this->encodeData((array)$params);
     }
-    
-    function getParams(){        
-        if ($this->params==""){
-            return array();
-        }else{
-            return unserialize($this->params);
-        }
+
+    function getParams(){
+        return $this->decodeData($this->params);
     }
     
     function getShippingForm($alias = null){

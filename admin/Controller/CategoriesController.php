@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.4 15.11.2015
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,7 +22,7 @@ class CategoriesController extends BaseadminController{
     
     protected $modelSaveItemFileName = 'category_image';
     protected $urlEditParamId = 'category_id';
-    protected $checkToken = array('save' => 1, 'remove' => 0);
+    protected $checkToken = array('save' => 1, 'remove' => 1);
     
     public function init(){
         HelperAdmin::checkAccessController("categories");

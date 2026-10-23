@@ -31,7 +31,7 @@ class TaxTable extends ShopbaseTable{
         $db->setQuery($query);
         $list = $db->loadObJectList();
         foreach($list as $k=>$v){
-            $list[$k]->countries = (array)unserialize($v->zones);
+            $list[$k]->countries = (array)unserialize($v->zones, ['allowed_classes' => ['stdClass']]);
         }
         return $list;
     }

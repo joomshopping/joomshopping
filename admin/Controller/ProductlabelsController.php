@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.1 29.03.2025
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -9,11 +9,13 @@
 namespace Joomla\Component\Jshopping\Administrator\Controller;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 defined('_JEXEC') or die();
 
 class ProductLabelsController extends BaseadminController{
+    protected $checkToken = array('save' => 1, 'remove' => 1);
     
     protected $modelSaveItemFileName = 'image';
     
@@ -80,7 +82,7 @@ class ProductLabelsController extends BaseadminController{
         $id = $this->input->getInt("id");
         $productLabel = JSFactory::getTable('productlabel');
         $productLabel->load($id);
-        @unlink($jshopConfig->image_labels_path."/".$productLabel->image);
+        @unlink($jshopConfig->image_labels_path."/".Helper::getSafeFileName($productLabel->image));
         $productLabel->image = "";
         $productLabel->store();
         die();               

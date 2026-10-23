@@ -13,6 +13,8 @@ defined('_JEXEC') or die();
 
 class AttributTable extends MultilangTable{
 
+    protected $_serialized_fields = ['cats'];
+
     function __construct(&$_db){
         parent::__construct('#__jshopping_attr', 'attr_id', $_db);
     }
@@ -38,7 +40,7 @@ class AttributTable extends MultilangTable{
             if ($v->allcats){
                 $rows[$k]->cats = array();
             }else{
-                $rows[$k]->cats = unserialize($v->cats);
+                $rows[$k]->cats = unserialize($v->cats, ['allowed_classes' => ['stdClass']]);
             }
         }
     return $rows;
@@ -57,7 +59,7 @@ class AttributTable extends MultilangTable{
       
     function getCategorys(){
         if ($this->cats!=""){
-            return unserialize($this->cats);
+            return unserialize($this->cats, ['allowed_classes' => ['stdClass']]);
         }else{
             return array();
         }
