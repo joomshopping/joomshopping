@@ -86,7 +86,7 @@ class UserMailActivationModel  extends MailModel{
     
     public function getListAdminUserSendEmail(){
         $db = Factory::getDBO();
-        $query = 'SELECT name, email, sendEmail FROM #__users WHERE sendEmail=1';
+        $query = 'SELECT name, email, sendEmail FROM #__users WHERE sendEmail=1 AND block=0';
         $db->setQuery( $query );
         return $db->loadObjectList();
     }

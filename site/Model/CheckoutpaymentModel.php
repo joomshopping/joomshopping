@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 23.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -111,7 +111,7 @@ class CheckoutPaymentModel  extends CheckoutModel{
 	}
 	
 	public function getCheckoutFirstPaymentClass(&$paym){
-		return $paym[0]->payment_class;
+		return $paym[0]->payment_class ?? '';
 	}
 	
 	public function savePaymentData($payment_method, &$params, &$adv_user){

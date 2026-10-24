@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -15,9 +15,11 @@ defined('_JEXEC') or die();
 
 class HtmlView extends BaseHtmlView{
 	
-    function displayList($tpl=null){        
+    function displayList($tpl=null){
         ToolbarHelper::title( Text::_('JSHOP_USER_LIST'), 'generic.png' );
-        ToolbarHelper::addNew(); 
+        ToolbarHelper::addNew();
+        ToolbarHelper::publishList();
+        ToolbarHelper::unpublishList();
         ToolbarHelper::deleteList(Text::_('JSHOP_DELETE')."?");
         HelperAdmin::btnHome();
         parent::display($tpl);

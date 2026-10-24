@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 17.10.2026
+* @version      5.10.0 23.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -177,12 +177,15 @@ class CheckoutController extends BaseController{
         $small_cart = $checkout->loadSmallCart(3);
 
 		$paym = $checkout->getCheckoutListPayments();
+		if (count($paym)==0 && $jshopConfig->checkout_step3_show_error_payment_config){
+			JSError::raiseWarning("", Text::_('JSHOP_ERROR_PAYMENT_CNF'));
+		}
 		$active_payment = $checkout->getCheckoutActivePayment($paym, $adv_user);
 		$first_payment_class = $checkout->getCheckoutFirstPaymentClass($paym);
 
         if ($jshopConfig->hide_payment_step){
             if (!$first_payment_class){
-                JSError::raiseWarning("", Text::_('JSHOP_ERROR_PAYMENT'));
+                JSError::raiseWarning("", Text::_('JSHOP_ERROR_PAYMENT_CNF'));
                 return 0;
             }
             $this->setRedirect($checkoutStep->getCheckoutUrl('step3save&payment_method='.$first_payment_class));

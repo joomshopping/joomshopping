@@ -248,6 +248,7 @@ $config->auto_backup_addon_files = 1;
 $config->send_admin_mail_order_status_appadmin = 0;
 $config->send_admin_mail_order_status = 1;
 $config->checkout_step4_show_error_shipping_config = 1;
+$config->checkout_step3_show_error_payment_config = 1;
 $config->category_sorting_direction = 'asc';
 $config->manufacturer_sorting_direction = 'asc';
 $config->get_vendors_order_query = 'shop_name';

@@ -29,8 +29,9 @@ class ConfigTable{
         $db->setQuery($query);
         $fields = $db->loadObjectList();
         $protected = $this->getProtectedKeys();
+        $prefixes = $this->getProtectedKeyPrefixes();
         foreach ($fields as $v) {
-            if (in_array($v->key, $protected)) {
+            if ($this->isProtectedKey($v->key, $protected, $prefixes)) {
                 continue;
             }
             $this->{$v->key} = $v->value;
@@ -47,8 +48,9 @@ class ConfigTable{
         Factory::getApplication()->triggerEvent('onBeforeBindConfigTable', array(&$obj, &$src, &$ignore));
 
         $ignore = array_merge($ignore, $this->getProtectedKeys(), $this->getServiceKeysDisabled());
+        $prefixes = $this->getProtectedKeyPrefixes();
         foreach ($src as $k => $v) {
-			if (!in_array($k, $ignore)) {
+			if (!$this->isProtectedKey($k, $ignore, $prefixes)) {
 				if (isset($src[$k])) {
 					$this->$k = $src[$k];
 				}
@@ -67,8 +69,9 @@ class ConfigTable{
     public function store($updateNulls = false){
         $config_id = $this->id;
         $protected = $this->getProtectedKeys();
+        $prefixes = $this->getProtectedKeyPrefixes();
         foreach (get_object_vars($this) as $k => $v) {
-			if (\is_array($v) || \is_object($v) || $k[0] === '_' || $k === 'id' || in_array($k, $protected)) {
+			if (\is_array($v) || \is_object($v) || $k[0] === '_' || $k === 'id' || $this->isProtectedKey($k, $protected, $prefixes)) {
 				continue;
 			}
             if ($v === null && $updateNulls === false) {
@@ -109,6 +112,24 @@ class ConfigTable{
         return $keys;
     }
 
+    public function getProtectedKeyPrefixes() {
+        $prefixes = ['cloud_'];
+        Factory::getApplication()->triggerEvent('onConfigTableGetProtectedKeyPrefixes', array(&$prefixes));
+        return $prefixes;
+    }
+
+    public function isProtectedKey($key, array $keys, array $prefixes) {
+        if (in_array($key, $keys)) {
+            return true;
+        }
+        foreach ($prefixes as $prefix) {
+            if ($prefix !== '' && strpos((string)$key, $prefix) === 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // keys that can not be changed from the admin when config_service_disable / apikey_edit_disable is set
     public function getServiceKeysDisabled() {
         $jshopConfig = JSFactory::getConfig();
@@ -130,6 +151,25 @@ class ConfigTable{
         }
         Factory::getApplication()->triggerEvent('onConfigTableGetServiceKeysDisabled', array(&$keys));
         return $keys;
+    }
+
+    /**
+     * Value of one key directly from the DB, also for protected keys (they are not loaded into the config object).
+     * @return string|null null - no such key
+     */
+    public function getValue($key, $config_id = 1) {
+        $data = $this->getFieldFromKey($key, $config_id);
+        return isset($data->id) ? $data->value : null;
+    }
+
+    // writes one key directly to the DB, also a protected one; the config object is not changed
+    public function setValue($key, $value, $config_id = 1) {
+        $data = $this->getFieldFromKey($key, $config_id);
+        if (isset($data->id) && $data->id) {
+            $this->updateRow($data->id, $key, $value, $config_id);
+        } else {
+            $this->insertRow($key, $value, $config_id);
+        }
     }
 
     protected function getFieldFromKey($key, $config_id = 1) {
