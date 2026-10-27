@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 17.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,6 +10,7 @@ namespace Joomla\Component\Jshopping\Site\Controller;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Lib\JSUri;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
@@ -191,16 +192,15 @@ class ProductController extends BaseController{
 		$model->setOid($oid);
 		$model->setHash($hash);
 		
-		if ($rl==1){
-            //fix for IE
-            print "<script type='text/javascript'>location.href='".$model->getUrlDownload()."';</script>";
-            die();
-        }
-		
 		if (!$model->checkHash()){
 			JSError::raiseError(500, "Error download file");
             return 0;
 		}
+		if ($rl==1){
+            //fix for IE
+            print "<script type='text/javascript'>location.href=".json_encode($model->getUrlDownload(), JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP|JSON_UNESCAPED_SLASHES).";</script>";
+            die();
+        }
 		if (!$model->checkOrderStatusPaid()){
             JSError::raiseWarning(500, Text::_('JSHOP_FOR_DOWNLOAD_ORDER_MUST_BE_PAID'));
             return 0;
@@ -245,6 +245,11 @@ class ProductController extends BaseController{
         Session::checkToken() or die('Invalid Token');
         $post = $this->input->post->getArray();
         $backlink = $this->input->getVar('back_link');
+        if (!$backlink || !JSUri::isInternal($backlink)){
+            $product = JSFactory::getTable('product');
+            $product->load((int)($post['product_id'] ?? 0));
+            $backlink = Helper::SEFLink('index.php?option=com_jshopping&controller=product&task=view&category_id='.(int)$product->getCategory().'&product_id='.(int)$product->product_id, 1, 1);
+        }
 		$post['review_id'] = 0;
 		$model = JSFactory::getModel('productReview', 'Site');
 		$model->setData($post);
@@ -290,8 +295,16 @@ class ProductController extends BaseController{
         $media_id = $this->input->getInt('media_id');
         $file = JSFactory::getTable('productfiles');
         $file->load($media_id);
+        $product = JSFactory::getTable('product');
+        $product->load((int)$file->product_id);
+        $access = $file->id && $file->demo != '' && $product->product_id && $product->product_publish
+            && in_array($product->access, Factory::getUser()->getAuthorisedViewLevels());
+        Factory::getApplication()->triggerEvent('onBeforeShowMediaCheckAccess', array(&$access, &$file, &$product));
+        if (!$access){
+            throw new \Exception(Text::_('JSHOP_PAGE_NOT_FOUND'), 404);
+        }
 		$scripts_load = '';
-        
+
         $view = $this->getView("product");
         $view->setLayout("playmedia");
         $view->set('config', $jshopConfig);

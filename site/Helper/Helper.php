@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 23.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -1346,7 +1346,7 @@ class Helper{
 
     public static function printContent(){
         $print = Factory::getApplication()->input->getInt("print");
-        $link =  str_replace("&", '&amp;', $_SERVER["REQUEST_URI"]);
+        $link = htmlspecialchars(strip_tags($_SERVER["REQUEST_URI"]), ENT_QUOTES);
         if (strpos($link,'?')===FALSE)
             $tmpl = "?tmpl=component&amp;print=1";
         else
@@ -1566,7 +1566,7 @@ class Helper{
         if ($filter){
             $url = self::jsFilterUrl($url);
         }
-        $url = str_replace("&","&amp;",$url);
+        $url = htmlspecialchars($url, ENT_QUOTES);
     return $url;
     }
 

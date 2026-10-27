@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 17.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -628,6 +628,7 @@ class ProductsModel extends BaseadminModel{
 
             $upload2 = new UploadFile($_FILES['product_video_preview_'.$i]);
             $upload2->setAllowFile($jshopConfig->allow_image_upload);
+            $upload2->setCheckImage($jshopConfig->image_upload_check_content);
             $upload2->setDir($jshopConfig->video_product_path);
             $upload2->setFileNameMd5(0);
             $upload2->setFilterName(1);
@@ -692,6 +693,7 @@ class ProductsModel extends BaseadminModel{
         for($i=0; $i<$jshopConfig->product_image_upload_count; $i++){
             $upload = new UploadFile($_FILES['product_image_'.$i]);
             $upload->setAllowFile($jshopConfig->allow_image_upload);
+            $upload->setCheckImage($jshopConfig->image_upload_check_content);
             $upload->setDir($jshopConfig->image_product_path);
 			if ($jshopConfig->product_imagename_lowercase){
 				$upload->name = strtolower($upload->name);

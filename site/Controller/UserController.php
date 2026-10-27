@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 17.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -123,6 +123,7 @@ class UserController extends BaseController{
     function check_user_exist_ajax(){
         $username = $this->input->getVar("username");
         $email = $this->input->getVar("email");
+        header("Content-type: text/plain; charset=utf-8");
 		print JSFactory::getTable('userShop')->checkUserExistAjax($username, $email);
         die();
     }

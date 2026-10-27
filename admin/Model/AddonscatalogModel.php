@@ -176,7 +176,7 @@ class AddonscatalogModel extends BaseadminModel{
         $result = false;
         try {
             $app->triggerEvent('onBeforeInstallAddon', array(&$file, &$installtype, &$addon, 'catalog'));
-            $model->install($file, $installtype);
+            $model->install($file, $installtype, $addon->name ?? '');
             $result = true;
         } finally {
             $app->triggerEvent('onAfterInstallAddon', array(&$file, &$installtype, &$addon, 'catalog', $result));

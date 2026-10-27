@@ -2,7 +2,7 @@
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 /**
-* @version      5.8.2 08.03.2025
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -116,6 +116,7 @@ Text::script('JSHOP_SAVE_FIRST');
 <input type="hidden" name="hidemainmenu" value="0" />
 <input type="hidden" name="f-id" value="<?php print $this->row->id?>">
 <?php print $this->tmp_html_end ?? ''?>
+<?php print HTMLHelper::_('form.token');?>
 </form>
 
 <div class="modal fade" id="overrideModal" tabindex="-1" aria-labelledby="overrideModalLabel" aria-hidden="true">

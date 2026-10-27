@@ -50,7 +50,7 @@ class ConfigTable{
         $ignore = array_merge($ignore, $this->getProtectedKeys(), $this->getServiceKeysDisabled());
         $prefixes = $this->getProtectedKeyPrefixes();
         foreach ($src as $k => $v) {
-			if (!$this->isProtectedKey($k, $ignore, $prefixes)) {
+			if ($this->isValidKey($k) && !$this->isProtectedKey($k, $ignore, $prefixes)) {
 				if (isset($src[$k])) {
 					$this->$k = $src[$k];
 				}
@@ -94,22 +94,18 @@ class ConfigTable{
 
     // keys set only in default_config.php / user_config.php or by plugins, never loaded from / stored to the DB
     public function getProtectedKeys() {
-        $keys = [
-            'typeshop',
-            'page_update_disable',
-            'downloadaddon_disable',
-            'installaddon_disable',
-            'apikey_edit_disable',
-            'addonkey_edit_disable',
-            'install_log_url_disable',
-            'install_demo_disable',
-            'addon_override_disable',
-            'config_service_disable',
-            'server_files_select_disable',
-            'install_url_allowed_hosts',
-        ];
+        static $list = null;
+        if ($list === null) {
+            $list = include(__DIR__.'/../config/protected_config.php');
+        }
+        $keys = $list;
         Factory::getApplication()->triggerEvent('onConfigTableGetProtectedKeys', array(&$keys));
         return $keys;
+    }
+
+    // a config key from a form: a name of a property, not the CSRF token (32 hex) or other junk of the POST
+    public function isValidKey($key) {
+        return is_string($key) && preg_match('/^[A-Za-z_][A-Za-z0-9_]{0,99}$/', $key) && !preg_match('/^[a-f0-9]{32}$/', $key);
     }
 
     public function getProtectedKeyPrefixes() {

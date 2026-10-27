@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 22.10.2026
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -86,6 +86,7 @@ class AddonsController extends BaseadminController{
     }
     
     public function save(){
+        $this->checkToken();
 		$post = $this->input->post->getArray();
         $params = $this->input->post->get('params', null, 'RAW');
         if (isset($params)) {
@@ -199,7 +200,8 @@ class AddonsController extends BaseadminController{
 	}
 
     public function saveconfig() {
-        $post = $this->input->post->getArray(array(), null, 'RAW');
+        $this->checkToken();
+        $post =$this->input->post->getArray(array(), null, 'RAW');
 	 	if (isset($post['f-id'])){
 	    	$post['id'] = $post['f-id'];
         	unset($post['f-id']);

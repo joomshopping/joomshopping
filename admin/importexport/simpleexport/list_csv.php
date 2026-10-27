@@ -4,7 +4,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
 
 /**
-* @version      5.10.0 18.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,8 +18,16 @@ defined('_JEXEC') or die();
 <input type="hidden" name="boxchecked" value="0" />
 <input type="hidden" name="ie_id" value="<?php print $ie_id;?>" />
 
-<?php print Text::_('JSHOP_FILE_NAME')?>: <input type="text" name="params[filename]" class = "form-control" value="<?php print htmlspecialchars($ie_params['filename'] ?? '', ENT_QUOTES)?>" size="45"><br/>
-<br/>
+<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+<label for="ie_filename"><?php print Text::_('JSHOP_FILE_NAME')?>:</label>
+<input type="text" name="params[filename]" id="ie_filename" class="form-control w-auto" value="<?php print htmlspecialchars($ie_params['filename'] ?? '', ENT_QUOTES)?>" size="45">
+<label for="ie_encoding" class="ms-3"><?php print Text::_('JSHOP_ENCODING')?>:</label>
+<select name="params[encoding]" id="ie_encoding" class="form-select w-auto">
+<?php foreach($this->getEncodings() as $encoding){?>
+    <option value="<?php print $encoding?>"<?php if ($encoding == $this->getSafeEncoding($ie_params['encoding'] ?? '')){?> selected<?php }?>><?php print $encoding?></option>
+<?php }?>
+</select>
+</div>
 <table class="table table-striped">
 <thead>
   <tr>

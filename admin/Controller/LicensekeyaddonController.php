@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 17.10.2026
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,6 +10,7 @@ namespace Joomla\Component\Jshopping\Administrator\Controller;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
@@ -47,13 +48,22 @@ class LicenseKeyAddonController extends BaseadminController{
 	}
 	
 	function save(){
+        $this->checkToken();
         $addon = JSFactory::getTable('addon');
         $post = $this->input->post->getArray();
-		if (isset($post['f-id'])){
-            $post['id'] = $post['f-id'];
-            unset($post['f-id']);
+        // only the key is changed, the other fields of the addon are not taken from the form
+        $id = (int)($post['f-id'] ?? 0);
+        if ($id){
+            $addon->load($id);
+        }else{
+            $addon->loadAlias((string)($post['alias'] ?? ''));
         }
-		$addon->bind($post);
+        if (!$addon->id && $addon->alias == ''){
+            JSError::raiseWarning("",Text::_('JSHOP_ERROR_SAVE_DATABASE'));
+            $this->setRedirect("index.php?option=com_jshopping");
+            return 0;
+        }
+        $addon->key = (string)($post['key'] ?? '');
 		if (!$addon->store()) {
 			JSError::raiseWarning("",Text::_('JSHOP_ERROR_SAVE_DATABASE'));
 			$this->setRedirect("index.php?option=com_jshopping");
@@ -64,11 +74,19 @@ class LicenseKeyAddonController extends BaseadminController{
         $addon->syncBundledKeys();
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onAfterSaveLicenseKeyAddons', array(&$addon));
-        $this->setRedirect(base64_decode($post['back']));
+        $this->setRedirect($this->getBackUrl($post['back'] ?? ''));
 	}
-    
+
     function cancel(){
         $post = $this->input->post->getArray();
-        $this->setRedirect(base64_decode($post['back']));
+        $this->setRedirect($this->getBackUrl($post['back'] ?? ''));
+    }
+
+    protected function getBackUrl($back){
+        $url = base64_decode((string)$back);
+        if (!$url || !Uri::isInternal($url)){
+            $url = "index.php?option=com_jshopping&controller=addons";
+        }
+        return $url;
     }
 }

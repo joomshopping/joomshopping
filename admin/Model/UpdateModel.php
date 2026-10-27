@@ -27,7 +27,7 @@ class UpdateModel extends BaseadminModel{
     protected $warnings = [];
     protected $back_url = '';
 
-    public function install($install_path, $installtype) {
+    public function install($install_path, $installtype, $addon_name = '') {
         $this->warnings = [];
         $this->back_url = '';
 
@@ -35,7 +35,11 @@ class UpdateModel extends BaseadminModel{
         if ($installtype == 'url' && JSFactory::getConfig()->install_log_url_disable) {
             $install_item_log = basename((string)parse_url($install_path, PHP_URL_PATH));
         }
-        Helper::saveToLog("install.log", "\nStart install: ".$install_item_log." ".$installtype." IP:".$_SERVER['REMOTE_ADDR']." UID:".Factory::getUser()->id);
+        if (JSFactory::getConfig()->typeshop == 'standart') {
+            Helper::saveToLog("install.log", "\nStart install: ".$install_item_log." ".$installtype." IP:".$_SERVER['REMOTE_ADDR']." UID:".Factory::getUser()->id);
+        } else {
+            Helper::saveToLog("install.log", "\nStart install: ".($addon_name != '' ? $addon_name : basename((string)$install_item_log)));
+        }
 
         if ($installtype == 'package') {
             $archivename = $this->fileUpload($install_path);

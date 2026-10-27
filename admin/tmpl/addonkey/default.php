@@ -1,8 +1,9 @@
 <?php
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.6.3 12.05.2025
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -23,7 +24,7 @@ $row=$this->row;
        <?php echo Text::_('JSHOP_KEY')?>
     </td>
     <td>
-        <input type="text" class="inputbox form-control" name="key" value="<?php echo $row->key;?>" size="90"> 
+        <input type="text" class="inputbox form-control" name="key" value="<?php echo htmlspecialchars((string)$row->key, ENT_QUOTES);?>" size="90"> 
         <?php if ($this->btn_genrate) {?>
         <a href="#" class="btn btn-primary btn-get-api-key" onclick="jshopAdmin.getAddonKey('<?php print $row->alias?>');return false;">
             <?php echo Text::_('JSHOP_GET_ADDON_KEY')?>
@@ -37,7 +38,8 @@ $row=$this->row;
 
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="f-id" value="<?php print $row->id?>" />
-<input type="hidden" name="alias" value="<?php print $row->alias?>" />
-<input type="hidden" name="back" value="<?php print $this->back?>" />
+<input type="hidden" name="alias" value="<?php print htmlspecialchars((string)$row->alias, ENT_QUOTES)?>" />
+<input type="hidden" name="back" value="<?php print htmlspecialchars((string)$this->back, ENT_QUOTES)?>" />
 <?php print $this->tmp_html_end?>
+<?php print HTMLHelper::_('form.token');?>
 </form>

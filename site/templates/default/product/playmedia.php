@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,7 +12,7 @@ $height = $this->config->video_product_height;
 ?>
 <html>
 	<head>
-		<title><?php print $this->description; ?></title>
+		<title><?php print htmlspecialchars((string)$this->description, ENT_QUOTES); ?></title>
         <?php print $this->scripts_load?>
 	</head>
 	<body style = "padding: 0px; margin: 0px;">
@@ -20,7 +20,7 @@ $height = $this->config->video_product_height;
             <div class="file_demo_audio">
                 <audio controls autoplay>
                     <source 
-                        src="<?php print $this->config->demo_product_live_path.'/'.$this->filename;?>" 
+                        src="<?php print htmlspecialchars($this->config->demo_product_live_path.'/'.$this->filename, ENT_QUOTES);?>" 
                         <?php if ($this->config->audio_html5_type){?>
                         type='<?php print $this->config->audio_html5_type?>' 
                         <?php }?>
@@ -31,7 +31,7 @@ $height = $this->config->video_product_height;
             <div class="file_demo_video">
                 <video <?php if ($width){?> width="<?php print $width?>"<?php }?> <?php if ($height){?>height="<?php print $height?>"<?php }?> controls autoplay id = "video">
                     <source 
-                        src="<?php print $this->config->demo_product_live_path.'/'.$this->filename;?>" 
+                        src="<?php print htmlspecialchars($this->config->demo_product_live_path.'/'.$this->filename, ENT_QUOTES);?>" 
                         <?php if ($this->config->video_html5_type){?>
                         type='<?php print $this->config->video_html5_type?>' 
                         <?php }?>

@@ -93,7 +93,7 @@ class AddonswebapiModel extends BaseadminModel{
             $headers[] = 'Authorization: Bearer '.$authKey;
         }
         $client = new Client(['base_uri' => $this->catalog_addon_api, 'timeout' => 120]);
-        $res = $client->request('POST', '/download', ['form_params' => ['product_id' => $product_id, 'domain' => $domain, 'typeshop' => $typeshop], 'headers' => $headers]);
+        $res = $client->request('POST', '/download', ['form_params' => ['product_id' => $product_id, 'domain' => $domain, 'typeshop' => $typeshop], 'headers' => $headers, 'allow_redirects' => true]);
         $info = $res->getInfo();
         if ($res->getStatusCode() != 200 || strpos($info['content_type'] ?? '', 'json') !== false || $res->getBody() === '') {
             $data = json_decode($res->getBody());
@@ -128,7 +128,7 @@ class AddonswebapiModel extends BaseadminModel{
             $res = $client->request('POST', $uri, ['form_params' => $params, 'headers' => $headers]);
         }
         $body = $res->getBody();
-        if ($this->use_cache) {
+        if ($this->use_cache && $res->getStatusCode() == 200) {
             $cache->set($cache_key, $body);
         }
         return $body;

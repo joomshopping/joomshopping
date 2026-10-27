@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 17.10.2026
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -304,6 +304,8 @@ class HelperAdmin{
         $access["vendors"] = $user->authorise('core.admin', 'com_jshopping')==1;
         $access["statistic"] = $user->authorise('core.admin', 'com_jshopping')==1;
         $access["addons"] = $user->authorise('core.admin', 'com_jshopping')==1;
+        $access["licensekeyaddon"] = $user->authorise('core.admin', 'com_jshopping')==1;
+        $access["addonscatalog"] = $user->authorise('core.admin', 'com_jshopping')==1;
         $access["logs"] = $user->authorise('core.admin', 'com_jshopping')==1;
         $access["update"] = $user->authorise('core.admin.install', 'com_jshopping')==1;
 

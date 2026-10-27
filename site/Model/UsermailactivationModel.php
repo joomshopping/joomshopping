@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.6 11.06.2022
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -18,8 +18,8 @@ class UserMailActivationModel  extends MailModel{
     public function getSubjectMail(){
         $data = $this->getData();
         $subject = Text::_('COM_USERS_EMAIL_ACTIVATED_BY_ADMIN_ACTIVATION_SUBJECT');
-		$search = ['{NAME}', '{SITENAME}'];
-        $replace = [$data['name'], $data['sitename']];
+		$search = ['{NAME}', '{SITENAME}', '{USERNAME}'];
+        $replace = [$data['name'], $data['sitename'], $data['username']];
         $subject = str_replace($search, $replace, $subject);
         return $subject;
     }
@@ -62,8 +62,8 @@ class UserMailActivationModel  extends MailModel{
     public function getSubjectMailAdmin(){
         $data = $this->getData();
 		$subject = Text::_('COM_USERS_EMAIL_ACTIVATE_WITH_ADMIN_ACTIVATION_SUBJECT');
-		$search = ['{NAME}', '{SITENAME}'];
-        $replace = [$data['name'], $data['sitename']];
+		$search = ['{NAME}', '{SITENAME}', '{USERNAME}'];
+        $replace = [$data['name'], $data['sitename'], $data['username']];
         $subject = str_replace($search, $replace, $subject);
         return $subject;
     }
@@ -86,7 +86,7 @@ class UserMailActivationModel  extends MailModel{
     
     public function getListAdminUserSendEmail(){
         $db = Factory::getDBO();
-        $query = 'SELECT name, email, sendEmail FROM #__users WHERE sendEmail=1 AND block=0';
+        $query = 'SELECT name, email, sendEmail FROM `#__users` WHERE sendEmail=1 AND block=0';
         $db->setQuery( $query );
         return $db->loadObjectList();
     }

@@ -1,10 +1,11 @@
 <?php
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.6.0 10.03.2025
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -773,6 +774,7 @@ $jshopConfig=JSFactory::getConfig();
 </div>
 
 <?php print $this->tmp_html_end?>
+<?php print HTMLHelper::_('form.token');?>
 </form>
 </div>
 </div>

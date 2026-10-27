@@ -3,9 +3,10 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -69,7 +70,7 @@ $i=0;
    </td>
    <td class="center">
    <?php if (!in_array($row->alias, $jshopConfig->sys_static_text)){?>
-    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=config&task=deletestatictext&id=<?php print $row->id?>' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>')">
+    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=config&task=deletestatictext&id=<?php print $row->id?>&<?php print Session::getFormToken()?>=1' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>')">
         <i class="icon-delete"></i>
     </a>
     <?php }else{?>
@@ -91,5 +92,6 @@ $i++;
 <input type="hidden" name="hidemainmenu" value="0" />
 <input type="hidden" name="boxchecked" value="0" />
 <?php print $this->tmp_html_end?>
+<?php print HTMLHelper::_('form.token');?>
 </form>
 </div>

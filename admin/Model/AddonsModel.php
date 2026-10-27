@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.7.0 01.03.2025
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -86,6 +86,9 @@ class AddonsModel extends BaseadminModel{
         $params = $post['params'] ?? [];
         $app = Factory::getApplication();
         $app->triggerEvent('onBeforeSaveAddons', array(&$params, &$post, &$row));
+        foreach(['uninstall', 'key', 'usekey', 'config', 'alias', 'version'] as $field) {
+            unset($post[$field]);
+        }
         $row->bind($post);
         $row->setParams($params);
         $row->store();
@@ -96,22 +99,33 @@ class AddonsModel extends BaseadminModel{
     public function saveconfig(array $post){
         $row = JSFactory::getTable('addon');
         $config = $post['config'] ?? [];
-        if (!$config['folder_overrides_view']) {
-            unset($config['folder_overrides_view']);
-        }
-        if (!$config['folder_overrides_js']) {
-            unset($config['folder_overrides_js']);
-        }
-        if (!$config['folder_overrides_css']) {
-            unset($config['folder_overrides_css']);
+        foreach(['folder_overrides_view', 'folder_overrides_js', 'folder_overrides_css'] as $key) {
+            $folder = $this->getSafeOverridesFolder($config[$key] ?? '');
+            if ($folder == '') {
+                unset($config[$key]);
+            } else {
+                $config[$key] = $folder;
+            }
         }
         $app = Factory::getApplication();
         $app->triggerEvent('onBeforeSaveConfigAddons', array(&$config, &$post, &$row));
-        $row->bind($post);
+        $row->load((int)($post['id'] ?? 0));
+        if (!$row->id) {
+            return $row;
+        }
         $row->setConfig($config);
         $row->store();
 		$app->triggerEvent('onBeforeSaveConfigAddons', array(&$config, &$post, &$row));
         return $row;
+    }
+
+    public function getSafeOverridesFolder($folder){
+        $folder = trim(str_replace('\\', '/', (string)$folder));
+        $folder = trim($folder, '/');
+        if ($folder == '' || preg_match('#(^|/)\.\.?(/|$)#', $folder) || str_contains($folder, ':') || str_contains($folder, "\0")) {
+            return '';
+        }
+        return $folder;
     }
 
     public function deleteList(array $cid, $msg = 1){

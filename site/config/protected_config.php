@@ -1,0 +1,70 @@
+<?php
+/**
+* @version      5.10.0 26.10.2026
+* @author       MAXXmarketing GmbH
+* @package      Jshopping
+* @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
+* @license      GNU/GPL
+*/
+defined('_JEXEC') or die();
+
+
+return [
+    'typeshop',
+    'page_update_disable',
+    'downloadaddon_disable',
+    'installaddon_disable',
+    'apikey_edit_disable',
+    'addonkey_edit_disable',
+    'install_log_url_disable',
+    'install_demo_disable',
+    'addon_override_disable',
+    'config_service_disable',
+    'server_files_select_disable',
+    'install_url_allowed_hosts',
+    'path',
+    'admin_path',
+    'live_path',
+    'live_admin_path',
+    'log_path',
+    'cache_path',
+    'importexport_path',
+    'importexport_live_path',
+    'image_category_path',
+    'image_category_live_path',
+    'image_product_path',
+    'image_product_live_path',
+    'image_manufs_path',
+    'image_manufs_live_path',
+    'video_product_path',
+    'video_product_live_path',
+    'demo_product_path',
+    'demo_product_live_path',
+    'files_product_path',
+    'files_product_live_path',
+    'pdf_orders_path',
+    'pdf_orders_live_path',
+    'image_attributes_path',
+    'image_attributes_live_path',
+    'image_labels_path',
+    'image_labels_live_path',
+    'image_vendors_path',
+    'image_vendors_live_path',
+    'template_path',
+    'css_path',
+    'css_live_path',
+    'file_jquery_media_js',
+    'file_functions_js',
+    'script_js_init',
+    'file_lightbox_js',
+    'file_lightbox_css',
+    'file_metadata_js',
+    'file_rating_js',
+    'file_rating_css',
+    'file_generete_pdf_order',
+    'default_template_block_list_product',
+    'default_template_no_list_product',
+    'default_template_block_form_filter_product',
+    'default_template_block_pagination_product',
+    'image_upload_check_content',
+];

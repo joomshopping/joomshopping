@@ -6,7 +6,7 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 
 /**
-* @version      5.9.4 17.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -110,13 +110,13 @@ $i = 0;
      <?php echo $row->name;?>
    </td>
    <td>
-     <?php echo $row->user_name;?>
+     <?php echo htmlspecialchars((string)$row->user_name, ENT_QUOTES);?>
    </td> 
    <td>
-     <?php echo $row->user_email;?>
+     <?php echo htmlspecialchars((string)$row->user_email, ENT_QUOTES);?>
    </td>     
    <td>
-     <?php echo $row->review;?>
+     <?php echo nl2br(htmlspecialchars((string)$row->review, ENT_QUOTES));?>
    </td>
    <?php if (!$this->config->hide_product_rating){?>
    <td>

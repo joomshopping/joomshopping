@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 22.10.2026
+* @version      5.10.0 24.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -50,11 +50,14 @@ class AddondependenciesModel extends BaseadminModel{
         return $db->loadObjectList();
     }
 
-    public function deleteByParent($parent) {
+    public function deleteByParent($parent, $required = null) {
         $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $query->delete($db->qn('#__jshopping_addons_dependencies'));
         $query->where($db->qn('parent')."=".$db->q($parent));
+        if (isset($required)) {
+            $query->where($db->qn('required')."=".(int)$required);
+        }
         $db->setQuery($query);
         $db->execute();
     }
@@ -84,7 +87,7 @@ class AddondependenciesModel extends BaseadminModel{
     }
 
     public function clearSystemAddons(){
-        $this->deleteByParent('');
+        $this->deleteByParent('', 1);
     }
 
     public function systemAddonsCheck(){

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 23.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -627,7 +627,7 @@ class CheckoutController extends BaseController{
     }
 
     function iframeRedirect($url){
-        echo "<script>parent.location.href='$url';</script>\n";
+        echo "<script>parent.location.href=".json_encode((string)$url, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP|JSON_UNESCAPED_SLASHES).";</script>\n";
         $mainframe = Factory::getApplication();
         $mainframe->close();
     }

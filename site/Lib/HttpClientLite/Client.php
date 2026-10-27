@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      5.6.0 08.04.2024
+ * @version      5.10.0 25.10.2026
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -77,6 +77,11 @@ class Client
         }
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_TIMEOUT, $this->config['timeout']);
+        if (!empty($options['allow_redirects'])) {
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($curl, CURLOPT_MAXREDIRS, (int)($options['max_redirects'] ?? 5));
+            curl_setopt($curl, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        }
         if (isset($options['http_version'])) {
             curl_setopt($curl, CURLOPT_HTTP_VERSION, $options['http_version']);
         }

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 21.04.2025
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -283,6 +283,7 @@ class CategoriesModel extends BaseadminModel{
         }
         $upload = new UploadFile($image);
         $upload->setAllowFile($jshopConfig->allow_image_upload);
+        $upload->setCheckImage($jshopConfig->image_upload_check_content);
         $upload->setDir($jshopConfig->image_category_path);
 		if (isset($post["image_name"]) && $post["image_name"] != '') {
             $upload->setNameWithoutExt($post["image_name"]);

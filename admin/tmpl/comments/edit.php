@@ -3,7 +3,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
 /**
-* @version      5.9.4 17.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -117,7 +117,7 @@ function clear_product_commentar(){
         <div class="clr"></div>
         <input type="hidden" name="product_id" id="product_id" class="form-control" value="<?php print $this->review->product_id;?>" />
         <input type="hidden" name="review_id" value="<?php echo (int)$this->review->review_id?>">
-        <input type="hidden" name="task" value="<?php echo Factory::getApplication()->input->getVar('task', '')?>" />
+        <input type="hidden" name="task" value="<?php echo htmlspecialchars(Factory::getApplication()->input->getCmd('task', ''), ENT_QUOTES)?>" />
         <?php print $this->tmp_html_end?>
     <?php print HTMLHelper::_('form.token');?>
     </form>

@@ -294,6 +294,7 @@ $config->checkout_step5_show_phone = 0;
 $config->productDownloadFilePart8kb = 1;
 $config->show_short_descr_insted_of = 1;
 $config->allow_image_upload = ['jpeg','jpg','gif','png','webp','avif'];
+$config->image_upload_check_content = 1;
 $config->frontend_csrf_strict = 0;
 $config->allow_video_upload = ['mp4','m4v','webm','ogg','ogv','mov','avi','mkv','flv','wmv','mpg','mpeg','mp3','m4a','oga','wav','aac','flac'];
 $config->image_fill_colors = [0xffffff => 'white', 0x000000 => 'black'];
