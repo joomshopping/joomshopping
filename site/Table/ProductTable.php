@@ -118,6 +118,7 @@ class ProductTable extends MultilangTable{
                             }
                         }
                     }
+                    $app->triggerEvent('onSetAddPriceIndependentAttrAfter', array(&$independent_attr, &$k, &$v, &$attr_data2, &$obj));
                 }
             }
         }else{
