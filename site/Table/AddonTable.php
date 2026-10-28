@@ -538,7 +538,7 @@ class AddonTable extends ShopbaseTable{
         if (!$bundled || !$this->key || !$this->alias) {
             return 0;
         }
-        if (!Helper::compareX64(Helper::replaceWWW(Helper::getJHost()).$this->alias, $this->key)) {
+        if (!Helper::compareX64(Helper::replaceWWW(Helper::getJHost()).$this->alias, $this->key, 1)) {
             return 0;
         }
         $items = explode(',', (string)base64_decode($this->key));

@@ -584,7 +584,7 @@ class Helper{
         if (base64_encode($a) == $b) {
             return true;
         }
-        if ($b) {
+        if ($comma_separated && $b) {
             $items = explode(',', (string)base64_decode($b));
             return in_array($a, $items);
         }
