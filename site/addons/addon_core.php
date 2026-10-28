@@ -127,7 +127,9 @@ class AddonCore{
     }
     
     protected function getCliView($config = array()){
-		return new #[\AllowDynamicProperties] class($config) {
+		return new
+			#[\AllowDynamicProperties]
+			class($config) {
 
 			protected $paths = array();
 			protected $layout = 'default';

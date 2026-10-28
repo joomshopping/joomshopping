@@ -100,8 +100,8 @@ class UserMailRegisterModel  extends MailModel{
     public function getSubjectMailAdmin(){
         $data = $this->getData();
         $subject = Text::_('COM_USERS_EMAIL_ACCOUNT_DETAILS');
-        $search = ['{NAME}', '{SITENAME}'];
-        $replace = [$data['name'], $data['sitename']];
+        $search = ['{NAME}', '{SITENAME}', '{USERNAME}'];
+        $replace = [$data['name'], $data['sitename'], $data['username']];
         $subject = str_replace($search, $replace, $subject);
         return $subject;
     }

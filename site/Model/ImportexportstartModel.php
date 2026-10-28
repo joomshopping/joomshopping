@@ -12,7 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
-class ImportExportStartModel{
+class ImportexportstartModel{
 	
 	public function checkKey($key){	
 		$securitykey = (string)JSFactory::getConfig()->securitykey;
