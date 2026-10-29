@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.4.1 23.04.2024
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -27,12 +27,19 @@ class UpdateModel extends BaseadminModel{
     protected $warnings = [];
     protected $back_url = '';
 
-    public function install($install_path, $installtype) {
+    public function install($install_path, $installtype, $addon_name = '') {
         $this->warnings = [];
         $this->back_url = '';
 
         $install_item_log = $installtype == 'package' ? $install_path['name'] : $install_path;
-        Helper::saveToLog("install.log", "\nStart install: ".$install_item_log." ".$installtype." IP:".$_SERVER['REMOTE_ADDR']." UID:".Factory::getUser()->id);
+        if ($installtype == 'url' && JSFactory::getConfig()->install_log_url_disable) {
+            $install_item_log = basename((string)parse_url($install_path, PHP_URL_PATH));
+        }
+        if (JSFactory::getConfig()->typeshop == 'standart') {
+            Helper::saveToLog("install.log", "\nStart install: ".$install_item_log." ".$installtype." IP:".$_SERVER['REMOTE_ADDR']." UID:".Factory::getUser()->id);
+        } else {
+            Helper::saveToLog("install.log", "\nStart install: ".($addon_name != '' ? $addon_name : basename((string)$install_item_log)));
+        }
 
         if ($installtype == 'package') {
             $archivename = $this->fileUpload($install_path);
@@ -247,6 +254,7 @@ class UpdateModel extends BaseadminModel{
         if (!$url){
             throw new Exception(Text::_('COM_INSTALLER_MSG_INSTALL_ENTER_A_URL'));
         }
+        $this->checkAllowedHost($url);
         $p_file = InstallerHelper::downloadPackage($url);
         if (!$p_file) {
             throw new Exception(Text::_('COM_INSTALLER_MSG_INSTALL_ENTER_A_URL'));
@@ -254,6 +262,21 @@ class UpdateModel extends BaseadminModel{
         $config = Factory::getConfig();
         $tmp_dest = $config->get('tmp_path');
         return Path::clean($tmp_dest.'/'.$p_file);
+    }
+
+    // install_url_allowed_hosts empty - any host
+    protected function checkAllowedHost($url) {
+        $hosts = JSFactory::getConfig()->install_url_allowed_hosts;
+        if (empty($hosts) || !is_array($hosts)) {
+            return 1;
+        }
+        $host = strtolower((string)parse_url($url, PHP_URL_HOST));
+        $hosts = array_map('strtolower', $hosts);
+        if ($host == '' || !in_array($host, $hosts)) {
+            Helper::saveToLog("install.log", "Error: host not allowed: ".$host);
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR').' ('.$host.')');
+        }
+        return 1;
     }
 
 }

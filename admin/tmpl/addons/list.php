@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.9.3 29.03.2025
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -9,6 +9,7 @@
 defined('_JEXEC') or die();
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -130,7 +131,11 @@ $i=0;
                 </td>
                 <?php }?>
                 <td class="center">
-                    <?php if ($row->usekey){?>
+                    <?php if ($row->usekey && $this->config->addonkey_edit_disable){?>
+                    <span class="btn btn-micro text-muted" style="cursor:default">
+                        <i class="icon-key"></i>
+                    </span>
+                    <?php }elseif ($row->usekey){?>
                     <a class="btn btn-micro" href='index.php?option=com_jshopping&controller=licensekeyaddon&alias=<?php print $row->alias?>&back=<?php print $this->back64?>'>
                         <i class="icon-key"></i>
                     </a>
@@ -154,7 +159,7 @@ $i=0;
                     <?php }?>
                 </td>
                 <td class="center">
-                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=remove&cid[]=<?php print $row->id?>'
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=addons&task=remove&cid[]=<?php print $row->id?>&<?php print Session::getFormToken()?>=1'
                         onclick="return confirm('<?php print Text::_('JSHOP_DELETE_ALL_DATA')?>')">
                         <i class="icon-delete"></i>
                     </a>
@@ -180,6 +185,7 @@ $i=0;
         <input type="hidden" name="hidemainmenu" value="0" />
         <input type="hidden" name="boxchecked" value="0" />
         <?php print $this->tmp_html_end?>
+    <?php print HTMLHelper::_('form.token');?>
     </form>
 </div>
 

@@ -779,8 +779,27 @@ span.prod_attr_img img{
 .jshop_profile_data .jshop_user_group_info{
     font-size:10px;
 }
+.jshop .groups_list{
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border-color, var(--bs-border-color, #dee2e6));
+}
+.jshop .groups_list th,
+.jshop .groups_list td{
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, var(--bs-border-color, #dee2e6));
+    text-align: left;
+}
+.jshop .groups_list th{
+    font-weight: 600;
+    background-color: var(--tertiary-bg, var(--bs-tertiary-bg, #f8f9fa));
+}
 .jshop .groups_list .title{
-    width:150px;
+    width: 70%;
+}
+.jshop .groups_list td.discount,
+.jshop .groups_list th.discount{
+    text-align: right;
 }
 
 /* module categories*/

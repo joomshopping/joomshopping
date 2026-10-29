@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.4 15.11.2025
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -94,6 +94,7 @@ class ManufacturersModel extends BaseadminModel{
         $jshopConfig = JSFactory::getConfig();
         $upload = new UploadFile($image);
         $upload->setAllowFile($jshopConfig->allow_image_upload);
+        $upload->setCheckImage($jshopConfig->image_upload_check_content);
         $upload->setDir($jshopConfig->image_manufs_path);
 		if (isset($post["image_name"]) && $post["image_name"] != '') {
             $upload->setNameWithoutExt($post["image_name"]);
@@ -102,7 +103,7 @@ class ManufacturersModel extends BaseadminModel{
         $upload->setFilterName(1);
         if ($upload->upload()){            
             if ($post['old_image']){
-                @unlink($jshopConfig->image_manufs_path."/".$post['old_image']);
+                @unlink($jshopConfig->image_manufs_path."/".Helper::getSafeFileName($post['old_image']));
             }
             $name = $upload->getName();
             @chmod($jshopConfig->image_manufs_path."/".$name, 0777);
@@ -176,7 +177,7 @@ class ManufacturersModel extends BaseadminModel{
         $jshopConfig = JSFactory::getConfig();
         $manuf = JSFactory::getTable('manufacturer');
         $manuf->load($id);
-        @unlink($jshopConfig->image_manufs_path.'/'.$manuf->manufacturer_logo);
+        @unlink($jshopConfig->image_manufs_path.'/'.Helper::getSafeFileName($manuf->manufacturer_logo));
         $manuf->manufacturer_logo = "";
         $manuf->store();
     }
@@ -191,7 +192,7 @@ class ManufacturersModel extends BaseadminModel{
             $manuf->load($value);
             if($manuf->delete()){
                 if($manuf->manufacturer_logo){
-                    @unlink(JSFactory::getConfig()->image_manufs_path.'/'.$manuf->manufacturer_logo);
+                    @unlink(JSFactory::getConfig()->image_manufs_path.'/'.Helper::getSafeFileName($manuf->manufacturer_logo));
                 }
                 if($msg){
                     $app->enqueueMessage(sprintf(Text::_('JSHOP_MANUFACTURER_DELETED'), $value), 'message');

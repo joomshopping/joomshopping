@@ -11,6 +11,8 @@ defined('_JEXEC') or die();
 
 class TempcartTable extends ShopbaseTable{
 
+    protected $_serialized_fields = ['cart'];
+
     function __construct(&$_db){
         parent::__construct('#__jshopping_cart_temp', 'id', $_db);
     }

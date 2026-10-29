@@ -4,13 +4,14 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 /**
- * @version      5.3.0 15.09.2018
+ * @version      5.10.0 17.10.2026
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
  * @license      GNU/GPL
  */
 defined('_JEXEC') or die();
+$file_upload_via_ftp = $jshopConfig->server_files_select_disable ? 0 : $jshopConfig->product_file_upload_via_ftp;
 ?>
 <div id="product_files" class="tab-pane">
 	<table class="admintable">
@@ -89,13 +90,13 @@ defined('_JEXEC') or die();
 				<tr>
 					<td class="key" style="width:250px;"><?php print Text::_('JSHOP_DEMO_FILE') ?></td>
 					<td>
-						<?php if ($jshopConfig->product_file_upload_via_ftp != 1) { ?>
+						<?php if ($file_upload_via_ftp != 1) { ?>
 							<input type="file" name="product_demo_file_<?php print $i; ?>" />
 						<?php } ?>
-						<?php if ($jshopConfig->product_file_upload_via_ftp == 2) { ?>
+						<?php if ($file_upload_via_ftp == 2) { ?>
 							<div class="small"> - <?php echo Text::_('JSHOP_OR')?> -</div>
 						<?php } ?>
-						<?php if ($jshopConfig->product_file_upload_via_ftp) { ?>
+						<?php if ($file_upload_via_ftp) { ?>
 							<div class="pt-1">
 								<input type="text" class="form-control form-control-inline" name="product_demo_file_name_<?php print $i; ?>" title="<?php print Text::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" />
 								<input type="button" value="<?php echo Text::_('JSHOP_FILE_SELECT')?>" class="btn btn-primary"
@@ -122,13 +123,13 @@ defined('_JEXEC') or die();
 				<tr>
 					<td class="key"><?php print Text::_('JSHOP_FILE_SALE') ?></td>
 					<td>
-						<?php if ($jshopConfig->product_file_upload_via_ftp != 1) { ?>
+						<?php if ($file_upload_via_ftp != 1) { ?>
 							<input type="file" name="product_file_<?php print $i; ?>" />
 						<?php } ?>
-						<?php if ($jshopConfig->product_file_upload_via_ftp == 2) { ?>
+						<?php if ($file_upload_via_ftp == 2) { ?>
 							<div class="small"> - <?php echo Text::_('JSHOP_OR')?> -</div>
 						<?php } ?>
-						<?php if ($jshopConfig->product_file_upload_via_ftp) { ?>
+						<?php if ($file_upload_via_ftp) { ?>
 							<div class="pt-1">
 								<input type="text" class="form-control form-control-inline" name="product_file_name_<?php print $i; ?>" title="<?php print Text::_('JSHOP_UPLOAD_FILE_VIA_FTP') ?>" />
 								<input type="button" value="<?php echo Text::_('JSHOP_FILE_SELECT')?>" class="btn btn-primary"

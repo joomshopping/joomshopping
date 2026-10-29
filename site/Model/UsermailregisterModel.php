@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 15.09.2018
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -32,8 +32,8 @@ class UserMailRegisterModel  extends MailModel{
         }else{
             $subject = Text::_('COM_USERS_EMAIL_ACCOUNT_DETAILS');
         }
-        $search = ['{NAME}', '{SITENAME}'];
-        $replace = [$data['name'], $data['sitename']];
+        $search = ['{NAME}', '{SITENAME}', '{USERNAME}'];
+        $replace = [$data['name'], $data['sitename'], $data['username']];
         $subject = str_replace($search, $replace, $subject);
         return $subject;
     }
@@ -100,8 +100,8 @@ class UserMailRegisterModel  extends MailModel{
     public function getSubjectMailAdmin(){
         $data = $this->getData();
         $subject = Text::_('COM_USERS_EMAIL_ACCOUNT_DETAILS');
-        $search = ['{NAME}', '{SITENAME}'];
-        $replace = [$data['name'], $data['sitename']];
+        $search = ['{NAME}', '{SITENAME}', '{USERNAME}'];
+        $replace = [$data['name'], $data['sitename'], $data['username']];
         $subject = str_replace($search, $replace, $subject);
         return $subject;
     }

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,12 +10,14 @@ namespace Joomla\Component\Jshopping\Administrator\Controller;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 class ShippingExtPriceController extends BaseadminController{
+    protected $checkToken = array('save' => 1, 'remove' => 1);
 
     function init(){
         HelperAdmin::checkAccessController("shippingextprice");
@@ -69,6 +71,9 @@ class ShippingExtPriceController extends BaseadminController{
 	}
 
     function remove(){
+        if ($this->checkToken['remove']){
+            (Session::checkToken() || Session::checkToken('get')) or die('Invalid Token');
+        }
         $id = $this->input->getInt("id");
         JSFactory::getModel("shippingextprice")->delete($id);
         $this->setRedirect("index.php?option=com_jshopping&controller=shippingextprice", Text::_('JSHOP_ITEM_DELETED'));

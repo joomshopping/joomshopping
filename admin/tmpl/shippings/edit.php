@@ -2,10 +2,11 @@
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\HTML\HTMLHelper;
 
 
 /**
- * @version      5.4.0 09.04.2024
+ * @version      5.9.4 17.10.2026
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -107,5 +108,6 @@ $edit = $this->edit;
             <input type="hidden" name="shipping_id" value="<?php echo (int)$row->shipping_id ?>" />
         <?php } ?>
         <?php print $this->tmp_html_end ?>
+    <?php print HTMLHelper::_('form.token');?>
     </form>
 </div>

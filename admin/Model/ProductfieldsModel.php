@@ -58,7 +58,7 @@ class ProductfieldsModel extends BaseadminModel{
         if (isset($filter['category_id']) && $filter['category_id']){
             foreach($rows as $k=>$v){
                 if (!$v->allcats){
-                    $_cats = (array)(unserialize($v->cats) ?? []);
+                    $_cats = (array)(unserialize($v->cats, ['allowed_classes' => ['stdClass']]) ?? []);
                     if (!in_array($filter['category_id'], $_cats)){
                         unset($rows[$k]);
                     }
@@ -74,7 +74,7 @@ class ProductfieldsModel extends BaseadminModel{
                 }else{
                     $printcat = '';
                     $catsnames = array();
-                    $_cats = (array)(unserialize($v->cats) ?? []);
+                    $_cats = (array)(unserialize($v->cats, ['allowed_classes' => ['stdClass']]) ?? []);
                     foreach($_cats as $cat_id){
                         $catsnames[] = $listCats[$cat_id] ?? '';
                         $printcat = implode(", ", $catsnames);
@@ -235,7 +235,7 @@ class ProductfieldsModel extends BaseadminModel{
             if ($v->allcats==1){
                 $insert = 1;
             } else {
-                $cats = (array)(unserialize($v->cats) ?? []);
+                $cats = (array)(unserialize($v->cats, ['allowed_classes' => ['stdClass']]) ?? []);
                 foreach($categorys as $catid){
                     if (in_array($catid, $cats)) $insert = 1;
                 }

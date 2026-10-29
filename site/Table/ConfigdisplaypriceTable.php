@@ -11,6 +11,8 @@ use Joomla\CMS\Factory;
 defined('_JEXEC') or die();
 
 class ConfigdisplaypriceTable extends ShopbaseTable{
+
+    protected $_serialized_fields = ['zones'];
     
     function __construct(&$_db){
         parent::__construct('#__jshopping_config_display_prices', 'id', $_db);
@@ -22,7 +24,7 @@ class ConfigdisplaypriceTable extends ShopbaseTable{
     
     function getZones(){
         if ($this->zones!=""){
-            return unserialize($this->zones);
+            return unserialize($this->zones, ['allowed_classes' => ['stdClass']]);
         }else{
             return array();
         }
@@ -34,7 +36,7 @@ class ConfigdisplaypriceTable extends ShopbaseTable{
         $db->setQuery($query);
         $list = $db->loadObJectList();
         foreach($list as $k=>$v){
-            $list[$k]->countries = unserialize($v->zones);
+            $list[$k]->countries = unserialize($v->zones, ['allowed_classes' => ['stdClass']]);
         }
         return $list;
     }

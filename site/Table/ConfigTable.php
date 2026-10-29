@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 06.10.2026
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -9,6 +9,7 @@
 namespace Joomla\Component\Jshopping\Site\Table;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\Installer\Installer;
 use Joomla\CMS\Component\ComponentHelper;
 
@@ -27,7 +28,12 @@ class ConfigTable{
         $query->select([$db->qn('key'), $db->qn('value')])->from($db->qn('#__jshopping_configs'))->where([$db->qn('config_id') . '=' . $db->q($keys)]);        
         $db->setQuery($query);
         $fields = $db->loadObjectList();
+        $protected = $this->getProtectedKeys();
+        $prefixes = $this->getProtectedKeyPrefixes();
         foreach ($fields as $v) {
+            if ($this->isProtectedKey($v->key, $protected, $prefixes)) {
+                continue;
+            }
             $this->{$v->key} = $v->value;
         }
         if (empty($fields)) {
@@ -41,8 +47,10 @@ class ConfigTable{
         $obj = $this;
         Factory::getApplication()->triggerEvent('onBeforeBindConfigTable', array(&$obj, &$src, &$ignore));
 
+        $ignore = array_merge($ignore, $this->getProtectedKeys(), $this->getServiceKeysDisabled());
+        $prefixes = $this->getProtectedKeyPrefixes();
         foreach ($src as $k => $v) {
-			if (!in_array($k, $ignore)) {
+			if ($this->isValidKey($k) && !$this->isProtectedKey($k, $ignore, $prefixes)) {
 				if (isset($src[$k])) {
 					$this->$k = $src[$k];
 				}
@@ -53,15 +61,27 @@ class ConfigTable{
         return true;
     }
 
+    // keys with serialize() data, checked before store
+    public function getSerializedKeys() {
+        return ['fields_register', 'product_list_display_extra_fields', 'filter_display_extra_fields', 'product_hide_extra_fields', 'cart_display_extra_fields'];
+    }
+
     public function store($updateNulls = false){
         $config_id = $this->id;
+        $protected = $this->getProtectedKeys();
+        $prefixes = $this->getProtectedKeyPrefixes();
         foreach (get_object_vars($this) as $k => $v) {
-			if (\is_array($v) || \is_object($v) || $k[0] === '_' || $k === 'id') {
+			if (\is_array($v) || \is_object($v) || $k[0] === '_' || $k === 'id' || $this->isProtectedKey($k, $protected, $prefixes)) {
 				continue;
 			}
             if ($v === null && $updateNulls === false) {
                 continue;
-            }            
+            }
+            // not a safe serialize() string - the old value stays in the DB
+            if (in_array($k, $this->getSerializedKeys()) && !Helper::isSafeSerialized($v)) {
+                Helper::saveToLog('error.log', 'Not allowed serialized data in config '.$k);
+                continue;
+            }
             $data = $this->getFieldFromKey($k, $config_id);
             if (isset($data->id) && $data->id) {
                 $this->updateRow($data->id, $k, $v, $config_id);
@@ -72,7 +92,83 @@ class ConfigTable{
         return true;
     }
 
-    protected function getFieldFromKey($key, $config_id = 1) {        
+    // keys set only in default_config.php / user_config.php or by plugins, never loaded from / stored to the DB
+    public function getProtectedKeys() {
+        static $list = null;
+        if ($list === null) {
+            $list = include(__DIR__.'/../config/protected_config.php');
+        }
+        $keys = $list;
+        Factory::getApplication()->triggerEvent('onConfigTableGetProtectedKeys', array(&$keys));
+        return $keys;
+    }
+
+    // a config key from a form: a name of a property, not the CSRF token (32 hex) or other junk of the POST
+    public function isValidKey($key) {
+        return is_string($key) && preg_match('/^[A-Za-z_][A-Za-z0-9_]{0,99}$/', $key) && !preg_match('/^[a-f0-9]{32}$/', $key);
+    }
+
+    public function getProtectedKeyPrefixes() {
+        $prefixes = ['cloud_'];
+        Factory::getApplication()->triggerEvent('onConfigTableGetProtectedKeyPrefixes', array(&$prefixes));
+        return $prefixes;
+    }
+
+    public function isProtectedKey($key, array $keys, array $prefixes) {
+        if (in_array($key, $keys)) {
+            return true;
+        }
+        foreach ($prefixes as $prefix) {
+            if ($prefix !== '' && strpos((string)$key, $prefix) === 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // keys that can not be changed from the admin when config_service_disable / apikey_edit_disable is set
+    public function getServiceKeysDisabled() {
+        $jshopConfig = JSFactory::getConfig();
+        $keys = [];
+        if ($jshopConfig->config_service_disable) {
+            $keys = array_merge($keys, [
+                'auto_backup_addon_files',
+                'website_addons_url',
+                'xml_update_path',
+                'updates_site_path',
+                'updates_server',
+                'display_updates_version',
+                'addonshop_api_get_my_paid_products_cache_time',
+                'product_file_upload_via_ftp',
+            ]);
+        }
+        if ($jshopConfig->apikey_edit_disable) {
+            $keys[] = 'addonshop_api_key';
+        }
+        Factory::getApplication()->triggerEvent('onConfigTableGetServiceKeysDisabled', array(&$keys));
+        return $keys;
+    }
+
+    /**
+     * Value of one key directly from the DB, also for protected keys (they are not loaded into the config object).
+     * @return string|null null - no such key
+     */
+    public function getValue($key, $config_id = 1) {
+        $data = $this->getFieldFromKey($key, $config_id);
+        return isset($data->id) ? $data->value : null;
+    }
+
+    // writes one key directly to the DB, also a protected one; the config object is not changed
+    public function setValue($key, $value, $config_id = 1) {
+        $data = $this->getFieldFromKey($key, $config_id);
+        if (isset($data->id) && $data->id) {
+            $this->updateRow($data->id, $key, $value, $config_id);
+        } else {
+            $this->insertRow($key, $value, $config_id);
+        }
+    }
+
+    protected function getFieldFromKey($key, $config_id = 1) {
         $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $query->select('*')->from($db->qn('#__jshopping_configs'))->where([$db->qn('key') . '=' . $db->q($key), $db->qn('config_id') . '=' . $db->q($config_id)]);
@@ -190,7 +286,7 @@ class ConfigTable{
         $config = new \stdClass();
         include(JPATH_JOOMSHOPPING."/config/default_config.php");
         if ($this->fields_register!=""){
-            $data = unserialize($this->fields_register);
+            $data = unserialize($this->fields_register, ['allowed_classes' => ['stdClass']]);
         }else{
             $data = array();
         }
@@ -243,7 +339,7 @@ class ConfigTable{
     
     function getProductListDisplayExtraFields(){
         if ($this->product_list_display_extra_fields!=""){
-            return unserialize($this->product_list_display_extra_fields);
+            return unserialize($this->product_list_display_extra_fields, ['allowed_classes' => ['stdClass']]);
         }else{
             return array();
         }
@@ -259,7 +355,7 @@ class ConfigTable{
 
     function getFilterDisplayExtraFields(){
         if ($this->filter_display_extra_fields!=""){
-            return unserialize($this->filter_display_extra_fields);
+            return unserialize($this->filter_display_extra_fields, ['allowed_classes' => ['stdClass']]);
         }else{
             return array();
         }
@@ -275,7 +371,7 @@ class ConfigTable{
     
     function getProductHideExtraFields(){
         if ($this->product_hide_extra_fields!=""){
-            return unserialize($this->product_hide_extra_fields);
+            return unserialize($this->product_hide_extra_fields, ['allowed_classes' => ['stdClass']]);
         }else{
             return array();
         }
@@ -291,7 +387,7 @@ class ConfigTable{
     
     function getCartDisplayExtraFields(){
         if ($this->cart_display_extra_fields!=""){
-            return unserialize($this->cart_display_extra_fields);
+            return unserialize($this->cart_display_extra_fields, ['allowed_classes' => ['stdClass']]);
         }else{
             return array();
         }

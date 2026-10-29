@@ -14,6 +14,8 @@ defined('_JEXEC') or die();
 
 class ShippingMethodPriceTable extends ShopbaseTable{
 
+    protected $_serialized_fields = ['params'];
+
     function __construct( &$_db ){
         parent::__construct( '#__jshopping_shipping_method_price', 'sh_pr_method_id', $_db );
     }
@@ -210,7 +212,7 @@ class ShippingMethodPriceTable extends ShopbaseTable{
         if ($this->params==""){
             return array();
         }else{
-            return (array)unserialize($this->params);
+            return (array)unserialize($this->params, ['allowed_classes' => ['stdClass']]);
         }
     }
 

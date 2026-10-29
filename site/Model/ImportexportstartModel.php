@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -12,10 +12,11 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
-class ImportExportStartModel{
+class ImportexportstartModel{
 	
 	public function checkKey($key){	
-		return JSFactory::getConfig()->securitykey == $key;
+		$securitykey = (string)JSFactory::getConfig()->securitykey;
+		return $securitykey !== '' && is_string($key) && hash_equals($securitykey, $key);
 	}
 	
 	public function getListStart($time, $filterAlias = '', $id = 0){

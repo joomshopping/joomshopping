@@ -1,8 +1,9 @@
 <?php
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.8.0 25.05.2025
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -67,5 +68,6 @@ $attr_id=$this->attr_id;
 <input type="hidden" name="value_id" value="<?php echo (int)$this->attributValue->value_id;?>" />
 <input type="hidden" name="attr_id" value="<?php echo (int)$attr_id;?>" />
 <?php print $this->tmp_html_end?>
+<?php print HTMLHelper::_('form.token');?>
 </form>
 </div>

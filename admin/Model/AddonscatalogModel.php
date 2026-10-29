@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.7.0 01.03.2025
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -10,6 +10,7 @@
 namespace Joomla\Component\Jshopping\Administrator\Model;
 
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
@@ -38,7 +39,7 @@ class AddonscatalogModel extends BaseadminModel{
     public function getListCount($filter = [], $domain = '') {
         $jshopConfig = JSFactory::getConfig();
         $api = JSFactory::getModel('Addonswebapi');
-        $rows = $api->products();
+        $rows = $api->products(JSFactory::getConfig()->typeshop);
         $myPaidProducts = $this->getListMyPaidAddonsId($domain);
         
         if (isset($filter['type']) && $filter['type'] != 3) {
@@ -69,7 +70,7 @@ class AddonscatalogModel extends BaseadminModel{
 
     public function getList($filter = [], $order = '', $orderDir = 'asc', $limitstart = 0, $limit = 0, $domain = '', $back_url = '') {
         $api = JSFactory::getModel('Addonswebapi');
-        $rows = $api->products();
+        $rows = $api->products(JSFactory::getConfig()->typeshop);
         $myPaidProducts = $this->getListMyPaidAddonsId($domain);
 
         if (isset($filter['type']) && $filter['type'] != 3) {
@@ -106,13 +107,18 @@ class AddonscatalogModel extends BaseadminModel{
         }
         $rows = array_slice($rows, $limitstart, $limit);
         $config = $api->config();
+        $jshopConfig = JSFactory::getConfig();
         foreach($rows as $k => $v) {
             if (isset($v->image)) {
                 $rows[$k]->image_url = $config->url . $config->product_image_folder . '/' . $v->image;
             }
             if (isset($v->last_file) && (isset($v->last_file->download) || in_array($v->id, $myPaidProducts))){
-                $rows[$k]->download_url = 'index.php?option=com_jshopping&controller=addonscatalog&task=downloadaddon&wid='.$v->id;
-                $rows[$k]->install_url = 'index.php?option=com_jshopping&controller=addonscatalog&task=installaddon&wid='.$v->id.'&back='.urlencode($back_url);
+                if (!$jshopConfig->downloadaddon_disable) {
+                    $rows[$k]->download_url = 'index.php?option=com_jshopping&controller=addonscatalog&task=downloadaddon&wid='.$v->id.'&'.Session::getFormToken().'=1';
+                }
+                if (!$jshopConfig->installaddon_disable) {
+                    $rows[$k]->install_url = 'index.php?option=com_jshopping&controller=addonscatalog&task=installaddon&wid='.$v->id.'&back='.urlencode($back_url).'&'.Session::getFormToken().'=1';
+                }
             }
             $rows[$k]->url = $config->url . $config->redirect_url . $v->id;
         }
@@ -122,7 +128,7 @@ class AddonscatalogModel extends BaseadminModel{
     public function getListByAlias() {
         $api = JSFactory::getModel('Addonswebapi');
         $config = $api->config();
-        $rows = $api->products();
+        $rows = $api->products(JSFactory::getConfig()->typeshop);
         $list = [];
         foreach($rows as $v) {
             if ($v->addon_alias != '') {
@@ -135,7 +141,7 @@ class AddonscatalogModel extends BaseadminModel{
 
     public function getAddonData($id) {
         $api = JSFactory::getModel('Addonswebapi');
-        $rows = $api->products();
+        $rows = $api->products(JSFactory::getConfig()->typeshop);
         foreach($rows as $v) {
             if ($v->id == $id) {
                 $data = $v;
@@ -145,70 +151,86 @@ class AddonscatalogModel extends BaseadminModel{
         return null;
     }
 
-    public function getDownloadUrlAddon($addon_data, $domain) {
-        if ($addon_data->free && isset($addon_data->last_file->download)) {
-            return $this->getDownloadUrlFreeAddon($addon_data->last_file->download);
-        }
-        if ($addon_data->free == 0) {
-            return $this->getDownloadUrlPaidAddon($addon_data->id, $domain);
-        }
-        return '';
-    }
-
-    public function getDownloadUrlFreeAddon($file) {
+    /**
+     * Downloads the addon package from the shop API (free and paid in one request).
+     * @return string path to the zip in tmp
+     * @throws Exception
+     */
+    public function downloadAddon($id) {
         $api = JSFactory::getModel('Addonswebapi');
-        $config = $api->config();
-        return $config->url . $config->download_folder . '/' . $file;
-    }
-
-    public function getDownloadUrlPaidAddon($id, $domain) {
         $jshopConfig = JSFactory::getConfig();
-		if (!$jshopConfig->addonshop_api_key) {
-            return '';
-        }
-        $api = JSFactory::getModel('Addonswebapi');
-        $api->useCache(0);
-        $res = $api->getUrlPaidAddon($id, $domain, $jshopConfig->addonshop_api_key);
-        if (isset($res->error)) {
-            Helper::saveToLog('addons.log', 'getDownloadUrlPaidAddon ('.$id.'): '.$res->error);
-        }
-        return $res->url ?? '';
+        return $api->downloadAddon($id, Helper::getClearHost(), $jshopConfig->addonshop_api_key, $jshopConfig->typeshop);
     }
 
-    public function getInstallUrlAddon($addon_data, $domain, $back_url = ''){
-        if ($addon_data->free && isset($addon_data->last_file->download)) {
-            return $this->getInstallUrlFreeAddon($addon_data->last_file->download, $back_url);
+    /**
+     * Downloads and installs the addon on the server, the package URL is never shown to the user.
+     * @return UpdateModel
+     * @throws Exception
+     */
+    public function installAddon($id) {
+        $file = $this->downloadAddon($id);
+        $installtype = 'file';
+        $addon = $this->getAddonData($id);
+        $model = JSFactory::getModel('Update');
+        $app = Factory::getApplication();
+        $result = false;
+        try {
+            $app->triggerEvent('onBeforeInstallAddon', array(&$file, &$installtype, &$addon, 'catalog'));
+            $model->install($file, $installtype, $addon->name ?? '');
+            $result = true;
+        } finally {
+            $app->triggerEvent('onAfterInstallAddon', array(&$file, &$installtype, &$addon, 'catalog', $result));
+            @unlink($file);
         }
-        if ($addon_data->free == 0) {
-            return $this->getInstallUrlPaidAddon($addon_data->id, $domain, $back_url);
+        if (isset($addon->free) && !$addon->free && ($addon->addon_alias ?? '')) {
+            $this->setAddonKeyAfterInstall($addon->addon_alias);
         }
-        return '';
+        return $model;
+    }
+    
+    public function setAddonKeyAfterInstall($alias) {
+        if (!JSFactory::getConfig()->install_paid_addon_set_key) {
+            return 0;
+        }
+        $row = JSFactory::getTable('addon');
+        $row->loadAlias($alias);
+        if (!$row->id || !$row->usekey) {
+            return 0;
+        }
+        $key = $this->getAddonKey($alias, Helper::getClearHost());
+        if ($key == '' || $row->key == $key) {
+            return 0;
+        }
+        $row->key = $key;
+        $row->store();
+        $row->load($row->id);
+        $row->syncBundledKeys();
+        Factory::getApplication()->triggerEvent('onAfterSaveLicenseKeyAddons', array(&$row));
+        Helper::saveToLog('addons.log', 'setAddonKeyAfterInstall: '.$alias);
+        return 1;
     }
 
-    public function getInstallUrlFreeAddon($file, $back_url = ''){
-        $instalurl = 'index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm2:'.$file.'&back='.urlencode($back_url);
-        return $instalurl;
-    }
-
-    public function getInstallUrlPaidAddon($id, $domain, $back_url = ''){
-        $url = $this->getDownloadUrlPaidAddon($id, $domain);        
-        if ($url) {
-            $ft = Session::getFormToken();
-            $instalurl = 'index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url='.urlencode($url).'&back='.urlencode($back_url)."&".$ft."=1&ct=1";
-            return $instalurl;
+    public function getDownloadFileName($id) {
+        $data = $this->getAddonData($id);
+        $name = ($data->addon_alias ?? '') ?: 'addon_'.(int)$id;
+        if (isset($data->last_file->version)) {
+            $name .= '_'.$data->last_file->version;
         }
-        return '';
+        return preg_replace('/[^a-zA-Z0-9_\.\-]/', '_', $name).'.zip';
     }
 
     public function getListInstallUrl($domain, $back_url) {
         $api = JSFactory::getModel('Addonswebapi');
-        $rows = $api->products();
-        $myPaidProducts = $this->getListMyPaidAddonsId($domain);
+        $rows = $api->products(JSFactory::getConfig()->typeshop);
         $list = [];
+        if (JSFactory::getConfig()->installaddon_disable) {
+            return $list;
+        }
+        $myPaidProducts = $this->getListMyPaidAddonsId($domain);
         foreach($rows as $v) {
             if ($v->addon_alias != '') {
                 if (isset($v->last_file) && (isset($v->last_file->download) || in_array($v->id, $myPaidProducts))){                    
-                    $list[$v->addon_alias] = 'index.php?option=com_jshopping&controller=addonscatalog&task=installaddon&wid='.$v->id.'&back='.urlencode($back_url);
+                    $list[$v->addon_alias] = 'index.php?option=com_jshopping&controller=addonscatalog&task=installaddon&wid='.$v->id.'&back='.urlencode($back_url).'&'.Session::getFormToken().'=1';
                 }
             }
         }
@@ -239,7 +261,7 @@ class AddonscatalogModel extends BaseadminModel{
 
     public function getListMyPaidAddons($domain) {
         $api = JSFactory::getModel('Addonswebapi');
-        $rows = $api->products();
+        $rows = $api->products(JSFactory::getConfig()->typeshop);
         $myPaidProducts = $this->getListMyPaidAddonsId($domain);
         foreach($rows as $k => $v) {
             if (!in_array($v->id, $myPaidProducts)) {

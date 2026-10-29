@@ -19,10 +19,17 @@ defined('_JEXEC') or die();
 
 class ProductTable extends MultilangTable{
 
+    protected $_published_attr_values = [];
+
     function __construct(&$_db){
         parent::__construct('#__jshopping_products', 'product_id', $_db);
         PluginHelper::importPlugin('jshoppingproducts');
         $this->_product_user_percent_discount = JSFactory::getUserShop()->percent_discount;
+    }
+
+    public function load($keys = null, $reset = true){
+        $this->_published_attr_values = [];
+        return parent::load($keys, $reset);
     }
 
     function setAttributeActive($attribs){
@@ -111,6 +118,7 @@ class ProductTable extends MultilangTable{
                             }
                         }
                     }
+                    $app->triggerEvent('onSetAddPriceIndependentAttrAfter', array(&$independent_attr, &$k, &$v, &$attr_data2, &$obj));
                 }
             }
         }else{
@@ -152,25 +160,45 @@ class ProductTable extends MultilangTable{
         $dependent_attr = $allattribs['dependent'];
         $independent_attr = $allattribs['independent'];
 
+        $prodAttribVal = count($dependent_attr) ? $this->getAttributes() : [];
+        $prodAttribVal2 = count($independent_attr) ? $this->getAttributes2() : [];
+
+        $value_ids = [];
+        foreach($prodAttribVal as $prodAtrtib){
+            foreach($dependent_attr as $attrib){
+                $field = "attr_".(int)$attrib->attr_id;
+                if ($prodAtrtib->$field ?? 0) $value_ids[] = $prodAtrtib->$field;
+            }
+        }
+        foreach($prodAttribVal2 as $attrib){
+            $value_ids[] = $attrib->attr_value_id;
+        }
+        $publishedValues = $this->getPublishedAttrValueIds($value_ids);
+
         if (count($dependent_attr)){
-            $prodAttribVal = $this->getAttributes();
             if (count($prodAttribVal)){
-                $prodAtrtib = $prodAttribVal[0];
                 foreach($dependent_attr as $attrib){
                     if ($check_attr_required && !$attrib->required) {
                         continue;
                     }
                     $field = "attr_".(int)$attrib->attr_id;
-                    if ($prodAtrtib->$field ?? 0) $require[] = $attrib->attr_id;
+                    foreach($prodAttribVal as $prodAtrtib){
+                        if (isset($publishedValues[$prodAtrtib->$field ?? 0])){
+                            $require[] = $attrib->attr_id;
+                            break;
+                        }
+                    }
                 }
             }
         }
 
         if (count($independent_attr)){
-            $prodAttribVal2 = $this->getAttributes2();
             foreach($prodAttribVal2 as $attrib){
                 $_req = $independent_attr[$attrib->attr_id]->required ?? 0;
                 if ($check_attr_required && !$_req) {
+                    continue;
+                }
+                if (!isset($publishedValues[$attrib->attr_value_id])){
                     continue;
                 }
                 if (!in_array($attrib->attr_id, $require) && isset($independent_attr[$attrib->attr_id])){
@@ -179,6 +207,22 @@ class ProductTable extends MultilangTable{
             }
         }
         return $require;
+    }
+
+    function getPublishedAttrValueIds($value_ids){
+        $value_ids = array_unique(array_filter(array_map('intval', $value_ids)));
+        if (!count($value_ids)){
+            return [];
+        }
+        sort($value_ids);
+        $key = implode(',', $value_ids);
+        if (!isset($this->_published_attr_values[$key])){
+            $db = Factory::getDBO();
+            $query = "SELECT value_id FROM `#__jshopping_attr_values` WHERE publish=1 AND value_id IN (".$key.")";
+            $db->setQuery($query);
+            $this->_published_attr_values[$key] = array_flip($db->loadColumn());
+        }
+        return $this->_published_attr_values[$key];
     }
 
     //get dependent attributs

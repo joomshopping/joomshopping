@@ -1,8 +1,9 @@
 <?php
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.7.0 12.05.2025
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -34,4 +35,5 @@ defined('_JEXEC') or die();
 
 <input type="hidden" name="task" value="" />
 <?php print $this->tmp_html_end ?? '';?>
+<?php print HTMLHelper::_('form.token');?>
 </form>

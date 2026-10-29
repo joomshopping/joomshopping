@@ -12,6 +12,8 @@ use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 defined('_JEXEC') or die();
 
 class ProductFieldTable extends MultilangTable{
+
+    protected $_serialized_fields = ['cats'];
     
     function __construct( &$_db ){
         parent::__construct('#__jshopping_products_extra_fields', 'id', $_db );
@@ -33,7 +35,7 @@ class ProductFieldTable extends MultilangTable{
     */    
     function getCategorys(){
         if ($this->cats!=""){
-            return unserialize($this->cats);
+            return unserialize($this->cats, ['allowed_classes' => ['stdClass']]);
         }else{
             return array();
         }
@@ -63,7 +65,7 @@ class ProductFieldTable extends MultilangTable{
             if ($v->allcats){
                 $list[$v->id]->cats = array();
             }else{
-                $list[$v->id]->cats = unserialize($v->cats);
+                $list[$v->id]->cats = unserialize($v->cats, ['allowed_classes' => ['stdClass']]);
             }            
         }
         unset($rows);

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.3.1 15.09.2018
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -111,6 +111,11 @@ class CheckoutController extends BaseController{
 
 		$post = $this->input->post->getArray();
 		$back_url = $checkoutStep->getCheckoutUrl('2');
+        if (!Helper::checkFrontendToken('step2save')){
+            JSError::raiseWarning('', Text::_('JINVALID_TOKEN_NOTICE'));
+            $this->setRedirect($back_url);
+            return 0;
+        }
 
         $dispatcher->triggerEvent('onLoadCheckoutStep2save', array(&$post));
 
@@ -172,12 +177,15 @@ class CheckoutController extends BaseController{
         $small_cart = $checkout->loadSmallCart(3);
 
 		$paym = $checkout->getCheckoutListPayments();
+		if (count($paym)==0 && $jshopConfig->checkout_step3_show_error_payment_config){
+			JSError::raiseWarning("", Text::_('JSHOP_ERROR_PAYMENT_CNF'));
+		}
 		$active_payment = $checkout->getCheckoutActivePayment($paym, $adv_user);
 		$first_payment_class = $checkout->getCheckoutFirstPaymentClass($paym);
 
         if ($jshopConfig->hide_payment_step){
             if (!$first_payment_class){
-                JSError::raiseWarning("", Text::_('JSHOP_ERROR_PAYMENT'));
+                JSError::raiseWarning("", Text::_('JSHOP_ERROR_PAYMENT_CNF'));
                 return 0;
             }
             $this->setRedirect($checkoutStep->getCheckoutUrl('step3save&payment_method='.$first_payment_class));
@@ -619,7 +627,7 @@ class CheckoutController extends BaseController{
     }
 
     function iframeRedirect($url){
-        echo "<script>parent.location.href='$url';</script>\n";
+        echo "<script>parent.location.href=".json_encode((string)$url, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP|JSON_UNESCAPED_SLASHES).";</script>\n";
         $mainframe = Factory::getApplication();
         $mainframe->close();
     }

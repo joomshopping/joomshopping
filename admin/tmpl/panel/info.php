@@ -1,14 +1,17 @@
 <?php
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
+use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 
 /**
-* @version      5.0.7 02.09.2022
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
 * @license      GNU/GPL
 */
 defined('_JEXEC') or die();
+$jshopConfig = JSFactory::getConfig();
 ?>
 
 <?php if ($this->sidebar){?>
@@ -19,7 +22,7 @@ defined('_JEXEC') or die();
     <div class="contacts">
         <div class="jslogo">
             <img src="components/com_jshopping/images/joomshopping.png">
-            <div class="version"><?php if (isset($this->data['version'])){?>Version <?php print $this->data['version'];}?></div>
+            <div class="version"><?php if (isset($this->data['version'])){?><?php print $jshopConfig->typeshop == 'cloud' ? 'Cloud' : 'Version'?> <?php print $this->data['version'];}?></div>
         </div>
         <div class="firm">by MAXXmarketing GmbH</div>        
         <div class="info mb-3">
@@ -70,15 +73,17 @@ defined('_JEXEC') or die();
                 <div><a href="index.php?option=com_jshopping"><b>JoomShopping</b></a></div>
             </div>
         </div>
+        <?php if (!$jshopConfig->install_demo_disable && !$jshopConfig->page_update_disable) {?>
         <div class="info mb-3">
             <div class="img"><img src="components/com_jshopping/images/jshop_import_export_b.png"></div>
-            <div>                
-                <div><a href="index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm1:demo_products_5.6.0.zip&back=<?php print urldecode("index.php?option=com_jshopping")?>">
+            <div>
+                <div><a href="index.php?option=com_jshopping&controller=update&task=update&installtype=url&install_url=sm1:demo_products_5.6.0.zip&back=<?php print urlencode("index.php?option=com_jshopping")?>&<?php print Session::getFormToken()?>=1&ct=1">
                         <b><?php print Text::_('JSHOP_LOAD_SAMPLE_DATA')?></b>
                     </a>
                 </div>
             </div>
         </div>
+        <?php }?>
     </div>
     <?php } ?>
 </div>

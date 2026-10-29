@@ -11,6 +11,8 @@ defined('_JEXEC') or die();
 
 class OrderItemTable extends ShopbaseTable{
 
+    protected $_serialized_fields = ['attributes', 'freeattributes', 'files'];
+
     function __construct( &$_db ){
         parent::__construct( '#__jshopping_order_item', 'order_item_id', $_db );
     }

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -17,6 +17,8 @@ Jimport('Joomla.filesystem.folder');
 include_once(JPATH_ROOT."/components/com_jshopping/shippings/shippingext.php");
 
 class ShippingExtTable extends ShopbaseTable{
+
+    protected $_serialized_fields = ['shipping_method', 'params'];
 
     function __construct(&$_db){
         parent::__construct('#__jshopping_shipping_ext_calc', 'id', $_db);
@@ -35,7 +37,7 @@ class ShippingExtTable extends ShopbaseTable{
         $return = parent::load($id, $reset);
         $JshopConfig = JSFactory::getConfig();
         $path = $JshopConfig->path."shippings";
-        $extname = $this->alias;
+        $extname = str_replace(array('.','/','\\'), '', (string)$this->alias);
         $filepatch = $path."/".$extname."/".$extname.".php";
         if (file_exists($filepatch)){
             include_once($filepatch);
@@ -64,15 +66,15 @@ class ShippingExtTable extends ShopbaseTable{
     
     function getShippingMethod(){
         if ($this->shipping_method=="") return array();
-        return unserialize($this->shipping_method);
+        return unserialize($this->shipping_method, ['allowed_classes' => ['stdClass']]);
     }
     
     function setParams($data){
         $this->params = serialize($data);
     }
     
-    function getParams(){        
+    function getParams(){
         if ($this->params=="") return array();
-        return unserialize($this->params);
+        return unserialize($this->params, ['allowed_classes' => ['stdClass']]);
     }
 }

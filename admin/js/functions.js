@@ -1265,7 +1265,8 @@ var jshopAdminClass = function(){
 
     this.getAddonKey = function(alias) {
         jshopAdmin.ajaxLoadAnimate().show();
-        var url = 'index.php?option=com_jshopping&controller=addonscatalog&task=getaddonkey&alias='+alias+"&ajax=1";
+        var token = Joomla.getOptions('csrf.token', '');
+        var url = 'index.php?option=com_jshopping&controller=addonscatalog&task=getaddonkey&alias='+encodeURIComponent(alias)+"&ajax=1&"+token+"=1";
         jQuery.ajaxSetup({ cache: false });
         jQuery.get(url, (data) => {
             jQuery('input[name="key"]').val(data);

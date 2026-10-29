@@ -4,7 +4,7 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.10.0 10.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -19,10 +19,10 @@ defined('_JEXEC') or die();
     <?php foreach($this->reviews as $curr){?>
         <div class="review_item">
             <div>
-                <span class="review_user"><?php print $curr->user_name?></span>, 
+                <span class="review_user"><?php print htmlspecialchars((string)$curr->user_name, ENT_QUOTES)?></span>, 
                 <span class='review_time'><?php print Helper::formatdate($curr->time, 1);?></span>
             </div>
-            <div class="review_text"><?php print nl2br($curr->review)?></div>
+            <div class="review_text"><?php print nl2br(htmlspecialchars((string)$curr->review, ENT_QUOTES))?></div>
             <?php if ($curr->mark && !$this->config->hide_product_rating){?>
                 <div class="review_mark"><?php print Helper::showMarkStar($curr->mark);?></div>
             <?php } ?> 
@@ -43,7 +43,7 @@ defined('_JEXEC') or die();
         <form action="<?php print Helper::SEFLink('index.php?option=com_jshopping&controller=product&task=reviewsave');?>" name="add_review" method="post" class="form-validate">
         
             <input type="hidden" name="product_id" value="<?php print $this->product->product_id?>" />
-            <input type="hidden" name="back_link" value="<?php print Helper::jsFilterUrl($_SERVER['REQUEST_URI'])?>" />
+            <input type="hidden" name="back_link" value="<?php print htmlspecialchars(Helper::jsFilterUrl($_SERVER['REQUEST_URI']), ENT_QUOTES)?>" />
 		    <?php echo HTMLHelper::_('form.token');?>
             
             <div id="jshop_review_write" >
@@ -52,7 +52,7 @@ defined('_JEXEC') or die();
                         <label for="review_user_name"><?php print Text::_('JSHOP_REVIEW_USER_NAME')?></label>
                     </div>
                     <div class = "col-lg-9">
-                        <input type="text" name="user_name" id="review_user_name" class="inputbox required" value="<?php print $this->user->name?>"/>
+                        <input type="text" name="user_name" id="review_user_name" class="inputbox required" value="<?php print htmlspecialchars((string)$this->user->name, ENT_QUOTES)?>"/>
                     </div>
                 </div>
                 <div class = "row">
@@ -60,7 +60,7 @@ defined('_JEXEC') or die();
                         <label for="review_user_email"><?php print Text::_('JSHOP_REVIEW_USER_EMAIL')?></label>
                     </div>
                     <div class = "col-lg-9">
-                        <input type="text" name="user_email" id="review_user_email" class="inputbox validate-email required" value="<?php print $this->user->email?>" />
+                        <input type="text" name="user_email" id="review_user_email" class="inputbox validate-email required" value="<?php print htmlspecialchars((string)$this->user->email, ENT_QUOTES)?>" />
                     </div>
                 </div>
                 <div class = "row">

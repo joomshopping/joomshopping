@@ -1,6 +1,6 @@
 <?php 
 /**
-* @version      5.4.1 18.04.2024
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -96,6 +96,7 @@ if ($saveOrder){
         <input type="hidden" name="hidemainmenu" value="0">
         <input type="hidden" name="boxchecked" value="0">
         <?php print $this->tmp_html_end?>
+    <?php print HTMLHelper::_('form.token');?>
     </form>
 </div>
 <script>

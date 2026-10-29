@@ -3,7 +3,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
 /**
-* @version      5.10.0 19.09.2026
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -63,15 +63,15 @@ $config->css_live_path = $config->live_path."css/";
 $config->file_generete_pdf_order = '\\Joomla\\Component\\Jshopping\\Site\\Pdf\\Order';
 $config->system_addons = [
     'tcpdf' => ['alias' => 'lib_tcpdf', 'name' => 'Lib TcPdf', 'version' => '1.1.1', 'required' => 1],
-    'news' => ['alias' => 'addon_news', 'name' => 'JoomShopping News', 'version' => '1.0.0', 'required' => 0]
+    'news' => ['alias' => 'addon_news', 'name' => 'JoomShopping News', 'version' => '1.0.1', 'required' => -1]
 ];
 
 $config->website_addons_url = "https://www.webdesigner-profi.de/joomla-webdesign/shop.html";
-$config->xml_update_path = "http://www.webdesigner-profi.de/joomla-webdesign/update/update.xml";
-$config->updates_site_path = "http://www.webdesigner-profi.de/joomla-webdesign/joomla-shop/downloads/updates.html";
-$config->updates_server['sm0'] = "http://www.webdesigner-profi.de/joomla-webdesign/update/sm0";
+$config->xml_update_path = "https://www.webdesigner-profi.de/joomla-webdesign/update/update.xml";
+$config->updates_site_path = "https://www.webdesigner-profi.de/joomla-webdesign/joomla-shop/downloads/updates.html";
+$config->updates_server['sm0'] = "https://www.webdesigner-profi.de/joomla-webdesign/update/sm0";
 $config->updates_server['sm1'] = "http://demo.joomshopping.com/demo";
-$config->updates_server['sm2'] = "http://www.webdesigner-profi.de/joomla-webdesign/components/com_jshopping/files/demo_products";
+$config->updates_server['sm2'] = "https://www.webdesigner-profi.de/joomla-webdesign/components/com_jshopping/files/demo_products";
 $config->display_updates_version = 1;
 $config->noimage = 'noimage.gif';
 $config->shippinginfourl = 'index.php?option=com_jshopping&controller=content&task=view&page=shipping';
@@ -248,6 +248,7 @@ $config->auto_backup_addon_files = 1;
 $config->send_admin_mail_order_status_appadmin = 0;
 $config->send_admin_mail_order_status = 1;
 $config->checkout_step4_show_error_shipping_config = 1;
+$config->checkout_step3_show_error_payment_config = 1;
 $config->category_sorting_direction = 'asc';
 $config->manufacturer_sorting_direction = 'asc';
 $config->get_vendors_order_query = 'shop_name';
@@ -293,6 +294,9 @@ $config->checkout_step5_show_phone = 0;
 $config->productDownloadFilePart8kb = 1;
 $config->show_short_descr_insted_of = 1;
 $config->allow_image_upload = ['jpeg','jpg','gif','png','webp','avif'];
+$config->image_upload_check_content = 1;
+$config->frontend_csrf_strict = 0;
+$config->allow_video_upload = ['mp4','m4v','webm','ogg','ogv','mov','avi','mkv','flv','wmv','mpg','mpeg','mp3','m4a','oga','wav','aac','flac'];
 $config->image_fill_colors = [0xffffff => 'white', 0x000000 => 'black'];
 $config->use_summ_for_calcule_payment_with_discount = 0;
 $config->product_related_order_by = 'relation.id';
@@ -324,6 +328,21 @@ $config->user_password_gen_in_shop = 1;
 $config->prod_attr_load_data_by_partial_selection = 0;
 $config->admin_default_cat_dtype = 0;
 $config->meta_data_save_as_raw = 1;
+$config->check_valid_productpage_attribute = 0;
+$config->sysmsg_use_order_pdf = 0;
+$config->typeshop = 'standart';
+$config->page_update_disable = 0;
+$config->downloadaddon_disable = 0;
+$config->installaddon_disable = 0;
+$config->apikey_edit_disable = 0;
+$config->addonkey_edit_disable = 0;
+$config->install_log_url_disable = 0;
+$config->install_demo_disable = 0;
+$config->addon_override_disable = 0;
+$config->config_service_disable = 0;
+$config->server_files_select_disable = 0;
+$config->install_url_allowed_hosts = []; // empty - any host, e.g. ["www.webdesigner-profi.de"]
+$config->install_paid_addon_set_key = 1;
 
 $config->default_template_block_list_product = 'list_products/list_products.php';
 $config->default_template_no_list_product = 'list_products/no_products.php';
@@ -434,7 +453,8 @@ $other_config = array(
     'user_discount_not_apply_prod_old_price',
     'admin_products_search_by_words',
     'admin_products_search_in_attribute',
-    'update_username_joomla'
+    'update_username_joomla',
+    'frontend_csrf_strict'
 );
 
 $other_config_checkbox = array(
@@ -461,7 +481,8 @@ $other_config_checkbox = array(
     'user_discount_not_apply_prod_old_price',
     'admin_products_search_by_words',
     'admin_products_search_in_attribute',
-    'update_username_joomla'
+    'update_username_joomla',
+    'frontend_csrf_strict'
 );
 $other_config_select = array(
     'cart_back_to_shop'=>array(
@@ -678,5 +699,3 @@ $config->fields_client_only_check = [
 ];
 
 $config->ordering_full_name = ['f_name', 'm_name', 'l_name'];
-$config->check_valid_productpage_attribute = 0;
-$config->sysmsg_use_order_pdf = 0;

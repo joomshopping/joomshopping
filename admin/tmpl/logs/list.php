@@ -3,9 +3,10 @@ use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
 
 /**
-* @version      5.5.5 01.02.2025
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -55,7 +56,7 @@ $rows = $this->rows;
                     </a>
                 </td>
                 <td class="center">
-                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=logs&task=remove&cid=<?php print $file[0];?>' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>');">
+                    <a class="btn btn-micro btn-nopad" href='index.php?option=com_jshopping&controller=logs&task=remove&cid=<?php print $file[0];?>&<?php print Session::getFormToken()?>=1' onclick="return confirm('<?php print Text::_('JSHOP_DELETE')?>');">
                         <i class="icon-delete"></i>
                     </a>
                 </td>
@@ -71,6 +72,7 @@ $rows = $this->rows;
         <input type="hidden" name="hidemainmenu" value="0" />
         <input type="hidden" name="boxchecked" value="0" />
         <?php print $this->tmp_html_end?>
+    <?php print HTMLHelper::_('form.token');?>
     </form>
 </div>
 <script>

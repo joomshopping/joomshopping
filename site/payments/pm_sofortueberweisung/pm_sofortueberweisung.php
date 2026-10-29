@@ -6,7 +6,7 @@ use Joomla\CMS\Installer\Installer;
 use Joomla\CMS\Factory;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -30,13 +30,13 @@ class pm_sofortueberweisung extends PaymentRoot{
         $post = Factory::getApplication()->input->post->getArray();
 		$order->order_total = $this->fixOrderTotal($order);
 
-        if ($params['user_id'] != $post['user_id']){
+        if ($params['user_id'] != ($post['user_id'] ?? '')){
             return array(0, 'Error user_id. Order ID '.$order->order_id);
         }
-        if ($order->order_total != $post['amount']){
+        if ($order->order_total != ($post['amount'] ?? '')){
             return array(0, 'Error amount. Order ID '.$order->order_id);
         }
-        if ($order->currency_code_iso != $post['currency_id']){
+        if ($order->currency_code_iso != ($post['currency_id'] ?? '')){
             return array(0, 'Error currency_id. Order ID '.$order->order_id);
         }
 
@@ -45,36 +45,36 @@ class pm_sofortueberweisung extends PaymentRoot{
         }
 
         $data = array(
-          'transaction' => $post['transaction'],
-          'user_id' => $post['user_id'],
-          'project_id' => $post['project_id'],
-          'sender_holder' => $post['sender_holder'],
-          'sender_account_number' => $post['sender_account_number'],
-          'sender_bank_code' => $post['sender_bank_code'],
-          'sender_bank_name' => $post['sender_bank_name'],
-          'sender_bank_bic' => $post['sender_bank_bic'],
-          'sender_iban' => $post['sender_iban'],
-          'sender_country_id' => $post['sender_country_id'],
-          'recipient_holder' => $post['recipient_holder'],
-          'recipient_account_number' => $post['recipient_account_number'],
-          'recipient_bank_code' => $post['recipient_bank_code'],
-          'recipient_bank_name' => $post['recipient_bank_name'],
-          'recipient_bank_bic' => $post['recipient_bank_bic'],
-          'recipient_iban' => $post['recipient_iban'],
-          'recipient_country_id' => $post['recipient_country_id'],
-          'international_transaction' => $post['international_transaction'],
-          'amount' => $post['amount'],
-          'currency_id' => $post['currency_id'],
-          'reason_1' => $post['reason_1'],
-          'reason_2' => $post['reason_2'],
-          'security_criteria' => $post['security_criteria'],
-          'user_variable_0' => $post['user_variable_0'],
-          'user_variable_1' => $post['user_variable_1'],
-          'user_variable_2' => $post['user_variable_2'],
-          'user_variable_3' => $post['user_variable_3'],
-          'user_variable_4' => $post['user_variable_4'],
-          'user_variable_5' => $post['user_variable_5'],
-          'created' => $post['created'],
+          'transaction' => $post['transaction'] ?? '',
+          'user_id' => $post['user_id'] ?? '',
+          'project_id' => $post['project_id'] ?? '',
+          'sender_holder' => $post['sender_holder'] ?? '',
+          'sender_account_number' => $post['sender_account_number'] ?? '',
+          'sender_bank_code' => $post['sender_bank_code'] ?? '',
+          'sender_bank_name' => $post['sender_bank_name'] ?? '',
+          'sender_bank_bic' => $post['sender_bank_bic'] ?? '',
+          'sender_iban' => $post['sender_iban'] ?? '',
+          'sender_country_id' => $post['sender_country_id'] ?? '',
+          'recipient_holder' => $post['recipient_holder'] ?? '',
+          'recipient_account_number' => $post['recipient_account_number'] ?? '',
+          'recipient_bank_code' => $post['recipient_bank_code'] ?? '',
+          'recipient_bank_name' => $post['recipient_bank_name'] ?? '',
+          'recipient_bank_bic' => $post['recipient_bank_bic'] ?? '',
+          'recipient_iban' => $post['recipient_iban'] ?? '',
+          'recipient_country_id' => $post['recipient_country_id'] ?? '',
+          'international_transaction' => $post['international_transaction'] ?? '',
+          'amount' => $post['amount'] ?? '',
+          'currency_id' => $post['currency_id'] ?? '',
+          'reason_1' => $post['reason_1'] ?? '',
+          'reason_2' => $post['reason_2'] ?? '',
+          'security_criteria' => $post['security_criteria'] ?? '',
+          'user_variable_0' => $post['user_variable_0'] ?? '',
+          'user_variable_1' => $post['user_variable_1'] ?? '',
+          'user_variable_2' => $post['user_variable_2'] ?? '',
+          'user_variable_3' => $post['user_variable_3'] ?? '',
+          'user_variable_4' => $post['user_variable_4'] ?? '',
+          'user_variable_5' => $post['user_variable_5'] ?? '',
+          'created' => $post['created'] ?? '',
           'project_password' => $params['project_password']
         );
 
@@ -83,8 +83,8 @@ class pm_sofortueberweisung extends PaymentRoot{
 
         $return = 0;
 
-        if ($post['security_criteria']){
-            if ($post['hash']==$hash){
+        if ($post['security_criteria'] ?? ''){
+            if (is_string($post['hash'] ?? null) && hash_equals($hash, $post['hash'])){
                 $return = 1;
             }else{
                 Helper::saveToLog("paymentdata.log", "Error hash. ".$hash);

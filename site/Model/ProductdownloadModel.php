@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -77,7 +77,7 @@ class ProductDownloadModel{
             $product = JSFactory::getTable('product');
             foreach($items as $item){
                 $product->product_id = $item->product_id;
-				$product->setAttributeActive(unserialize($item->attributes));
+				$product->setAttributeActive(unserialize($item->attributes, ['allowed_classes' => ['stdClass']]));
                 $files = $product->getSaleFiles();
                 foreach($files as $_file){
                     $filesid[] = $_file->id;
@@ -85,7 +85,7 @@ class ProductDownloadModel{
             }
         }else{
             foreach($items as $item){
-                $arrayfiles = unserialize($item->files);
+                $arrayfiles = unserialize($item->files, ['allowed_classes' => ['stdClass']]);
                 foreach($arrayfiles as $_file){
                     $filesid[] = $_file->id;
                 }
@@ -107,7 +107,11 @@ class ProductDownloadModel{
 		if ($name==''){
 			$name = $this->getFileName();
 		}
-		return JSFactory::getConfig()->files_product_path."/".$name;
+		$path = Helper::getFilePathInDir(JSFactory::getConfig()->files_product_path, $name);
+		if ($path == '') {
+			Helper::saveToLog("error.log", "Productdownload - file not in files_product_path: ".$name);
+		}
+		return $path;
 	}
 	
 	public function storeStatDownloads(){

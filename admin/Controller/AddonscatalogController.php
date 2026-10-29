@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.7.0 10.05.2025
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -8,11 +8,15 @@
 */
 namespace Joomla\Component\Jshopping\Administrator\Controller;
 
+use Exception;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
+use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
 
 defined('_JEXEC') or die();
 
@@ -48,6 +52,7 @@ class AddonscatalogController extends BaseadminController{
         }
         $domain = Helper::getClearHost();
         $back_url = 'index.php?option=com_jshopping&controller=addonscatalog';
+        $app->triggerEvent('onBeforeDisplayAddonsCatalogFilter', array(&$filter, &$domain, &$back_url));
 
 		$total = $model->getListCount($filter, $domain);
 		$pageNav = new Pagination($total, $limitstart, $limit);
@@ -65,6 +70,7 @@ class AddonscatalogController extends BaseadminController{
         $view->filter = $filter;
 		$view->pageNav = $pageNav;
         $view->config = JSFactory::getConfig();
+        $app->triggerEvent('onBeforeDisplayAddonsCatalog', array(&$view));
         $view->displayList();
     }
 
@@ -73,63 +79,107 @@ class AddonscatalogController extends BaseadminController{
     }
 
     public function refresh(){
+        $this->checkToken();
+        $app = Factory::getApplication();
         $model = JSFactory::getModel('addonscatalog');
+        $app->triggerEvent('onBeforeRefreshAddonsCatalog', array(&$model));
         $model->refresh();
+        $app->triggerEvent('onAfterRefreshAddonsCatalog', array(&$model));
         $this->setRedirect("index.php?option=com_jshopping&controller=addonscatalog");
     }
 
     public function apikey() {
+        HelperAdmin::checkConfigDisable("apikey_edit_disable", "index.php?option=com_jshopping&controller=addonscatalog");
         $view = $this->getView("addonscatalog", 'html');
         $view->setLayout("apikey");
         $view->key = JSFactory::getConfig()->addonshop_api_key;
+        $view->tmp_html_start = "";
+        $view->tmp_html_end = "";
+        Factory::getApplication()->triggerEvent('onBeforeEditAddonsCatalogApikey', array(&$view));
         $view->displayApikey();
     }
 
     public function apikeysave() {
+        $this->checkToken();
+        HelperAdmin::checkConfigDisable("apikey_edit_disable", "index.php?option=com_jshopping&controller=addonscatalog");
         $jshopConfig = JSFactory::getConfig();
         $config = JSFactory::getTable('Config');
 		$config->id = $jshopConfig->load_id;
         $config->addonshop_api_key = $this->input->getString('key');
+        $app = Factory::getApplication();
+        $app->triggerEvent('onBeforeSaveAddonsCatalogApikey', array(&$config));
         $config->store();
+        $app->triggerEvent('onAfterSaveAddonsCatalogApikey', array(&$config));
         $this->setRedirect('index.php?option=com_jshopping&controller=addonscatalog');
     }
 
     public function downloadaddon() {
+        $this->checkToken('get');
+        HelperAdmin::checkConfigDisable("downloadaddon_disable", "index.php?option=com_jshopping&controller=addonscatalog");
         $app = Factory::getApplication();
         $id = $this->input->getInt('wid');
-        $domain = Helper::getClearHost();
         $model = JSFactory::getModel('addonscatalog');
-        $data = $model->getAddonData($id);
-        $url = $model->getDownloadUrlAddon($data, $domain);        
-        if ($url) {
-            $app->redirect($url);
-        } else {
-            $app->enqueueMessage('Error download Url', 'error');
+        $app->triggerEvent('onBeforeDownloadAddonsCatalogAddon', array(&$id, &$model));
+        try {
+            $file = $model->downloadAddon($id);
+        } catch (Exception $e) {
+            $app->enqueueMessage($e->getMessage(), 'error');
             $this->setRedirect("index.php?option=com_jshopping&controller=addonscatalog");
+            return 0;
         }
+        $name = $model->getDownloadFileName($id);
+        $app->triggerEvent('onAfterDownloadAddonsCatalogAddon', array(&$id, &$file, &$name));
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        header('Content-Type: application/zip');
+        header('Content-Length: '.filesize($file));
+        header('Content-Disposition: attachment; filename="'.$name.'"');
+        header('Cache-Control: no-store');
+        readfile($file);
+        @unlink($file);
+        $app->close();
     }
 
     public function installaddon() {
+        $this->checkToken('get');
+        HelperAdmin::checkAccessController("update");
+        HelperAdmin::checkConfigDisable("installaddon_disable", "index.php?option=com_jshopping&controller=addonscatalog");
         $app = Factory::getApplication();
         $id = $this->input->getInt('wid');
         $back = $this->input->getVar('back');
-        $domain = Helper::getClearHost();
-        $model = JSFactory::getModel('addonscatalog');
-        $data = $model->getAddonData($id);
-        $url = $model->getInstallUrlAddon($data, $domain, $back);
-        if ($url) {
-            $this->setRedirect($url);
-        } else {
-            $app->enqueueMessage('Error install Url', 'error');
-            $this->setRedirect($back);
+        if (!$back || !Uri::isInternal($back)) {
+            $back = "index.php?option=com_jshopping&controller=addonscatalog";
         }
+        $model = JSFactory::getModel('addonscatalog');
+        $app->triggerEvent('onBeforeInstallAddonsCatalogAddon', array(&$id, &$back, &$model));
+        try {
+            $update = $model->installAddon($id);
+        } catch (Exception $e) {
+            JSError::raiseError(500, $e->getMessage());
+            Helper::saveToLog("install.log", $e->getMessage());
+            $this->setRedirect($back);
+            return 0;
+        }
+        foreach($update->getWarnings() as $msg) {
+            JSError::raiseWarning(400, $msg);
+        }
+        if ($update->getBackUrl()) {
+            $back = $update->getBackUrl();
+        }
+        $app->triggerEvent('onAfterInstallAddonsCatalogAddon', array(&$id, &$update, &$back));
+        $this->setRedirect($back, Text::_('JSHOP_COMPLETED'));
     }
 
     public function getaddonkey(){
+        $this->checkToken('get');
+        HelperAdmin::checkConfigDisable("addonkey_edit_disable", "index.php?option=com_jshopping&controller=addonscatalog");
         $alias = $this->input->getString('alias');
         $domain = Helper::getClearHost();
         $model = JSFactory::getModel('addonscatalog');
-        echo $model->getAddonKey($alias, $domain);
+        $key = $model->getAddonKey($alias, $domain);
+        Factory::getApplication()->triggerEvent('onAfterGetAddonsCatalogAddonKey', array(&$alias, &$domain, &$key));
+        echo $key;
         die();
     }
 

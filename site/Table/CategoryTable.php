@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.1 15.10.2022
+* @version      5.10.0 23.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -162,8 +162,7 @@ class CategoryTable extends MultilangTable{
             $cats_tree[] = $category_parent;
             $query = "SELECT category_parent_id FROM `#__jshopping_categories` WHERE category_id = '".$db->escape($category_parent)."' ".$add_where;
             $db->setQuery($query);
-            $rows = $db->loadObJectList();
-            $category_parent = $rows[0]->category_parent_id;
+            $category_parent = (int)$db->loadResult();
         }
         return array_reverse($cats_tree);
     }

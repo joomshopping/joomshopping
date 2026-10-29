@@ -4,7 +4,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 
 /**
-* @version      5.10.0 10.10.2026
+* @version      5.10.0 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -812,6 +812,7 @@ HTMLHelper::_('behavior.formvalidator');
                 </button>
             </div>
         </div>
+        <?php print HTMLHelper::_('form.token');?>
     </form>
         </div>
         </div>

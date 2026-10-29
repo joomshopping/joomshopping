@@ -453,7 +453,7 @@ $print = $this->print;
 </tr>
 </thead>
 <?php foreach ($order_item as $item){
-    $files = unserialize($item->files);
+    $files = unserialize($item->files, ['allowed_classes' => ['stdClass']]);
 ?>
 <tr>
  <td>

@@ -3,9 +3,10 @@ use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Helper\Error as JSError;
+use Joomla\CMS\Session\Session;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -24,7 +25,8 @@ class IeSimpleImport extends IeController{
         $ie_id = $this->ie_id;
         $_importexport = JSFactory::getTable('ImportExport'); 
         $_importexport->load($ie_id);
-        $name = $_importexport->get('name');                        
+        $name = $_importexport->get('name');
+        $ie_params = $this->getIeParams($_importexport);
             
         ToolbarHelper::title(Text::_('JSHOP_IMPORT'). ' "'.$name.'"', 'generic.png' ); 
         ToolbarHelper::custom("backtolistie", "arrow-left", 'arrow-left', Text::_('JSHOP_BACK_TO').' "'.Text::_('JSHOP_PANEL_IMPORT_EXPORT').'"', false );        
@@ -36,8 +38,11 @@ class IeSimpleImport extends IeController{
 
     function save(){
         $app = Factory::getApplication();
+        if ($app->isClient('administrator')){
+            Session::checkToken() or die('Invalid Token');
+        }
         $jshopConfig = JSFactory::getConfig();
-        
+
         $ie_id = $app->input->getInt("ie_id");
         if (!$ie_id) $ie_id = $this->get('ie_id');
         
@@ -48,6 +53,13 @@ class IeSimpleImport extends IeController{
         $_importexport->load($ie_id);
         $alias = $_importexport->get('alias');
         $_importexport->set('endstart', time());
+        $ie_params = $this->getIeParams($_importexport);
+        $params = $app->input->getVar("params");
+        if (is_array($params) && $app->isClient('administrator')){
+            $ie_params = $params;
+        }
+        $ie_params['encoding'] = $this->getSafeEncoding($ie_params['encoding'] ?? '');
+        $this->setIeParams($_importexport, $ie_params);
         $_importexport->store();
                 
         //get list tax
@@ -93,7 +105,7 @@ class IeSimpleImport extends IeController{
                         $listTax[$tax_value] = $tax->get("tax_id");                        
                     }
                     
-                    $category_name = $row['6'];
+                    $category_name = mb_convert_encoding((string)$row[6], 'UTF-8', $ie_params['encoding']);
                     if (!isset($listCat[$category_name]) && $category_name!=""){
                         $cat = JSFactory::getTable("category");
                         $query = "SELECT max(ordering) FROM `#__jshopping_categories`";
@@ -117,9 +129,9 @@ class IeSimpleImport extends IeController{
                     $product->set("min_price", $row[4]);
                     $product->set("product_tax_id", $listTax[$tax_value]);                                        
                     $product->set("currency_id", $jshopConfig->mainCurrency);
-                    $product->set($lang->get("name"), utf8_encode($row[7]));
-                    $product->set($lang->get("short_description"), utf8_encode($row[8]));
-                    $product->set($lang->get("description"), utf8_encode($row[9]));
+                    $product->set($lang->get("name"), mb_convert_encoding((string)$row[7], 'UTF-8', $ie_params['encoding']));
+                    $product->set($lang->get("short_description"), mb_convert_encoding((string)$row[8], 'UTF-8', $ie_params['encoding']));
+                    $product->set($lang->get("description"), mb_convert_encoding((string)$row[9], 'UTF-8', $ie_params['encoding']));
                     $product->store();
                     $product_id = $product->get("product_id");
                     $category_id = $listCat[$category_name];

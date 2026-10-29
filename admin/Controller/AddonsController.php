@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.3 10.05.2025
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
+use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
@@ -21,6 +22,7 @@ use Joomla\Component\Jshopping\Site\Helper\SelectOptions;
 defined('_JEXEC') or die();
 
 class AddonsController extends BaseadminController{
+    protected $checkToken = array('save' => 1, 'remove' => 1);
     
     public function init(){
         HelperAdmin::checkAccessController("addons");
@@ -84,6 +86,7 @@ class AddonsController extends BaseadminController{
     }
     
     public function save(){
+        $this->checkToken();
 		$post = $this->input->post->getArray();
         $params = $this->input->post->get('params', null, 'RAW');
         if (isset($params)) {
@@ -170,7 +173,7 @@ class AddonsController extends BaseadminController{
         $has_folder_view = is_dir($jsPath . 'templates/addons/' . $row->alias);
         $has_file_js     = is_file($jsPath . 'js/addons/' . $row->alias . '.js');
         $has_file_css    = is_file($jsPath . 'css/addons/' . $row->alias . '.css');
-        $has_overrides   = $has_folder_view || $has_file_js || $has_file_css;
+        $has_overrides   = ($has_folder_view || $has_file_js || $has_file_css) && !$jshopConfig->addon_override_disable;
 
         $wa = JSFactory::getWebAssetManager();
         $wap = $jshopConfig->getWebAssetParams('script', 'com.jshopping.admin.addonoverride');
@@ -197,7 +200,8 @@ class AddonsController extends BaseadminController{
 	}
 
     public function saveconfig() {
-        $post = $this->input->post->getArray(array(), null, 'RAW');
+        $this->checkToken();
+        $post =$this->input->post->getArray(array(), null, 'RAW');
 	 	if (isset($post['f-id'])){
 	    	$post['id'] = $post['f-id'];
         	unset($post['f-id']);
@@ -212,6 +216,10 @@ class AddonsController extends BaseadminController{
 
     public function override() {
         $app = Factory::getApplication();
+        if (JSFactory::getConfig()->addon_override_disable) {
+            echo new JsonResponse(null, Text::_('JERROR_ALERTNOAUTHOR'), true);
+            $app->close();
+        }
         $input = $app->input;
         $id           = $input->getInt('id');
         $templateName = $input->getString('template_name', '');
@@ -263,6 +271,10 @@ class AddonsController extends BaseadminController{
     public function overridesave() {
         $this->checkToken();
         $app = Factory::getApplication();
+        if (JSFactory::getConfig()->addon_override_disable) {
+            echo new JsonResponse(null, Text::_('JERROR_ALERTNOAUTHOR'), true);
+            $app->close();
+        }
         $input = $app->input;
         $alias        = $input->getString('alias');
         $customFolder = $input->getString('folder');
@@ -295,5 +307,14 @@ class AddonsController extends BaseadminController{
         }
         $app->close();
     }    
+
+    public function agreeinstalldependency(){
+        Session::checkToken('get') or die('Invalid Token');
+        if (!Factory::getUser()->authorise('core.admin.install', 'com_jshopping')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+        JSFactory::getModel("addondependencies")->agreeInstall($this->input->getInt('id'));
+        $this->setRedirect("index.php?option=com_jshopping&controller=addons");
+    }
 
 }

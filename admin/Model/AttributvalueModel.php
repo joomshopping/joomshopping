@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.4 30.09.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -122,12 +122,13 @@ class AttributValueModel extends BaseadminModel{
         if ($image){
             $upload = new UploadFile($image);
             $upload->setAllowFile($jshopConfig->allow_image_upload);
+            $upload->setCheckImage($jshopConfig->image_upload_check_content);
             $upload->setDir($jshopConfig->image_attributes_path);
             $upload->setFileNameMd5(0);
             $upload->setFilterName(1);
             if ($upload->upload()){
                 if ($post['old_image']){
-                    @unlink($jshopConfig->image_attributes_path."/".$post['old_image']);
+                    @unlink($jshopConfig->image_attributes_path."/".Helper::getSafeFileName($post['old_image']));
                 }
                 $post['image'] = $upload->getName();
                 @chmod($jshopConfig->image_attributes_path."/".$post['image'], 0777);
@@ -171,7 +172,7 @@ class AttributValueModel extends BaseadminModel{
 	public function deleteImage($id){
 		$image = $this->getImage($id);
 		if ($image){
-			@unlink(JSFactory::getConfig()->image_attributes_path."/".$image);
+			@unlink(JSFactory::getConfig()->image_attributes_path."/".Helper::getSafeFileName($image));
 		}
 	}
 	
@@ -224,7 +225,7 @@ class AttributValueModel extends BaseadminModel{
         $jshopConfig = JSFactory::getConfig();
         $attributValue = JSFactory::getTable('attributValue');
         $attributValue->load($id);
-        @unlink($jshopConfig->image_attributes_path."/".$attributValue->image);
+        @unlink($jshopConfig->image_attributes_path."/".Helper::getSafeFileName($attributValue->image));
         $attributValue->image = "";
         $attributValue->store();
     }

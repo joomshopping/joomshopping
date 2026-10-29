@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.8.3 11.10.2025
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -8,6 +8,7 @@
 */
 namespace Joomla\Component\Jshopping\Site\Helper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\Installer\Installer;
@@ -91,7 +92,7 @@ class Helper{
 
     public static function getParseParamsSerialize($data){
         if ($data!=""){
-            return unserialize($data);
+            return unserialize($data, ['allowed_classes' => ['stdClass']]);
         }else{
             return [];
         }
@@ -418,6 +419,22 @@ class Helper{
     return 1;
     }
 
+    /**
+    * CSRF check for frontend forms.
+    * Valid token - true. Missing/invalid token - false in strict mode (frontend_csrf_strict),
+    * otherwise true (old templates without token). Plugins can change the result.
+    */
+    public static function checkFrontendToken($action = ''){
+        $jshopConfig = JSFactory::getConfig();
+        $app = Factory::getApplication();
+        if ($app->input->post->get(Session::getFormToken(), '', 'alnum')){
+            return true;
+        }
+        $result = !$jshopConfig->frontend_csrf_strict;
+        $app->triggerEvent('onCheckFrontendToken', array(&$result, $action));
+        return $result;
+    }
+
     public static function addLinkToProducts(&$products, $default_category_id = 0, $useDefaultItemId = 0){
         $jshopConfig = JSFactory::getConfig();
         Factory::getApplication()->triggerEvent('onBeforeAddLinkToProducts', array(&$products, &$default_category_id, &$useDefaultItemId));
@@ -426,7 +443,7 @@ class Helper{
             if (!$category_id) $category_id = 0;
             $products[$key]->product_link = self::SEFLink('index.php?option=com_jshopping&controller=product&task=view&category_id='.$category_id.'&product_id='.$products[$key]->product_id, $useDefaultItemId);
             $products[$key]->buy_link = '';
-            if ($jshopConfig->show_buy_in_category && $products[$key]->_display_price){
+            if ($jshopConfig->show_buy_in_category && !empty($products[$key]->_display_price)){
                 if (!($jshopConfig->hide_buy_not_avaible_stock && ($products[$key]->product_quantity <= 0))){
                     $products[$key]->buy_link = self::SEFLink('index.php?option=com_jshopping&controller=cart&task=add&category_id='.$category_id.'&product_id='.$products[$key]->product_id, 1);
                 }
@@ -564,13 +581,14 @@ class Helper{
     }
 
     public static function compareX64($a, $b, $comma_separated = 0){
-        if ($comma_separated && $b) {
-            $vals = base64_decode($b);
-            $items = explode(',', $vals);
-            return in_array($a, $items); 
-        } else {
-            return base64_encode($a)==$b;
+        if (base64_encode($a) == $b) {
+            return true;
         }
+        if ($comma_separated && $b) {
+            $items = explode(',', (string)base64_decode($b));
+            return in_array($a, $items);
+        }
+        return false;
     }
 
     public static function replaceNbsp($string) {
@@ -595,6 +613,53 @@ class Helper{
             $html.='<span class="input_type_radio"><input type="radio" name="'.$name.'" id="'.$id_text.'" value="'.$obj->$key.'"'.$sel.' '.$params.'> <label for="'.$id_text.'">'.$obj->$val."</label></span>".$separator;
         }
     return $html;
+    }
+
+    // full path of $name inside $dir, or '' if the file does not exist or points outside $dir (../, symlink)
+    public static function getFilePathInDir($dir, $name){
+        $name = (string)$name;
+        if ($name === '' || str_contains($name, "\0")) {
+            return '';
+        }
+        $base = realpath($dir);
+        $path = realpath($dir.'/'.$name);
+        if ($base === false || $path === false || !str_starts_with($path, $base.DIRECTORY_SEPARATOR)) {
+            return '';
+        }
+        return $path;
+    }
+
+    public static function getSafeFileName($name){
+        return str_replace(array('..', '/', '\\'), '', (string)$name);
+    }
+
+    public static function unserializeData($data){
+        return unserialize((string)$data, ['allowed_classes' => ['stdClass']]);
+    }
+
+    public static function isSafeSerialized($data){
+        if (!is_string($data) || $data === ''){
+            return true;
+        }
+        $value = @unserialize($data, ['allowed_classes' => ['stdClass']]);
+        if ($value === false && $data !== serialize(false)){
+            return false;
+        }
+        return self::hasOnlyStdClassObjects($value);
+    }
+
+    private static function hasOnlyStdClassObjects($value){
+        if (is_object($value) && !($value instanceof \stdClass)){
+            return false;
+        }
+        if (is_array($value) || is_object($value)){
+            foreach((array)$value as $v){
+                if (!self::hasOnlyStdClassObjects($v)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public static function saveToLog($file, $text, $date_add = 1){
@@ -1281,7 +1346,7 @@ class Helper{
 
     public static function printContent(){
         $print = Factory::getApplication()->input->getInt("print");
-        $link =  str_replace("&", '&amp;', $_SERVER["REQUEST_URI"]);
+        $link = htmlspecialchars(strip_tags($_SERVER["REQUEST_URI"]), ENT_QUOTES);
         if (strpos($link,'?')===FALSE)
             $tmpl = "?tmpl=component&amp;print=1";
         else
@@ -1501,7 +1566,7 @@ class Helper{
         if ($filter){
             $url = self::jsFilterUrl($url);
         }
-        $url = str_replace("&","&amp;",$url);
+        $url = htmlspecialchars($url, ENT_QUOTES);
     return $url;
     }
 

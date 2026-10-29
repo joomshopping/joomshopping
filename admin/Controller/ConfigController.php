@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.4 08.10.2026
+* @version      5.10.0 26.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -11,6 +11,7 @@ use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Filter\OutputFilter;
@@ -285,6 +286,7 @@ class ConfigController extends BaseadminController{
     }
     
     function save(){
+        Session::checkToken() or die('Invalid Token');
 	    $jshopConfig = JSFactory::getConfig();
 		$tab = $this->input->getVar('tab');
 		$db = Factory::getDBO();
@@ -292,6 +294,9 @@ class ConfigController extends BaseadminController{
         $dispatcher = Factory::getApplication();
 		$extconf = array('imageheader'=>'header.jpg', 'imagefooter'=>'footer.jpg');	
 		$post = $this->input->post->getArray();
+        if (isset($post['securitykey']) && trim($post['securitykey']) == ''){
+            unset($post['securitykey']);
+        }
         $dispatcher->triggerEvent('onBeforeSaveConfig', array(&$post, &$extconf));
 
         JSFactory::getModel("addondependencies")->clearSystemAddons();
@@ -454,6 +459,7 @@ class ConfigController extends BaseadminController{
     }
     
     function saveseo(){
+        Session::checkToken() or die('Invalid Token');
         $post = $this->input->post->getArray();
         $model = JSFactory::getModel("seo");
         $seo = $model->save($post);
@@ -506,6 +512,7 @@ class ConfigController extends BaseadminController{
     }
     
     function savestatictext(){
+        Session::checkToken() or die('Invalid Token');
         $model = JSFactory::getModel("statictext");
         $post = $model->getPrepareDataSave($this->input);
         $statictext = $model->save($post);
@@ -517,19 +524,22 @@ class ConfigController extends BaseadminController{
     }
     
     function deletestatictext(){
+        Session::checkToken('get') or die('Invalid Token');
         $id = $this->input->getInt("id");
         JSFactory::getModel("statictext")->delete($id);
         $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictext');
     }
     
     function publish(){
-        $cid = $this->input->getVar('cid');
+        Session::checkToken() or die('Invalid Token');
+        $cid = $this->input->get('cid', array(), 'array');
         JSFactory::getModel("statictext")->useReturnPolicy($cid, 1);
         $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictext');
     }
     
     function unpublish(){
-        $cid = $this->input->getVar('cid');
+        Session::checkToken() or die('Invalid Token');
+        $cid = $this->input->get('cid', array(), 'array');
         JSFactory::getModel("statictext")->useReturnPolicy($cid, 0);
         $this->setRedirect('index.php?option=com_jshopping&controller=config&task=statictext');
     }
@@ -590,6 +600,7 @@ class ConfigController extends BaseadminController{
 		$jshopConfig = JSFactory::getConfig();
         $config = new \stdClass();
 		include($jshopConfig->path.'config/default_config.php');
+        $other_config = array_values(array_diff($other_config, JSFactory::getTable('Config')->getServiceKeysDisabled()));
         $tax_rule_for = array();
         $tax_rule_for[] = HTMLHelper::_('select.option', 0, Text::_('JSHOP_FIRMA_CLIENT'), 'id', 'name' );
         $tax_rule_for[] = HTMLHelper::_('select.option', 1, Text::_('JSHOP_VAT_NUMBER'), 'id', 'name' );

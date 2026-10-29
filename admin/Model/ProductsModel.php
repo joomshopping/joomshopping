@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 13.09.2025
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -628,6 +628,7 @@ class ProductsModel extends BaseadminModel{
 
             $upload2 = new UploadFile($_FILES['product_video_preview_'.$i]);
             $upload2->setAllowFile($jshopConfig->allow_image_upload);
+            $upload2->setCheckImage($jshopConfig->image_upload_check_content);
             $upload2->setDir($jshopConfig->video_product_path);
             $upload2->setFileNameMd5(0);
             $upload2->setFilterName(1);
@@ -643,6 +644,7 @@ class ProductsModel extends BaseadminModel{
             unset($upload2);
 
             $upload = new UploadFile($_FILES['product_video_'.$i]);
+            $upload->setAllowFile($jshopConfig->allow_video_upload);
             $upload->setDir($jshopConfig->video_product_path);
             $upload->setFileNameMd5(0);
             $upload->setFilterName(1);
@@ -691,6 +693,7 @@ class ProductsModel extends BaseadminModel{
         for($i=0; $i<$jshopConfig->product_image_upload_count; $i++){
             $upload = new UploadFile($_FILES['product_image_'.$i]);
             $upload->setAllowFile($jshopConfig->allow_image_upload);
+            $upload->setCheckImage($jshopConfig->image_upload_check_content);
             $upload->setDir($jshopConfig->image_product_path);
 			if ($jshopConfig->product_imagename_lowercase){
 				$upload->name = strtolower($upload->name);
@@ -898,7 +901,7 @@ class ProductsModel extends BaseadminModel{
         for($i=0; $i<$jshopConfig->product_file_upload_count; $i++){
             $file_demo = "";
             $file_sale = "";
-            if ($jshopConfig->product_file_upload_via_ftp!=1){
+            if ($jshopConfig->product_file_upload_via_ftp!=1 || $jshopConfig->server_files_select_disable){
                 if (isset($_FILES['product_demo_file_'.$i])) {
                     $upload = new UploadFile($_FILES['product_demo_file_'.$i]);
                     $upload->setDir($jshopConfig->demo_product_path);
@@ -934,11 +937,21 @@ class ProductsModel extends BaseadminModel{
                 }
             }
 
-            if (!$file_demo && isset($post['product_demo_file_name_'.$i]) && $post['product_demo_file_name_'.$i]){
-                $file_demo = $post['product_demo_file_name_'.$i];
-            }
-            if (!$file_sale && isset($post['product_file_name_'.$i]) && $post['product_file_name_'.$i]){
-                $file_sale = $post['product_file_name_'.$i];
+            if (!$jshopConfig->server_files_select_disable){
+                if (!$file_demo && isset($post['product_demo_file_name_'.$i]) && $post['product_demo_file_name_'.$i]){
+                    if (Helper::getFilePathInDir($jshopConfig->demo_product_path, $post['product_demo_file_name_'.$i])){
+                        $file_demo = $post['product_demo_file_name_'.$i];
+                    }else{
+                        JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_FILE_DEMO').' '.$post['product_demo_file_name_'.$i]);
+                    }
+                }
+                if (!$file_sale && isset($post['product_file_name_'.$i]) && $post['product_file_name_'.$i]){
+                    if (Helper::getFilePathInDir($jshopConfig->files_product_path, $post['product_file_name_'.$i])){
+                        $file_sale = $post['product_file_name_'.$i];
+                    }else{
+                        JSError::raiseWarning("", Text::_('JSHOP_ERROR_UPLOADING_FILE_SALE').' '.$post['product_file_name_'.$i]);
+                    }
+                }
             }
 
             if ($file_demo!="" || $file_sale!=""){
@@ -1336,9 +1349,9 @@ class ProductsModel extends BaseadminModel{
                 $query = "select count(*) as k from #__jshopping_products_images where image_name='".$db->escape($image->image_name)."' and product_id!='".$db->escape($pid)."'";
                 $db->setQuery($query);
                 if (!$db->loadResult()){
-                    @unlink(Helper::getPatchProductImage($image->image_name,'thumb',2));
-                    @unlink(Helper::getPatchProductImage($image->image_name,'',2));
-                    @unlink(Helper::getPatchProductImage($image->image_name,'full',2));
+                    @unlink(Helper::getPatchProductImage(Helper::getSafeFileName($image->image_name),'thumb',2));
+                    @unlink(Helper::getPatchProductImage(Helper::getSafeFileName($image->image_name),'',2));
+                    @unlink(Helper::getPatchProductImage(Helper::getSafeFileName($image->image_name),'full',2));
                 }
             }
         }
@@ -1352,9 +1365,9 @@ class ProductsModel extends BaseadminModel{
                 $query = "select count(*) as k from #__jshopping_products_videos where video_name='".$db->escape($video->video_name)."' and product_id!='".$db->escape($pid)."'";
                 $db->setQuery($query);
                 if (!$db->loadResult()){
-                    @unlink($jshopConfig->video_product_path . "/" . $video->video_name);
+                    @unlink($jshopConfig->video_product_path . "/" . Helper::getSafeFileName($video->video_name));
                     if ($video->video_preview){
-                        @unlink($jshopConfig->video_product_path . "/" . $video->video_preview);
+                        @unlink($jshopConfig->video_product_path . "/" . Helper::getSafeFileName($video->video_preview));
                     }
                 }
             }
@@ -1369,13 +1382,13 @@ class ProductsModel extends BaseadminModel{
                 $query = "select count(*) as k from #__jshopping_products_files where demo='".$db->escape($file->demo)."' and product_id!='".$db->escape($pid)."'";
                 $db->setQuery($query);
                 if (!$db->loadResult()){
-                    @unlink($jshopConfig->demo_product_path."/".$file->demo);
+                    if ($path = Helper::getFilePathInDir($jshopConfig->demo_product_path, $file->demo)) @unlink($path);
                 }
 
                 $query = "select count(*) as k from #__jshopping_products_files where file='".$db->escape($file->file)."' and product_id!='".$db->escape($pid)."'";
                 $db->setQuery($query);
                 if (!$db->loadResult()){
-                    @unlink($jshopConfig->files_product_path."/".$file->file);
+                    if ($path = Helper::getFilePathInDir($jshopConfig->files_product_path, $file->file)) @unlink($path);
                 }
             }
         }
@@ -1404,9 +1417,9 @@ class ProductsModel extends BaseadminModel{
         $query = "select count(*) as k from #__jshopping_products_images where image_name='".$db->escape($row->image_name)."' and product_id!='".$db->escape($row->product_id)."'";
         $db->setQuery($query);
         if (!$db->loadResult()){
-            @unlink(Helper::getPatchProductImage($row->image_name,'thumb',2));
-            @unlink(Helper::getPatchProductImage($row->image_name,'',2));
-            @unlink(Helper::getPatchProductImage($row->image_name,'full',2));
+            @unlink(Helper::getPatchProductImage(Helper::getSafeFileName($row->image_name),'thumb',2));
+            @unlink(Helper::getPatchProductImage(Helper::getSafeFileName($row->image_name),'',2));
+            @unlink(Helper::getPatchProductImage(Helper::getSafeFileName($row->image_name),'full',2));
         }
 
         $product = JSFactory::getTable('product');
@@ -1432,9 +1445,9 @@ class ProductsModel extends BaseadminModel{
         $query = "select count(*) from #__jshopping_products_videos where video_name='".$db->escape($row->video_name)."' and product_id!='".$db->escape($row->product_id)."'";
         $db->setQuery($query);
         if (!$db->loadResult()){
-            @unlink($jshopConfig->video_product_path . "/" . $row->video_name);
+            @unlink($jshopConfig->video_product_path . "/" . Helper::getSafeFileName($row->video_name));
             if ($row->video_preview){
-                @unlink($jshopConfig->video_product_path . "/" . $row->video_preview);
+                @unlink($jshopConfig->video_product_path . "/" . Helper::getSafeFileName($row->video_preview));
             }
         }
 
@@ -1468,7 +1481,7 @@ class ProductsModel extends BaseadminModel{
             $query = "select count(*) as k from #__jshopping_products_files where demo='".$db->escape($row->demo)."'";
             $db->setQuery($query);
             if (!$db->loadResult()){
-                @unlink($jshopConfig->demo_product_path."/".$row->demo);
+                if ($path = Helper::getFilePathInDir($jshopConfig->demo_product_path, $row->demo)) @unlink($path);
             }
         }
 
@@ -1487,7 +1500,7 @@ class ProductsModel extends BaseadminModel{
             $query = "select count(*) as k from #__jshopping_products_files where file='".$db->escape($row->file)."'";
             $db->setQuery($query);
             if (!$db->loadResult()){
-                @unlink($jshopConfig->files_product_path."/".$row->file);
+                if ($path = Helper::getFilePathInDir($jshopConfig->files_product_path, $row->file)) @unlink($path);
             }
         }
         return $delete_row;

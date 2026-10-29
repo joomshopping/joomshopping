@@ -1,9 +1,10 @@
 <?php
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.8.0 15.09.2025
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -115,5 +116,6 @@ defined('_JEXEC') or die();
 <input type="hidden" name="hidemainmenu" value="0" />
 <input type="hidden" name="attr_id" value="<?php echo (int)$this->attribut->attr_id?>" />
 <?php print $this->tmp_html_end?>
+<?php print HTMLHelper::_('form.token');?>
 </form>
 </div>

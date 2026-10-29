@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.5 31.01.2025
+* @version      5.9.5 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -23,6 +23,7 @@ use Joomla\Component\Jshopping\Site\Helper\Request;
 defined('_JEXEC') or die();
 
 class ProductsController extends BaseadminController{
+    protected $checkToken = array('save' => 1, 'remove' => 1);
 
     public function init(){
         HelperAdmin::checkAccessController("products");

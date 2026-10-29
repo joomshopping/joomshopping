@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.9.2 09.04.2024
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -199,9 +199,8 @@ class PaymentMethodTable extends MultilangTable{
             }else{
                 $script = $this->payment_class;
             }
-        }else{
-            $script = str_replace(array('.','/'),'', $script);
-        }
+        }        
+        $script = str_replace(array('.','/','\\'),'', (string)$script);
         $data = new \stdClass();
         
         if (!file_exists($JshopConfig->path.'payments/'.$script."/".$script.'.php')){
@@ -210,7 +209,7 @@ class PaymentMethodTable extends MultilangTable{
         }else{
             include_once($JshopConfig->path.'payments/'.$script."/".$script.'.php');
             if (!class_exists($script)){
-                throw new Exception('Error loading class '.$script);
+                throw new \Exception('Error loading class '.$script);
             }else{
                 $data->paymentSystemVerySimple = 0;
                 $data->paymentSystem = new $script();

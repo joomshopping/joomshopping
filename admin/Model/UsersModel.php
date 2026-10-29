@@ -12,6 +12,8 @@ use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\User;
+use Joomla\CMS\User\UserHelper;
+use Joomla\CMS\User\UserFactoryInterface;
 defined('_JEXEC') or die();
 
 class UsersModel extends BaseadminModel{
@@ -96,7 +98,11 @@ class UsersModel extends BaseadminModel{
         $dispatcher = Factory::getApplication();        
 		$dispatcher->triggerEvent('onBeforeSaveUser', array(&$post));
         $user_id = $post['user_id'];
-        
+        if ($user_id && !empty($post['block']) && $user_id == Factory::getApplication()->getIdentity()->id){
+            $this->setError(Text::_('JSHOP_ERROR_CANNOT_BLOCK_SELF'));
+            return 0;
+        }
+
 		if ($user_id){
 			$model = JSFactory::getModel('useredit', 'Site');
 			$model->setUserId($user_id);
@@ -116,7 +122,10 @@ class UsersModel extends BaseadminModel{
 		
 		$user_shop = $model->getUser();
 		$user = $model->getUserJoomla();
-		        
+		if ($user_id && $user->block){
+			UserHelper::destroyUserSessions($user->id);
+		}
+
         $dispatcher->triggerEvent('onAfterSaveUser', array(&$user, &$user_shop));
         return $user_shop;
     }
@@ -137,7 +146,20 @@ class UsersModel extends BaseadminModel{
                     continue;
                 }
                 $user = User::getInstance((int)$id);
-                $user->delete();
+                try {
+                    $deleted = $user->delete();
+                    $error = $user->getError();
+                } catch (\Exception $e) {
+                    $deleted = false;
+                    $error = $e->getMessage();
+                }
+                if (!$deleted) {
+                    if ($msg && $error) {
+                        $app->enqueueMessage($error, 'error');
+                    }
+                    $res[$id] = false;
+                    continue;
+                }
                 $app->logout((int)$id);
                 $user_shop = JSFactory::getTable('userShop');
                 $user_shop->delete((int)$id);
@@ -150,15 +172,34 @@ class UsersModel extends BaseadminModel{
     
     public function publish(array $cid, $flag){
         $block = (int)!$flag;
-        $db = Factory::getDBO();
-        $dispatcher = Factory::getApplication();        
-        $dispatcher->triggerEvent('onBeforePublishUser', array(&$cid, &$block));
-        foreach($cid as $id){
-            $query = "UPDATE `#__users` SET `block`=".(int)$block." "
-                . "WHERE `id` = ".(int)$id;
-            $db->setQuery($query);
-            $db->execute();
+        $app = Factory::getApplication();
+        $me = $app->getIdentity();
+        $userFactory = Factory::getContainer()->get(UserFactoryInterface::class);
+        $app->triggerEvent('onBeforePublishUser', array(&$cid, &$block));
+        foreach($cid as $i => $id){
+            $user = $userFactory->loadUserById((int)$id);
+            if (!$user->id){
+                unset($cid[$i]);
+                continue;
+            }
+            if ($block && $user->id == $me->id){
+                $app->enqueueMessage(Text::_('JSHOP_ERROR_CANNOT_BLOCK_SELF'), 'error');
+                unset($cid[$i]);
+                continue;
+            }
+            $user->block = $block;
+            if (!$user->save(true)){
+                if ($user->getError()){
+                    $app->enqueueMessage($user->getError(), 'error');
+                }
+                unset($cid[$i]);
+                continue;
+            }
+            if ($block){
+                UserHelper::destroyUserSessions($user->id);
+            }
         }
-        $dispatcher->triggerEvent('onAfterPublishUser', array(&$cid, &$block));
+        $cid = array_values($cid);
+        $app->triggerEvent('onAfterPublishUser', array(&$cid, &$block));
     }
 }

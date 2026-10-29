@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.6.2 21.04.2025
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -283,6 +283,7 @@ class CategoriesModel extends BaseadminModel{
         }
         $upload = new UploadFile($image);
         $upload->setAllowFile($jshopConfig->allow_image_upload);
+        $upload->setCheckImage($jshopConfig->image_upload_check_content);
         $upload->setDir($jshopConfig->image_category_path);
 		if (isset($post["image_name"]) && $post["image_name"] != '') {
             $upload->setNameWithoutExt($post["image_name"]);
@@ -293,7 +294,7 @@ class CategoriesModel extends BaseadminModel{
             $name = $upload->getName();
             Factory::getApplication()->triggerEvent('onAfterUploadCategoryImage', array(&$post, &$name));
             if ($post['old_image'] && $name!=$post['old_image']){
-                @unlink($jshopConfig->image_category_path."/".$post['old_image']);
+                @unlink($jshopConfig->image_category_path."/".Helper::getSafeFileName($post['old_image']));
             }
             @chmod($jshopConfig->image_category_path."/".$name, 0777);
             
@@ -439,7 +440,7 @@ class CategoriesModel extends BaseadminModel{
                 continue;
             }
             $this->deleteCategory($value);
-            @unlink($jshopConfig->image_category_path.'/'.$category->category_image);            
+            @unlink($jshopConfig->image_category_path.'/'.Helper::getSafeFileName($category->category_image));            
             if ($msg){
                 $app->enqueueMessage(sprintf(Text::_('JSHOP_CATEGORY_DELETED'), $name_category), 'message');
             }
@@ -464,7 +465,7 @@ class CategoriesModel extends BaseadminModel{
         $jshopConfig = JSFactory::getConfig();
         $category = JSFactory::getTable("category", "jshop");
         $category->load($id);
-        @unlink($jshopConfig->image_category_path.'/'.$category->category_image);
+        @unlink($jshopConfig->image_category_path.'/'.Helper::getSafeFileName($category->category_image));
         $category->category_image = "";
         $category->store();
     }

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.1.3 15.09.2022
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -22,36 +22,40 @@ ERROR UPLOAD
 13 - File copy Error
 14 - File Error size class
 15 - Error array $_FILES or filesize > post_max_size
+16 - File is not a valid image
 */
 
 class UploadFile{
 
     /* File parametr from $_FILES */
-    var $name = null;
-    var $tmp_name = null;
-    var $type = null;
-    var $size = null;
-    var $error = null;
+    public $name = null;
+    public $tmp_name = null;
+    public $type = null;
+    public $size = null;
+    public $error = null;
     
-    var $uploaded_real_name_file = "";
+    public $uploaded_real_name_file = "";
 
     /*Upload Dir*/
-    var $dir = ".";
-    var $new_dir_access = 0777;
+    public $dir = ".";
+    public $new_dir_access = 0777;
 
     /*Config*/
-    var $auto_rename_file = 1;
-    var $auto_create_dir = 1;
-    var $file_upload_ok = 0;
-    var $file_name_md5 = 1;
-    var $file_name_filter = 0;
+    public $auto_rename_file = 1;
+    public $auto_create_dir = 1;
+    public $file_upload_ok = 0;
+    public $file_name_md5 = 1;
+    public $file_name_filter = 0;
+    public $check_image = 0;
 
     /*install allow or forbid files ext*/
-    var $allow_file = array();
-    var $forbid_file = array('php','php2','php3','php4','php5','js','html','htm');
+    public $allow_file = array();
+    public $forbid_file = array('php','php2','php3','php4','php5','php6','php7','php8','phtml','pht','phar','phps','shtml','shtm','cgi','pl','py','sh','asp','aspx','jsp','js','html','htm','xhtml','htaccess','htpasswd');
+    /*executable ext forbidden in any part of the name (file.php.jpg)*/
+    public $forbid_exec_file = array('php','php2','php3','php4','php5','php6','php7','php8','phtml','pht','phar','phps','shtml','cgi');
 
     /*set upload max file size (kb)*/
-    var $maxSizeFile = 0;
+    public $maxSizeFile = 0;
 
     /**
     * constructor
@@ -114,6 +118,13 @@ class UploadFile{
     */    
     function setFilterName($val){
         $this->file_name_filter = $val;
+    }
+
+    /**
+    * check that the file is a real image of the type given by its extension
+    */
+    function setCheckImage($val){
+        $this->check_image = $val;
     }
 
     /**
@@ -193,8 +204,13 @@ class UploadFile{
     * get test file allow
     */
     function getTestFileAllow(){
+        $this->name = rtrim((string)$this->name, ". ");
+        if ($this->name === '' || substr($this->name, 0, 1) == '.'){
+            $this->error=12;
+            return 0;
+        }
         $mas=pathinfo($this->name);
-        $ext=strtolower($mas['extension']);
+        $ext=strtolower($mas['extension'] ?? '');
 
         if (count($this->allow_file)>0){
              if (!in_array($ext,$this->allow_file)) {
@@ -209,12 +225,65 @@ class UploadFile{
                  return 0;
              }
         }
-        
+
+        $parts = array_map('strtolower', array_slice(explode('.', $this->name), 1));
+        if (count(array_intersect($parts, $this->forbid_exec_file))>0){
+            $this->error=12;
+            return 0;
+        }
+
+        if ($this->check_image && !$this->isValidImage($ext)){
+            $this->error=16;
+            return 0;
+        }
+
         if ($this->maxSizeFile!=0 && $this->size > $this->maxSizeFile*1024){
              $this->error=14;
             return 0;
         }
 
+    return 1;
+    }
+
+    /**
+    * image content must match the extension and must not contain php code
+    */
+    function isValidImage($ext){
+        if (!is_file((string)$this->tmp_name)){
+            return 0;
+        }
+        $types = array('jpg'=>IMAGETYPE_JPEG, 'jpeg'=>IMAGETYPE_JPEG, 'jpe'=>IMAGETYPE_JPEG, 'gif'=>IMAGETYPE_GIF, 'png'=>IMAGETYPE_PNG, 'webp'=>IMAGETYPE_WEBP, 'bmp'=>IMAGETYPE_BMP);
+        if ($ext == 'avif'){
+            $info = @getimagesize($this->tmp_name);
+            if (!(defined('IMAGETYPE_AVIF') && $info && $info[2] == IMAGETYPE_AVIF)){
+                $head = (string)file_get_contents($this->tmp_name, false, null, 4, 8);
+                if (substr($head, 0, 4) != 'ftyp' || !in_array(substr($head, 4, 4), array('avif', 'avis'))){
+                    return 0;
+                }
+            }
+        }else{
+            if (!isset($types[$ext])){
+                return 0;
+            }
+            $info = @getimagesize($this->tmp_name);
+            if (!$info || $info[2] != $types[$ext]){
+                return 0;
+            }
+        }
+        $fp = fopen($this->tmp_name, 'rb');
+        if (!$fp){
+            return 0;
+        }
+        $prev = '';
+        while(!feof($fp)){
+            $data = $prev.fread($fp, 131072);
+            if (stripos($data, '<?php') !== false || stripos($data, '__HALT_COMPILER') !== false){
+                fclose($fp);
+                return 0;
+            }
+            $prev = substr($data, -16);
+        }
+        fclose($fp);
     return 1;
     }
 
@@ -259,10 +328,10 @@ class UploadFile{
 }
 
 class UploadImage extends UploadFile{
-    var $name_image = "";
-    var $dir_image = "";
-    var $quality = 85;
-    var $prefix = "thumb_";
+    public $name_image = "";
+    public $dir_image = "";
+    public $quality = 85;
+    public $prefix = "thumb_";
 
     function copyImage($width=120, $height=0){
         if (!$this->file_upload_ok) return 0;

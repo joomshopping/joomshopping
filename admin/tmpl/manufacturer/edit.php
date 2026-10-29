@@ -4,9 +4,10 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Editor\Editor;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
-* @version      5.6.0 13.03.2025
+* @version      5.9.4 17.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -272,5 +273,6 @@ $jshopConfig=JSFactory::getConfig();
 <input type="hidden" name="edit" value="<?php echo $edit;?>" />
 <input type="hidden" name="manufacturer_id" value="<?php echo (int)$row->manufacturer_id?>" />
 <?php print $this->tmp_html_end?>
+<?php print HTMLHelper::_('form.token');?>
 </form>
 </div>

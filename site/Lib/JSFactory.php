@@ -636,7 +636,7 @@ class JSFactory{
         $returnlist = array();
         foreach($list as $row){
             if ($row->shipping_method!=""){
-                $sm = unserialize($row->shipping_method);
+                $sm = unserialize($row->shipping_method, ['allowed_classes' => ['stdClass']]);
             }else{
                 $sm = array();
             }

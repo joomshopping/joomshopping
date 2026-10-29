@@ -336,7 +336,7 @@ $order=$this->order;
         <?php
         $i=1; $countprod=count($order->items);
         foreach($order->items as $key_id=>$prod){
-            $files=unserialize($prod->files);
+            $files=unserialize($prod->files, ['allowed_classes' => ['stdClass']]);
             ?>            
             <tr class="jshop_prod_cart <?php if ($i % 2 == 0) print "even"; else print "odd"?>">
                 <td class="product_name">

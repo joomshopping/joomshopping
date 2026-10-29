@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -81,6 +81,9 @@ class PaymentsModel extends BaseadminModel{
         }
         $post['price'] = Helper::saveAsPrice($post['price']);
         $post['payment_class'] = $input->getCmd("payment_class");
+        if (isset($post['scriptname'])){
+            $post['scriptname'] = str_replace(array('.','/','\\'), '', (string)$post['scriptname']);
+        }
         if (!$post['payment_id'] && !$post['payment_type']){
             $post['payment_type'] = 1;
         }        

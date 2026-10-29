@@ -1,13 +1,13 @@
 <?php
 use Joomla\CMS\Factory;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
-use Joomla\Component\Jshopping\Site\Helper\Helper;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Session\Session;
 
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -25,8 +25,7 @@ class IeSimpleExport extends IeController{
         $_importexport = JSFactory::getTable('ImportExport'); 
         $_importexport->load($ie_id);
         $name = $_importexport->get('name');
-        $ie_params_str = $_importexport->get('params');
-        $ie_params = Helper::parseParamsToArray($ie_params_str);
+        $ie_params = $this->getIeParams($_importexport);
                 
         $files = Folder::files($jshopConfig->importexport_path.$_importexport->get('alias'), '.csv');
         $count = count($files);
@@ -40,22 +39,25 @@ class IeSimpleExport extends IeController{
     }
 
     function save(){
-        $app = Factory::getApplication();        
-        
+        $app = Factory::getApplication();
+        if ($app->isClient('administrator')){
+            Session::checkToken() or die('Invalid Token');
+        }
+
         $ie_id = $this->get('ie_id');
-        $_importexport = JSFactory::getTable('ImportExport'); 
+        $_importexport = JSFactory::getTable('ImportExport');
         $_importexport->load($ie_id);
         $alias = $_importexport->get('alias');
-        $_importexport->set('endstart', time());        
-        $params = $app->input->getVar("params");        
-        if (is_array($params)){        
-            $paramsstr = Helper::parseArrayToParams($params);
-            $_importexport->set('params', $paramsstr);
-        }        
+        $_importexport->set('endstart', time());
+        $ie_params = $this->getIeParams($_importexport);
+        $params = $app->input->getVar("params");
+        if (is_array($params) && $app->isClient('administrator')){
+            $ie_params = $params;
+        }
+        $ie_params['filename'] = $this->getSafeFileName($ie_params['filename'] ?? '');
+        $ie_params['encoding'] = $this->getSafeEncoding($ie_params['encoding'] ?? '');
+        $this->setIeParams($_importexport, $ie_params);
         $_importexport->store();
-        
-        $ie_params_str = $_importexport->get('params');
-        $ie_params = Helper::parseParamsToArray($ie_params_str);
         
         $jshopConfig = JSFactory::getConfig();
         $lang = JSFactory::getLang();
@@ -82,10 +84,10 @@ class IeSimpleExport extends IeController{
             $row[] = $prod->product_date_added;
             $row[] = $prod->product_price;        
             $row[] = $prod->tax;
-            $row[] = utf8_decode($prod->cat_name);
-            $row[] = utf8_decode($prod->name);
-            $row[] = utf8_decode($prod->short_description);
-            $row[] = utf8_decode($prod->description);
+            $row[] = mb_convert_encoding((string)$prod->cat_name, $ie_params['encoding'], 'UTF-8');
+            $row[] = mb_convert_encoding((string)$prod->name, $ie_params['encoding'], 'UTF-8');
+            $row[] = mb_convert_encoding((string)$prod->short_description, $ie_params['encoding'], 'UTF-8');
+            $row[] = mb_convert_encoding((string)$prod->description, $ie_params['encoding'], 'UTF-8');
             $data[] = $row; 
         }
         
@@ -104,16 +106,28 @@ class IeSimpleExport extends IeController{
     }
 
     function filedelete(){
+        Session::checkToken('get') or die('Invalid Token');
         $app = Factory::getApplication();
         $jshopConfig = JSFactory::getConfig();
         $ie_id = $app->input->getInt("ie_id");
-        $_importexport = JSFactory::getTable('ImportExport'); 
+        $_importexport = JSFactory::getTable('ImportExport');
         $_importexport->load($ie_id);
         $alias = $_importexport->get('alias');
-        $file = $app->input->getVar("file");
-        $filename = $jshopConfig->importexport_path.$alias."/".$file;
-        @unlink($filename);
+        // only a file from the list of this export folder
+        $file = $app->input->getString("file");
+        $dir = $jshopConfig->importexport_path.$alias;
+        if ($alias != '' && is_dir($dir) && in_array($file, Folder::files($dir, '.csv'), true)){
+            @unlink($dir."/".$file);
+        }
         $app->redirect("index.php?option=com_jshopping&controller=importexport&task=view&ie_id=".$ie_id);
+    }
+
+    protected function getSafeFileName($name){
+        $name = str_replace(array('.', '/', '\\'), '', (string)$name);
+        if ($name == ''){
+            $name = 'export_'.bin2hex(random_bytes(8));
+        }
+        return $name;
     }
     
 }

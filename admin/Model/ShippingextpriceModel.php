@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.0.0 15.09.2018
+* @version      5.10.0 18.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -38,6 +38,9 @@ class ShippingExtPriceModel extends BaseadminModel{
         $shippingext = JSFactory::getTable('shippingExt');
         $dispatcher = Factory::getApplication();
         $dispatcher->triggerEvent('onBeforeSaveShippingExtCalc', array(&$post));
+        if (isset($post['alias'])){
+            $post['alias'] = str_replace(array('.','/','\\'), '', (string)$post['alias']);
+        }
         $shippingext->bind($post);
         $shippingext->setShippingMethod($post['shipping']);
         $shippingext->setParams($post['params']);

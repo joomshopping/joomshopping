@@ -10,6 +10,8 @@ namespace Joomla\Component\Jshopping\Site\Table;
 defined('_JEXEC') or die();
 
 class TaxExtTable extends ShopbaseTable{    
+
+    protected $_serialized_fields = ['zones'];
     
     
     function __construct( &$_db ){
@@ -22,7 +24,7 @@ class TaxExtTable extends ShopbaseTable{
     
     function getZones(){
         if ($this->zones!=""){
-            return (array)unserialize($this->zones);
+            return (array)unserialize($this->zones, ['allowed_classes' => ['stdClass']]);
         }else{
             return array();
         }

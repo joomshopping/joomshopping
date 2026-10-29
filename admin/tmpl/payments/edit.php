@@ -3,9 +3,10 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Administrator\Helper\HelperAdmin;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
- * @version      5.4.0 09.04.2024
+ * @version      5.9.4 17.10.2026
  * @author       MAXXmarketing GmbH
  * @package      Jshopping
  * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -178,5 +179,6 @@ $lists = $this->lists;
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="payment_id" value="<?php echo (int)$row->payment_id ?>" />
         <?php print $this->tmp_html_end ?>
+    <?php print HTMLHelper::_('form.token');?>
     </form>
 </div>

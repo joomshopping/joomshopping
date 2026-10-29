@@ -40,7 +40,7 @@ class ConfigDisplayPriceModel extends BaseadminModel{
             $countries_name[$v->country_id] = $v->name;
         }
         foreach($rows as $k=>$v){
-            $list = unserialize($v->zones);
+            $list = unserialize($v->zones, ['allowed_classes' => ['stdClass']]);
             foreach($list as $k2=>$v2){
                 $list[$k2] = $countries_name[$v2];
             }

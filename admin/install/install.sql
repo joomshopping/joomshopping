@@ -702,6 +702,7 @@ CREATE TABLE IF NOT EXISTS `#__jshopping_addons_dependencies` (
 `installed` TINYINT(1) NOT NULL default 0,
 `error` TINYINT(1) NOT NULL DEFAULT 0,
 `display_count` INT(11) NOT NULL default 0,
+`scriptinstall` VARCHAR(255) NOT NULL default '',
 PRIMARY KEY  (`id`)
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -1221,7 +1222,7 @@ INSERT INTO `#__jshopping_unit` (`id`, `qty`, `name_de-DE`, `name_en-GB`) values
 INSERT INTO `#__jshopping_product_labels` (`id`, `name`, `name_de-DE`, `name_en-GB`, `image`) VALUES(1, 'New', 'New', 'New', 'new.png'), (2, 'Sale', 'Sale', 'Sale', 'sale.png');
 
 INSERT INTO `#__jshopping_import_export` (`id`, `name`, `alias`, `description`, `params`, `endstart`, `steptime`) VALUES
-(1, 'Simple Export', 'simpleexport', 'Simple Export in CSV iso-8859-1', 'filename=export', 0, 1), (2, 'Simple Import', 'simpleimport', 'Simple Import in CSV iso-8859-1', '', 0, 0);
+(1, 'Simple Export', 'simpleexport', 'Simple Export in CSV iso-8859-1', '', 0, 1), (2, 'Simple Import', 'simpleimport', 'Simple Import in CSV iso-8859-1', '', 0, 0);
 
 INSERT INTO `#__jshopping_currencies` ( `currency_id` , `currency_name` , `currency_code`, `currency_code_iso`, `currency_code_num` , `currency_ordering` , `currency_publish` , `currency_value` ) VALUES ( NULL, 'Euro', 'EUR', 'EUR', '978', '1', '1', '1.00');
 

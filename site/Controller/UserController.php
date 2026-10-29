@@ -1,6 +1,6 @@
 <?php
 /**
-* @version      5.10.0 10.10.2026
+* @version      5.10.0 27.10.2026
 * @author       MAXXmarketing GmbH
 * @package      Jshopping
 * @copyright    Copyright (C) 2010 webdesigner-profi.de. All rights reserved.
@@ -123,6 +123,7 @@ class UserController extends BaseController{
     function check_user_exist_ajax(){
         $username = $this->input->getVar("username");
         $email = $this->input->getVar("email");
+        header("Content-type: text/plain; charset=utf-8");
 		print JSFactory::getTable('userShop')->checkUserExistAjax($username, $email);
         die();
     }
@@ -313,7 +314,12 @@ class UserController extends BaseController{
 		$model = JSFactory::getModel('useredit', 'Site');
 		
 		$error_back_url = Helper::SEFLink("index.php?option=com_jshopping&controller=user&task=editaccount",1,1, $jshopConfig->use_ssl);
-		
+		if (!Helper::checkFrontendToken('accountsave')){
+            JSError::raiseWarning('', Text::_('JINVALID_TOKEN_NOTICE'));
+            $this->setRedirect($error_back_url);
+            return 0;
+        }
+
 		Factory::getApplication()->triggerEvent('onBeforeAccountSave', array(&$post));
 		
 		$model->setUserId(Factory::getUser()->id);

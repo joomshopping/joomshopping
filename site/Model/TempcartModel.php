@@ -133,7 +133,7 @@ class TempCartModel{
         $db->setQuery($query);
         $row = $db->loadObject();
 		if (isset($row->cart)) {
-			$products = unserialize($row->cart);
+			$products = unserialize($row->cart, ['allowed_classes' => ['stdClass']]);
 		} else {
 			$products = [];
 		}
@@ -148,7 +148,7 @@ class TempCartModel{
 			$rows = $this->getListRowsByUserId($user_id, $type_cart);
 			foreach($rows as $v) {
 				if ($v->id_cookie != $id_cookie && $v->cart) {
-					$_products = unserialize($v->cart);
+					$_products = unserialize($v->cart, ['allowed_classes' => ['stdClass']]);
 					foreach($_products as $_prod) {
 						$check = $_prod['product_id'].'-'.$_prod['attributes'].'-'.$_prod['freeattributes'];
 						if (!in_array($check, $exist_pid)) {
